@@ -1,0 +1,6 @@
+_Unwind_Resume
+std::basic_ios<char, std::char_traits<char> >::operator bool() const
+std::basic_ofstream<char, std::char_traits<char> >::basic_ofstream(char const*, std::_Ios_Openmode)
+std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()
+std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
+__gxx_personality_v0

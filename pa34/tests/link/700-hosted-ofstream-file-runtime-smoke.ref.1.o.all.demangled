@@ -1,0 +1,19 @@
+0000000000000000 d DW.ref.__gxx_personality_v0
+0000000000000000 d Lcppgm_10
+0000000000000010 d Lcppgm_11
+000000000000000b t Lcppgm_2
+0000000000000061 t Lcppgm_3
+0000000000000088 t Lcppgm_4
+00000000000000c4 t Lcppgm_5
+00000000000000d9 t Lcppgm_6
+00000000000000ee t Lcppgm_7
+000000000000012e t Lcppgm_9
+                 U _Unwind_Resume
+                 U std::basic_ios<char, std::char_traits<char> >::operator bool() const
+                 U std::basic_ofstream<char, std::char_traits<char> >::basic_ofstream(char const*, std::_Ios_Openmode)
+                 U std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()
+                 U std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
+0000000000000120 t __cppgm_405f5f637070676d5f696e6974
+                 U __gxx_personality_v0
+0000000000000000 r cppgm_lsda_0
+0000000000000000 T main

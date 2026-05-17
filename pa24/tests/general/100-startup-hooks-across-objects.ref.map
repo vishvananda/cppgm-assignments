@@ -1,0 +1,12 @@
+link_map x86_64 linux
+startup_size 35
+code_size 183
+data_size 388
+object 0 code_offset 48 data_offset 192
+object 1 code_offset 48 data_offset 208
+object 2 code_offset 112 data_offset 208
+object 3 code_offset 144 data_offset 208
+symbol @__cppgm_fini code 112
+symbol @__cppgm_init code 48
+symbol @g data 192
+symbol @main code 144

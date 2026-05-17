@@ -1,0 +1,8 @@
+link_map x86_64 linux
+startup_size 22
+code_size 71
+data_size 164
+object 0 code_offset 32 data_offset 80
+object 1 code_offset 32 data_offset 96
+symbol @g data 80
+symbol @main code 32
