@@ -1,19 +1,30 @@
 0000000000000000 d DW.ref.__gxx_personality_v0
-0000000000000000 d Lcppgm_10
-0000000000000010 d Lcppgm_11
+000000000000000b t Lcppgm_10
+000000000000014f t Lcppgm_12
+0000000000000000 d Lcppgm_13
+0000000000000010 d Lcppgm_14
 000000000000000b t Lcppgm_2
-0000000000000061 t Lcppgm_3
-0000000000000088 t Lcppgm_4
-00000000000000c4 t Lcppgm_5
-00000000000000d9 t Lcppgm_6
-00000000000000ee t Lcppgm_7
-000000000000012e t Lcppgm_9
+000000000000005e t Lcppgm_3
+0000000000000085 t Lcppgm_4
+00000000000000d7 t Lcppgm_5
+00000000000000ec t Lcppgm_6
+0000000000000101 t Lcppgm_7
+000000000000000b t Lcppgm_8
+0000000000000021 t Lcppgm_9
                  U _Unwind_Resume
                  U std::basic_ios<char, std::char_traits<char> >::operator bool() const
+0000000000000000 W std::basic_ostream<char, std::char_traits<char> >::~basic_ostream()
+                 U std::basic_filebuf<char, std::char_traits<char> >::~basic_filebuf()
                  U std::basic_ofstream<char, std::char_traits<char> >::basic_ofstream(char const*, std::_Ios_Openmode)
-                 U std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()
+0000000000000000 W std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()
+0000000000000000 W std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()
+                 U std::ios_base::~ios_base()
+0000000000000000 W std::basic_ios<char, std::char_traits<char> >::~basic_ios()
                  U std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
-0000000000000120 t __cppgm_405f5f637070676d5f696e6974
+                 U VTT for std::basic_ofstream<char, std::char_traits<char> >
+                 U vtable for std::basic_ofstream<char, std::char_traits<char> >
+                 U vtable for std::basic_ios<char, std::char_traits<char> >
+0000000000000141 t __cppgm_405f5f637070676d5f696e6974
                  U __gxx_personality_v0
 0000000000000000 r cppgm_lsda_0
 0000000000000000 T main
