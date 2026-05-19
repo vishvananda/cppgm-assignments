@@ -1,6 +1,6 @@
 0000000000000000 d DW.ref.__gxx_personality_v0
 000000000000000b t Lcppgm_10
-000000000000014f t Lcppgm_12
+000000000000014e t Lcppgm_12
 0000000000000000 d Lcppgm_13
 0000000000000010 d Lcppgm_14
 000000000000000b t Lcppgm_2
@@ -24,7 +24,7 @@
                  U VTT for std::basic_ofstream<char, std::char_traits<char> >
                  U vtable for std::basic_ofstream<char, std::char_traits<char> >
                  U vtable for std::basic_ios<char, std::char_traits<char> >
-0000000000000141 t __cppgm_405f5f637070676d5f696e6974
+0000000000000140 t __cppgm_405f5f637070676d5f696e6974
                  U __gxx_personality_v0
 0000000000000000 r cppgm_lsda_0
 0000000000000000 T main
