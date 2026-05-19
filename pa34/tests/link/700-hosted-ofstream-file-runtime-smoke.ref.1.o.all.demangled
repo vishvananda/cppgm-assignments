@@ -12,7 +12,7 @@
 000000000000000b t Lcppgm_8
 0000000000000021 t Lcppgm_9
                  U _Unwind_Resume
-                 U std::basic_ios<char, std::char_traits<char> >::operator bool() const
+                 w std::basic_ios<char, std::char_traits<char> >::operator bool() const
 0000000000000000 W std::basic_ostream<char, std::char_traits<char> >::~basic_ostream()
                  U std::basic_filebuf<char, std::char_traits<char> >::~basic_filebuf()
                  U std::basic_ofstream<char, std::char_traits<char> >::basic_ofstream(char const*, std::_Ios_Openmode)
