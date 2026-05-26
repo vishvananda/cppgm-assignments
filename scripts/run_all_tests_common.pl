@@ -244,17 +244,32 @@ sub run_command_capture
 	my $stderr_path = $options{stderr};
 	my $stdin_path = $options{stdin};
 	my $timeout = $options{timeout};
+	my $env = $options{env} || {};
+	my $shared_output = defined($stderr_path) && $stderr_path eq $stdout_path;
 
 	open(my $stdout_fh, '>', $stdout_path)
 		or die "Unable to write $stdout_path: $!";
-	open(my $stderr_fh, '>', $stderr_path)
-		or die "Unable to write $stderr_path: $!";
+	my $stderr_fh;
+	if ($shared_output)
+	{
+		open($stderr_fh, '>&', $stdout_fh)
+			or die "Unable to duplicate $stdout_path for stderr: $!";
+	}
+	else
+	{
+		open($stderr_fh, '>', $stderr_path)
+			or die "Unable to write $stderr_path: $!";
+	}
 
 	my $pid = fork();
 	die "fork failed: $!" unless defined($pid);
 	if ($pid == 0)
 	{
 		setpgid(0, 0);
+		for my $name (keys %{$env})
+		{
+			$ENV{$name} = $env->{$name};
+		}
 		if (defined($stdin_path))
 		{
 			open(STDIN, '<', $stdin_path)
@@ -297,6 +312,27 @@ sub run_command_capture
 
 	return $? >> 8 if ($? & 127) == 0;
 	return 128 + ($? & 127);
+}
+
+sub run_single_wrapped_text
+{
+	my ($mode, $app, $suffix, $test, $assignment) = @_;
+	my $test_out = $test;
+	$test_out =~ s/\.t(\.1)?$/\.$suffix/;
+	my ($stdout_path, $stderr_path, $stdin_path, $env, @args) =
+		build_wrapped_text_request($mode, $suffix, $test, $assignment);
+	$stdin_path = undef if defined($stdin_path) && $stdin_path eq '-';
+
+	my @app_args = shellwords($ENV{CPPGM_APP_ARGS} || '');
+	my $status = run_command_capture(
+		cmd => [local_exec_path($app), @app_args, @args],
+		stdout => $stdout_path,
+		stderr => $stderr_path,
+		stdin => $stdin_path,
+		env => $env,
+		timeout => get_timeout_from_env("CPPGM_TEXT_TEST_TIMEOUT_SEC", 10),
+	);
+	write_named_status_code("$test_out.exit_status", $status);
 }
 
 sub sorted_glob
@@ -497,6 +533,49 @@ sub run_batch_wrapped_pa9
 	close_wrapped_worker($worker_pid, $worker_out, $worker_in);
 }
 
+sub run_single_pa9_driver
+{
+	my ($app, $suffix, $test) = @_;
+	my $test_base = $test;
+	$test_base =~ s/\.t\.1$//;
+
+	unlink(glob("$test_base.$suffix.program"));
+	unlink(glob("$test_base.$suffix.program.exit_status"));
+	unlink(glob("$test_base.$suffix.program.stdout"));
+	unlink(glob("$test_base.$suffix.program.stderr"));
+	unlink(glob("$test_base.$suffix.impl.stdout"));
+	unlink(glob("$test_base.$suffix.impl.stderr"));
+	unlink(glob("$test_base.$suffix.impl.exit_status"));
+
+	my @srcfiles = sorted_glob("$test_base.t.*");
+	my @args;
+	if (defined($ENV{CY86_TARGET}) && $ENV{CY86_TARGET} ne '')
+	{
+		push @args, '--target', $ENV{CY86_TARGET};
+	}
+	push @args, '-o', "$test_base.$suffix.program", @srcfiles;
+
+	my $impl_status = run_command_capture(
+		cmd => [local_exec_path($app), @args],
+		stdout => "$test_base.$suffix.impl.stdout",
+		stderr => "$test_base.$suffix.impl.stderr",
+		timeout => get_timeout_from_env("CPPGM_BUILD_TEST_TIMEOUT_SEC", 30),
+	);
+	write_numeric_status("$test_base.$suffix.impl.exit_status", $impl_status);
+
+	if ($impl_status == 0)
+	{
+		my $program_status = run_command_capture(
+			cmd => [local_exec_path("$test_base.$suffix.program")],
+			stdout => "$test_base.$suffix.program.stdout",
+			stderr => "$test_base.$suffix.program.stderr",
+			stdin => "$test_base.stdin",
+			timeout => get_timeout_from_env("CPPGM_PROGRAM_TEST_TIMEOUT_SEC", 10),
+		);
+		write_numeric_status("$test_base.$suffix.program.exit_status", $program_status);
+	}
+}
+
 sub shard_tests
 {
 	my ($tests, $jobs) = @_;
@@ -570,60 +649,17 @@ sub run_batch
 
 sub run_single
 {
-	my ($mode, $app, $suffix, $tests, $jobs, $verbose) = @_;
+	my ($mode, $app, $suffix, $tests, $jobs, $verbose, $assignment) = @_;
 	run_tests($tests, $jobs, sub {
 		my ($test) = @_;
-		if ($mode eq "text_t")
+		if ($mode eq "text_t" || $mode eq "text_t1" || $mode eq "witness_t")
 		{
-			my $test_out = $test;
-			$test_out =~ s/\.t$/\.$suffix/;
-			my $sys_ret = system("scripts/run_one_test.sh", $app, $test, $test_out);
-			write_named_status_code("$test_out.exit_status", system_status_to_exit_code($sys_ret));
-			return;
-		}
-		if ($mode eq "witness_t")
-		{
-			my $test_out = $test;
-			$test_out =~ s/\.t$/\.$suffix/;
-			my $test_input = abs_path($test) || $test;
-			my @app_args = shellwords($ENV{CPPGM_APP_ARGS} || '');
-			my $status = run_command_capture(
-				cmd => [local_exec_path($app),
-				        @app_args,
-				        "-o",
-				        $test_out,
-				        "--witness",
-				        "$test_out.witness",
-				        $test_input],
-				stdout => "$test_out.stdout",
-				stderr => "$test_out.stderr",
-				timeout => get_timeout_from_env("CPPGM_TEXT_TEST_TIMEOUT_SEC", 10),
-			);
-			write_named_status_code("$test_out.exit_status", $status);
-			return;
-		}
-		if ($mode eq "text_t1")
-		{
-			my $test_out = $test;
-			$test_out =~ s/\.t\.1$/\.$suffix/;
-			my $test_base = $test;
-			$test_base =~ s/\.t\.1$/\.t/;
-			my $sys_ret = system("scripts/run_one_test.sh", $app, $test_out, $test_base);
-			write_named_status_code("$test_out.exit_status", system_status_to_exit_code($sys_ret));
-			return;
-		}
-		if ($mode eq "driver_t")
-		{
-			my $test_base = $test;
-			$test_base =~ s/\.t$//;
-			system("scripts/run_one_test.sh", $app, $suffix, $test_base);
+			run_single_wrapped_text($mode, $app, $suffix, $test, $assignment);
 			return;
 		}
 		if ($mode eq "driver_t1")
 		{
-			my $test_base = $test;
-			$test_base =~ s/\.t\.1$//;
-			system("scripts/run_one_test.sh", $app, $suffix, $test_base);
+			run_single_pa9_driver($app, $suffix, $test);
 			return;
 		}
 		die "Unsupported run_all_tests mode $mode";
@@ -648,7 +684,6 @@ my %patterns = (
 	text_t => qr/\.t$/,
 	witness_t => qr/\.t$/,
 	text_t1 => qr/\.t\.1$/,
-	driver_t => qr/\.t$/,
 	driver_t1 => qr/\.t\.1$/,
 );
 die "Unsupported run_all_tests mode $mode" if !exists($patterns{$mode});
@@ -668,5 +703,5 @@ if ($ENV{CPPGM_BATCH_TESTS})
 }
 else
 {
-	run_single($mode, $app, $suffix, \@tests, $jobs, $verbose);
+	run_single($mode, $app, $suffix, \@tests, $jobs, $verbose, $assignment);
 }
