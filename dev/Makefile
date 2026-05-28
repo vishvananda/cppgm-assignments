@@ -4,6 +4,7 @@ MAKEFLAGS += -j$(DEFAULT_BUILD_JOBS)
 endif
 
 TARGETS = \
+	abimangle \
 	pptoken \
 	posttoken \
 	ctrlexpr \

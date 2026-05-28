@@ -3,8 +3,9 @@
 # Add dev/src/foo.cpp to the tools that use it by adding `foo` below. For
 # subdirectories, use the path without `.cpp`, such as `parser/foo`.
 
-FRONTEND_SOURCE_SET_TARGETS := pptoken posttoken ctrlexpr macro preproc recog nsdecl nsinit cy86 cppgm++ lowiropt lowir2cy86 lowir2native cpplink cppeh
+FRONTEND_SOURCE_SET_TARGETS := abimangle pptoken posttoken ctrlexpr macro preproc recog nsdecl nsinit cy86 cppgm++ lowiropt lowir2cy86 lowir2native cpplink cppeh
 
+FRONTEND_OBJ_BASENAMES_abimangle :=
 FRONTEND_OBJ_BASENAMES_pptoken :=
 FRONTEND_OBJ_BASENAMES_posttoken :=
 FRONTEND_OBJ_BASENAMES_ctrlexpr :=
