@@ -1,0 +1,15 @@
+translation-unit
+  class-use at pa22/tests/general/300-inherited-constructor-template-forwarding.t:38:3
+    template derived
+    selected primary
+    bind #1 = int source=explicit
+  function-call at pa22/tests/general/300-inherited-constructor-template-forwarding.t:38:16
+    callee derived<int>::derived
+    selected instantiation
+    bind #1 = arg source=deduced
+    drop derived<int>::derived reason=bad_conversion
+template-closure-events
+  function-instantiation
+    entity base<int>::base
+  require-definition
+    entity base<int>::base
