@@ -1,11 +1,9 @@
-cppeh
-cpplink
-cpplink-debug
-lowir2obj
-lowir2obj-debug
-objlink
-objlink-debug
-tests/**/*.my*
+cppgm++
+cppgm++-debug
 testout
 .test_failed
+tests/**/*.my
+tests/**/*.my.*
+tests/*.my
+tests/*.my.*
 *.dSYM

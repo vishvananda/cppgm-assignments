@@ -12,6 +12,8 @@ metaprogramming layer:
 
 - integral non-type template parameters
 - integral non-type template arguments
+- type and non-type template parameter packs
+- pack expansions in supported declaration, call, and instantiated body shapes
 - explicit specialization of supported class templates and function templates
 - integral constant-expression evaluation for template arguments
 - `static_assert` over the supported integral constant-expression subset
@@ -124,9 +126,8 @@ by test role:
   provided C++ language test in this directory starts with a leading comment of the
   form `// N3485 focus: 14.x.y [clause.name] ...` so a reviewer can find the
   governing text in `../doc/n3485.txt`.
-- `tests/general/` contains broader cross-feature and realistic
-  metaprogramming tests that are useful for PA19 but are not one-rule spec
-  probes.
+- `tests/general/` contains broader metaprogramming tests that are useful for
+  PA19 but are not one-rule spec probes.
 
 The `make test` target runs both directories through the LowIR validator. For
 successful tests, the validator checks the reference LowIR and your generated
@@ -135,15 +136,15 @@ against the checked-in reference. For rejected tests, the exit status is the
 checked result; exact diagnostic text is not checked.
 
 PA19 is tested against generated LowIR text. That LowIR is intended to become
-input for the later PA23 `lowir2native` backend, but that future native path is
+input for the later PA28 `lowir2native` backend, but that future native path is
 not the PA19 grading contract.
 
 ### Optional Student Test Ideas
 
 When adding your own tests, useful PA19 themes include explicit specialization
-ordering and visibility, integral non-type argument equivalence, dependent
-non-type parameter types, and static data member specialization. Keep larger
-metaprogramming integration cases under `tests/general/`.
+ordering and visibility, integral non-type argument equivalence, type and
+non-type parameter packs, `sizeof...`, pack expansions, dependent non-type
+parameter types, and static data member specialization.
 
 ### PA19 Syntax Spec
 
@@ -160,6 +161,8 @@ PA19 gives the following previously parsed forms semantic/code-generation
 meaning:
 
 - integral non-type template parameters such as `template<int N>`
+- template parameter packs and pack expansions such as `template<class... Ts>`
+  and `f(args...)`
 - explicit specialization syntax such as `template<> int f<int>(int)` and
   `template<> struct Box<int> { ... }`
 
@@ -182,10 +185,13 @@ treat `lowir.md` as authoritative. If they disagree about the PA19 lowering slic
 
 PA19 supports the following in addition to the PA18 subset:
 
-- class templates whose parameters may now include integral non-type parameters and integral
-  non-type parameter packs
-- function templates whose parameters may now include integral non-type parameters and
-  integral non-type parameter packs when the arguments are supplied explicitly
+- class templates whose parameters may now include type parameter packs,
+  integral non-type parameters, and integral non-type parameter packs
+- function templates whose parameters may now include type parameter packs,
+  integral non-type parameters, and integral non-type parameter packs when the
+  arguments are supplied explicitly
+- pack expansions in supported declarations, direct calls, and instantiated
+  body shapes
 - integral constant-expression template arguments over the supported subset:
   - literals, including ordinary character literals
   - keyword literals `true` / `false`
@@ -211,7 +217,7 @@ PA19 supports the following in addition to the PA18 subset:
 
 Within this milestone, PA19 should produce valid LowIR for ordinary metaprogramming code
 over the supported PA18 language subset. That LowIR is intended to be accepted
-by the later PA23 `lowir2native` backend for the supported cases. PA13
+by the later PA28 `lowir2native` backend for the supported cases. PA13
 `lowir2cy86` remains an optional execution scaffold.
 
 ### Out Of Scope
@@ -239,7 +245,9 @@ The intended next stages are:
 - PA20: complete the language-level constant-evaluation model over the existing LowIR path
 - PA21 and PA22: finish the remaining template specialization, deduction, substitution, and
   SFINAE work on top of that constant-evaluation engine
-- PA23: retarget the settled LowIR language surface to the real native backend
+- PA23: check that the individual template features from PA18, PA19, PA21, and
+  PA22 compose without breaking their basic behavior
+- PA28: retarget the settled LowIR language surface to the real native backend
 
 So PA19 should leave behind:
 
@@ -257,13 +265,13 @@ The same monotonic-extension rule applies here:
   PA19 feature set
 - it should not perturb PA18 outputs for programs that remain entirely within the PA18
   subset
-- in practice, non-type template arguments, explicit specialization, and `static_assert`
-  should stay on-demand rather than eagerly changing the behavior of ordinary earlier
-  programs that do not use those features
+- in practice, packs, non-type template arguments, explicit specialization, and
+  `static_assert` should stay on-demand rather than eagerly changing the
+  behavior of ordinary earlier programs that do not use those features
 
 Useful intermediate representations include:
 
-- template parameters that distinguish type, template-template, and integral value slots
+- template parameters that distinguish type, pack, and integral value slots
 - template arguments that carry canonical constant values rather than only source text
 - explicit-specialization tables that plug into the existing instantiation machinery
 - a specialization lookup step that runs before instantiation so late visible

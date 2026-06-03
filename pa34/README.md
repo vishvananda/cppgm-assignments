@@ -21,7 +21,7 @@ To complete PA34, implement these goals:
 - GNU builtin type and literal forms used by the selected hosted environment
 - builtin traits, transforms, and intrinsics used by that hosted environment
 - enough hosted-header/source compile compatibility to make later bootstrap
-  work realistic
+  work realistic (the heaviest standard-library headers are deferred to PA35)
 
 ### Prerequisites
 
@@ -70,7 +70,7 @@ There is no separate PA34 reference binary in the starter kit. The checked-in
 
 Previously required:
 
-- the PA30 compile/link surface: `-c`, default link mode, `-I`, `-L`, `-l`, and
+- the PA29 compile/link surface: `-c`, default link mode, `-I`, `-L`, `-l`, and
   `--target`
 - the PA32/PA33 host-compatible behavior for the relevant compile-mode subset
 
@@ -194,7 +194,7 @@ and function template specializations keep the semantic information needed to
 name them.
 
 For compile-only tests, the immediate oracle may be successful object emission,
-but the object must carry host ABI names that PA35 can link and run without a
+but the object must carry host ABI names that PA36 can link and run without a
 separate hosted-only naming scheme.
 
 ### Assignment Boundary
@@ -226,7 +226,8 @@ pressure, not a second copy of every earlier language rule.
 The following are out of scope for PA34:
 
 - host object/link/runtime contracts already owned by PA32 and PA33
-- hosted header-emitted link/runtime behavior, which belongs in PA35
+- compiling the heaviest hosted standard-library headers, which belongs in PA35
+- hosted header-emitted link/runtime behavior, which belongs in PA36
 - full build-system emulation beyond the documented query and compatibility
   flags
 - recursive hosted-header coverage reporting
@@ -248,5 +249,6 @@ to create fragile library-version-specific behavior.
 ### Stage Handoff
 
 The next stage is PA35, which keeps the same hosted source/header environment
-but raises the contract from "it compiles" to "its emitted code also links and
-runs."
+but raises the bar to compiling the heaviest hosted standard-library headers
+(the perf-gated header-compile workload split out of PA34). PA36 then raises the
+contract from "it compiles" to "its emitted code also links and runs."

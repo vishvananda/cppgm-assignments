@@ -137,7 +137,7 @@ the expected LowIR shape is direct short-circuit control flow. In that condition
 the compiler should branch through the operand blocks rather than first materializing a
 separate `land__*` / `lor__*` boolean slot.
 
-The generated LowIR is intended to become input for the later PA23
+The generated LowIR is intended to become input for the later PA28
 `lowir2native` backend. That future native path is not the PA14 grading
 contract, but PA14 should avoid emitting LowIR that only works for this one
 text comparison.
@@ -262,7 +262,7 @@ This PA14 milestone supports the following:
     subscript forms from the PA12 procedural subset
 
 The generated LowIR for this supported subset is intended to be accepted by the
-later PA23 `lowir2native` backend. PA13 `lowir2cy86` remains a useful optional
+later PA28 `lowir2native` backend. PA13 `lowir2cy86` remains a useful optional
 execution scaffold, not the primary validation path.
 
 ### Out Of Scope

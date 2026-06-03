@@ -21,16 +21,16 @@ export CPPGM_TEST_RUNNER ?= 1
 export CPPGM_TEXT_TEST_TIMEOUT_SEC ?= 10
 export CPPGM_BUILD_TEST_TIMEOUT_SEC ?= 30
 export CPPGM_PROGRAM_TEST_TIMEOUT_SEC ?= 10
-DEBUGINFO_TEST_PAS ?= pa13 pa36 pa37
+DEBUGINFO_TEST_PAS ?= pa13 pa37 pa38
 
 ALL_PAS = $(patsubst %/Makefile,%,$(wildcard pa*/Makefile))
-EXPERIMENTAL_PAS ?= pa38
+EXPERIMENTAL_PAS ?= pa39
 PAS = $(filter-out $(EXPERIMENTAL_PAS),$(ALL_PAS))
 SORTED_PAS = $(shell printf '%s\n' $(PAS) | sort -t a -k 2,2n)
 TEST_REPORT_PAS ?= $(SORTED_PAS)
 ACTIVE_TEST_REPORT_PAS ?= $(TEST_REPORT_PAS)
 REF_TEST_PAS ?= $(SORTED_PAS)
-STRICT_PAS ?= pa18 pa19 pa21 pa22
+STRICT_PAS ?= pa18 pa19 pa21 pa22 pa23
 STRICT_SUBTEST_JOBS ?= $(DEFAULT_BUILD_JOBS)
 DEV_BUILD_LOCK = obj/.dev-build.lock
 
@@ -191,7 +191,7 @@ test-debuginfo-nobuild:
 	@echo "===== DEBUG-INFO TESTS PASSED SUCCESSFULLY! ====="
 
 inception: build
-	@$(MAKE) -C pa38 \
+	@$(MAKE) -C pa39 \
 		CXX=../dev/cppgm++ \
 		CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" \
 		CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)" \
@@ -204,7 +204,7 @@ test-report: build
 		TEST_REPORT_SUBTEST_JOBS='$(TEST_REPORT_SUBTEST_JOBS)' \
 		ORDERED='$(ORDERED)'
 
-test-report-through-%: build
+test-report-through-%-nobuild:
 	@target='$*'; \
 	max=$${target#pa}; \
 	pas=''; \
@@ -220,7 +220,7 @@ test-report-through-%: build
 		TEST_REPORT_SUBTEST_JOBS='$(TEST_REPORT_SUBTEST_JOBS)' \
 		ORDERED='$(ORDERED)'
 
-test-report-through-%-nobuild:
+test-report-through-%: build
 	@target='$*'; \
 	max=$${target#pa}; \
 	pas=''; \

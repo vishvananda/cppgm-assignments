@@ -2,16 +2,29 @@
 
 ### Overview
 
-PA35 is the hosted header-emission and link/runtime compatibility assignment.
+PA35 is the hosted header-compile assignment. It is split out of PA34: where
+PA34 establishes that hosted source and headers preprocess and compile at all
+(intrinsics, parser concessions, builtin traits, header-free conformance
+anchors), PA35 raises the bar to **compiling the heaviest real standard-library
+headers** end to end with `cppgm++ -c`, within a workable time and memory budget.
 
 By PA34, hosted headers and source should preprocess and compile. PA35 owns the
-next question: once hosted headers compile, do the emitted inline, template, and
-header-generated definitions also link and run correctly through the host
-toolchain?
+next question: can `cppgm++` actually compile the large, template- and
+trait-heavy STL headers (`<vector>`, `<unordered_map>`, `<tuple>`, `<random>`,
+`<functional>`, and the iostream/string/exception machinery) that later
+bootstrap-style builds depend on?
 
-This milestone is narrower than a second general host ABI assignment. It is
-specifically about hosted header-emitted code on top of the ordinary host object
-and ABI/runtime path established by PA32 and PA33.
+This is the perf-gated tier of hosted compatibility. It is not a link or runtime
+test — once the heavy headers compile, making the emitted code link and run is
+PA36's contract.
+
+To complete PA35, implement these goals:
+
+- compile the heaviest hosted standard-library headers cleanly with `cppgm++ -c`
+- carry the template instantiation, trait evaluation, and overload-resolution
+  depth those headers exercise without exponential blow-up
+- stay within a workable compile time and memory budget on the heavy-header
+  workload (the perf gate that distinguishes PA35 from the lighter PA34 surface)
 
 ### Prerequisites
 
@@ -19,28 +32,17 @@ Complete PA34 before starting this assignment.
 
 You will want to reuse:
 
-- the full earlier language, template, and lowering stack
-- the PA34 hosted preprocess/compile compatibility surface
-- the PA32/PA33 host object and ABI/runtime path
-- the PA35 demand-driven emitted-symbol model described below
+- the full earlier language, template, semantic, and lowering stack
+- the PA34 hosted preprocess/compile compatibility surface (intrinsics, parser
+  concessions, builtin traits/types, header-free conformance anchors)
+- the PA32/PA33 `cppgm++ -c` host-object path
 
 The tests assume a Linux shell environment with `make`, `bash`, `perl`, and a
-working host C/C++ toolchain with hosted C++ headers and libraries installed.
-You may override the compiler with `CXX=...`.
-`CPPGM_HOST_CXX` selects the host compiler/link driver used by the harness and
-by host-symbol comparison helpers. If it is not set, it defaults to `CXX`.
-
-PA35 tests also use host object tools:
-
-- `nm` for symbol inspection
-- `c++filt` for demangling in host-symbol comparison tests
-- `readelf` for selected object/relocation checks
-- `ar` and the host C/C++ compilers for helper libraries when a test provides
-  `x.lib.*` sidecars
-
-The checked-in tests assume the normal x86_64 Linux host C++ ABI. When you use
-a non-default standard library, pass the same choice through
-`CPPGM_STDLIB_FLAGS` so the course compiler and host compiler agree.
+working host C++ compiler with hosted C++ headers installed. You may override the
+compiler with `CXX=...`. `CPPGM_HOST_CXX` selects the host compiler used for
+builtin macro/include probing; if unset it defaults to `CXX`. When you use a
+non-default standard library, pass the same choice through `CPPGM_STDLIB_FLAGS`
+so the course compiler and host compiler agree.
 
 ### Starter Kit
 
@@ -51,201 +53,94 @@ The starter kit provides:
 - the shared `dev/` sources needed by the scaffold
 - `pa35/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
 - `pa35/Makefile`
-- `pa35/scripts/`, the hosted link/runtime test harness
-- `pa35/tests/link/`, the PA35 tests and checked-in reference files
+- `pa35/scripts/`, the hosted `-c` compile test harness (shared with PA34)
+- `pa35/tests/compile/`, the heavy-STL header-compile tests and checked-in
+  reference files
 
 Student code changes should go in `dev/`, especially `dev/cppgm++.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Test
-inputs and references are part of the handout unless your instructor asks you
-to add or update tests.
+inputs and references are part of the handout unless your instructor asks you to
+add or update tests.
 
 There is no separate PA35 reference binary in the starter kit. The checked-in
 `.ref.*` files are the oracle.
 
 ### Command-Line Contract
 
-PA35 does not introduce new `cppgm++` flags. It reuses the compile-mode surface
+PA35 introduces no new `cppgm++` flags. It reuses the compile-mode surface
 already required by PA34:
 
 ```sh
 cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c --target <target> -o <objfile> <srcfile>
-cppgm++ -c -I <dir> -o <objfile> <srcfile>
-cppgm++ -c -I<dir> -o <objfile> <srcfile>
 cppgm++ -c -isystem <dir> -o <objfile> <srcfile>
 cppgm++ -c -D <macro> -U <macro> -include <file> -o <objfile> <srcfile>
 ```
 
-The normal PA35 final link is performed outside `cppgm++` by the host C++
-compiler driver.
-
 ### Output Format
 
-`cppgm++ -c` shall continue to write host-linker-compatible relocatable object
-files.
-
-The PA35 contract is not a new file format. It is correct symbol ownership,
-ABI spelling, and runtime behavior for hosted header-generated code once those
-objects are host-linked.
-
-The PA35 tests observe:
-
-- `cppgm++ -c` exit status
-- host final-link exit status
-- final program exit status
-- final program standard output
-- optional object-inspection output for symbol ownership, unresolved-symbol
-  spelling, relocation, and ABI checks
+`cppgm++ -c` shall write a host-linker-compatible relocatable object as in
+PA32/PA33/PA34. For PA35 the emitted object is discarded — the contract is
+simply that the heavy hosted header compiles cleanly to an object without error.
 
 ### Error Handling
 
-If preprocessing, parsing, semantic analysis, lowering, object emission, host
-linking, or output writing fails, the relevant tool invocation shall report
-failure. For `cppgm++`, that means exiting with failure.
-
-For negative tests, exact diagnostics are not the grading contract. The harness
-compares exit status first. If the reference compile/link path fails, stdout and
-stderr are diagnostic side effects rather than required output.
-
-### Hosted Symbol Emission Surface
-
-Hosted headers expose many inline functions, function templates, constants,
-helpers, and implementation-detail declarations. PA35 does not require
-`cppgm++ -c` to emit every hosted entity that was parsed, referenced during
-semantic analysis, or made visible by an include.
-
-The emitted object should be demand-driven:
-
-- emit the definitions needed by the current translation unit's generated code
-  and by the required-definition closure of those definitions
-- keep ordinary declarations, overload candidates, template patterns, and
-  unused inline/header helpers available for semantic analysis without turning
-  them into defined object symbols
-- allow unresolved references for externally owned hosted library symbols, using
-  the host ABI spelling expected by the configured toolchain
-
-This keeps hosted object files small and avoids exporting implementation-detail
-symbols just because a broad standard-library header was included. For example,
-including `<functional>`, using `std::forward`, using placement `new`, or
-instantiating an `unordered_set` should not by itself cause unrelated libc++ or
-libstdc++ helper definitions to appear as defined symbols in the output object.
-
-### Hosted Mangling Rules
-
-PA35 uses the ordinary host C++ ABI spelling. Generic substitution mechanics
-should be tested with source-level spellings, and hosted standard-library
-ABI checks should be derived from the configured host compiler rather than from
-hard-coded library-private names.
-
-The hosted emission policy decides which entities are defined or left
-unresolved. Those decisions still need to preserve ordinary host ABI spelling
-for every emitted or referenced hosted symbol.
-
-For Itanium-style mangling on GNU/libstdc++ and Clang/libc++ style hosts:
-
-- direct standard-library substitutions such as `St`, `So`, `Si`, `Sd`, `Ss`,
-  and `Sa` must use the host ABI spellings
-- numbered substitutions must continue across the whole mangled entity, not
-  restart between the function-name template-argument list and the bare function
-  type
-- direct standard substitutions do not themselves become numbered substitution
-  entries
-- hosted weak/header-emitted definitions must still use the same symbol names
-  that the host library expects for the corresponding inline/template bodies
-
-In practice, PA35 symbol tests should prefer source spellings, such as
-`std::string` versus `std::basic_string<char, std::char_traits<char>,
-std::allocator<char>>`, and compare the unresolved symbol surface against the
-configured host compiler where the exact raw spelling is library-specific.
-
-PA35 symbol tests should avoid hard-coding implementation namespaces such as
-`std::__1` or `std::__cxx11` unless the test is explicitly guarded for that host
-library.
+If preprocessing, parsing, semantic analysis, lowering, object emission, or
+output writing fails, `cppgm++` shall exit with failure. Exact diagnostics are
+not the grading contract; the harness compares exit status and checked output
+sidecars.
 
 ### Testing
 
 Run the PA35 suite with:
 
 ```sh
-make test
+make test                       # non-batch
+make test CPPGM_BATCH_TESTS=1   # batch worker
 ```
 
 To run one test through the shared check target:
 
 ```sh
-make check TEST=tests/link/600-hosted-std-function-call-link-smoke.t
+make check TEST=tests/compile/600-const-unordered-map-find.t
 ```
 
-The local tests live in `tests/link/`. The directory name reflects the oracle:
-hosted compile plus host final link/run, with optional object inspection for
-symbol ownership and unresolved-symbol checks.
-
-For each test anchor `x.t`, companion C++ sources are named:
-
-```text
-x.t.1
-x.t.2
-...
-```
-
-Optional sidecars include:
-
-- `x.compile.flags`: extra flags passed to `cppgm++ -c`
-- `x.link.flags`: extra flags passed to the host link driver
-- `x.env`: environment variables for one test
-- `x.lib.*`: host-built C or C++ helper sources
-- `x.inspect.cmd` or `x.inspect.expect`: object/symbol checks
-
-Some PA35 tests inspect intermediate object files with `nm`-style expectations.
-These checks verify both positive ownership, such as a needed inline/template
-definition being present, and negative ownership, such as an unused hosted helper
-remaining absent from the defined-symbol table.
-
-The checked-in tests are hosted link/runtime smokes, ABI spelling checks, and
-object-inspection checks rather than direct N3485 clause tests.
+The local tests live in `tests/compile/`. Each test is `.t` (source) plus an
+empty `.ref` base, a `.ref.exit_status` of `EXIT_SUCCESS`, and a `.ref.stdout`;
+it passes iff `cppgm++ -c` compiles it cleanly. Each test includes a real heavy
+header together with a cheat-proof anchor — a trait, `decltype`, `sizeof`, or
+`static_assert` that cannot be satisfied without genuinely compiling the header,
+so a test cannot pass by skipping or stubbing the include.
 
 ### Assignment Boundary
 
-To complete PA35, implement hosted link/runtime behavior for:
+PA35 owns:
 
-- emitted inline/template/header definitions from hosted headers
-- demand-driven emission of only the hosted inline/template/header definitions
-  needed by the current object
-- hosted standard-library code that compiles in PA34 but still has to link and
-  run through the plain host toolchain
-- hosted link smokes where the main question is emitted symbol ownership, ABI
-  spelling, or runtime behavior of hosted header-generated code
+- compiling the heaviest hosted standard-library headers within the perf budget
+- the template, trait, and overload-resolution depth those headers exercise
+  during `-c` compilation
 
-If hosted header code compiles but the emitted objects do not link or run
-correctly, the issue belongs in PA35.
+PA35 does not own:
 
-### Out Of Scope
-
-The following are out of scope for PA35:
-
-- earlier hosted preprocess/compile compatibility already owned by PA34
-- general host object or host ABI ownership outside the hosted-header-triggered
-  surface already owned by PA32/PA33
-- build-system wrapper emulation
-- recursive hosted-header coverage reporting
+- intrinsics, parser concessions, and header-free conformance anchors (PA34)
+- hosted header-emitted link/runtime behavior (PA36)
 - bootstrap or self-host builds
+
+Standard-language bugs discovered here should still be fixed in their true
+earlier owner stage when appropriate. PA35 owns the heavy-header compile
+pressure, not a second copy of every earlier language rule.
 
 ### Design Notes (Non-Normative)
 
-Treat header-emitted code as ordinary code with an ABI-sensitive ownership
-policy. The implementation should preserve enough semantic information to know
-which inline/template definitions are required, which declarations remain
-external, and which unused hosted helpers should stay un-emitted.
-
-A recommended integration style is to use the PA31 ABI naming layer for hosted
-symbols in the same way PA32 and PA33 use it for ordinary host objects. Semantic
-analysis can produce the facts for the entity being emitted or referenced, then
-the mangler can produce the final raw symbol name before object emission. When a
-hosted symbol case is missing information, prefer threading that semantic fact
-forward instead of building already-mangled or partly-mangled strings in later
-object/link stages.
+The heavy headers stress the same machinery PA34 enables, just far harder:
+deeply nested template instantiation, trait and `decltype` evaluation, partial
+specialization selection, and large overload sets. The productive failures here
+are usually performance cliffs (re-resolving the same bound template pack,
+re-instantiating the same specialization) rather than missing features. Prefer
+memoizing repeated resolution over deepening recursion guards.
 
 ### Stage Handoff
 
-The hosted compatibility work from PA34 and PA35 prepares the later optimizer
-and self-host stages to compile larger source bases with the course compiler.
+The previous stage is PA34 (hosted intrinsics and header-free compile
+conformance). The next stage is PA36, which keeps the same hosted header
+environment but raises the contract from "it compiles" to "its emitted code also
+links and runs."

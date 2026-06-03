@@ -10,8 +10,8 @@ export CPPGM_HOST_CXX
 CPPGM_TEST_RUNNER ?= 1
 CPPGM_TEST_APP ?= ../dev/$(TARGET)
 REF_TEST_APP ?= $(CPPGM_TEST_APP)-ref
-TEST_DEPS ?= dev-shared-target lowir-link-test-tools
-RUN_CHECK_DEPS ?= dev-shared-target lowir-link-test-tools
+TEST_DEPS ?= dev-shared-target
+RUN_CHECK_DEPS ?= dev-shared-target
 TEST_RUNNER_SHARED_FLAGS = $(if $(filter 1,$(CPPGM_TEST_RUNNER)),-DTEST_RUNNER_ENABLE,)
 TEST_RUNNER_ENTRY_FLAGS = $(if $(filter 1,$(CPPGM_TEST_RUNNER)),-Dmain=test_runner_real_main,)
 HOST_CXX_DEFAULT_DEF = -DCPPGM_DEFAULT_HOST_CXX='"$(CPPGM_HOST_CXX)"'
@@ -58,13 +58,7 @@ runner_state_stamp = $(OBJ)/$(1)/.test_runner_mode
 link_objs = $(call common_objs,$(1)) $(call runner_obj,$(1))
 link_prereqs = $(call link_objs,$(1)) $(call runner_state_stamp,$(1))
 
-all: $(TARGET)
-
-$(TARGET): $(OBJ)/release $(TARGET).cpp $(call link_prereqs,release)
-	$(CXX) $(ENTRY_CC_FLAGS) $(INC) -o $(TARGET) $(TARGET).cpp $(call link_objs,release)
-
-$(TARGET)-debug: $(OBJ)/debug $(TARGET).cpp $(call link_prereqs,debug)
-	$(CXX) $(ENTRY_DEBUG_CC_FLAGS) $(INC) -o $(TARGET)-debug $(TARGET).cpp $(call link_objs,debug)
+all: dev-shared-target
 
 $(OBJ)/release $(OBJ)/debug: %:
 	@- mkdir -p $@
@@ -95,7 +89,6 @@ $(OBJ)/debug/test_runner_enabled.o: $(SRC)/test_runner.cpp
 	$(CXX) $(DEBUG_CC_FLAGS) $(TEST_RUNNER_SHARED_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(DDEPDIR)/test_runner_enabled.Td -o $@ $<
 	mv -f $(DDEPDIR)/test_runner_enabled.Td $(DDEPDIR)/test_runner_enabled.d
 
-
 ifeq ($(COURSE_TEST_ROOT),)
 test: $(TEST_DEPS)
 ifneq ($(CPPGM_BATCH_TESTS),)
@@ -122,20 +115,17 @@ endif
 endif
 
 ref-test:
-	@CPPGM_CPPLINK_APP=../dev/cpplink-ref CPPGM_CPPEH_APP=../dev/cppeh-ref \
-		scripts/run_all_tests.pl $(REF_TEST_APP) ref tests
+	@scripts/run_all_tests.pl $(REF_TEST_APP) ref tests
 
 CHECK_RUN = perl ../scripts/run_cpphostinterop_tests_worker.pl $(CPPGM_TEST_APP) check "$(TEST)"
 include ../scripts/pa_run_check_targets.mk
 
-.PHONY: dev-shared-target lowir-link-test-tools ref-test
+.PHONY: dev-shared-target ref-test
 ../dev/$(TARGET):
 	$(MAKE) -C ../dev $(TARGET) CXX=$(CXX)
 
 dev-shared-target:
 	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) CXX=$(CXX); fi
-lowir-link-test-tools:
-	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev cpplink cppeh CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
 
 clean:
 	-rm -f "$(TARGET)" "$(TARGET)-debug" $(OBJ)/release/*.o $(OBJ)/debug/*.o
