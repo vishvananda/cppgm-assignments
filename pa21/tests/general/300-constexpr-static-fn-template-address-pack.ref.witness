@@ -1,8 +1,4 @@
 translation-unit
-  class-use at pa21/tests/general/300-constexpr-static-fn-template-address-pack.t:27:14
-    template slot
-    selected primary
-    bind #1 = void () source=explicit
   class-use at pa21/tests/general/300-constexpr-static-fn-template-address-pack.t:31:17
     template table_instance
     selected primary
