@@ -91,6 +91,10 @@ typeinfo ns::C
 vtable ns::C
 ```
 
+The normalized builtin word `float128` denotes GNU `__float128` and uses the
+Itanium builtin type code `g`. This is an ABI fact spelling, not a requirement
+to parse `__float128` as C++ source in PA30.
+
 Structured cases introduce reusable facts before the final target:
 
 ```text
@@ -154,6 +158,15 @@ the function-template prefix is substitutable; local entities use
 `local-context ...` or `lambda-context ...` followed by the same terminal,
 qualifier, result, and parameter lines as ordinary functions.
 
+Namespace-scope lambda closure types use
+`type namespace-lambda <source-name> [namespace-qualifier...]`. Their call
+operators may be written either as
+`function namespace-lambda <source-name> <terminal> [namespace-qualifier...]`
+or, in a `function encoding` case, as
+`namespace-lambda-context <source-name> [namespace-qualifier...]` followed by
+ordinary terminal, qualifier, result, and parameter lines. The source name is
+the ABI source-name component, such as `$_0`.
+
 `operator-terminal <name>` names the C++ operator semantically. Supported names
 include `plus`, `minus`, `address-of`, `deref`, `new`, `new-array`,
 `delete`, `delete-array`, `multiply`, `divide`, `remainder`, `bit-or`,
@@ -182,6 +195,8 @@ Template-template arguments may name either a namespace-scope template with
 `let-arg <id> template-entity <qualified-name>` or a member template of an
 already-structured owner type with
 `let-arg <id> member-template-entity <owner-type> <member-name> <substitution>`.
+Type facts may also spell a class-template specialization whose template name
+is a template-template parameter using `type template-param-template <index> <arg-ref>...`.
 Member type facts use the same structured owner rule, so `type member <owner>
 <name>` may be rooted in a dependent template specialization or builtin
 transform type such as `__remove_const<T>`.
@@ -196,8 +211,8 @@ situations:
 
 - `100-*`: basic functions, variables, named types, builtin types, pointers,
   arrays, member pointers, typeinfo, vtables, VTTs, and variadic forms
-- `200-*`: ABI tags, local entities, lambdas, operators, conversion terminals,
-  TLS wrappers, and thunks
+- `200-*`: ABI tags, local entities, local and namespace-scope lambdas,
+  operators, conversion terminals, TLS wrappers, and thunks
 - `300-*`: entity-valued template arguments, template-template arguments,
   standard substitutions, construction vtables, and dependent integral values
 - `400-*`: dependent aliases and dependent member/owner types
