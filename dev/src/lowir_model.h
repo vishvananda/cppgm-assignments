@@ -166,10 +166,13 @@ struct SymbolMetadata
   SymbolBindingMode binding = SBM_DEFAULT;
   std::string object_symbol;
   std::string tls_for_symbol;
+  std::string section_segment;
+  std::string section_name;
   bool keep_internal_alias = false;
   bool prefer_local_object_binding = false;
   bool object_output_root = false;
   bool object_trivial_lifecycle = false;
+  bool force_inline = false;
 };
 
 struct FunctionBoundaryMetadata

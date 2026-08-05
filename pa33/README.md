@@ -15,7 +15,8 @@ The tested ABI/runtime surface includes:
 
 - virtual dispatch, vtable ownership, and imported/exported vtables
 - RTTI object ownership and `dynamic_cast` / `typeid`
-- covariant return adjustment
+- covariant return adjustment, including layout-finalized fixed adjustments and
+  virtual-base result projection through the returned object's vtable
 - richer host exception handling in the exercised
   rethrow/cleanup/noexcept/RTTI subset
 - host-compatible unwind and relocation facts where the tests inspect objects
@@ -143,7 +144,8 @@ Optional sidecars control or check the host flow:
 The checked-in PA33 tests cover:
 
 - cleanup, rethrow, noexcept termination, and foreign catch-all behavior beyond
-  the basic PA31 host-EH facts surface
+  the basic PA31 host-EH facts surface, including exactly-once same-frame local
+  cleanup around class-exception allocation and payload construction
 - class, base, transitive-base, and virtual-base host exception catches
 - host EH interaction with RTTI, `typeid`, lambdas, templates, and control flow
 - virtual dispatch, imported/exported vtable ownership, and polymorphic header

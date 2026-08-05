@@ -176,6 +176,8 @@ PA24 supports the following in addition to the PA23 subset:
 - direct braced-init expressions over the supported scalar / array / class subset when the
   earlier PA15-PA23 object/value semantics already define the target
 - braced initialization of bounded arrays with compile-time known size
+- arrays of aggregate elements whose array members receive nested braced
+  sub-lists, including zero-initialization of omitted member elements
 - direct aggregate construction when the target aggregate type is already supported by the
   earlier object-model assignments
 - ordinary function-call argument conversion through non-explicit converting constructors
@@ -211,7 +213,9 @@ To complete PA24, implement these goals:
 4. Range-for lowering.
    Range-for over arrays, braced-init lists, and supported user-defined `begin` / `end`
    ranges should lower into ordinary loop/control-flow structure in LowIR, including
-   ordinary reference loop declarations such as `const int&` and `const auto&`.
+   ordinary reference loop declarations such as `const int&` and `const auto&`. A
+   materialized class prvalue used as the range remains alive through the loop and is
+   destroyed when the complete range-for statement ends.
 
 The test suite also exercises a small remaining ordinary-language closure cluster here:
 direct braced-init expressions, direct aggregate construction, supported integral / enum

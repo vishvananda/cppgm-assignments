@@ -143,7 +143,8 @@ For PA29, object files are identified by implementation-supported object-like
 filenames such as `.o` or `.obj`. The checked-in tests use `.obj`.
 
 `-I` adds user include search paths for any C++ source files compiled in that
-invocation. The tests use `-I` with quoted includes.
+invocation. These paths apply to quoted and angle-bracket includes and are
+searched before compiler-provided shim include paths.
 
 `-L` and `-l` search implementation-supported object-like libraries. The tests use simple helper objects named like `lib<name>.o` in a harness-created
 library directory.
@@ -175,7 +176,8 @@ with failure.
 
 Important PA29 error cases include:
 
-- duplicate global symbol definitions
+- duplicate global symbol definitions, including definitions imported from
+  separate helper objects or libraries
 - unresolved external symbols
 - missing `main`
 
@@ -245,6 +247,9 @@ This validates:
   compilation
 - cross-translation-unit data relocations that feed indirect calls
 - namespace-scope startup hooks across translation units
+- coalescible ODR emission when an out-of-class class-template member
+  definition from a shared header is instantiated in multiple translation
+  units
 
 ### Assignment Boundary
 
@@ -282,6 +287,12 @@ To complete PA29, implement these goals:
    and `-L`/`-l` subset.
 7. Full-language-through-toolchain validation for previously implemented
    language features.
+   The supported wide-integer extension is included in that runtime surface:
+   truth conversion of `__int128` values must inspect the complete value, and
+   mixed signed/unsigned 128-bit comparisons must follow the usual arithmetic
+   conversions independently of operand order. Bitwise complement and left,
+   logical-right, and arithmetic-right shifts must also work for runtime counts,
+   including counts on either side of the 64-bit half boundary.
 8. Source-driven runtime-program validation without host-library dependence.
 
 ### Out Of Scope

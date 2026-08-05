@@ -189,7 +189,8 @@ Optional sidecars include:
 - `x.env`: environment variables for one test, such as additional standard
   include paths
 - `x.no-exceptions`: compile a `tests/compile` input with `-fno-exceptions`
-- `x.cxx-standard`: compile in the named `c++11` or `c++14` language mode
+- `x.cxx-standard`: compile in the named `c++11`, `c++14`, or `c++17`
+  language mode
 - `x.ref.impl.exit_status`, `x.ref.program.exit_status`, and
   `x.ref.program.stdout`: implementation and program-result references for
   `tests/run` host-link/run smokes
@@ -230,11 +231,22 @@ To complete PA34, implement hosted compatibility for:
   throw-expressions emitted by hosted helper macros, and GNU builtin float type
   specifiers such as `__float128` / `_Float128`
 - builtin traits, transforms, intrinsics, and builtin families used during
-  hosted compile acceptance
+  hosted compile acceptance, including lowering `__builtin_abort` as a
+  non-returning call to the host C runtime
 - semantic and lowering compatibility for hosted source patterns used by those
   headers, including post-declarator parameter
   attributes, explicit specializations of primary-template member functions,
-  and non-standard hex-float compile acceptance on ordinary floating types
+  bodyless C++14 placeholder-return declarations selected by a test's language
+  mode, non-standard hex-float compile acceptance on ordinary floating types,
+  and `[[no_unique_address]]` empty-member layout through generated copy operations
+- semantic validation of primary-source GNU inline function bodies even when
+  emission is deferred; an unimplemented reserved compiler builtin may defer
+  its wrapper, but ordinary lookup and type errors in an unused wrapper must
+  still be diagnosed
+- typed retention of a scalar GNU `vector_size` typedef's byte width for
+  compile-time layout queries and semantic validation of unused inline wrapper
+  literals; runtime vector operations and vector-expression lowering are not
+  required
 - lightweight hosted C-wrapper header and C runtime interop smokes where the
   header surface is mostly builtin macros/functions or ordinary C declarations
   (`<cassert>`, `<cmath>`, `<cstddef>`, `<cstdio>`, `<cstdlib>`, `<cstring>`,

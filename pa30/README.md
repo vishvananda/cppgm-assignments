@@ -95,6 +95,32 @@ The normalized builtin word `float128` denotes GNU `__float128` and uses the
 Itanium builtin type code `g`. This is an ABI fact spelling, not a requirement
 to parse `__float128` as C++ source in PA30.
 
+The normalized builtin words `complex-float`, `complex-double`, and
+`complex-longdouble` denote GNU complex floating types and use the Itanium type
+encodings `Cf`, `Cd`, and `Ce`. These are typed ABI facts; consumers must not
+construct them by appending raw mangled fragments.
+
+Integral `value` facts are interpreted according to their typed value. Signed
+negative values use the Itanium `n`-plus-magnitude spelling, including the
+minimum value of a signed type. A negative stored value for an unsigned builtin
+type denotes that type's modulo bit pattern, so `value uint -1` and
+`value ulong -1` are emitted as the maximum values for their respective target
+widths rather than as negative ABI literals.
+
+Compact member-pointer types use
+`memberptr:<owner>:<member-type>`, where the compact owner is a bare qualified
+name or type-definition identifier. Scope separators do not delimit the two
+operands, so both `memberptr:ns::C:int` and `memberptr:C:ptr:int` are valid.
+Use the multiword `member-pointer <owner> <member-type>` form when the owner
+itself needs a constructor prefix such as `named:`; the canonical fact
+serializer uses this unambiguous form. A `function-type` fact contains a result
+type followed by zero or more parameter types; an empty parameter list is
+encoded with the Itanium `v` marker.
+
+Adjacent `const` and `volatile` type wrappers describe one canonical
+cv-qualified type. Their source order does not create distinct types or
+substitution keys, and the encoder emits the canonical Itanium qualifier order.
+
 Structured cases introduce reusable facts before the final target:
 
 ```text
@@ -121,6 +147,17 @@ Definition forms:
 - `let-entity <id> ...`: an entity fact used by entity-valued template
   arguments and dependent expressions
 
+Definition identifiers are file-local binders. Their spelling does not
+participate in the ABI name; use a short descriptive identifier and refer to it
+consistently. Whether two uses refer to one definition or to separately
+defined structural facts can still matter to the case being described. One
+identifier may be defined only once in a case, across all `let-*` forms;
+redefining it is an invalid fact file rather than an overwrite.
+
+Template-parameter and other ABI indices are nonnegative decimal integers.
+Negative or otherwise malformed index spellings are invalid facts and must be
+rejected.
+
 Target forms:
 
 - `type ...`
@@ -133,6 +170,16 @@ Target forms:
 - `tls-wrapper variable ...`
 - `thunk ... function ...`
 - `virtual-base-thunk ... function ...`
+
+The thunk target uses `thunk <this-adjust> function ...` when only `this`
+needs adjustment and `thunk <this-adjust> <result-adjust> function ...` for a
+fixed covariant-result adjustment.  A covariant result reached through a
+virtual base uses the typed form
+`thunk <this-adjust> virtual-result <fixed-adjust> <vcall-offset> function ...`.
+The fixed component is applied after loading the dynamic adjustment from the
+returned object's vtable at the supplied vcall-offset slot.  Production ABI
+symbol construction and fact-file mangling must use the same typed thunk
+target; the text form is its public scaffold serialization.
 
 Function operator terminals use semantic names, not raw Itanium terminal
 fragments:
@@ -180,9 +227,11 @@ unambiguous.
 
 Literal operators are written as `operator-terminal literal <suffix>`, where
 `<suffix>` is the unencoded suffix source name such as `_digits`. Conversion
-operators remain separate `conversion-terminal <type>` facts. Local and lambda
-call-operator contexts continue to use `operator-call` as a semantic terminal
-marker, not as an Itanium code.
+operators remain separate `conversion-terminal <type>` facts. The conversion
+type participates in ordinary substitution ordering and is also the function's
+encoded result; a separate `result` record is not emitted for a conversion
+function. Local and lambda call-operator contexts continue to use
+`operator-call` as a semantic terminal marker, not as an Itanium code.
 
 Thunks, wrappers, typeinfo, and vtable names are described as ABI facts instead
 of already-mangled names.
@@ -190,6 +239,9 @@ of already-mangled names.
 Raw external symbols may be carried with `let-entity <id> symbol <mangled-name>`
 when a template argument or dependent expression names an entity that is already
 known by ABI symbol rather than by a source-level qualified name.
+Namespace-scope variables with internal linkage use
+`let-entity <id> internal-variable <qualified-name>`; this keeps the qualified
+entity and linkage typed until the encoder inserts the Itanium local-name marker.
 
 Template-template arguments may name either a namespace-scope template with
 `let-arg <id> template-entity <qualified-name>` or a member template of an
@@ -224,7 +276,13 @@ situations:
 An implementation should handle Itanium substitution ordering, nested names,
 local-name contexts, template parameter references, template arguments,
 dependent expressions, ABI tags, special names, and every target form covered
-by the tests.
+by the tests. Ordering remains deterministic when substitutions arise inside
+dependent expressions, qualified member-template owners, and local-name
+contexts. Multiple ABI tags use canonical order, and local entities support the
+same special-member terminals as their nonlocal counterparts. A local lambda
+used as a function-template argument retains the enclosing function as its
+local-name context; it is not represented as a named class under its call
+operator.
 
 Reference:
 
@@ -319,7 +377,10 @@ specific internal representation.
 Substitution is part of the ABI grammar, not just text de-duplication. The
 encoder should record substitutions in the order required by the Itanium ABI
 and should compare structured facts when deciding whether a component can reuse
-an existing slot.
+an existing slot. Structural comparison must retain encoding-significant facts
+such as array bounds, integral-expression values, and type-trait operands while
+still recognizing equivalent value arguments and canonical spellings of the
+same named type.
 
 Avoid building names by assembling large ad hoc strings that are later
 reparsed. Some ABI facts contain source spellings, but type structure,

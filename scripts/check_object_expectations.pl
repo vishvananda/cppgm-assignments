@@ -62,6 +62,14 @@ sub line_has_canonical_symbol
 	return 0;
 }
 
+sub line_has_macos_canonical_symbol
+{
+	my ($line, $needle) = @_;
+	return 1 if line_has_canonical_symbol($line, $needle);
+	return 0 if $needle =~ /^_/;
+	return line_has_canonical_symbol($line, "_$needle");
+}
+
 sub read_nm_symbol_entries
 {
 	my ($obj, $mode) = @_;
@@ -207,7 +215,7 @@ sub count_macos_relocation_class
 	for my $line (read_command_lines('otool', '-rv', $obj))
 	{
 		next if index($line, $kind_for{$class}) < 0;
-		++$count if line_has_canonical_symbol($line, $needle);
+		++$count if line_has_macos_canonical_symbol($line, $needle);
 	}
 	return $count;
 }
@@ -796,6 +804,17 @@ while (my $line = <$spec>)
 		my $ok = validate_host_unwind_section($os, $obj);
 		die "Expected host unwind section in object $obj_index\n" if !$ok;
 		print "host_unwind_section $obj_index 1\n";
+		next;
+	}
+
+	if ($kind eq 'custom_section')
+	{
+		my ($section_name) = @fields;
+		die "Invalid custom_section expectation in $spec_file: $line\n"
+			if !defined($section_name) || scalar(@fields) != 1;
+		my $ok = has_section_named($os, $obj, $section_name);
+		die "Expected section '$section_name' in object $obj_index\n" if !$ok;
+		print "custom_section $obj_index $section_name 1\n";
 		next;
 	}
 

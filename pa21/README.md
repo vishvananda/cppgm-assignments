@@ -151,16 +151,27 @@ implemented language surface, including:
 - template-template parameters and template-template argument matching
 - member templates, including templated member operators and templated call
   operators
-- friend templates in the supported class-template/function-template subset
+- access checking for member class templates, alias templates, and nested type
+  paths, including inherited access and template-template arguments
+- friend templates in the supported class-template/function-template subset, including a
+  friend type template-id whose non-type argument is a dependent constant expression
 - class partial specialization
 - partial-specialization ordering and specialization selection
 - current-specialization identity in the supported class-template and
   specialization cases
 - explicit-instantiation declarations and definitions over the supported surface
+- an explicit-instantiation declaration for a class specialization suppresses
+  non-inline instantiation but keeps a locally used in-class inline or defaulted
+  member definition available
 - integration with PA19 explicit specialization declarations/definitions when
   they interact with the PA21 specialization graph
 - collection/ownership behavior for constructor/member-template specializations
   and namespace-scope friend-template declarations
+- an explicit definition of a member template for a concrete class-template
+  specialization replaces the definition instantiated from the primary and may
+  not itself be defined more than once
+- an out-of-class member-template definition attaches to specializations selected
+  by earlier calls in the translation unit and remains available for their demand
 - the dependent-name and instantiation behavior strictly required to make the
   specialization model work
 

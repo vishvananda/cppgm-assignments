@@ -1,7 +1,7 @@
-global @z [binding=internal, object=_Z1z] = {
+global @z [binding=internal, object=_ZL1z] = {
   zero 4
 }
-global @e [binding=internal, object=_Z1e] = {
+global @e [binding=internal, object=_ZL1e] = {
   zero 1
 }
 
@@ -14,10 +14,6 @@ function @Zero__Zero(%this : ptr) -> void [unwind=no, binding=weak, object=_ZN4Z
 
   block ^entry:
     store ptr %this, $this
-    return void
-}
-function @__cppgm_init() -> void [role=init, binding=internal] {
-  block ^entry:
     return void
 }
 alias object _ZN4ZeroC2Ev = @Zero__Zero

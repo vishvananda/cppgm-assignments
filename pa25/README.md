@@ -162,7 +162,9 @@ PA25 supports the following in addition to the PA24 subset:
   values, including class objects whose existing copy-construction path is supported
 - default `[=]` and `[&]` captures over the same supported local-value and `this` subset
 - explicit `this` capture for supported member-function cases
-- `std::initializer_list<T>` interoperation for the supported non-class element subset
+- `std::initializer_list<T>` interoperation for supported scalar elements and
+  class elements whose construction, copy, and destruction stay within the
+  PA15/PA16/PA23 object and template subset
 - `typeid(type-id)`
 - `typeid(expr)` for supported polymorphic lvalue expressions
 - `dynamic_cast<T*>(expr)` for supported polymorphic single-inheritance pointer conversions
@@ -176,7 +178,8 @@ To complete PA25, implement these goals:
 1. Capturing lambda lowering.
    Explicit by-copy captures should materialize deterministic closure-object LowIR and the
    resulting closure object should be callable through the existing class/method lowering
-   path.
+   path. A catch parameter declared inside a lambda body is local to that body and is not an
+   implicit capture.
 
 2. `std::initializer_list` interoperation.
    Supported braced-list calls should materialize deterministic lowered storage and expose
@@ -190,6 +193,30 @@ To complete PA25, implement these goals:
    The compiler should lower supported polymorphic single-inheritance pointer casts into
    ordinary LowIR control flow without introducing new IR operations.
 
+5. Full-expression cleanup through condition control flow.
+   Temporary-owning call arguments inside nested `&&` and `||` expressions
+   should be destroyed exactly on evaluated paths, and every nested logical
+   result used by an outer condition should retain a valid LowIR result slot.
+   Guarded local-static initialization should destroy initializer temporaries
+   on the initialization edge before that edge joins the already-initialized path.
+   EH-bearing aggregate construction should invoke nontrivial member constructors
+   instead of representation-copying those members, so cleanup state describes
+   the subobjects that were constructed.
+   Construction and destruction cleanup dependencies on class-template
+   destructors should be demanded only after a recursively containing type is
+   complete, and should retain that concrete owner in emitted cleanup calls.
+   A caller-created copy for a destructible class value parameter transfers to
+   the callee. The callee destroys that parameter, while the caller keeps only
+   the unwind cleanup needed for objects it still owns.
+   Once an exception object has been initialized, destroy the throw operand's
+   temporaries and remove them from later unwind snapshots. A temporary from an
+   untaken throw branch must not appear in a sibling call's cleanup path.
+   If a conditional initializer arm throws before the destination object is
+   constructed, do not schedule destruction of that destination on the unwind path.
+   When a potentially throwing call is reached through a branch in an active
+   handler, its unwind path must finish the handler and destroy objects that
+   remain live from scopes outside the corresponding `try` statement.
+
 ### Out Of Scope
 
 The following are explicitly out of scope for PA25:
@@ -197,7 +224,8 @@ The following are explicitly out of scope for PA25:
 - init-captures
 - class captures that require unsupported copy construction, destruction, or object-model
   features
-- `std::initializer_list` with class element types
+- `std::initializer_list` class elements that require unsupported construction,
+  copy, destruction, or later object-model behavior
 - `typeid` cases that require `bad_typeid`
 - `dynamic_cast` reference forms
 - `dynamic_cast<void*>`

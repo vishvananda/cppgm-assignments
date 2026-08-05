@@ -208,19 +208,57 @@ PA18 supports the following in addition to the PA17 subset:
 - `typename` and `template` disambiguators where they are needed by the PA18
   dependent-name subset
 - explicit template-id use for supported class templates and function templates
+- explicit type arguments using the ordinary PA11 declarator/type forms,
+  including function types
+- ordinary lookup and using-declaration behavior for supported templates,
+  including repeated using-declarations of the same template and preservation
+  of an ordinarily visible function template when hidden non-template friends
+  share its name, and replay of a dependent-base using-declaration that names an
+  enumerator used by another enumerator; ordinary lookup must retain ambiguity
+  when distinct declarations are introduced by using-directives
 - basic template argument deduction for direct supported function-template calls
   from ordinary argument types, without function-template partial ordering or
   SFINAE
-- on-demand instantiation of the supported class-template and function-template cases
+- on-demand instantiation of the supported class-template and function-template cases,
+  including deferring unused conversion-function bodies and dependent defaulted
+  special-member dependencies, and waiting until an out-of-line owning destructor
+  is defined before demanding a completeness-dependent member destructor
+- instantiated specializations reuse supported PA16 rvalue-reference return
+  paths and PA17 virtual-destructor lifetime without changing their value
+  category or object-lifetime behavior
+- distinct local-class identities for separate function-template
+  specializations
+- declaration-owned template-parameter scopes across nested instantiations and
+  out-of-class member-definition bodies, including definition-time rejection
+  of a declaration that redeclares an active template parameter even when the
+  member is never instantiated
+- definition-time semantic checking of unused supported function-template and
+  qualified inline member bodies, including ordinary block and condition
+  scopes and the distinction between type names and value names; class bit-field
+  members remain valid value expressions in those bodies
+- qualified class-template-ids in function declarators are parsed in their own
+  declaration context rather than being captured by an unrelated function
+  template with the same unqualified name
+- class-template instantiation preserves the class-scope rule that a name which
+  has become a typedef-name cannot be redefined by another typedef declaration
+- compatible function-template declarations and definitions in either order
+- dependent-base lookup provenance attached to the particular base-specifier,
+  so a nested class with a fixed base keeps ordinary base lookup and a local
+  class in a function template independently classifies its own dependent base
 - out-of-class definitions of nested classes declared inside the supported class templates,
   when those nested classes stay within the already supported PA15-PA17 class/value/
   polymorphic machinery
+- distinct nested types from different class-template specializations remain distinct in
+  overload resolution, and a dependent local type alias used by `new` resolves to the
+  concrete specialization before constructor selection
 - ordinary PA10 function declarator forms, including trailing return types, on the supported
   function-template cases
 - instantiated specialization names that then participate in the ordinary PA15-PA17
   class/method/codegen machinery
 - template-backed overload participation where the non-template PA12-PA17 machinery already
   exists, including function-template operator overloads
+- ordinary member typedef hiding and injected-name lookup during re-entrant
+  class-template instantiation
 
 Within this milestone, PA18 should produce valid LowIR for ordinary generic code over the
 supported PA17 subset. That LowIR is intended to be accepted by the later PA28

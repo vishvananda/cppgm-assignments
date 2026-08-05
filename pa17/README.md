@@ -198,7 +198,8 @@ PA17 supports the following in addition to the PA16 subset:
 - derived classes whose direct base is already polymorphic and therefore already carries the
   shared vpointer at offset `0`
 - derived classes with non-polymorphic direct bases that introduce the first supported
-  vpointer at offset `0`
+  vpointer at offset `0`; ordinary pointer/reference conversion to such a base uses the
+  resulting nonzero base-subobject offset and preserves its data members
 - virtual member functions in the ordinary non-template class cases
 - overriding of inherited virtual members by exact signature match in the current class model
 - covariant pointer/reference return overrides when the class hierarchy is in
@@ -212,6 +213,8 @@ PA17 supports the following in addition to the PA16 subset:
   - references to polymorphic class type
 - explicit base qualification suppressing virtual dispatch for supported calls
 - virtual destructors as part of the supported virtual set
+- virtual `delete` over that supported set, including the deleting-destructor
+  entry and selection of a PA16-supported class-specific deallocation function
 - emitted vtable data for supported polymorphic classes
 - constructor/destructor vpointer writes for supported polymorphic classes
 - deterministic vtable slot order, including declaration order for ordinary virtual
@@ -232,7 +235,8 @@ The following are explicitly out of scope for PA17:
 - pointer-adjusting thunks or any ABI that requires base-subobject pointer adjustment
 - class-level `final`
 - full abstract-class enforcement beyond the pure-declaration/vtable cases above
-- deleting destructors, `delete`, and exception-aware virtual cleanup
+- generalized exception-aware virtual cleanup beyond the deleting-destructor
+  and deallocation path pinned by the checked references
 - generalized operator overloading beyond the supported PA16 value-semantics paths
 - template-aware virtual dispatch
 

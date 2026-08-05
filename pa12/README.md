@@ -207,11 +207,13 @@ PA12 must support:
 
 - namespace-scope simple declarations, alias declarations, function
   declarations, and function definitions
-- named and unnamed namespace definitions, namespace aliases, using directives,
-  and using declarations
+- named, inline, and unnamed namespace definitions, namespace aliases, using
+  directives, and using declarations, with same-scope namespace/ordinary-name
+  conflicts rejected
 - type aliases used by the PA12 slice
 - fundamental, pointer, reference, array, and function types
-- function parameter scopes and nested block scopes
+- function parameter scopes, nested block scopes, and the separate scopes of
+  unbraced selection/iteration substatements
 - local simple declarations
 - block-scope using declarations and using directives
 - supported ordinary anonymous-union local declarations
@@ -227,6 +229,10 @@ PA12 must support:
   conversions, pointer-to-bool, `nullptr_t` to pointer, pointer qualification,
   object pointer to cv-qualified `void*`, and the supported lvalue-reference
   bindings
+- function redeclaration matching after top-level parameter cv normalization,
+  with conflicting return types and duplicate definitions rejected
+- recursive pointer-qualification conversion checks, including rejection when
+  the intermediate const qualification required by a deep conversion is absent
 - copy-initialization for local variables, condition declarations, and returns
   using that same conversion subset
 - integer literals, `true`, `false`, and `nullptr`
@@ -237,6 +243,8 @@ PA12 must support:
 - built-in arithmetic, bitwise, shift, logical, comparison, equality,
   conditional, comma, assignment, and compound-assignment expressions over the
   supported operand categories
+- conditional-expression typing and value-category selection for the supported
+  scalar cases, including mixed `bool` lvalue/prvalue operands
 - pointer arithmetic and pointer comparisons in the ordinary object-pointer
   cases required by the tests
 - built-in subscript expressions on arrays and pointers
@@ -246,6 +254,16 @@ PA12 must support:
 - compound statements, `if` / `else`, `switch`, `while`, `do`, `for`, `break`,
   and `continue`
 - expression conditions and declaration conditions of the form `T x = expr`
+- supported integral `constexpr` complete objects, enumerator constants, the
+  course-supported `__builtin_constant_p` query over propagated integral
+  expressions, and semantic recognition of a zero-argument `__builtin_abort`
+  call (without requiring its later control-flow lowering)
+- rejection of type, call-arity, and control-flow violations within this
+  supported slice, including mismatched indirect-call arity, nonconstant case
+  labels, `break` or `continue` outside a permitted statement, `default`
+  outside a switch, a value returned from a `void` function, invalid
+  scoped-enum conditions, and invalid pointer/integer equality or pointer
+  multiplication
 - deterministic resolved-expression output
 
 The PA12 output should preserve enough information for later assignments to add

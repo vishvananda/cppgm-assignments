@@ -55,6 +55,8 @@ struct GlobalDefinition
   bool readonly = false;
   bool thread_local_storage = false;
   std::string thread_local_wrapper_symbol;
+  std::string section_segment;
+  std::string section_name;
   std::string type;
   long long int_value = 0;
   long double float_value = 0.0L;
@@ -141,6 +143,7 @@ struct Instruction
     MI_LOCK_XADD,
     MI_XCHG,
     MI_LOCK_CMPXCHG,
+    MI_LOCK_CMPXCHG16B,
     MI_LEA,
     MI_FMOV,
     MI_FNEG,
@@ -156,6 +159,7 @@ struct Instruction
     MI_FGE,
     MI_FCMP,
     MI_FSTP,
+    MI_FPOP,
     MI_SITOFP,
     MI_UITOFP,
     MI_FPTOSI,

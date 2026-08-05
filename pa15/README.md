@@ -224,7 +224,8 @@ PA15 supports the following in addition to the PA14 procedural subset:
   class subset
 - complete object layout for non-static data members in declaration order, including:
   - empty classes
-  - alignment and padding
+  - alignment and padding, including preservation of a stronger requested
+    class alignment while laying out a direct base and members
   - ordinary integral and enum bit-fields, including zero-width unnamed separators
   - self-referential pointer members
   - previously completed class-type members
@@ -241,11 +242,14 @@ PA15 supports the following in addition to the PA14 procedural subset:
   - member operators such as `operator[]`
   - hidden-friend and namespace-scope non-member operators found through ordinary lookup / ADL
   - chained reference-returning operators such as `operator<<`
+  - rejection of a non-member overloaded operator unless at least one operand has class or
+    enumeration type
 - ordinary non-template non-member function calls found through associated-namespace lookup /
   hidden-friend ADL when the arguments stay within the supported class subset
 - in-class member-function definitions
 - out-of-class definitions for ordinary non-static member functions when the parser accepts
-  them as ordinary qualified function definitions
+  them as ordinary qualified function definitions, including a leading return type that
+  names a private nested type in the member's class context
 - constructors and destructors defined inside the class body
 - implicit default constructors and destructors when no user-declared one exists
 - demand-driven LowIR emission of the ctor/dtor helpers required by the supported lifetime
@@ -256,17 +260,23 @@ PA15 supports the following in addition to the PA14 procedural subset:
 - non-static default member initializers for the supported scalar and supported
   class/aggregate subobject construction forms, with explicit constructor member-initializers
   taking precedence
-- aggregate initialization for the supported PA15 object subset
+- aggregate initialization for the supported PA15 object subset, including namespace-scope
+  aggregate arrays whose elements contain string-literal pointer members
 - local and namespace-scope class object lifetime:
   - constructor execution at declaration time / program startup
   - destructor execution at block exit, `return`, loop exit, and program shutdown
+  - per-thread initialization for namespace-scope `thread_local` class objects,
+    with collision-free internal wrapper, guard, and initializer symbols
 - recursive member/base construction and destruction for supported class-type subobjects
 - anonymous struct/union members, including injected member lookup and layout in
   the supported class subset
-- bit-field member access, assignment, and initializer lowering
+- bit-field member access, assignment, initializer, and built-in increment/decrement
+  lowering; reads of explicitly signed integral and signed-underlying enum bit-fields
+  preserve the represented negative value, and built-in address-of rejects bit-fields
 - pseudo-destructor and explicit destructor-name syntax over supported scalar
   and class expressions
-- standard `alignas` and `alignof`
+- standard `alignas` and `alignof`, including rejection of a requested class
+  alignment weaker than its natural alignment
 - inheriting constructors through `using Base::Base`
 - use of complete class types in:
   - `sizeof(type-id)`

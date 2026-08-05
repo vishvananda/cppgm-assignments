@@ -345,7 +345,13 @@ PA14-PA27, including:
 - object-lowered ABI forms emitted by source-to-LowIR assignments:
   - hidden destination-pointer returns
   - lowered object parameters carried as `ptr`
+- direct one- and two-eightbyte object parameters and results in the supported
+  x86-64 ABI, including padded homes for partial second eightbytes
+- supported variadic calls and `va_start` register-save state for GPR and XMM
+  arguments, including the caller-provided vector-register count
 - structured vtable/global table data emitted by source-to-LowIR lowering
+- structured global alignment derived from typed data items; raw `zero` byte
+  padding inside mixed data does not independently raise alignment
 
 Within this milestone, PA28 should successfully compile the LowIR emitted by PA14-PA27 into
 host-native executables, without requiring CY86 as the primary output format.
@@ -428,13 +434,37 @@ To complete PA28, implement these goals:
    `f64` operations should stay on the floating-register path. A conservative stack spill
    is acceptable when pressure or an ABI boundary requires it, as long as the generated
    program is correct and the checked structural MIR cases still match their oracles.
+   Lowering operations with fixed scratch registers, including integer comparisons,
+   division, and shifts, must preserve still-live frame addresses and incoming parameters
+   before reusing those registers.
+
+   A numeric immediate written without a decimal point still follows the declared LowIR
+   type in a floating store or return. It must be materialized as the requested floating
+   value rather than routed through an integer-only move path.
 
 9. Implement call-boundary correctness without requiring a clever allocator.
    PA28 must respect the native calling convention for direct calls, indirect calls,
-   mixed GPR/XMM arguments, stack arguments, returned values, and values that remain live
-   across calls. The tests intentionally check some high-pressure call cases by program
-   behaviour only; those cases should compile and run correctly but do not require the
-   exact spill/register strategy used by the reference implementation.
+   mixed GPR/XMM arguments, variadic register-save state, stack arguments, scalar and
+   direct-object returned values, and values that remain live across calls. The tests
+   intentionally check some high-pressure call cases by program behaviour only; those
+   cases should compile and run correctly but do not require the exact spill/register
+   strategy used by the reference implementation.
+
+   An integer-only call still clobbers caller-saved XMM registers, so a live `f32` or
+   `f64` value must survive that call even when no floating argument or result is present.
+
+   Hidden indirect-result arguments can shift ordinary pointer and reference parameters
+   into different ABI registers. Forwarding those parameters after earlier scratch-using
+   operations must preserve their original values too.
+
+   Atomic operations are subject to the same pressure correctness requirement. Producing
+   an atomic operation's returned old value in a loop must remain executable when its
+   address and source values occupy the available general-purpose registers.
+
+   The same correctness requirement applies through control-flow joins and loop
+   backedges. Incoming parameters, values computed before a loop, and values recomputed
+   on each iteration must retain their current value across calls without a later
+   iteration overwriting an earlier spill home.
 
 10. Keep mixed-width conversion and floating-bool materialization explicit.
    Mixed integer/float conversion chains should keep their conversion family and width
@@ -445,6 +475,10 @@ To complete PA28, implement these goals:
    Ordinary `i8`/`u16` compare-fed branches should stay visibly narrow, and small signed
    or unsigned integer arithmetic should show the expected post-operation normalization
    instead of silently widening into an untyped 64-bit path.
+
+   Narrow values returned across a call boundary or loaded from frame storage must also
+   be normalized before a wider comparison or `switch`; stale upper bits must not affect
+   branch or case selection.
 
 12. Keep the conservative `f80` path explicit rather than implicit.
    PA28 does not need to treat `f80` like ordinary XMM-resident `f32`/`f64`, but its

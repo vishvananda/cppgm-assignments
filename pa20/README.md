@@ -154,7 +154,10 @@ complete compiler-owned semantic layer for the supported C++11 language surface,
 collection of special cases.
 
 More concretely, over the already-implemented language subset, PA20 should cover the full
-C++11 `constexpr` forms that later template and library code expect:
+C++11 `constexpr` forms that later template and library code expect include
+dependent function-template return and parameter types. Their literal-type
+requirements are checked on the dependent declaration, and are not reapplied
+after a valid declaration is instantiated with concrete template arguments:
 
 - scalar, floating, `nullptr`, and enum constant expressions
 - unary, arithmetic, comparison, bitwise, logical, conditional, cast, `sizeof`,
@@ -177,7 +180,8 @@ C++11 `constexpr` forms that later template and library code expect:
   static data members
 - function-local static objects over the supported LowIR subset:
   - constant initialization when the initializer is a constant expression
-  - dynamic class-object local statics with the required guard/check behavior
+  - dynamic class-object local statics with the required guard/check behavior, including
+    direct initialization from a class-prvalue factory call
 
 PA20 also owns the semantic validation side of C++11 `constexpr`, not just evaluation. In
 particular, the compiler should enforce the C++11-facing rules that matter for the
@@ -189,6 +193,10 @@ supported language subset, such as:
   initialization
 - invalid `constexpr` declarations should fail during semantic analysis instead of being
   accepted and only failing later during use
+- an executed declaration whose initializer is not constant invalidates the enclosing
+  constant evaluation even when the declared value is not read
+- a member call on a temporary is constant only when construction of that temporary is
+  itself a valid constant expression
 
 The implementation may support a strict superset of C++11 evaluation rules internally,
 such as local variables, assignment, and loops inside constexpr evaluation. That is fine
