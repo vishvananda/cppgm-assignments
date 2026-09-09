@@ -1,0 +1,1 @@
+ERROR: constexpr constructor leaves a scalar member uninitialized

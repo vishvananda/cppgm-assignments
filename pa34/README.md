@@ -1,290 +1,137 @@
-## CPPGM Programming Assignment 34 (`cppgm++ -E` / `cppgm++ -c`)
+# CPPGM Programming Assignment 34: Self-hosting (inception)
 
-### Overview
+Complete PA33, then use your compiler to build itself. PA34 adds no language
+feature or output format: it checks that the implementation you have built
+can compile its own sources correctly and reproducibly.
 
-PA34 is the hosted source/header compatibility assignment. Its job is to make
-`cppgm++` preprocess and compile the hosted standard-library and vendor
-extension environment needed by later bootstrap-style builds.
+## Completion criterion
 
-This milestone is intentionally distinct from the previous host-toolchain
-assignments:
-
-- PA32 is about ordinary host-linkable object files.
-- PA33 is about host C++ ABI/runtime correctness after host link.
-- PA34 is about preprocessing, parsing, semantic analysis, and lowering
-  compatibility for hosted source/header inputs.
-
-To complete PA34, implement these goals:
-
-- hosted preprocessor compatibility
-- GNU/Clang parser concessions used by the selected hosted headers
-- GNU builtin type and literal forms used by the selected hosted environment
-- builtin traits, transforms, and intrinsics used by that hosted environment
-- hosted-header/source compile compatibility for the lighter hosted workload
-  covered by the PA34 tests, including C-wrapper headers and selected
-  vendor/header forms
-
-### Prerequisites
-
-Complete PA33 before starting this assignment.
-
-You will want to reuse:
-
-- the full earlier language, template, and lowering stack
-- the PA32/PA33 `cppgm++ -c` host-object path
-- the PA33 host-ABI-compatible output path
-- the earlier preprocessor pipeline, now with hosted-driver controls
-
-The tests assume a Linux shell environment with `make`, `bash`, `perl`, and a
-working host C++ compiler with hosted C++ headers installed.
-You may override the compiler with `CXX=...`. `CPPGM_HOST_CXX` selects the host
-compiler used for builtin macro/include probing. If it is not set, it defaults
-to `CXX`.
-
-The hosted tests rely on the host compiler's target, predefined macros, standard
-library include paths, and standard-library selection flags. When you use a
-non-default standard library, pass the same choice through `CPPGM_STDLIB_FLAGS`
-so the course compiler and host compiler agree.
-
-### Starter Kit
-
-The starter kit provides:
-
-- `dev/cppgm++.cpp`, populated from the `cppgm++` scaffold for the cumulative
-  PA10+ compiler driver
-- the shared `dev/` sources needed by the scaffold
-- `pa34/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
-- `pa34/Makefile`
-- `pa34/scripts/`, the hosted preprocessor/compile test harness
-- `pa34/tests/preproc/`, hosted preprocessor tests and references
-- `pa34/tests/compile/`, hosted compile-only tests and references
-- `pa34/tests/run/`, small host-link/run smokes for hosted C-wrapper headers
-  and builtin/runtime interop
-
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
-shared implementation files it calls. Do not edit generated `.my` files. Test
-inputs and references are part of the handout unless your instructor asks you
-to add or update tests.
-
-There is no separate PA34 reference binary in the starter kit. The checked-in
-`.ref.*` files are the oracle.
-
-### Driver Surface
-
-Previously required:
-
-- the PA30 compile/link surface: `-c`, default link mode, `-I`, `-L`, `-l`, and
-  `--target`
-- the PA32/PA33 host-compatible behavior for the relevant compile-mode subset
-
-New or newly required in PA34:
-
-- hosted preprocess mode: `-E`
-- hosted preprocessor-control flags:
-  - `-D <macro>` and `-D<macro>`
-  - `-U <macro>` and `-U<macro>`
-  - `-include <file>`
-  - `-isystem <dir>` and `-isystem<dir>`
-- direct driver query forms:
-  - `--version`
-  - `-v`
-  - `-dumpmachine`
-  - `-dumpversion`
-  - `-print-search-dirs`
-- compatibility handling for common build-system flags that should either be
-  honored or harmlessly accepted when they do not affect the tested output
-
-### Command-Line Contract
-
-PA34 continues extending the same `cppgm++` frontend used in PA30-PA33.
-
-Required preprocess forms:
+From the repository root:
 
 ```sh
-cppgm++ -E -o <outfile> <srcfile>
-cppgm++ -E <srcfile1> <srcfile2> ...
-cppgm++ -E -D <macro> -U <macro> -include <file> -isystem <dir> <srcfile>
+make inception CXX=g++ CPPGM_HOST_CXX=g++
 ```
 
-Required compile forms:
+Keep the same host compiler and standard-library flags throughout the build.
+The target performs three builds:
+
+| Generation | Built by | Output |
+| --- | --- | --- |
+| Seed | The host C++ compiler | `dev/cppgm++` |
+| Self | The seed compiler | `pa34/cppgm++-self` |
+| Inception | The self-built compiler | `pa34/cppgm++-inception` |
+
+The self and inception binaries must match byte for byte. The seed is built
+by a different compiler and is not the binary comparison target. A successful
+run prints `MATCH cppgm++` and exits successfully.
+
+The host compiler still links the generated object files and supplies the
+hosted configuration. Your compiler must perform the C++ compilation and
+native object generation itself. Keep LowIR and MIR as the interfaces defined
+by the earlier assignments.
+
+## Work through the ladder
+
+The ladder helps locate failures before the final comparison. Run these
+commands from the repository root:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c <srcfile1> <srcfile2> ...
-cppgm++ -c -D <macro> -U <macro> -include <file> -isystem <dir> -o <objfile> <srcfile>
+make build CXX=g++ CPPGM_HOST_CXX=g++
+make -C pa34 test-through-pa4 CPPGM_HOST_CXX=g++
+make -C pa34 test-through-pa5 CPPGM_HOST_CXX=g++
+make -C pa34 test-through-pa8 CPPGM_HOST_CXX=g++
+make -C pa34 test-through-pa33 CPPGM_HOST_CXX=g++
+make inception CXX=g++ CPPGM_HOST_CXX=g++
 ```
 
-Query flags are required only as direct driver queries. For example:
+Within `pa34/`, `CXX` defaults to `../dev/cppgm++`. Keep
+`CPPGM_HOST_CXX` set to a real host compiler. Do not pass the host compiler
+as PA34's `CXX`, since that would bypass self-compilation.
+
+`test-through-paN` builds the needed self-hosted tools and runs PA1 through
+PA N with them, in assignment order. `test-paN` reruns just one stage. These
+are the existing assignment contracts with a different compiler binary; the
+expected outputs do not change.
+
+| Assignment tests | Self-built tool |
+| --- | --- |
+| PA1 | `pptoken-self` |
+| PA2 | `posttoken-self` |
+| PA3 | `ppexpr-self` |
+| PA4 | `preproc-self` |
+| PA5–PA7, PA10–PA23, PA25–PA31 | `cppgm++-self` |
+| PA8 | `lowir-self` |
+| PA9 | `abimangle-self` |
+| PA24, PA33 | `lowir2native-self` |
+| PA32 | `lowiropt-self`, with `cppgm++-self` for driver checks |
+
+PA1–PA4 rebuild the smaller preprocessing tools. PA5 must build the complete
+`cppgm++` implementation even though its tests use only `--emit-ast`; later
+source-language rungs reuse that binary in the appropriate mode. The ladder
+is a sequence of checks, not a sequence of partial implementations of your
+compiler.
+
+PA8 still uses the supplied native backend to execute the LowIR constructed
+by `lowir-self`; PA12 uses it for the behavioral controls on C++ lowering.
+PA24 and PA33 test your self-built native backend.
+
+The source sets come from `dev/frontend_source_sets.mk`, including the files
+you added during earlier assignments. Keep those lists current for every tool
+that uses a shared module.
+
+## Focused builds and checks
+
+From the repository root:
 
 ```sh
-cppgm++ --version
-cppgm++ -dumpmachine
-cppgm++ -print-search-dirs
+make -C pa34 cppgm++-self CPPGM_HOST_CXX=g++
+make -C pa34 test-pa12 CPPGM_HOST_CXX=g++
+make -C pa34 compare-cppgm++-inception CPPGM_HOST_CXX=g++
 ```
 
-### Output Format
+The last command performs the final comparison without rebuilding the seed
+first. After changing compiler sources, run root `make build` before these
+focused commands so the seed includes your fix.
 
-`cppgm++ -E` shall write the same structured posttoken/preprocessor stream
-format used by the PA5 `preproc` frontend. When `-o <outfile>` is present, that
-stream is written to `<outfile>`.
+Use `INCEPTION_OBJ_ROOT_BASE=../obj/pa34-experiment` on PA34 commands to keep
+an experiment's objects separate. Canonical objects depend on the compiler
+that produced them; changing that compiler correctly invalidates those objects.
+Do not combine object generations for the final comparison.
 
-`cppgm++ -c` shall continue to write host-linker-compatible relocatable object
-files as in PA32/PA33.
-
-The new PA34 requirement is not a new object format. It is the ability to
-preprocess and compile hosted source/header inputs successfully through the
-`cppgm++` path.
-
-Hosted compatibility should use the same source-to-LowIR-to-object pipeline as
-ordinary compilation. Hosted include search, predefined macros, and builtin
-probes can affect the source program being compiled, but `--emit-lowir` should
-remain representative of the LowIR that object emission consumes. Do not add a
-hosted-only lowering path that carries backend facts outside serialized LowIR.
-
-### Error Handling
-
-If preprocessing, parsing, semantic analysis, lowering, object emission, or
-output writing fails, `cppgm++` shall exit with failure.
-
-For compile-only tests, exact diagnostics are not the grading contract. The
-harness compares exit status and any checked output sidecars. If the reference
-run fails, stdout and stderr are diagnostic side effects rather than required
-output.
-
-### Testing
-
-Run the PA34 suite with:
+For a quick single-source diagnosis:
 
 ```sh
-make test
+make -C pa34 probe-self-object SOURCE=../dev/cppgm++.cpp CPPGM_HOST_CXX=g++
 ```
 
-To run one test through the shared check target:
+This uses the self-host flags but writes a scratch object under
+`obj/pa34/probe/`. It is a debugging aid; finish with the normal ladder and
+inception targets.
 
-```sh
-make check TEST=tests/preproc/300-has-include.t
-make check TEST=tests/compile/600-builtin-transforms-and-traits.t
-make check TEST=tests/run/800-hosted-cmath-ceil-run.t
-```
+## Diagnose a failure
 
-PA34 has three test directories:
+1. Find the first failing source file or assignment test.
+2. Reduce it to a small input in `student.tests/` and compare the seed and
+   self-built compiler on that input.
+3. Fix the underlying parser, semantic, lowering, optimizer or native-code
+   behavior. Preserve the earlier assignment contracts.
+4. Rebuild the seed, rerun the failing rung, then continue the ladder and final
+   comparison.
 
-- `tests/preproc/`: hosted preprocessor compatibility. The oracle is the
-  PA5-style structured preprocessor stream plus exit status.
-- `tests/compile/`: hosted compile-only compatibility. The oracle is successful
-  object emission, compile exit status, and any stdout/reference sidecars used
-  by the harness.
-- `tests/run/`: narrow host-link/run compatibility smokes. These tests cover
-  hosted builtins, C library entry points, and lightweight hosted C-wrapper
-  headers such as `<cassert>`, `<cmath>`, `<cstddef>`, `<cstdio>`, `<cstdlib>`,
-  `<cstring>`, and `<csignal>`. They do not require broad template-heavy C++
-  standard-library headers or general hosted header-generated runtime support.
+A byte mismatch can come from unstable symbol or instruction order, embedded
+paths, timestamps, host configuration or linker behavior. PA34 also compares
+corresponding self and inception objects as they are built, so the first
+object mismatch can identify the responsible source file.
 
-The checked-in tests are hosted/vendor compatibility cases, standard-library
-sentinels, reducers, and bootstrap-facing compile smokes rather than direct
-N3485 clause tests.
+A self-build slowdown can expose a miscompilation as well as an inefficient
+algorithm. Check for repeated semantic work, lost cache results and divergent
+control flow before increasing resource limits.
 
-Optional sidecars include:
-
-- `x.env`: environment variables for one test, such as additional standard
-  include paths
-- `x.no-exceptions`: compile a `tests/compile` input with `-fno-exceptions`
-- `x.cxx-standard`: compile in the named `c++11`, `c++14`, or `c++17`
-  language mode
-- `x.ref.impl.exit_status`, `x.ref.program.exit_status`, and
-  `x.ref.program.stdout`: implementation and program-result references for
-  `tests/run` host-link/run smokes
-
-The default preprocessor references are intentionally host-agnostic. The test harness checks that checked-in PA34 preprocessor refs do not accidentally
-pin local host macro values such as platform-specific integer or floating-point
-limits.
-
-### Hosted ABI Name Guidance
-
-PA34 is mostly about accepting hosted headers, but compile-only hosted tests can
-still expose symbol-spelling problems through emitted objects and unresolved
-references. The `cppgm++ -c` path should continue producing host ABI names that
-PA32 and PA33 already made observable.
-
-A recommended implementation style is to keep the PA31 mangler in the
-compile-mode path while adding hosted parser, semantic, builtin, and lowering
-support. That style works best when hosted standard-library entities, inline
-namespaces, ABI-tagged declarations, dependent template names, local entities,
-and function template specializations keep the semantic information needed to
-name them.
-
-For compile-only tests, the immediate oracle may be successful object emission,
-but the object must carry host ABI names that PA36 can link and run without a
-separate hosted-only naming scheme.
-
-### Required Implementation Surface
-
-To complete PA34, implement hosted compatibility for:
-
-- predefined macro import, `_Pragma`, `__has_*`, `#include_next`, `#warning`,
-  ignored unknown pragmas, and hosted hex-float preprocessing forms such as
-  `0x1p+4`
-- GNU/Clang parser concessions commonly exercised by the selected hosted
-  headers, including dependent nested-angle disambiguation, nested qualified
-  template-ids used as outer template arguments, builtin-trait identifiers
-  referenced as ordinary names, GNU `__decltype`, parenthesized
-  throw-expressions emitted by hosted helper macros, and GNU builtin float type
-  specifiers such as `__float128` / `_Float128`
-- builtin traits, transforms, intrinsics, and builtin families used during
-  hosted compile acceptance, including lowering `__builtin_abort` as a
-  non-returning call to the host C runtime
-- semantic and lowering compatibility for hosted source patterns used by those
-  headers, including post-declarator parameter
-  attributes, explicit specializations of primary-template member functions,
-  bodyless C++14 placeholder-return declarations selected by a test's language
-  mode, non-standard hex-float compile acceptance on ordinary floating types,
-  and `[[no_unique_address]]` empty-member layout through generated copy operations
-- semantic validation of primary-source GNU inline function bodies even when
-  emission is deferred; an unimplemented reserved compiler builtin may defer
-  its wrapper, but ordinary lookup and type errors in an unused wrapper must
-  still be diagnosed
-- typed retention of a scalar GNU `vector_size` typedef's byte width for
-  compile-time layout queries and semantic validation of unused inline wrapper
-  literals; runtime vector operations and vector-expression lowering are not
-  required
-- lightweight hosted C-wrapper header and C runtime interop smokes where the
-  header surface is mostly builtin macros/functions or ordinary C declarations
-  (`<cassert>`, `<cmath>`, `<cstddef>`, `<cstdio>`, `<cstdlib>`, `<cstring>`,
-  `<csignal>`)
-
-If a failing PA34 test exposes a bug in syntax, semantic analysis, template
-handling, lowering, or object emission that is shared with earlier language
-features, fix the shared compiler behavior rather than adding a PA34-only path.
-
-### Out Of Scope
-
-The PA34 tests do not require:
-
-- host object/link/runtime behavior beyond the PA32/PA33 host-compatible path
-- compiling broad template-heavy C++ standard-library headers such as
-  `<vector>`, `<tuple>`, `<functional>`, `<iostream>`, `<string>`, or container
-  and stream headers
-- general hosted C++ header-emitted link/runtime behavior
-- full build-system emulation beyond the documented query and compatibility
-  flags
-- recursive hosted-header coverage reporting
-- bootstrap or self-host builds
-
-### Design Notes (Non-Normative)
-
-Hosted compatibility is easiest to approach as a sequence of small compatibility
-surfaces: preprocessor probes, parser concessions, builtin traits/types, and
-then semantic/lowering cases. Keep fixes tied to the source pattern being
-exercised. Avoid making broad source-text special cases when an earlier
-semantic or template representation can carry the information directly.
-
-That same preference applies to hosted ABI names: keep type structure, template
-arguments, ABI tags, and local context available until the ABI naming layer can
-consume them. Reconstructing those facts later from pretty-printed strings tends
-to create fragile library-version-specific behavior.
-
-### After PA34
-
-Later hosted tests keep the same hosted source/header environment while adding
-larger template-heavy standard-library headers and then link/run behavior for
-code emitted from hosted headers.
+Each self-build source compile has a 900-second timeout; each inception
+compile has a 3,600-second timeout. The runner also caps a command at 8 GiB
+RSS. Inception compilation uses at most eight jobs by default; lower
+`INCEPTION_BUILD_JOBS` if concurrent compiler processes exhaust memory.
+The timeout knobs are `INCEPTION_SELFHOST_COMPILE_TIMEOUT_SEC` and
+`INCEPTION_INCEPTION_COMPILE_TIMEOUT_SEC`; the memory knob is
+`CPPGM_RUN_MAX_RSS_KB`. Use them to diagnose a reduced case, then validate the
+complete build under the normal limits.

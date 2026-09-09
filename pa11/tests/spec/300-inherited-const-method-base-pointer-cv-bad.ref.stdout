@@ -1,0 +1,1 @@
+ERROR: assignment requires modifiable lvalue at tests/spec/300-inherited-const-method-base-pointer-cv-bad.t:32:20

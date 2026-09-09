@@ -1,0 +1,1 @@
+ERROR: signed division overflow at tests/general/100-signed-constant-modulo-overflow-bad.t:1:33

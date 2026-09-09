@@ -1,16 +1,10 @@
-TARGET = cppgm++
-TARGET_ARGS = --emit-lowir -O0
-export CPPGM_APP_ARGS := $(TARGET_ARGS)
+TARGET = lowir2native
 CXX = g++
 CPPGM_STDLIB_FLAGS ?=
-CPPGM_TEST_RUNNER ?= 1
 CPPGM_TEST_APP ?= ../dev/$(TARGET)
 REF_TEST_APP ?= $(CPPGM_TEST_APP)-ref
 TEST_DEPS ?= dev-shared-target
-TEST_RUNNER_SHARED_FLAGS = $(if $(filter 1,$(CPPGM_TEST_RUNNER)),-DTEST_RUNNER_ENABLE,)
-TEST_RUNNER_ENTRY_FLAGS = $(TEST_RUNNER_SHARED_FLAGS) $(if $(filter 1,$(CPPGM_TEST_RUNNER)),-Dmain=test_runner_real_main,)
 CC_FLAGS = -std=gnu++11 -Wall -O3 $(CPPGM_STDLIB_FLAGS)
-ENTRY_CC_FLAGS = $(CC_FLAGS) $(TEST_RUNNER_ENTRY_FLAGS)
 SRC = ../dev/src
 GENERATED = ../obj/generated
 INC = -I$(SRC) -I$(GENERATED)
@@ -18,7 +12,11 @@ OBJ = ../obj
 VPATH = $(SRC)
 RDEPDIR = $(OBJ)/release/.d
 DDEPDIR = $(OBJ)/debug/.d
-COURSE_TEST_ROOT = $(wildcard course/pa24)
+CONTROL_TEST_ROOT ?= tests/controls
+# Our own shape references live in the regression lane, outside the course
+# contract (tests/regression; see docs/student-export-root/TESTING_AND_REFERENCES.md).
+REGRESSION_ORACLE_TEST_ROOTS = $(wildcard tests/regression/strict tests/regression/structural tests/regression/behavior)
+PERF_TOLERANCE_PERCENT ?= 10
 
 $(shell mkdir -p $(RDEPDIR) $(DDEPDIR) >/dev/null)
 
@@ -26,23 +24,11 @@ include ../dev/frontend_source_sets.mk
 
 common_obj_basenames = $(FRONTEND_OBJ_BASENAMES_$(TARGET))
 common_objs = $(addprefix $(OBJ)/$(1)/,$(addsuffix .o,$(common_obj_basenames)))
-runner_obj = $(if $(filter 1,$(CPPGM_TEST_RUNNER)),$(OBJ)/$(1)/test_runner_enabled.o)
-runner_state_stamp = $(OBJ)/$(1)/.test_runner_mode
-link_objs = $(call common_objs,$(1)) $(call runner_obj,$(1))
-link_prereqs = $(call link_objs,$(1)) $(call runner_state_stamp,$(1))
 
 all: dev-shared-target
 
 $(OBJ)/release $(OBJ)/debug: %:
 	@- mkdir -p $@
-
-FORCE:
-
-$(OBJ)/release/.test_runner_mode $(OBJ)/debug/.test_runner_mode: FORCE | $(OBJ)/release $(OBJ)/debug
-	@current=$$(cat $@ 2>/dev/null || true); \
-	if [ "$$current" != "$(CPPGM_TEST_RUNNER)" ]; then \
-		printf '%s\n' '$(CPPGM_TEST_RUNNER)' > $@; \
-	fi
 
 $(OBJ)/release/%.o: %.cpp
 	@mkdir -p $(@D) $(dir $(RDEPDIR)/$*)
@@ -54,58 +40,92 @@ $(OBJ)/debug/%.o: %.cpp
 	$(CXX) $(CC_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(DDEPDIR)/$*.Td -o $@ $<
 	mv -f $(DDEPDIR)/$*.Td $(DDEPDIR)/$*.d
 
-$(OBJ)/release/test_runner_enabled.o: $(SRC)/test_runner.cpp
-	$(CXX) $(CC_FLAGS) $(TEST_RUNNER_SHARED_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(RDEPDIR)/test_runner_enabled.Td -o $@ $<
-	mv -f $(RDEPDIR)/test_runner_enabled.Td $(RDEPDIR)/test_runner_enabled.d
+# The course suite (test-course) judges by behaviour, contract shape where
+# the shape is the contract, and envelope; the regression suite
+# (test-regression) pins the course solution's dumps.  test-variants runs the
+# course suite under each design variant of dev/src/backend_variant.h.
+test: test-course
 
-$(OBJ)/debug/test_runner_enabled.o: $(SRC)/test_runner.cpp
-	$(CXX) $(CC_FLAGS) $(TEST_RUNNER_SHARED_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(DDEPDIR)/test_runner_enabled.Td -o $@ $<
-	mv -f $(DDEPDIR)/test_runner_enabled.Td $(DDEPDIR)/test_runner_enabled.d
-
-ifeq ($(COURSE_TEST_ROOT),)
-test: $(TEST_DEPS)
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my tests
-	@scripts/compare_results.pl ref my tests
-
-test-strict: $(TEST_DEPS)
-	@rm -f .test_failed
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my tests
-	@../scripts/run_witness_tests.pl $(CPPGM_TEST_APP) my tests
-	@scripts/compare_results.pl ref my tests
-	@../scripts/compare_witness_results.pl ref my tests
-	@test ! -f .test_failed
+test-course: $(TEST_DEPS)
+ifneq ($(CPPGM_BATCH_TESTS),)
+	@perl ../scripts/run_lowir_native_tests_worker.pl $(CPPGM_TEST_APP) my tests
 else
-test: $(TEST_DEPS)
 	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my tests
-	@scripts/compare_results.pl ref my tests
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my $(COURSE_TEST_ROOT)
-	@scripts/compare_results.pl ref my $(COURSE_TEST_ROOT)
-
-test-strict: $(TEST_DEPS)
-	@rm -f .test_failed
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my tests
-	@../scripts/run_witness_tests.pl $(CPPGM_TEST_APP) my tests
-	@scripts/compare_results.pl ref my tests
-	@../scripts/compare_witness_results.pl ref my tests
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my $(COURSE_TEST_ROOT)
-	@scripts/compare_results.pl ref my $(COURSE_TEST_ROOT)
-	@test ! -f .test_failed
 endif
+	@scripts/compare_results.pl ref my tests
+	@set -e; if [ -d "$(CONTROL_TEST_ROOT)" ]; then \
+		perl ../scripts/check_pa24_native_contracts.pl \
+			$(CPPGM_TEST_APP) "$(CONTROL_TEST_ROOT)"; \
+		perl ../scripts/check_pa24_native_contracts.pl \
+			$(CPPGM_TEST_APP) \
+			tests/behavior/900-scratch-carried-frame-reloads.t; \
+		perl ../scripts/check_pa24_native_contracts.pl \
+			$(CPPGM_TEST_APP) \
+			tests/behavior/900-deferred-address-parameter-carrier-reuse.t; \
+		perl ../scripts/check_pa24_native_contracts.pl \
+			$(CPPGM_TEST_APP) \
+			tests/behavior/800-cost-directed-small-zeroinit.t; \
+	fi
+
+test-regression: $(TEST_DEPS)
+ifneq ($(CPPGM_BATCH_TESTS),)
+	@set -e; for root in $(REGRESSION_ORACLE_TEST_ROOTS); do \
+		perl ../scripts/run_lowir_native_tests_worker.pl \
+			$(CPPGM_TEST_APP) my "$$root"; \
+		case "$$root" in \
+			*/behavior) mode=mir_behavior_t ;; \
+			*/structural) mode=mir_structural_t ;; \
+			*) mode=mir_t ;; \
+		esac; \
+		perl ../scripts/compare_results_common.pl \
+			"$$mode" ref my "$$root"; \
+	done
+else
+	@set -e; for root in $(REGRESSION_ORACLE_TEST_ROOTS); do \
+		scripts/run_all_tests.pl $(CPPGM_TEST_APP) my "$$root"; \
+		case "$$root" in \
+			*/behavior) mode=mir_behavior_t ;; \
+			*/structural) mode=mir_structural_t ;; \
+			*) mode=mir_t ;; \
+		esac; \
+		perl ../scripts/compare_results_common.pl \
+			"$$mode" ref my "$$root"; \
+	done
+endif
+
+BACKEND_VARIANTS ?= pool-reverse frame-pad rpo-layout colouring linear-scan
+test-variants: $(TEST_DEPS)
+	@set -e; for variant in $(BACKEND_VARIANTS); do \
+		echo "== $(TARGET) course suite under variant $$variant"; \
+		CPPGM_BACKEND_VARIANT=$$variant $(MAKE) --no-print-directory test-course; \
+	done
 
 ref-test:
 	@$(REF_TEST_RUN)
+	@if [ -d tests/structural ]; then perl ../scripts/canonicalize_lowir_native_refs.pl tests/structural; fi
 
-ref-test-strict:
-	@../scripts/run_witness_tests.pl $(REF_TEST_APP) ref tests
+REF_TEST_RUN = case "$(TEST)" in \
+	$(CONTROL_TEST_ROOT)/*) echo "$(TEST): focused native predicate has no reference sidecar" ;; \
+	*) scripts/run_all_tests.pl $(REF_TEST_APP) ref "$(if $(strip $(TEST)),$(TEST),tests)" ;; \
+esac
+
+CHECK_RUN = case "$(TEST)" in \
+	$(CONTROL_TEST_ROOT)/*) perl ../scripts/check_pa24_native_contracts.pl $(CPPGM_TEST_APP) "$(TEST)" ;; \
+	*) scripts/run_all_tests.pl $(CPPGM_TEST_APP) check "$(TEST)" ;; \
+esac
+CHECK_COMPARE = case "$(TEST)" in \
+	$(CONTROL_TEST_ROOT)/*) true ;; \
+	*) scripts/compare_results.pl ref check "$(TEST)" ;; \
+esac
 
 include ../scripts/pa_run_check_targets.mk
 
-.PHONY: dev-shared-target ref-test ref-test-strict
-../dev/$(TARGET):
-	$(MAKE) -C ../dev $(TARGET) CXX=$(CXX)
+.PHONY: dev-shared-target ref-test
+$(CPPGM_TEST_APP):
+	$(MAKE) -C ../dev $(TARGET) CXX=$(CXX) OBJ=$(OBJ)
 
 dev-shared-target:
-	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) CXX=$(CXX); fi
+	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) CXX=$(CXX) OBJ=$(OBJ); fi
 
 clean:
 	-rm -f $(TARGET) $(TARGET)-debug $(OBJ)/release/*.o $(OBJ)/debug/*.o
@@ -118,5 +138,13 @@ $(DDEPDIR)/%.d: ;
 
 -include $(addprefix $(RDEPDIR)/,$(addsuffix .d,$(common_obj_basenames)))
 -include $(addprefix $(DDEPDIR)/,$(addsuffix .d,$(common_obj_basenames)))
--include $(RDEPDIR)/test_runner_enabled.d
--include $(DDEPDIR)/test_runner_enabled.d
+
+# The performance envelope: each behaviour program runs under Cachegrind and
+# its instruction count must stay within PERF_TOLERANCE_PERCENT of the
+# `x.ref.ir` sidecar.  `make test-perf-refs` writes the sidecars from the
+# current programs.  Skipped when valgrind is not installed.
+test-perf: $(TEST_DEPS)
+	@perl ../scripts/check_ir_envelope.pl $(PERF_TOLERANCE_PERCENT) tests/behavior
+
+test-perf-refs: $(TEST_DEPS)
+	@perl ../scripts/check_ir_envelope.pl --write $(PERF_TOLERANCE_PERCENT) tests/behavior

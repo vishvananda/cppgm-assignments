@@ -1,8 +1,11 @@
-## CPPGM Programming Assignment 3 (ctrlexpr)
+## CPPGM Programming Assignment 3 (ppexpr)
+
+Adapted from the original CPPGM material; revised for cppgm-extended.
+See [NOTICE](../NOTICE) for attribution.
 
 ### Overview
 
-Write a C++ application called `ctrlexpr` that accepts a _C++ Source File_ on standard input that contains Controlling Expressions (defined below) for Conditional Inclusion, one per logical line.
+Write a C++ application called `ppexpr` that accepts a _C++ Source File_ on standard input that contains Controlling Expressions (defined below) for Conditional Inclusion, one per logical line.
 
 The input file does NOT include any...
 
@@ -12,7 +15,7 @@ The input file does NOT include any...
 
 Evaluate each controlling expression and return the results in the specified format.
 
-`ctrlexpr` should execute translation phases 1, 2, 3 to delimit logical source lines.
+`ppexpr` should execute translation phases 1, 2, 3 to delimit logical source lines.
 
 ### Prerequisites
 
@@ -20,13 +23,17 @@ You should complete Programming Assignment 2 before starting this assignment.
 
 ### Starter Kit
 
-The starter kit can be obtained from:
+Use the cumulative student repository. Implement `ppexpr` in
+`../dev/ppexpr.cpp` and reusable helpers under `../dev/src/`.
+The assignment provides tests, references and a `ppexpr-ref` wrapper;
+see [Testing and references](../TESTING_AND_REFERENCES.md).
 
-    $ git clone git://git.cppgm.org/pa3.git
+Reuse the implementation from PA2; do not start it over.
 
-It contains a stub implementation of `ctrlexpr` with some _optional_ starter code, a compiled reference implementation and a test suite.
+### Testing
 
-You will also want to reuse most of your code from PA2.
+Run `make test-pa3` and `make test-report-through-pa3` from the repository root.
+Use `ppexpr-ref` for investigation under the root reference policy.
 
 ### Mock `defined` Implementation
 
@@ -34,7 +41,7 @@ As we do not have any macros defined in PA3, in order to test the `defined` oper
 
 If the first UTF-8 code unit of the identifier is odd than return true, else return false.
 
-There is an implementation of this mock function called `PA3Mock_IsDefinedIdentifier` in the starter code.
+The starter code includes an optional helper implementing this mock behavior.
 
 ### Input Format
 
@@ -44,15 +51,15 @@ Each logical line will contain a (possibly invalid, possibly empty) controlling 
 
 ### Output Format
 
-For each logical line of the input file `ctrlexpr` should output zero or one line of output.
+For each logical line of the input file `ppexpr` should output zero or one line of output.
 
-In the event the logical source line is empty (contains only whitespace or nothing) after phase 3, `ctrlexpr` should not output a line.
+In the event the logical source line is empty (contains only whitespace or nothing) after phase 3, `ppexpr` should not output a line.
 
-If the logical source line contains an invalid controlling expression (one that contains invalid tokens or does not match the grammar or semantics of a controlling expression), `ctrlexpr` should output one line containing `error`.
+If the logical source line contains an invalid controlling expression (one that contains invalid tokens or does not match the grammar or semantics of a controlling expression), `ppexpr` should output one line containing `error`.
 
-In the event the logical source line contains a valid controlling expression, `ctrlexpr` should output a decimal literal as the result of the controlling expression.  In the case that the output is signed it should have no suffix.  In the event that the output is unsigned it should have the suffix `u` (lowercase).
+In the event the logical source line contains a valid controlling expression, `ppexpr` should output a decimal literal as the result of the controlling expression.  In the case that the output is signed it should have no suffix.  In the event that the output is unsigned it should have the suffix `u` (lowercase).
 
-At the end of output, `ctrlexpr` should output `eof` on a line by itself.
+At the end of output, `ppexpr` should output `eof` on a line by itself.
 
 ### Error Reporting
 
@@ -85,9 +92,9 @@ Produces an output of:
     error
     eof
 
-### Restrictions
+### Implementation
 
-As per PA1
+Extend your existing compiler code under `dev/` and `dev/src/`.
 
 ### Definition: Controlling Expression
 
@@ -128,14 +135,14 @@ Some types that are NOT integral types are:
     void
     nullptr_t
     array of <anything>
-    
+
 An `identifier_or_keyword` is simply an identifier in `preprocessing-token` context (meaning the `identifier` from PA1 and not from PA2).  In particular it treats keywords the same as identifiers.  There are two special cases.  They are:
 
  - `true`, which is effectively evaluated as `1`
  - `defined` which has special meaning in a controlling expression
 
 > Note: For PA3, in the context of a preprocessor controlling expression only, we shall course-define the treatment of the identifier `true` to be evaluated the same as the integer literal `1`, and the identifier `false` to be evaluated the same as the integer literal `0`.  Note that this may conflict slightly with the standard requirements.
- 
+
 At this point try to read 16.1 Conditional Inclusion, there will be many "forward" references to terminology that has not been required reading in the course yet, so don't worry if you don't understand everything.  The parts which you do understand should be sufficient to complete this assignment.
 
 ### Controlling Expression Grammar
@@ -153,70 +160,70 @@ At this point try to read 16.1 Conditional Inclusion, there will be many "forwar
 	    OP_MINUS unary-expression
 	    OP_LNOT unary-expression
 	    OP_COMPL unary-expression
-	
+
 	multiplicative-expression:
 	    unary-expression
 	    multiplicative-expression OP_STAR unary-expression
 	    multiplicative-expression OP_DIV unary-expression
 	    multiplicative-expression OP_MOD unary-expression
-	
+
 	additive-expression:
 	    multiplicative-expression
 	    additive-expression OP_PLUS multiplicative-expression
 	    additive-expression OP_MINUS multiplicative-expression
-	
+
 	shift-expression:
 	    additive-expression
 	    shift-expression OP_LSHIFT additive-expression
 	    shift-expression OP_RSHIFT additive-expression
-	
+
 	relational-expression:
 	    shift-expression
 	    relational-expression OP_LT shift-expression
 	    relational-expression OP_GT shift-expression
 	    relational-expression OP_LE shift-expression
 	    relational-expression OP_GE shift-expression
-	
+
 	equality-expression:
 	    relational-expression
 	    equality-expression OP_EQ relational-expression
 	    equality-expression OP_NE relational-expression
-	
+
 	and-expression:
 	    equality-expression
 	    and-expression OP_AMP equality-expression
-	
+
 	exclusive-or-expression:
 	    and-expression
 	    exclusive-or-expression OP_XOR and-expression
-	
+
 	inclusive-or-expression:
 	    exclusive-or-expression
 	    inclusive-or-expression OP_BOR exclusive-or-expression
-	
+
 	logical-and-expression:
 	    inclusive-or-expression
 	    logical-and-expression OP_LAND inclusive-or-expression
-	
+
 	logical-or-expression:
 	    logical-and-expression
 	    logical-or-expression OP_LOR logical-and-expression
-	
+
 	controlling-expression:
 	    logical-or-expression
 	    logical-or-expression OP_QMARK controlling-expression OP_COLON controlling-expression
-	    
+
 Notice that this grammar is unambiguous and has the precedence and associativity of operators built into it.
 
 ### Features
 
-The following steps do not necessarily need to occur in the order specified, however `ctrlexpr` should behave _as if_ they had.
+The following steps do not necessarily need to occur in the order specified, however `ppexpr` should behave _as if_ they had.
 
 First apply phase 1-3 to get a stream of `preprocessing-tokens`.
 
 Then split them by the `new-line` token.  Discard/ignore `whitespace-sequences`.
 
-For each non-empty sequence of `preprocessing-tokens` `ctrlexpr` will output one line, either (a) a decimal number; (b) a decimal number followed by `u`; or (c) `error`.
+For each non-empty sequence of `preprocessing-tokens` `ppexpr` will output one line, either (a) a decimal number; (b) a decimal number followed by `u`; or (c) `error`.
 
 Apply some of the "post-tokenization" code from PA2 to get a sequence of `tokens` (paying attention to the `identifier_or_keyword` case).
 

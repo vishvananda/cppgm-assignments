@@ -1,0 +1,81 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $values : obj<8x4>
+  slot $it : obj<8x8>
+  slot $i : i32
+  slot $cond__1 : i32
+
+  block ^entry:
+    %t1 = addr $values
+    store i32 1, %t1
+    %t2 = index i8 %t1, 4
+    store i32 2, %t2
+    %t3 = addr $it
+    %t4 = addr $values
+    call void @Iter__Iter(%t3, %t4)
+    store i32 0, $i
+    jump ^for_cond_1
+
+  block ^for_cond_1:
+    %t5 = load i32 $i
+    %t6 = cmp ne i32 %t5, 1
+    branch %t6, ^for_body_2, ^for_end_4
+
+  block ^for_body_2:
+    jump ^for_iter_3
+
+  block ^for_iter_3:
+    %t7 = load i32 $i
+    %t8 = binary add i32 %t7, 1
+    store i32 %t8, $i
+    %t9 = addr $it
+    %t10 = call ptr @Iter__operator__(%t9)
+    jump ^for_cond_1
+
+  block ^for_end_4:
+    %t11 = addr $it
+    %t12 = index i8 [projection=field] %t11, 0
+    %t13 = load ptr %t12
+    %t14 = load i32 %t13
+    %t15 = cmp eq i32 %t14, 2
+    branch %t15, ^cond_then_5, ^cond_else_6
+
+  block ^cond_then_5:
+    store i32 0, $cond__1
+    jump ^cond_end_7
+
+  block ^cond_else_6:
+    store i32 1, $cond__1
+    jump ^cond_end_7
+
+  block ^cond_end_7:
+    %t16 = load i32 $cond__1
+    return i32 %t16
+}
+function @Iter__Iter(%this : ptr [object_bytes=8], %value : ptr) -> void [binding=weak, object=_ZN4IterC1EPi, inline_hint=yes] {
+  slot $this : ptr
+  slot $value : ptr
+
+  block ^entry:
+    store ptr %this, $this
+    store ptr %value, $value
+    %t1 = load ptr $value
+    %t2 = load ptr $this
+    %t3 = index i8 [projection=field] %t2, 0
+    store ptr %t1, %t3
+    return void
+}
+function @Iter__operator__(%this : ptr [object_bytes=8]) -> ptr [binding=weak, object=_ZN4IterppEv, inline_hint=yes] {
+  slot $this : ptr
+
+  block ^entry:
+    store ptr %this, $this
+    %t1 = load ptr $this
+    %t2 = index i8 [projection=field] %t1, 0
+    %t3 = load ptr %t2
+    %t4 = binary mul i64 1, 4
+    %t5 = index i8 %t3, %t4
+    store ptr %t5, %t2
+    %t6 = load ptr $this
+    return ptr %t6
+}
+alias object _ZN4IterC2EPi = @Iter__Iter

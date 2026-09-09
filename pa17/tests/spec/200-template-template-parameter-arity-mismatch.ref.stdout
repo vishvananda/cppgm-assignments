@@ -1,0 +1,1 @@
+ERROR: structured template type was not found: use<pair_box> at tests/spec/200-template-template-parameter-arity-mismatch.t:14:1

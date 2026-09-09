@@ -1,0 +1,1 @@
+ERROR: indirect call arity mismatch at tests/general/300-bad-indirect-call-too-few-arguments.t:3:10

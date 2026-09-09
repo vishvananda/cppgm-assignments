@@ -1,0 +1,1 @@
+ERROR: invalid comparison operands at tests/general/300-bad-pointer-integer-equality.t:3:16

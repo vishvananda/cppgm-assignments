@@ -1,0 +1,1 @@
+ERROR: no viable constructor for 1 argument(s) from 2 candidate(s) at tests/general/400-bad-constructor-template-parameter-shadowing-target-aware.t:43:10 while instantiating make_duration(long long int)

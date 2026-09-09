@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from array of 4 const char to int at tests/general/300-function-address-nttp-instantiates-member-body-bad.t:10:24

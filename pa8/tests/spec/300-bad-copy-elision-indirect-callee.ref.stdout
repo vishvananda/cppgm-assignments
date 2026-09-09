@@ -1,0 +1,1 @@
+ERROR: expected '=', got 'function' at tests/spec/300-bad-copy-elision-indirect-callee.t:1

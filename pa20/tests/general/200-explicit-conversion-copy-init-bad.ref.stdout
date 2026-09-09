@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from struct S to bool at tests/general/200-explicit-conversion-copy-init-bad.t:12:12

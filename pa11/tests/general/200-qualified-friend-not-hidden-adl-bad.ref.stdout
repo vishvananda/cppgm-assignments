@@ -1,0 +1,1 @@
+ERROR: unknown expression name: f at tests/general/200-qualified-friend-not-hidden-adl-bad.t:23:3

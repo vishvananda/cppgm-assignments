@@ -1,0 +1,1 @@
+ERROR: inaccessible member function f on pointer to struct YP in main owner-type=struct YP naming-type=struct YP [member-owner=0 access-owner=4294967295 naming-class=0 object-class=0 access=2] at tests/general/100-private-method-bad.t:8:11

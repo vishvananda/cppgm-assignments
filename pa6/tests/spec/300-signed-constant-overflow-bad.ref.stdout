@@ -1,0 +1,1 @@
+ERROR: signed constant arithmetic overflow at tests/spec/300-signed-constant-overflow-bad.t:1:37

@@ -1,0 +1,1 @@
+ERROR: unknown expression name: missing_destructor_name at tests/general/300-unused-qualified-inline-destructor-body-bad.t:8:3

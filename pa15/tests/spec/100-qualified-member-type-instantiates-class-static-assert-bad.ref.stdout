@@ -1,0 +1,1 @@
+ERROR: static assertion failed at tests/spec/100-qualified-member-type-instantiates-class-static-assert-bad.t:3:3

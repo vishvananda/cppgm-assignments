@@ -1,0 +1,1 @@
+ERROR: unknown expression name: lookup::operator+ at tests/spec/300-hidden-friend-not-visible-to-qualified-lookup.t:18:9

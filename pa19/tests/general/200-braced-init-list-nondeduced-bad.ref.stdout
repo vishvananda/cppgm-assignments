@@ -1,0 +1,1 @@
+ERROR: call has no resolved callee type at tests/general/200-braced-init-list-nondeduced-bad.t:12:3

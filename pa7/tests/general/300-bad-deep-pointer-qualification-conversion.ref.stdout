@@ -1,0 +1,1 @@
+ERROR: no viable overload for sink in pass candidate=function of (pointer to pointer to const int) returning void object=<none> argument=pointer to pointer to int at tests/general/300-bad-deep-pointer-qualification-conversion.t:5:3

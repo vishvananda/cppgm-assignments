@@ -1,0 +1,1 @@
+ERROR: constexpr constructor has non-literal subobjects in struct invalid

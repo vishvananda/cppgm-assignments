@@ -1,0 +1,1 @@
+ERROR: invalid positive integer: 0 at tests/spec/300-bad-object-extent-zero.t:1

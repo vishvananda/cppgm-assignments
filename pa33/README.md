@@ -1,236 +1,119 @@
-## CPPGM Programming Assignment 33 (`cppgm++ -c`)
+## CPPGM Programming Assignment 33 (`lowir2native -O*`)
 
 ### Overview
 
-Write one C++ application called `cppgm++`.
+Improve the native code produced from LowIR while preserving program behavior,
+the ABI, unwinding and debug information. PA32 optimizes LowIR; PA33 optimizes
+its translation to machine instructions. Reuse this backend in both
+`lowir2native` and the `cppgm++` object and executable paths.
 
-PA33 is the host C++ ABI/runtime interoperability assignment. It builds on the
-ordinary host-linkable object requirements from PA32 and makes the behavior of
-the host-linked program observable.
+Complete PA24 and PA32 first. Continue working in `dev/lowir2native.cpp` and
+your shared backend under `dev/src/`. The assignment wrapper points there.
+The supplied `mir_model.h` and register definitions are scaffolding you may
+adapt or replace. [Design notes](design-notes.md) suggest a starting approach.
 
-The main PA33 question is: once host link succeeds, does the resulting program
-behave correctly under the ordinary host C++ ABI/runtime?
+### Required behavior
 
-The tested ABI/runtime surface includes:
-
-- virtual dispatch, vtable ownership, and imported/exported vtables
-- RTTI object ownership and `dynamic_cast` / `typeid`
-- covariant return adjustment, including layout-finalized fixed adjustments and
-  virtual-base result projection through the returned object's vtable
-- richer host exception handling in the exercised
-  rethrow/cleanup/noexcept/RTTI subset
-- host-compatible unwind and relocation facts where the tests inspect objects
-
-### Prerequisites
-
-Complete PA32 before starting this assignment.
-
-You will want to reuse:
-
-- the full C++ language pipeline through PA32
-- the PA32 host-compatible `cppgm++ -c` path
-- the PA29 native backend and PA30 object-emission path
-- the PA31 exception/runtime lowering concepts
-
-The tests assume a POSIX-like shell environment with `make`, `bash`,
-`perl`, and a working host C/C++ toolchain. The harness selects host tools from:
-
-- `CPPGM_HOST_CXX` or `CXX` for the host C++ compiler/link driver
-- `CPPGM_HOST_CC` or `CC` for host C helper objects
-
-If those are not set, the harness searches for common compilers such as
-`clang++`, `g++`, `c++`, `clang`, `gcc`, and `cc`. Archive and inspection tests
-also require `ar`, `nm`, and `readelf`. The checked-in tests assume the normal
-x86_64 Linux host C++ ABI.
-
-PA31 introduced the basic host-EH object-facts surface. PA33 keeps the same
-host-link path while exercising richer host ABI/runtime interactions.
-
-### Starter Kit
-
-The starter kit provides:
-
-- `dev/cppgm++.cpp`, populated from the `cppgm++` scaffold for the cumulative
-  PA10+ compiler driver
-- the shared `dev/` sources needed by the scaffold
-- `pa33/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
-- `pa33/Makefile`
-- `pa33/scripts/`, the host-ABI test harness
-- `pa33/tests/general/`, the PA33 tests and checked-in reference files
-
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
-shared implementation files it calls. Do not edit generated `.my` files. Test
-inputs and references are part of the handout unless your instructor asks you
-to add or update tests.
-
-There is no separate PA33 reference binary in the starter kit. The checked-in
-`.ref.*` files are the oracle.
-
-### Command-Line Contract
-
-PA33 does not introduce new command-line flags. It reuses the PA32 compile-mode
-surface:
+Support these forms at each of `-O1`, `-O2` and `-O3`:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c --target <target> -o <objfile> <srcfile>
-cppgm++ -c -I <dir> -o <objfile> <srcfile>
-cppgm++ -c -I<dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I <dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I<dir> -o <objfile> <srcfile>
+lowir2native -O1 -o <program> <lowirfile>...
+lowir2native -O1 --dump-machine-ir <mirfile> <lowirfile>...
+lowir2native -O1 --dump-machine-ir <mirfile> -o <program> <lowirfile>...
 ```
 
-`<target>` may be `linux` or the corresponding x86_64 Linux host triple form
-accepted by your implementation. PA33 only requires compile mode. The normal
-PA33 final link is performed outside `cppgm++` by the host C++ compiler driver.
+`-O0` remains the PA24 baseline. `--help` and `-h` exit successfully;
+`--target <target>` retains its PA24 meaning. Reuse the PA8 LowIR language,
+including entry-role and other explicit metadata.
 
-### Output Format
+- **O1:** meet the bounds for local cleanup, such as redundant copies,
+  argument setup, address calculations and unnecessary jumps.
+- **O2:** also meet the bounds for values live across blocks and calls,
+  loop register use and frame size.
+- **O3:** handle PA32's O3 output through the optimized native backend.
+  A separate O3 machine pass is not required if your O2 backend meets the bar.
 
-`cppgm++ -c` shall continue to write one host-linker-compatible relocatable
-object file to `<objfile>`.
+Pass order, register allocation and instruction selection are your choices.
+If your existing backend already meets a bound, no extra pass is needed for
+that case. Completion depends on the output, not on adding named optimizations.
+Higher optimization levels must preserve the correctness established by
+previous assignments. In `cppgm++`, apply PA32's LowIR optimization before
+native lowering at the requested level.
 
-The PA33 tests do not compare object bytes directly. They observe:
+The MIR dump uses PA24's text format and describes the same instructions and
+ABI/frame facts that produce the executable. When both outputs are requested,
+they must come from the same optimized program. Keep call argument uses,
+stack arguments, variadic and no-return annotations, exception boundaries,
+callee-saved register information and indexed-address operands accurate after
+rewriting instructions.
 
-- `cppgm++ -c` exit status
-- host final-link exit status
-- final program exit status
-- final program standard output
-- optional object-inspection output for ABI, unwind, relocation, RTTI, vtable,
-  thunk, and symbol-ownership checks
+Fail with a nonzero status for missing inputs or output options, missing option
+arguments, unreadable or invalid LowIR, an unsupported target, an unwritable
+output, or failed code generation/linking. Exact diagnostic wording and output
+files left after failure are not prescribed.
 
-### Error Handling
+### How output is checked
 
-If preprocessing, parsing, semantic analysis, lowering, object emission, or
-output writing fails, `cppgm++` shall exit with failure.
+Every native fixture checks compilation status and the generated program's
+stdout and exit status. Correct output is required regardless of optimization
+level or allocation strategy.
 
-For negative tests, exact diagnostics are not the grading contract. The harness
-compares exit status first. If the reference compile/link path fails, stdout and
-stderr are diagnostic side effects rather than required output.
+Where `x.ref.expect` exists, the MIR must satisfy its predicates. They bound
+quantities such as instruction count, blocks, calls, memory operands and frame
+size, and state focused requirements for effects such as volatile accesses
+and exception operations. The numbers in the sidecar are the actual limits;
+you do not need to reproduce the reference registers, offsets, instruction
+order or block layout. A missing expectation means execution alone is checked.
+The `.ref.mir` and `.ref.cmir` files are examples, not optimized-output oracles.
+
+These bounds provide a deterministic, lightweight code-quality bar. They are
+not measurements of execution time: fewer static instructions do not always
+mean faster code. No timing threshold, Cachegrind installation or allocator
+statistics are required to complete PA33.
+
+For a failed expectation, inspect the reported predicate or run:
+
+```sh
+perl ../scripts/expect_ir.pl tests/o1/<name>.my.mir tests/o1/<name>.ref.expect
+```
+
+Debug fixtures carry `!dbg(file, line, column)` annotations. Their predicates
+check source locations on surviving calls and returns without comparing the
+whole instruction sequence. Removed computations may lose their locations;
+combined computations may use a contributing location. Preserve meaningful
+locations on surviving operations and do not invent locations from another
+function or source statement.
 
 ### Testing
 
-Run the PA33 suite with:
+From this directory:
 
 ```sh
 make test
+make test-debuginfo
+make check TEST='tests/o1/100-return-copy-coalesce.t'
 ```
 
-To run one test through the shared check target:
+`make test` runs the O1, O2 and O3 MIR and behavior buckets, the native
+correctness controls, and two self-checking C++ programs under `tests/driver/`.
+The driver programs must exit zero and write no stdout at all three levels,
+when built directly, through PA25 compiler objects (`.obj`), and through PA26
+native objects (`.o`) linked with `CPPGM_HOST_CXX`.
+They exercise calls and a loop with volatile memory accesses; they do not
+require diagnostic counters or a particular backend design.
 
-```sh
-make check TEST=tests/general/200-host-eh-rethrow.t
-```
+`make test-debuginfo` runs `tests/debuginfo/o1`, `o2` and `o3`. Both targets
+must pass. Finish with `make test-report-through-pa33` from the repository root
+before continuing to PA34's self-host ladder. See
+[Testing and references](../TESTING_AND_REFERENCES.md) for test selection.
 
-The local tests live in `tests/general/`. They cover host C++ ABI/runtime
-behavior, host-linked exception handling, RTTI, vtables, thunks, and object
-inspection around those host-runtime surfaces. They are not direct N3485 clause
-tests.
+The numbered buckets group backend features. `tests/o1`, `o2` and `o3` check
+code-quality bounds as well as execution; `tests/behavior/` adds correctness
+cases and applies bounds only where an expectation is supplied.
 
-For each test anchor `x.t`, companion C++ sources are named:
+### Scope
 
-```text
-x.t.1
-x.t.2
-...
-```
-
-Optional sidecars control or check the host flow:
-
-- `x.link.flags`: extra flags passed to the host link driver
-- `x.lib.*`: host-built C or C++ helper sources
-- `x.inspect.cmd`, `x.inspect.expect`, or `x.inspect.plan`: object-inspection
-  checks that use the host symbol and object tools
-
-The checked-in PA33 tests cover:
-
-- cleanup, rethrow, noexcept termination, and foreign catch-all behavior beyond
-  the basic PA31 host-EH facts surface, including exactly-once same-frame local
-  cleanup around class-exception allocation and payload construction
-- class, base, transitive-base, and virtual-base host exception catches
-- host EH interaction with RTTI, `typeid`, lambdas, templates, and control flow
-- virtual dispatch, imported/exported vtable ownership, and polymorphic header
-  duplication
-- RTTI-driven `dynamic_cast` and `typeid`
-- covariant return adjustment
-- host ABI mangling for dependent/template/lambda/standard-library-adjacent
-  names needed by this milestone
-- object facts such as unwind sections, relocation classes, weak/undefined
-  symbols, and vtable/RTTI ownership when a test includes an inspect sidecar
-
-PA33 does not require general hosted-header support. Your compiler must support
-the host ABI behavior for user-defined RTTI and exception cases: emitted RTTI
-objects, `dynamic_cast`, `typeid`, vtables, catches, cleanup, and unwind
-interoperability. The PA33 tests exercise that behavior without including hosted
-headers. For `typeid`, it is enough in this assignment to support the language
-operation with a narrow declaration of `std::type_info`; the tests do not depend
-on the hosted `<typeinfo>` header or on `std::type_info` member APIs.
-
-Parsing hosted `<exception>` and `<typeinfo>` headers, implementing APIs such
-as `std::type_info::name()` or `hash_code()`, compiling hosted exception
-classes, and supporting `std::exception_ptr` are later hosted-header/runtime
-work.
-
-### Host ABI Symbol Names
-
-PA33 extends the PA32 object requirements into host C++ ABI/runtime behavior. The
-same ABI naming behavior from PA14 and PA32 is still observable for every C++
-symbol that the host linker, unwinder, RTTI system, or virtual-dispatch
-machinery can observe.
-
-The important observable result is that these entities have host ABI names that
-match the configured toolchain:
-
-- ordinary functions, methods, constructors, destructors, and function
-  templates
-- vtables, VTTs, RTTI objects, covariant thunks, non-virtual thunks, and
-  virtual-base thunks
-- exception, cleanup, and helper symbols that must interoperate with host-built
-  code
-- local classes, lambdas, dependent/template names, ABI tags, and inline
-  namespaces when they affect the host name
-- ABI tags carried by class typeinfo names, typeinfo objects, and vtables
-
-### Required Implementation Surface
-
-To complete PA33, preserve practical host-linked C++ ABI/runtime behavior within
-the supported subset:
-
-- virtual dispatch and imported/exported vtable ownership
-- RTTI-driven `dynamic_cast` / `typeid`
-- covariant return adjustment
-- ordinary host-linked rethrow and advanced catch behavior
-- cleanup and unwind interactions beyond the basic PA31 fact owners
-- foreign catch-all interaction in the tested subset
-
-If host link succeeds but the host C++ ABI/runtime behavior is wrong, fix the
-host ABI/runtime lowering, metadata, or object-emission path.
-
-### Out Of Scope
-
-The PA33 tests do not require:
-
-- basic host-EH metadata/object facts beyond the PA31 surface
-- private course-only exception/runtime ABI details that are not visible through
-  the host-linked program or object checks
-- hosted standard-library header/source compatibility
-- hosted header-emitted link/runtime behavior
-- bootstrap or self-host builds
-
-### Design Notes (Non-Normative)
-
-PA33 is not just a runtime-output assignment. Runtime behavior is the primary
-oracle, but some tests inspect object facts because host C++ ABI correctness is
-often decided before the program starts: symbol names, weak ownership, unwind
-sections, RTTI/vtable objects, and relocation classes must match the host
-toolchain's expectations closely enough for ordinary linking and unwinding.
-
-A recommended implementation style is to continue using the PA14 ABI naming
-layer before object emission. Feed semantic facts for the entity into the
-mangler, then let the object writer preserve the final raw symbol name. That
-keeps ABI spelling decisions close to semantic information and avoids a second
-name-construction path in object-format code.
-
-### After PA33
-
-Later hosted tests keep the same host object and ABI/runtime path while adding
-hosted source/header compatibility.
+PA33 does not require a new LowIR optimizer, source-language changes,
+interprocedural machine optimization, instruction scheduling or vectorization.
+A bounded allocator and a small set of well-justified improvements are enough
+if they meet the supplied predicates and preserve earlier contracts.

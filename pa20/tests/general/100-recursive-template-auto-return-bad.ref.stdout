@@ -1,0 +1,1 @@
+ERROR: recursive placeholder function return deduction at tests/general/100-recursive-template-auto-return-bad.t:4:10 while instantiating recurse<int>

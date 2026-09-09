@@ -1,0 +1,1 @@
+ERROR: unknown expression name: derived::value at tests/general/300-qualified-variable-template-hiding-bad.t:22:10

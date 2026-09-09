@@ -1,0 +1,1 @@
+ERROR: expected braced initializer at tests/general/200-malformed-function-parameter-list.t:2:3 at token 4 (`return`)

@@ -1,0 +1,1 @@
+ERROR: dependent qualified type requires typename: selected<sizeof...(Types)>::type

@@ -1,0 +1,1 @@
+ERROR: expected `)` at tests/general/200-bad-condition-declaration.t:1:22 at token 8 (`x`)

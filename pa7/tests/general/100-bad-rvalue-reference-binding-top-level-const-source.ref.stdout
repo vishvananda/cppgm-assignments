@@ -1,0 +1,1 @@
+ERROR: no viable overload for sink in f candidate=function of (rvalue-reference to int) returning void object=<none> argument=rvalue-reference to const int at tests/general/100-bad-rvalue-reference-binding-top-level-const-source.t:3:11

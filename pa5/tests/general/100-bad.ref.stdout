@@ -1,0 +1,1 @@
+ERROR: expected braced initializer at tests/general/100-bad.t:1:13 at token 4 (`return`)

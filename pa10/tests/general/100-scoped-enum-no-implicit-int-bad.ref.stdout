@@ -1,0 +1,1 @@
+ERROR: no viable overload for takes_int in main candidate=function of (int) returning int object=<none> argument=enum class Mode at tests/general/100-scoped-enum-no-implicit-int-bad.t:14:10

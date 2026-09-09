@@ -1,0 +1,1 @@
+ERROR: no viable overload for g in f candidate=function of (pointer to int) returning int object=<none> argument=int at tests/spec/100-bad-no-match.t:3:18

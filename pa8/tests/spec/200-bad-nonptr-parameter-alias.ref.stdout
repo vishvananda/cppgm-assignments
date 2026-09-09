@@ -1,0 +1,1 @@
+ERROR: alias metadata requires ptr at tests/spec/200-bad-nonptr-parameter-alias.t:3

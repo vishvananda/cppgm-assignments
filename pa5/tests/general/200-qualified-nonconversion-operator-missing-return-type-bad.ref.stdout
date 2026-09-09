@@ -1,0 +1,1 @@
+ERROR: expected declaration at tests/general/200-qualified-nonconversion-operator-missing-return-type-bad.t:5:1 at token 13 (`C`)

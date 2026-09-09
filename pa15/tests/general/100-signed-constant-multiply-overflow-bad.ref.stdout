@@ -1,0 +1,1 @@
+ERROR: signed constant arithmetic overflow at tests/general/100-signed-constant-multiply-overflow-bad.t:1:26

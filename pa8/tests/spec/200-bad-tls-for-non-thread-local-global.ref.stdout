@@ -1,0 +1,1 @@
+ERROR: tls_for target is not thread-local global at tests/spec/200-bad-tls-for-non-thread-local-global.t:7

@@ -1,0 +1,1 @@
+ERROR: __VA_ARGS__ in a non-variadic replacement list at tests/macros/250-badvargs2.t:1:2

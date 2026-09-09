@@ -1,0 +1,1 @@
+ERROR: static assertion failed at tests/spec/300-nontype-parameter-dependent-owner-static-assert-bad.t:3:3

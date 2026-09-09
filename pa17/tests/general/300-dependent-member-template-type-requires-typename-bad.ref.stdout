@@ -1,0 +1,1 @@
+ERROR: dependent qualified type requires typename: T::template rebind<int>

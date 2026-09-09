@@ -1,0 +1,1 @@
+ERROR: typeid requires std::type_info at tests/general/200-typeid-rejects-unqualified-typeinfo-bad.t:7:11

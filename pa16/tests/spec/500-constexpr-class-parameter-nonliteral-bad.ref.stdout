@@ -1,0 +1,1 @@
+ERROR: constexpr callable uses a non-literal result or parameter type

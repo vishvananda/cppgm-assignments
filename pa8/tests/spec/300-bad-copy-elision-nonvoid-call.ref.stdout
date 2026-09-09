@@ -1,0 +1,1 @@
+ERROR: copy elision requires a direct void call with destination and source at tests/spec/300-bad-copy-elision-nonvoid-call.t:13

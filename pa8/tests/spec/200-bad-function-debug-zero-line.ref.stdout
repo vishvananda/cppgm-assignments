@@ -1,0 +1,1 @@
+ERROR: invalid positive integer: 0 at tests/spec/200-bad-function-debug-zero-line.t:1

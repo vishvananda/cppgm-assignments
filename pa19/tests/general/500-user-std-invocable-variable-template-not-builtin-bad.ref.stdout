@@ -1,0 +1,1 @@
+ERROR: static assertion failed at tests/general/500-user-std-invocable-variable-template-not-builtin-bad.t:19:3

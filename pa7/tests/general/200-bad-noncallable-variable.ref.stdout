@@ -1,0 +1,1 @@
+ERROR: called object is not callable at tests/general/200-bad-noncallable-variable.t:3:10

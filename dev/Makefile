@@ -10,7 +10,7 @@ CPPGM_MAKE_LOW_JOB_LIMIT = $(shell \
 	limit='$(CPPGM_MAKE_JOB_LIMIT)'; cpus='$(DEFAULT_BUILD_JOBS)'; \
 	if [ "$$limit" -gt 0 ] 2>/dev/null && [ "$$cpus" -gt "$$limit" ] 2>/dev/null; then echo 1; else echo 0; fi)
 ifeq ($(CPPGM_MAKE_LOW_JOB_LIMIT),1)
-$(warning make is limited to -j$(CPPGM_MAKE_JOB_LIMIT) on a $(DEFAULT_BUILD_JOBS)-core machine; large compiler builds, especially self-host and PA39/inception builds, will be very slow. Omit -j or use -j$(DEFAULT_BUILD_JOBS).)
+$(warning make is limited to -j$(CPPGM_MAKE_JOB_LIMIT) on a $(DEFAULT_BUILD_JOBS)-core machine; large compiler builds, especially self-host and PA34/inception builds, will be very slow. Omit -j or use -j$(DEFAULT_BUILD_JOBS).)
 endif
 endif
 endif
@@ -19,17 +19,12 @@ TARGETS = \
 	abimangle \
 	pptoken \
 	posttoken \
-	ctrlexpr \
-	macro \
+	ppexpr \
 	preproc \
-	recog \
-	lowir2cy86 \
+	lowir \
 	lowiropt \
 	lowir2native \
-	cppgm++ \
-	nsdecl \
-	nsinit \
-	cy86
+	cppgm++
 
 CXX ?= g++
 V ?= 0
@@ -91,7 +86,7 @@ $(RUNNER_STATE_STAMP): FORCE | $(OBJDIR)
 		printf '%s\n' '$(CPPGM_TEST_RUNNER)' > $@; \
 	fi
 
-$(OBJDIR)/test_runner_enabled.o: $(SRC)/test_runner.cpp $(COMPILE_CONFIG_STAMP)
+$(OBJDIR)/test_runner_enabled.o: $(SRC)/$(FRONTEND_TEST_RUNNER_SOURCE_ID).cpp $(COMPILE_CONFIG_STAMP)
 	@mkdir -p $(@D) $(DEPDIR)
 	$(call quiet,CXX,$@)
 	$(Q)$(CXX) $(CC_FLAGS) $(TEST_RUNNER_SHARED_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(DEPDIR)/test_runner_enabled.Td -o $@ $<

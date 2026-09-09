@@ -1,0 +1,1 @@
+ERROR: invalid additive operands at tests/spec/300-hidden-friend-not-visible-to-unrelated-adl.t:22:16

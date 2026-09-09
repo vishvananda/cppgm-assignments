@@ -1,0 +1,1 @@
+ERROR: unknown type name: missing_type at tests/general/300-bad-unused-template-nondependent-trailing-return.t:6:23

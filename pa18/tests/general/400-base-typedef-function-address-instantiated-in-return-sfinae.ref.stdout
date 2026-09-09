@@ -1,0 +1,1 @@
+ERROR: unknown expression name: T::bad at tests/general/400-base-typedef-function-address-instantiated-in-return-sfinae.t:3:48

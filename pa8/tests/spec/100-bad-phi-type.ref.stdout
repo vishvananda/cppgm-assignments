@@ -1,0 +1,1 @@
+ERROR: phi incoming temporary type mismatch: a is i64, the phi %result is f64 in function @main at tests/spec/100-bad-phi-type.t:9

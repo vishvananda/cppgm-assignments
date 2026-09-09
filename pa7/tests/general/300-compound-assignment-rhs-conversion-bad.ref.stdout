@@ -1,0 +1,1 @@
+ERROR: invalid compound assignment at tests/general/300-compound-assignment-rhs-conversion-bad.t:3:9

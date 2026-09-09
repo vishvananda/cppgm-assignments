@@ -1,0 +1,1 @@
+ERROR: invalid implicit call conversion at tests/general/300-indirect-call-argument-conversion-bad.t:3:10

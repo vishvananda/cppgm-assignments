@@ -1,247 +1,309 @@
-## CPPGM Programming Assignment 32 (`cppgm++ -c`)
+## CPPGM Programming Assignment 32 (`lowiropt`)
 
 ### Overview
 
-Write one C++ application called `cppgm++`.
+PA32 adds the first explicit optimization stage to the compiler. The new tool,
+`lowiropt`, reads PA8 LowIR text, applies a deterministic optimization
+pipeline selected by `-O0`, `-O1`, `-O2`, or `-O3`, and writes LowIR text.
 
-PA32 is the host object/toolchain interoperability assignment. It does not add
-new language features. Instead, it combines the PA30 compile-mode driver with
-the PA14 ABI naming layer. PA14 built ABI names from normalized fact files;
-PA32 connects that same naming work to the compiler's semantic/linkage facts
-and writes the resulting names into real object files:
+The same LowIR optimizer is also reached from `cppgm++` when source programs
+are compiled with `--emit-lowir -O1`, `--emit-lowir -O2`,
+`--emit-lowir -O3`, or through the ordinary compile/link driver at an
+optimization level.
 
-- `cppgm++ -c` must emit ordinary relocatable object files for the current host
-  object format.
-- Those objects must be accepted by the host C++ compiler driver when it performs
-  the final link.
-- Objects produced by `cppgm++` must interoperate with host-built C and C++
-  objects, static archives, and shared libraries in the practical subset tested
-  here.
-- Header-emitted inline/template definitions must use host-correct symbol
-  spelling and duplicate-definition/coalescing rules.
+### How PA32 Is Specified
 
-The PA32 harness does not normally use `cppgm++` as the final linker. It runs:
+This README separates three kinds of statement, and the course suite is
+built the same way.
 
-1. `cppgm++ -c` once for each C++ translation unit.
-2. The host C++ compiler driver on the generated objects and any helper objects
-   supplied by the test.
-3. The linked program, when the link succeeds.
+- The **contract** is what every implementation must do: the command line,
+  the LowIR it reads and writes, the behaviour it must preserve, and the
+  object path that must accept its output.  Command Line, Output Format,
+  Error Handling and Validation Modes are the contract.
+- The **quality bar** is what the output must reach on the course fixtures:
+  the outcome and the size envelope each fixture states in its
+  `x.ref.expect` sidecar, and the lowering floor.  The Quality Bar section
+  is normative.
+- **One design** is how the course solution meets that bar, pass by pass,
+  with the budgets and caps it chose.  The linked design notes are a worked example.  A different optimizer that meets the bar is a correct PA32; a
+  course fixture never compares the shape of your output with the course
+  solution's.
 
-The main PA32 question is: can `cppgm++` produce ordinary host-linkable object
-files?
+Run `make test` from this assignment directory to check the course contract.
+See [Testing and references](../TESTING_AND_REFERENCES.md) for selecting tests.
 
 ### Prerequisites
 
-Complete PA31 before starting this assignment.
+You should complete PA31 before starting this assignment.
 
-You will want to reuse:
+You will reuse:
 
-- the full C++ language pipeline through PA30
-- the PA30 `cppgm++ -c` driver path
-- the PA14 ABI naming layer
-- the PA29 native backend and PA30 object-emission path
-- the PA30 cross-translation-unit compile/link model
-
-The tests assume a POSIX-like shell environment with `make`, `bash`,
-`perl`, and a working host C/C++ toolchain. The harness selects host tools from
-environment variables first:
-
-- `CPPGM_HOST_CXX` or `CXX` for the host C++ compiler/link driver
-- `CPPGM_HOST_CC` or `CC` for host C helper objects
-
-If those are not set, the harness searches for common compilers such as
-`clang++`, `g++`, `c++`, `clang`, `gcc`, and `cc`. Archive and inspection tests
-also require `ar`, `nm`, and `readelf`. The checked-in tests assume the normal
-x86_64 Linux host object ABI.
+- the PA8 LowIR syntax and semantics
+- the PA10 through PA31 source-to-LowIR lowering pipeline
+- the PA24 native backend, PA25 driver, PA9 ABI naming, and PA26 host-runtime path
+- the PA31 hosted compiler driver surface
 
 ### Starter Kit
 
-The starter kit provides:
+The starter kit supplies:
 
-- `dev/cppgm++.cpp`, populated from the `cppgm++` scaffold for the cumulative
-  PA10+ compiler driver
-- the shared `dev/` sources needed by the scaffold
-- `pa32/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
 - `pa32/Makefile`
-- `pa32/scripts/`, the host-interoperability test harness
-- `pa32/tests/general/`, the PA32 tests and checked-in reference files
+- `pa32/lowiropt.cpp`, linked to the editable `dev/lowiropt.cpp`
+- a `dev/lowiropt.cpp` scaffold based on `dev/lowiropt-scaffold.cpp`
+- shared compiler support under `dev/src/`
+- test directories under `pa32/tests/`
+- harness scripts under `pa32/scripts/`
+- checked-in `.ref` and `.ref.exit_status` files for the tests
 
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
-shared implementation files it calls. Do not edit generated `.my` files. Test
-inputs and references are part of the handout unless your instructor asks you
-to add or update tests.
+The expected implementation work is in `dev/lowiropt.cpp` and shared optimizer
+or driver support under `dev/src/`, especially the LowIR optimizer and
+optimization-level plumbing. Reuse your PA8 LowIR reader/writer and later
+driver implementation; the supplied harness does not implement these passes.
 
-There is no separate PA32 reference binary in the starter kit. The checked-in
-`.ref.*` files are the oracle.
+Use `lowiropt-ref` to inspect example output.
+The harness checks the contract sidecars and quality envelopes.
 
-### Command-Line Contract
+### Command Line
 
-PA32 does not introduce new command-line flags. It strengthens the PA30
-compile-mode surface on the host-compatible path and uses the PA14 ABI naming
-layer for C++ object symbols.
-
-Required forms:
+`lowiropt` accepts exactly one optimization level, one output path, and one or
+more LowIR input files:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c --target <target> -o <objfile> <srcfile>
-cppgm++ -c -I <dir> -o <objfile> <srcfile>
-cppgm++ -c -I<dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I <dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I<dir> -o <objfile> <srcfile>
+lowiropt -O0 -o <outfile> <lowirfile>...
+lowiropt -O1 -o <outfile> <lowirfile>...
+lowiropt -O2 -o <outfile> <lowirfile>...
+lowiropt -O3 -o <outfile> <lowirfile>...
 ```
 
-`<target>` may be `linux` or the corresponding x86_64 Linux host triple form
-accepted by your implementation. PA32 only requires compile mode. The normal
-PA32 final link is performed outside `cppgm++` by the host C++ compiler driver.
+`--help` and `-h` print usage information and exit successfully.
+
+PA32 also requires the source driver to route these options through the same
+optimizer:
+
+```sh
+cppgm++ --emit-lowir -g0 -O1 -o <outfile> <srcfile>...
+cppgm++ --emit-lowir -g0 -O2 -o <outfile> <srcfile>...
+cppgm++ --emit-lowir -g0 -O3 -o <outfile> <srcfile>...
+cppgm++ --emit-lowir -gline-tables-only -O1 -o <outfile> <srcfile>...
+cppgm++ --emit-lowir -gline-tables-only -O2 -o <outfile> <srcfile>...
+cppgm++ --emit-lowir -gline-tables-only -O3 -o <outfile> <srcfile>...
+```
+
+The ordinary `cppgm++ -c` and link-driver paths must also accept `-O0`, `-O1`,
+`-O2`, and `-O3` and use the same LowIR optimization level before object
+generation. As with GCC and Clang, omitting `-O` selects `-O0`; optimization
+must be requested explicitly.
+Compile mode must also accept serialized LowIR text as an input:
+
+```sh
+cppgm++ -c -O0 -o <objfile> <lowirfile>
+cppgm++ -c -O1 -o <objfile> <lowirfile>
+cppgm++ -c -O2 -o <objfile> <lowirfile>
+cppgm++ -c -O3 -o <objfile> <lowirfile>
+```
+
+This LowIR object input mode parses LowIR text, runs the same object-prep and
+optimization path used by source object compilation, and writes the same
+host-compatible relocatable object format.
 
 ### Output Format
 
-`cppgm++ -c` shall write one host-linker-compatible relocatable object file to
-`<objfile>`.
+`lowiropt` writes LowIR text to `<outfile>`. The output must remain valid LowIR
+and must preserve the behavior of every defined input program.
 
-The PA32 tests do not compare object bytes directly. They observe:
+The optimizer works on the same LowIR program representation that the object
+path consumes. It may use typed internal data structures, but optimized output
+must serialize back to valid LowIR, and object generation at a chosen
+optimization level must not require extra semantic facts unavailable from that
+optimized LowIR text.
 
-- `cppgm++ -c` exit status
-- host final-link exit status
-- final program exit status
-- final program standard output
-- optional object-inspection output for tests that include `.inspect.*` sidecars
+This LowIR/object boundary is required in PA32. A correct compile path
+may keep LowIR in memory for speed, but it must not pass private frontend or
+semantic side data around the serialized LowIR representation. If object
+emission needs a fact after optimization, that fact must either be represented
+in LowIR or derived again by the object-lowering layer from LowIR. The direct
+`cppgm++ -c` source object and the object produced by `--emit-lowir -O0`
+followed by `cppgm++ -c -O<level>` on that LowIR file should therefore match
+for the same source, flags, and optimization level.
+
+This durability rule includes PA27 global section placement. A token-safe GNU
+section attribute is serialized as global `section=<name>` metadata and must
+survive `-O0` through `-O3`. The replayed object must keep the global in the
+same named ELF section and keep relocations originating in that section aimed
+at the same symbols; direct/replayed byte equality alone is not the feature
+definition.
+
+Your output must be deterministic and follow the [LowIR format](../pa8/lowir.md).
+Optimization may change instructions and control flow while preserving their
+meaning, including initialization, destruction, volatile accesses and cleanup.
+`-O0` preserves semantic content without optimization. At higher levels, the
+fixture expectations define the required simplifications and size bounds; the
+choice and order of passes are yours.
 
 ### Error Handling
 
-If preprocessing, parsing, semantic analysis, lowering, object emission, or
-output writing fails, `cppgm++` shall exit with failure.
+The tool must fail with a nonzero exit status when:
 
-For negative tests, exact diagnostics are not the grading contract. The harness
-compares exit status first. If the reference compile/link path fails, stdout and
-stderr are diagnostic side effects rather than required output.
+- no optimization level is provided
+- `-o` is missing or has no following path
+- there are no input files
+- an input file cannot be read
+- the input is not valid LowIR
+- the output file cannot be written
+
+For failure cases, diagnostics only need to be useful to a developer; exact
+diagnostic text is not part of the grading contract. The contents of the
+output file after a failed run are undefined.
+
+### Quality Bar
+
+The levels have this contract.  `-O0` parses the input program, preserves all
+semantic content, and writes the canonical LowIR dump without running
+optimizing transforms.  `-O1`, `-O2` and `-O3` each write valid LowIR that
+preserves the behaviour of every defined input program; each higher level
+may do everything the lower one does and more.  What the levels do is
+your design.
+
+What the course fixtures then check, for each `x.t`:
+
+- the tool's exit status agrees with `x.ref.exit_status`;
+- a successful output passes the LowIR structural validator;
+- the output meets every predicate in its `x.ref.expect`
+  (`../scripts/expect_ir.pl`);
+- the output lowers through the object path at `-O0`
+  (`cppgm++ -c -O0 x.lowir`) whenever the input does.  `make test` sets
+  `CPPGM_LOWER_CHECK_APP` so the harness runs that floor; an optimizer's
+  output is not correct until the backend accepts it.
+
+An `x.ref.expect` sidecar has two kinds of line.  Outcome lines state what
+the fixture is about in terms of the LowIR it reads and writes:
+`none(call @callee) in @caller` for a call that must be inlined,
+`count(load) <= 1 in ^body` for a load that must be hoisted,
+`none(phi) in ^merge` for a choice that must collapse.  Budget lines bound
+the output's size: `instructions <= N`, `blocks <= N`, `count(call)`,
+`count(load)`, `count(store)`, `count(phi)`, and `instructions <= N in
+@function`.  The budgets were generated from the course solution's output
+at 10% tolerance plus one. Each sidecar states the actual required bounds
+and outcomes. The adjacent `x.ref` is an informational example; matching its
+instruction sequence is not required.
+
+A source fixture in a driver lane is also run: the emitted LowIR is built
+into a program through the object path and compared with the source built
+at the lane's level (`CPPGM_BEHAVIOR_CHECK_APP`, set by `make test`); both
+must print the same output and exit the same way.  A source that does not
+build at that level is skipped.
+
+To evaluate one sidecar by hand:
+
+```sh
+$ perl ../scripts/expect_ir.pl tests/o1/x.my tests/o1/x.ref.expect
+```
+
+### Design example
+
+[Design notes](design-notes.md) describe the course solution’s passes and
+implementation choices. They are a worked example, not additional requirements.
+
+### Validation Modes
+
+Successful outputs must pass the LowIR structural validator, the fixture’s
+`.ref.expect` predicates, and the object-lowering check. Source-driver cases
+also compare execution before and after LowIR serialization. Failed cases
+are checked by exit status. See Quality Bar for the sidecar syntax.
 
 ### Testing
 
-Run the PA32 suite with:
+From this assignment directory, run:
 
 ```sh
 make test
 ```
 
-To run one test through the shared check target:
+Before moving on, run `make test-report-through-pa32` from the repository root.
+
+`make test` runs:
+
+- `tests/o0`
+- `tests/o1`
+- `tests/o2`
+- `tests/o3`
+- `tests/driver/o1`
+- `tests/driver/o2`
+- `tests/driver/o3`
+- `tests/object-roundtrip`
+
+
+These directories are organized by tool mode and validation mode, not by N3485
+source-language clauses.
+
+- `tests/o0` runs `lowiropt -O0` on handwritten LowIR.
+- `tests/o1` runs `lowiropt -O1` on handwritten LowIR.
+- `tests/o2` runs `lowiropt -O2` on handwritten LowIR.
+- `tests/o3` runs `lowiropt -O3` on handwritten LowIR.
+- `tests/driver/o1` runs `cppgm++ --emit-lowir -g0 -O1` on source programs.
+- `tests/driver/o2` runs `cppgm++ --emit-lowir -g0 -O2` on source programs.
+- `tests/driver/o3` runs `cppgm++ --emit-lowir -g0 -O3` on source programs.
+- `tests/object-roundtrip` compares direct `cppgm++ -c` output against an
+  object produced by `cppgm++ --emit-lowir -O0` followed by `cppgm++ -c` on
+  the generated LowIR file. This checks that object emission can be
+  reconstructed from serialized LowIR instead of from hidden frontend side
+  data. These tests may be standalone `.cpp` files or symlinks to existing
+  `.t` harness cases; a selected `.t` test expands to its numbered `.t.1`,
+  `.t.2`, ... source files when those sidecars exist. The harness checks
+  no-debug objects at `-O0`, `-O1`, `-O2`, and `-O3`. A
+  GNU-section reducer additionally checks the global-section and relocation
+  relationships in both objects rather than relying only on byte equality. A
+  `default-no-optimization` case also checks that omitting `-O` matches
+  explicit `-O0`. A parameter-object-extent case additionally makes O3 object
+  shape depend on a source-produced member-object boundary, so byte equality
+  checks compiler-object and textual LowIR transport of that fact.
+
+Run the debug metadata preservation lanes with:
 
 ```sh
-make check TEST=tests/general/100-host-main-argv.t
+make test-debuginfo
 ```
 
-The local tests live in `tests/general/`. They cover host object
-interoperability, host final-link behavior, symbol spelling/coalescing, and
-object inspection where the object surface is directly checked. They are
-not direct N3485 clause tests.
+This also runs `tests/object-roundtrip` in debuginfo mode, comparing direct
+`cppgm++ -c` output against LowIR-input `cppgm++ -c` output with
+`-gline-tables-only` at `-O0`, `-O1`, `-O2`, and `-O3`.
 
-For each test anchor `x.t`, companion C++ sources are named:
+`make test-debuginfo` runs:
 
-```text
-x.t.1
-x.t.2
-...
-```
+- `tests/debuginfo/o1`
+- `tests/debuginfo/o2`
+- `tests/debuginfo/o3`
+- `tests/debuginfo/driver/o1`
+- `tests/debuginfo/driver/o2`
+- `tests/debuginfo/driver/o3`
 
-Optional sidecars control or check the host flow:
+The direct debug-info tests run `lowiropt -O*` over LowIR containing
+`!dbg(...)` metadata. The driver debug-info tests run
+`cppgm++ --emit-lowir -gline-tables-only -O*` and check that source locations
+survive the source-to-LowIR optimizer path.
 
-- `x.system-includes`: system include search directories passed to `cppgm++`
-  as `-isystem <dir>`
-- `x.link.flags`: extra flags passed to the host link driver
-- `x.lib.*`: host-built C or C++ helper sources
-- `x.argv`: program arguments for the runtime check
-- `x.inspect.cmd`, `x.inspect.expect`, or `x.inspect.plan`: object-inspection
-  checks that use the host symbol tools
-
-The checked-in PA32 tests cover:
-
-- hosted `main(argc, argv)` behavior through the host CRT
-- host linking across multiple `cppgm++`-generated objects
-- host linking against host-built objects
-- host linking against static archives and shared libraries
-- import/export of host-built `thread_local` variables in the tested subset
-- duplicate-definition/coalescing behavior for inline and template output
-- host symbol spelling for user-defined entities and selected template cases
-
-PA32 does not require hosted standard-library header support. Your compiler does
-not need hosted include search, hosted preprocessor compatibility, or semantic
-support for hosted headers such as `<exception>` or `<typeinfo>` yet. The PA32
-tests cover object emission, host linking, symbol spelling, and cross-object
-interoperability through declarations and helper objects that expose the object
-boundary directly. Hosted header compatibility begins in a later assignment, and
-hosted exception-library runtime behavior is introduced after hosted headers
-compile.
-
-### Using PA14 ABI Names
-
-PA32 does not require the broader host C++ ABI/runtime behavior exercised later,
-but ordinary host object interoperability already requires correct raw symbol
-spelling for user-defined entities.
-
-The object-file requirement is that visible symbol names match the configured host
-ABI. The PA14 ABI naming layer is the recommended path for producing those
-names:
-
-- the host linker sees raw symbol names, not demangled intent
-- function templates must encode template-parameter references with the same
-  `T_`, `T0_`, and related forms the host compiler uses
-- repeated components inside one mangled name must reuse Itanium substitution
-  slots in host-compatible order
-- canonical qualified names matter, including inline namespaces when they are
-  part of the ABI name
-
-Reference:
-
-- Local copy of Itanium C++ ABI, Chapter 5.1 "External Names (a.k.a.
-  Mangling)": [`../doc/itanium-mangling.txt`](../doc/itanium-mangling.txt)
-
-### Required Implementation Surface
-
-To complete PA32, implement ordinary host-toolchain interoperability of emitted
-object files within the supported subset:
-
-1. Emit host-linker-compatible relocatable objects, including PIE-safe GOT
-   materialization for the addresses of imported data and functions.
-2. Expose a hosted entrypoint through the host CRT.
-3. Preserve cross-translation-unit behavior under host link.
-4. Emit target-correct duplicate-definition semantics for header and template
-   code.
-5. Interoperate with host-built objects, archives, shared libraries, and tested
-   `thread_local` variables through practical function/global boundaries.
-6. Preserve the earlier class-value semantics in host-object mode. Compiler-object
-   metadata must not append a whole-object representation copy after a nontrivial
-   memberwise copy or move body.
-
-If the host linker rejects generated objects as ordinary objects, fix the
-host-compatible object-emission path.
+For each `.t` test, the harness records the tool exit status and compares the
+generated output against the oracle for that test directory. Failed reference
+cases are judged by exit status; successful reference cases are judged by the
+directory's LowIR validation mode.
 
 ### Out Of Scope
 
-The PA32 tests do not require:
+PA32 does not require:
 
-- host C++ ABI/runtime behavior after link
-- hosted standard-library header/source compatibility
-- hosted header-emitted link/runtime behavior
-- bootstrap or self-host builds
-
-### Design Notes (Non-Normative)
-
-A simple implementation strategy is to keep PA30's source-to-LowIR path, use
-PA14 to derive concrete C++ object symbols, and retarget only the object
-emission details needed by the host object format. The observable result is
-whether the host toolchain can consume and link the result, not whether your
-internal object pipeline has the same structure as the course implementation.
-
-One practical integration point is the compiler semantic/linkage layer: after
-semantic analysis determines the entity, owner scopes, function type, template
-arguments, local context, ABI tags, and special-name kind, that layer can feed
-those facts to the PA14 mangler and store the resulting raw symbol on the
-LowIR/object symbol. This keeps lower object-format and toolchain-driver code
-focused on preserving the spelling it was given instead of reconstructing C++
-ABI names from text fragments.
+- input programs to arrive in SSA form
+- PRE that requires critical-edge splitting, speculative trapping operations,
+  or an unbounded insertion/fixed-point schedule
+- alias-driven aggressive dead-store elimination
+- partial unrolling, peeling, vectorization, or loop transformations beyond
+  the bounded transformations needed by the fixture expectations
+- machine-IR scheduling or register-allocation optimization
+- unbounded interprocedural cloning, externally observable ABI changes,
+  semantic body merging, or indirect-call specialization
+- size-specific `-Os` or `-Oz` behavior
 
 ### After PA32
 
-Later host-link tests keep the same object path and then exercise richer host
-C++ ABI/runtime behavior.
+Later optimization tests build on this assignment by optimizing after LowIR has
+already been lowered to machine IR. PA32 focuses on the LowIR optimization
+pipeline and the `lowiropt` contract and quality checks.

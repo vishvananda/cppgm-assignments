@@ -1,117 +1,92 @@
-# Testing And References
+# Testing and references
 
-Run build and test targets from the repository root unless a PA handout says to
-use a narrower command.
-
-## Common Root Targets
+Run these commands from the repository root, replacing N with the assignment
+number:
 
 ```sh
 make build
-make test
 make test-paN
 make test-report-through-paN
 make test-report
-make test-strict
 make inception
 ```
 
-- `make build` builds the compiler tools in `dev/`.
-- `make test` builds once, then runs the assignment tests.
-- `make test-paN` runs one assignment.
-- `make test-report-through-paN` runs the report suite through PA N.
-- `make test-report` runs the broad keep-going report.
-- `make test-strict` runs stricter suites used by selected later assignments.
-- `make inception` runs the final PA39 self-host comparison.
+For PA1–PA33, a clean through-milestone report is the exit criterion. PA34 ends
+with inception. `make test` builds once and runs all assignment suites;
+`make test-report` keeps going and summarizes failures. Use
+`ACTIVE_TEST_REPORT_PAS='pa8 pa10'` to narrow a report.
 
-The exit criterion for PA N is a clean root `make test-report-through-paN`.
-
-## Assignment-Local Targets
-
-Inside an assignment directory:
+## Local checks and toolchains
 
 ```sh
-make
-make test
-make check TEST=tests/path/to/case.t
-make check TEST='tests/path/to/100-*.t'
-make check TEST='tests/path/to/a.t tests/path/to/b.t'
-```
-
-`TEST=` accepts one checked-in test file, a quoted shell glob, or a quoted
-space-separated list of files and globs. Later assignments with multiple test
-kinds can route mixed entries to the right local runner, for example a
-preprocessor case plus a compile case. Use local targets for quick iteration,
-then return to the root through target before considering the assignment
-complete.
-
-## Compiler Selection
-
-You may pass compilers explicitly:
-
-```sh
+make -C pa8 check TEST='tests/spec/100-*.t'
+make -C pa8 check TEST='tests/behavior/100-sum.t tests/behavior/200-swap.t'
 make CXX=g++ CPPGM_HOST_CXX=g++
 ```
 
-For normal host builds, `CXX` and `CPPGM_HOST_CXX` should usually match. For
-PA39 self-host work, `CXX` may be `../dev/cppgm++` while `CPPGM_HOST_CXX`
-remains a real host compiler.
+`TEST=` accepts a path, quoted glob or quoted list; mixed-input assignments
+route each fixture to its runner. Finish with the root through target.
+Keep a real host compiler in `CPPGM_HOST_CXX` when PA34 uses
+`CXX=../dev/cppgm++`. Use a separate object root for different toolchains.
 
-## Test Locations
+## Test locations and requirements
 
-- Assignment-local tests live in `paN/tests/`.
-- Shared course tests live in `cppgm.tests/course/paN/`.
-- Later PA handouts may describe additional folders such as strict, debuginfo,
-  object-inspection, or link tests.
+- Required fixtures live in `paN/tests/`, in the buckets named by the handout.
+  `controls/` holds focused property checks with no complete-output oracle.
+- Personal inputs and harnesses live in `student.tests/`; run them explicitly.
+  Default assignment targets do not discover that directory.
+- PA24 and PA32 also ship `tests/regression/`, which pins the course
+  solution's particular design. Those fixtures are outside your exit criteria;
+  default `make test` and the through reports run the course contract.
 
-Add focused regression tests for new bugs. Put shared student tests under
-`cppgm.tests/course/paN/` when they should travel with the course-wide harness;
-put PA-local tests under `paN/tests/` when they are specific to one assignment.
+PA33 checks executable behavior, declared MIR bounds and debug locations.
+It requires no profiler, allocator statistics or exact optimized MIR match.
+
+From PA5 onward, filenames use a three-digit feature-cluster prefix
+(`100-`, `200-`, ...); PA1–PA4 use finer subgroups. Controls and solution
+regressions follow their own local naming. Required rejection cases are in the
+owning suite; unspecified inputs do not add requirements.
 
 ## References
 
-Reference outputs, stdout refs, exit-status refs, and inspect refs are the test
-oracle. Do not edit them to hide an incomplete implementation.
+Use the oracle named by the handout: output, exit status, a focused property,
+or a code-quality envelope. Diagnostic text is not compared. Informational
+LowIR/MIR sidecars do not become grading requirements merely because they ship.
 
-Reference binaries such as `pptoken-ref` or `cppgm++-ref` are provided for
-observing expected behavior and regenerating reference fixtures. They must not
-be used by your compiler implementation.
+PA8 requires a LowIR model, reader/validator, writer and three construction
+exercises. The harness uses `lowir-ref` for roundtrips and `lowir2native-ref`
+to execute the student's constructed LowIR. Behavior checks accept alternative
+valid LowIR and grade program outcomes. The student compiler must implement
+LowIR construction and later C++ lowering itself.
 
-The reference binaries are not perfect. Only checked-in fixtures gate an
-assignment. Synthesizing new inputs is fine, but reference behavior outside
-the test suites is intended to be correct, not guaranteed; prefer the handout
-and the standard over exact reference parity. Error message text is never
-compared: failing tests check only the exit status.
+PA12’s behavioral controls also execute your source-generated LowIR through
+the supplied native backend. Your own native backend is introduced in PA24.
 
-The repository does not store the large binary payloads in Git. The checked-in
-`*-ref` wrappers automatically download, verify, and unpack the pinned
-reference-binary bundle the first time a reference tool is needed. To fetch the
-bundle before running a ref target, use:
+Reference wrappers download and verify a pinned bundle built from the current
+cppgm-extended solution. They provide examples of the required behavior and
+are not the original CPPGM binaries. Fetch them ahead of time with:
 
 ```sh
 make reference-binaries
 ```
 
-The ref regeneration targets use the provided reference binaries:
+Reference wrappers fail if a tool cannot be downloaded or verified; they
+never fall back to your implementation.
 
-```sh
-make ref-test-paN
-make -C paN ref-test
-```
+Failed-case stdout is an informational example. Successful stdout and
+required exit-status sidecars remain
+oracles. [The LowIR specification](pa8/lowir.md) explains normal comparison's
+presentation tolerance.
 
-These targets intentionally fail if the needed reference binary cannot be
-downloaded or verified. There is no fallback to the implementation under test.
+Reference implementations and checked outputs are not guaranteed bug-free.
+Preserve them by default. You may correct reference outputs when a reduced
+reproducer and cited C++11 rules—or the LowIR contract for IR-only cases—prove
+them incorrect. Document the proof and bundle revision. Compiler agreement
+alone is insufficient. Never weaken required behavior, coverage, or comparison
+rules.
 
-## Strict And Debug Fixtures
+## Debug and inspection checks
 
-Some later assignments include optional stricter comparisons, witness fixtures,
-debug-info fixtures, or object/link inspection checks. Run the targets named in
-the PA handout when you touch that surface. The broad root commands are:
-
-```sh
-make test-strict
-make ref-test-strict
-make ref-test-debuginfo
-```
-
-Strict/reference regeneration is for maintaining fixtures from the provided
-reference tools, not for making current incorrect output pass.
+Run the debug, object and link checks required by the current handout.
+`make test-debuginfo` collects the later debug suites; it is not an extra
+prerequisite for early assignments.

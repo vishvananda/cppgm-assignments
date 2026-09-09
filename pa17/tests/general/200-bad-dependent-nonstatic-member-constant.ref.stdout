@@ -1,0 +1,1 @@
+ERROR: non-static member requires an object at tests/general/200-bad-dependent-nonstatic-member-constant.t:13:29

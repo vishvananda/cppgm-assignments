@@ -1,0 +1,1 @@
+ERROR: invalid __builtin_abort call at tests/general/300-builtin-abort-arity-bad.t:3:2

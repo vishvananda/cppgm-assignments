@@ -1,0 +1,17 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $a : obj<8x4>
+  slot $p : ptr
+
+  block ^entry:
+    %t1 = addr $a
+    store i32 3, %t1
+    %t2 = index i8 %t1, 4
+    store i32 4, %t2
+    %t3 = addr $a
+    store ptr %t3, $p
+    %t4 = load ptr $p
+    %t5 = index i32 [projection=array_element] %t4, 1
+    %t6 = load i32 %t5
+    %t7 = binary sub i32 %t6, 4
+    return i32 %t7
+}

@@ -1,11 +1,12 @@
 TARGET = cppgm++
-TARGET_ARGS = --emit-semantics
+TARGET_ARGS = --emit-lowir -O0
 export CPPGM_APP_ARGS := $(TARGET_ARGS)
 CXX = g++
 CPPGM_STDLIB_FLAGS ?=
 CPPGM_TEST_RUNNER ?= 1
 CPPGM_TEST_APP ?= ../dev/$(TARGET)
 REF_TEST_APP ?= $(CPPGM_TEST_APP)-ref
+NATIVE_REFERENCE_APP ?= ../dev/lowir2native-ref
 TEST_DEPS ?= dev-shared-target
 TEST_RUNNER_SHARED_FLAGS = $(if $(filter 1,$(CPPGM_TEST_RUNNER)),-DTEST_RUNNER_ENABLE,)
 TEST_RUNNER_ENTRY_FLAGS = $(TEST_RUNNER_SHARED_FLAGS) $(if $(filter 1,$(CPPGM_TEST_RUNNER)),-Dmain=test_runner_real_main,)
@@ -18,7 +19,7 @@ OBJ = ../obj
 VPATH = $(SRC)
 RDEPDIR = $(OBJ)/release/.d
 DDEPDIR = $(OBJ)/debug/.d
-COURSE_TEST_ROOT = $(wildcard course/pa12)
+CONTROL_TEST_ROOT ?= tests/controls
 
 $(shell mkdir -p $(RDEPDIR) $(DDEPDIR) >/dev/null)
 
@@ -54,28 +55,38 @@ $(OBJ)/debug/%.o: %.cpp
 	$(CXX) $(CC_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(DDEPDIR)/$*.Td -o $@ $<
 	mv -f $(DDEPDIR)/$*.Td $(DDEPDIR)/$*.d
 
-$(OBJ)/release/test_runner_enabled.o: $(SRC)/test_runner.cpp
+$(OBJ)/release/test_runner_enabled.o: $(SRC)/$(FRONTEND_TEST_RUNNER_SOURCE_ID).cpp
 	$(CXX) $(CC_FLAGS) $(TEST_RUNNER_SHARED_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(RDEPDIR)/test_runner_enabled.Td -o $@ $<
 	mv -f $(RDEPDIR)/test_runner_enabled.Td $(RDEPDIR)/test_runner_enabled.d
 
-$(OBJ)/debug/test_runner_enabled.o: $(SRC)/test_runner.cpp
+$(OBJ)/debug/test_runner_enabled.o: $(SRC)/$(FRONTEND_TEST_RUNNER_SOURCE_ID).cpp
 	$(CXX) $(CC_FLAGS) $(TEST_RUNNER_SHARED_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(DDEPDIR)/test_runner_enabled.Td -o $@ $<
 	mv -f $(DDEPDIR)/test_runner_enabled.Td $(DDEPDIR)/test_runner_enabled.d
 
-ifeq ($(COURSE_TEST_ROOT),)
 test: $(TEST_DEPS)
 	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my tests
 	@scripts/compare_results.pl ref my tests
-else
-test: $(TEST_DEPS)
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my tests
-	@scripts/compare_results.pl ref my tests
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my $(COURSE_TEST_ROOT)
-	@scripts/compare_results.pl ref my $(COURSE_TEST_ROOT)
-endif
+	@if [ -d "$(CONTROL_TEST_ROOT)" ]; then \
+		perl ../scripts/check_pa12_survivor_properties.pl \
+			$(CPPGM_TEST_APP) $(NATIVE_REFERENCE_APP) "$(CONTROL_TEST_ROOT)"; \
+	fi
 
 ref-test:
 	@$(REF_TEST_RUN)
+
+REF_TEST_RUN = case "$(TEST)" in \
+	$(CONTROL_TEST_ROOT)/*) echo "$(TEST): focused LowIR/behavior predicate has no reference sidecar" ;; \
+	*) scripts/run_all_tests.pl $(REF_TEST_APP) ref "$(if $(strip $(TEST)),$(TEST),tests)" ;; \
+esac
+
+CHECK_RUN = case "$(TEST)" in \
+	$(CONTROL_TEST_ROOT)/*) perl ../scripts/check_pa12_survivor_properties.pl $(CPPGM_TEST_APP) $(NATIVE_REFERENCE_APP) "$(TEST)" ;; \
+	*) scripts/run_all_tests.pl $(CPPGM_TEST_APP) check "$(TEST)" ;; \
+esac
+CHECK_COMPARE = case "$(TEST)" in \
+	$(CONTROL_TEST_ROOT)/*) true ;; \
+	*) scripts/compare_results.pl ref check "$(TEST)" ;; \
+esac
 
 include ../scripts/pa_run_check_targets.mk
 

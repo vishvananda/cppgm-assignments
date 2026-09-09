@@ -1,0 +1,1 @@
+ERROR: signed constant unary negation overflow at tests/general/100-signed-constant-unary-overflow-bad.t:1:15

@@ -13,9 +13,11 @@ use POSIX qw(setpgid WNOHANG);
 use Text::ParseWords qw(shellwords);
 
 our @EXPORT_OK = qw(
+  app_args_for
   clear_progress_state
   close_worker
   collect_tests
+  detect_jobs
   ensure_test_app_available
   get_timeout_from_env
   note_progress_state
@@ -99,6 +101,13 @@ sub collect_tests
 			elsif (-d $root)
 			{
 				find(sub {
+					# A `controls` or `regression` directory inside a suite
+					# is a lane of its own, run by its own target.
+					if (-d $_ && $_ ne $root && $_ =~ m{(?:^|/)(?:controls|regression)$})
+					{
+						$File::Find::prune = 1;
+						return;
+					}
 					return if !-f $_;
 					push @found, $File::Find::name if $File::Find::name =~ $pattern;
 				}, $root);
@@ -285,10 +294,25 @@ sub read_env_file
 	return \%env;
 }
 
-sub open_worker
+# The tool's arguments: CPPGM_APP_ARGS, plus the backend design variant the
+# course harness selects through CPPGM_BACKEND_VARIANT (`make test-variants`)
+# for the tools that have a backend.  The compiler takes the variant only as
+# the `--backend-variant <name>` option.
+sub app_args_for
 {
 	my ($app) = @_;
 	my @app_args = shellwords($ENV{CPPGM_APP_ARGS} || '');
+	my $variant = $ENV{CPPGM_BACKEND_VARIANT};
+	push @app_args, '--backend-variant', $variant
+		if defined($variant) && $variant ne '' &&
+		   $app =~ m{(?:^|/)(?:cppgm\+\+|lowiropt|lowir2native)(?:-ref)?$};
+	return @app_args;
+}
+
+sub open_worker
+{
+	my ($app) = @_;
+	my @app_args = app_args_for($app);
 	my ($worker_out, $worker_in);
 	my $pid = open2($worker_out,
 	               $worker_in,
@@ -311,6 +335,24 @@ sub try_set_process_group
 	return 1 if setpgid($pid, $pid);
 	return 0 if $!{EACCES} || $!{EPERM} || $!{ESRCH};
 	die "Unable to set worker process group for $pid: $!";
+}
+
+# Worker count for a test run. Checks each named environment variable in turn
+# and otherwise uses the machine width, matching run_all_tests_common.pl.
+# Falling back to one worker instead made a bare `make -C paN test` run every
+# test serially, which is an order of magnitude slower than the same
+# assignment under `make test-report`.
+sub detect_jobs
+{
+	my @names = @_ ? @_ : ('CPPGM_TEST_JOBS');
+	for my $name (@names)
+	{
+		my $value = $ENV{$name};
+		return $value if defined($value) && $value =~ m/^\d+$/ && $value > 0;
+	}
+	chomp(my $cpus = `getconf _NPROCESSORS_ONLN 2>/dev/null`);
+	return $cpus if $cpus =~ m/^\d+$/ && $cpus > 0;
+	return 1;
 }
 
 sub set_cloexec
@@ -368,7 +410,11 @@ sub encode_env
 {
 	my ($env) = @_;
 	return '' if !defined($env);
-	return join(';', map { $_ . '=' . $env->{$_} } sort keys %{$env});
+	return join(';', map {
+		my $val = $env->{$_};
+		$val =~ s/[\r\n\t]/ /g;
+		$_ . '=' . $val
+	} sort keys %{$env});
 }
 
 sub submit_cli_request

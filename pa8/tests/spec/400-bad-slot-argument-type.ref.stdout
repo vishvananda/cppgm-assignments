@@ -1,0 +1,1 @@
+ERROR: call argument src is a slot of type i64 but the parameter type is ptr at tests/spec/400-bad-slot-argument-type.t:19

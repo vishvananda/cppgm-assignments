@@ -1,0 +1,61 @@
+function @hash_like(%h : i64, %bc : i64) -> i64 [binding=strong, prefer_local=yes] {
+  block ^entry:
+    %t4 = binary sub i64 %bc, 1
+    %t5 = binary and i64 %bc, %t4
+    %t6 = cmp eq i64 %t5, 0
+    branch %t6, ^pow2, ^generic
+
+  block ^pow2:
+    %t11 = binary and i64 %h, %t4
+    jump ^end
+
+  block ^generic:
+    %t14 = cmp ult i64 %h, %bc
+    branch %t14, ^small, ^mod
+
+  block ^small:
+    jump ^merge
+
+  block ^mod:
+    %t18 = binary umod i64 %h, %bc
+    jump ^merge
+
+  block ^merge:
+    %t3 = phi i64 [^small: %h, ^mod: %t18]
+    jump ^end
+
+  block ^end:
+    %t0 = phi i64 [^pow2: %t11, ^merge: %t3]
+    return i64 %t0
+}
+function @caller(%h : i64, %bc : i64) -> i64 {
+  block ^entry:
+    %__o1inl0__t4 = binary sub i64 %bc, 1
+    %__o1inl0__t5 = binary and i64 %bc, %__o1inl0__t4
+    %__o1inl0__t6 = cmp eq i64 %__o1inl0__t5, 0
+    branch %__o1inl0__t6, ^__o1inl0__pow2, ^__o1inl0__generic
+
+  block ^__o1inl0__pow2:
+    %__o1inl0__t11 = binary and i64 %h, %__o1inl0__t4
+    jump ^__o1inl0__end
+
+  block ^__o1inl0__generic:
+    %__o1inl0__t14 = cmp ult i64 %h, %bc
+    branch %__o1inl0__t14, ^__o1inl0__small, ^__o1inl0__mod
+
+  block ^__o1inl0__small:
+    jump ^__o1inl0__merge
+
+  block ^__o1inl0__mod:
+    %__o1inl0__t18 = binary umod i64 %h, %bc
+    jump ^__o1inl0__merge
+
+  block ^__o1inl0__merge:
+    %t3 = phi i64 [^__o1inl0__small: %h, ^__o1inl0__mod: %__o1inl0__t18]
+    jump ^__o1inl0__end
+
+  block ^__o1inl0__end:
+    %t0 = phi i64 [^__o1inl0__pow2: %__o1inl0__t11, ^__o1inl0__merge: %t3]
+    %t2 = binary add i64 %t0, 1
+    return i64 %t2
+}

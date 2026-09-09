@@ -1,0 +1,1 @@
+ERROR: ambiguous overload for choose among 3 candidates at tests/general/300-overload-no-global-best-bad.t:7:3

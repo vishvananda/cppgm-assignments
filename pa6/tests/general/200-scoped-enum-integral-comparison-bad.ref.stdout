@@ -1,0 +1,1 @@
+ERROR: invalid comparison operands at tests/general/200-scoped-enum-integral-comparison-bad.t:5:21

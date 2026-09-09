@@ -1,0 +1,1 @@
+ERROR: invalid explicit conversion at tests/general/300-static-pointer-integral-cast-bad.t:5:10

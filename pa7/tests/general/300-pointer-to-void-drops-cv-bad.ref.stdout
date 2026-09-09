@@ -1,0 +1,1 @@
+ERROR: no viable overload for consume in pass candidate=function of (pointer to void) returning void object=<none> argument=pointer to const int at tests/general/300-pointer-to-void-drops-cv-bad.t:5:3

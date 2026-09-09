@@ -1,0 +1,1 @@
+ERROR: __VA_ARGS__ outside a variadic replacement list at tests/macros/250-badvargs4.t:1:12

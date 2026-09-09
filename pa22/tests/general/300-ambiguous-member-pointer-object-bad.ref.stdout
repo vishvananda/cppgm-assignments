@@ -1,0 +1,1 @@
+ERROR: member pointer object has no unique base path at tests/general/300-ambiguous-member-pointer-object-bad.t:10:15

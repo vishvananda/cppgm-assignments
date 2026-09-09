@@ -1,0 +1,1 @@
+ERROR: member pointer owner not found at tests/general/300-unknown-member-pointer-owner-bad.t:3:3

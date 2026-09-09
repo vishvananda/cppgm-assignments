@@ -1,0 +1,1 @@
+ERROR: unknown type name: Inner at tests/spec/300-template-template-inner-parameter-scope-bad.t:3:3

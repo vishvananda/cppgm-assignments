@@ -1,0 +1,1 @@
+ERROR: dynamic_cast names an inaccessible base at tests/general/300-dynamic-cast-inaccessible-upcast-bad.t:8:10

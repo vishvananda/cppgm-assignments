@@ -1,0 +1,1 @@
+ERROR: non-type template argument is not an integral constant:  at tests/general/400-nonconstexpr-class-bool-conversion-nttp-bad.t:13:6 in <namespace> [parameter=bool expression=bool constant=no binding=8]

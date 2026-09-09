@@ -1,0 +1,1 @@
+ERROR: expected close angle bracket at tests/general/200-malformed-template-parameter-clause.t:1:18 at token 4 (`struct`)

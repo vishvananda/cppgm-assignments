@@ -1,0 +1,1 @@
+ERROR: object_bytes metadata requires ptr at tests/spec/300-bad-object-extent-nonpointer.t:3

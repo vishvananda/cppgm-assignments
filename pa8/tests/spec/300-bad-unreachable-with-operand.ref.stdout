@@ -1,0 +1,1 @@
+ERROR: instruction after terminator at tests/spec/300-bad-unreachable-with-operand.t:3

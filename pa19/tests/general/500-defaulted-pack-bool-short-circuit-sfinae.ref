@@ -1,0 +1,30 @@
+function @test(%source : ptr [pass=by_address, object_bytes=1]) -> void [binding=strong, object=_Z4testRK3boxIJiiEE] {
+  slot $source : ptr
+  slot $value : obj<1x1>
+
+  block ^entry:
+    store ptr %source, $source
+    %t1 = addr $value
+    %t2 = load ptr $source
+    call void @box_lvalue_reference_to_const_struct___cppgm_class_template_identity_2_0_0___box_lvalue_reference_to_const_struct___cppgm_class_template_identity_2_0_0___ov3(%t1, %t2)
+    %t3 = addr $value
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    return i32 0
+}
+function @box_lvalue_reference_to_const_struct___cppgm_class_template_identity_2_0_0___other() -> u8 [binding=weak, object=_ZN3boxIJRKS_IJiiEEEE5otherIS2_EEbv, inline_hint=yes] {
+  block ^entry:
+    return u8 0
+}
+function @box_lvalue_reference_to_const_struct___cppgm_class_template_identity_2_0_0___box_lvalue_reference_to_const_struct___cppgm_class_template_identity_2_0_0___ov3(%this : ptr [object_bytes=1], %__param1 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN3boxIJRKS_IJiiEEEEC1IiiLb0ELb0EEERKS_IJT_EE, inline_hint=yes] {
+  slot $this : ptr
+  slot $__param1 : ptr
+
+  block ^entry:
+    store ptr %this, $this
+    store ptr %__param1, $__param1
+    return void
+}
+alias object _ZN3boxIJRKS_IJiiEEEEC2IiiLb0ELb0EEERKS_IJT_EE = @box_lvalue_reference_to_const_struct___cppgm_class_template_identity_2_0_0___box_lvalue_reference_to_const_struct___cppgm_class_template_identity_2_0_0___ov3

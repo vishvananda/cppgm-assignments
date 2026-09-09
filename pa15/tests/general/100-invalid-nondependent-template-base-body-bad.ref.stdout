@@ -1,0 +1,1 @@
+ERROR: static assertion failed at tests/general/100-invalid-nondependent-template-base-body-bad.t:7:3

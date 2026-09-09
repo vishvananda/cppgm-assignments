@@ -1,0 +1,1 @@
+ERROR: no viable overload for take in test candidate=function of (pointer to int) returning void object=<none> argument=enum __anonymous_enum1 at tests/spec/300-enumerator-is-not-null-pointer-constant-bad.t:4:15

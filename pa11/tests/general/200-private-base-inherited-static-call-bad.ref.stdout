@@ -1,0 +1,1 @@
+ERROR: inaccessible member function value on <no object> in main owner-type=struct YStaticBase naming-type=class YStaticDerived [member-owner=0 access-owner=4294967295 naming-class=1 object-class=4294967295 access=0] at tests/general/200-private-base-inherited-static-call-bad.t:10:10

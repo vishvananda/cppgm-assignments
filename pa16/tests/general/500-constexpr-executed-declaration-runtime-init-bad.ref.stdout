@@ -1,0 +1,1 @@
+ERROR: static_assert requires an integral constant expression at tests/general/500-constexpr-executed-declaration-runtime-init-bad.t:11:1

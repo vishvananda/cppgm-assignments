@@ -1,5 +1,8 @@
 ## CPPGM Programming Assignment 2 (posttoken)
 
+Adapted from the original CPPGM material; revised for cppgm-extended.
+See [NOTICE](../NOTICE) for attribution.
+
 ### Overview
 
 Write a C++ application called `posttoken` that accepts a _C++ Source File_ on standard input that does NOT include any...
@@ -7,7 +10,7 @@ Write a C++ application called `posttoken` that accepts a _C++ Source File_ on s
  - preprocessing directives
  - pre-defined macro names
  - the pragma operator
- 
+
 ...executes phases 1, 2, 3, 4, 5, 6 and the tokenization part of 7 of the _Phases of Translation_, and describes the resulting sequence of analyzed and categorized `tokens` to standard output in the specified format.
 
 Notice that by virtue of the restrictions, phase 4 (preprocessing) is a _no-op_ (does nothing).
@@ -18,13 +21,12 @@ You should complete Programming Assignment 1 before starting this assignment.
 
 ### Starter Kit
 
-The starter kit can be obtained from:
+Use the cumulative student repository. Implement `posttoken` in
+`../dev/posttoken.cpp` and reusable helpers under `../dev/src/`.
+The assignment provides tests, references and a `posttoken-ref` wrapper;
+see [Testing and references](../TESTING_AND_REFERENCES.md).
 
-    $ git clone git://git.cppgm.org/pa2.git
-
-It contains a stub implementation of `posttoken` with some _optional_ starter code, a compiled reference implementation and a test suite.
-
-You will also want to reuse most of your code from PA1.
+Reuse the implementation from PA1; do not start it over.
 
 ### Input Format
 
@@ -40,9 +42,9 @@ Preprocessing-tokens `#`, `##`, `%:`, `%:%:`, `non-whitespace-characters`, and `
 
 If a `preprocessing-token` contains a pre-defined macro names or the pragma operator you may treat them as identifiers.
 
-### Restrictions
+### Implementation
 
-As per PA1
+Extend your existing compiler code under `dev/` and `dev/src/`.
 
 ### Output Format
 
@@ -83,7 +85,7 @@ For example, for an input of:
     auto &&
 
 the output is:
- 
+
     simple auto KW_AUTO
     simple && OP_LAND
 
@@ -92,15 +94,15 @@ the output is:
 `identifiers` are output as
 
     identifier <source>
-    
+
 Where `<source>` is the identifier in UTF-8, for example for an input of:
 
     foo
-    
+
 the output is:
 
     identifier foo
-        
+
 #### literal
 
     literal <source> <type> <hexdump>
@@ -120,7 +122,7 @@ And `<hexdump>` is the hexadecimal representation of the data in memory in the L
 For example, for an input of:
 
     1000000 'A' "ABC" 3.2
-    
+
 the output is:
 
 	literal 1000000 int 40420F00
@@ -154,7 +156,7 @@ In the case of `string` and `character`, `<type> <hexdump>` have the same meanin
 For example:
 
     123_foo 4.2_bar 0x3_baz "abc"_qux 'a'_quux
-    
+
 outputs:
 
 	user-defined-literal 123_foo _foo integer 123
@@ -172,7 +174,7 @@ For any valid `preprocessing-token` that does not posttokenize output:
 For example:
 
     # 123abc 1..e
-    
+
 Should output:
 
     invalid #
@@ -182,7 +184,7 @@ Should output:
 Also as stated above invalid string literal concatenation should output one invalid.  For example:
 
     u8"abc" u"def" U"ghi"
-    
+
 Should output:
 
     invalid u8"abc" u"def" U"ghi"
@@ -273,9 +275,9 @@ corresponding to the sequence's element type, otherwise the complete
 the course ABI, the code-unit widths are 8 bits for `char`, 16 bits for
 `char16_t`, and 32 bits for `char32_t` and `wchar_t`.
 
-For example, `"\\x3C0"` is invalid because `0x3C0` does not fit in one
-`char` code unit, while `u"\\x3C0"`, `U"\\x3C0"`, and `L"\\x3C0"` are
-valid. `"\\u03C0"` is also valid because a `universal-character-name` is
+For example, `"\x3C0"` is invalid because `0x3C0` does not fit in one
+`char` code unit, while `u"\x3C0"`, `U"\x3C0"`, and `L"\x3C0"` are
+valid. `"\u03C0"` is also valid because a `universal-character-name` is
 encoded rather than treated as a numeric escape.
 
 You then need to consider maximal consequtive sequences of both kinds (user-defined and non-user-defined) together and apply the phase 6 rules about string concatenation.
@@ -306,35 +308,20 @@ The rule about combining `ud-suffixes` is similiar to the one about `encoding-pr
 
 Read 2.14.8.8 for clarification.
 
-## Testing / Reference Implementation
+## Testing and references
 
-The test suite is similiar to PA1.  Execute:
+From the repository root:
 
-    $ make test
-    
-In order to deal with invalids and keep going, stderr is not included in the output.  It is placed in another file.  So the content of the tests directory is:
+```sh
+make test-pa2
+make test-report-through-pa2
+```
 
-    tests/123-test-name.t                // test stdin
-    tests/123-test-name.ref              // reference impl stdout
-    tests/123-test-name.ref.exit_status  // reference impl exit status
-    tests/123-test-name.ref.stderr       // reference impl stderr
-    tests/123-test-name.my               // your impl stdout
-    tests/123-test-name.my.exit_status   // your impl exit status
-    tests/123-test-name.my.stderr        // your impl stderr
-
-If you add a test case:
-
-    tests/456-my-test-case.t
-    
-You can regenerate reference impl output with:
-
-    $ make ref-test
-
-and then retest against it:
-
-    $ make test
-    
-However you should not modify existing tests or their reference output.
+Use `posttoken-ref` to investigate behavior. Required output and exit status
+are compared with the checked-in sidecars; diagnostic text is not graded.
+See [Testing and references](../TESTING_AND_REFERENCES.md) for local checks
+and comparison rules. Preserve supplied test inputs; reference corrections
+follow that policy.
 
 ## Definition: Fundamental Types
 
@@ -362,7 +349,7 @@ They are:
     long double
     void
     nullptr_t
-    
+
 Each fundamental type is different (distinct) from every other.
 
 The C++ standard does not specify exactly the size, alignment and representation of each of these types.

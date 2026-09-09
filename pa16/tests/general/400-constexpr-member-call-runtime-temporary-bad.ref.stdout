@@ -1,0 +1,1 @@
+ERROR: static_assert requires an integral constant expression at tests/general/400-constexpr-member-call-runtime-temporary-bad.t:13:1

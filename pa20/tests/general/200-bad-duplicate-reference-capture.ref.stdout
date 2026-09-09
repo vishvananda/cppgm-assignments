@@ -1,0 +1,1 @@
+ERROR: duplicate explicit lambda capture at tests/general/200-bad-duplicate-reference-capture.t:4:31

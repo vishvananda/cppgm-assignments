@@ -1,8 +1,0 @@
-translation-unit
-template-closure-events
-  ensure-definition
-    entity inspect
-  function-instantiation
-    entity inspect
-  require-definition
-    entity inspect

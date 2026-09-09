@@ -1,0 +1,1 @@
+ERROR: no viable overload for set in f candidate=function of (lvalue-reference to pointer to char) returning void object=<none> argument=const pointer to char at tests/general/100-bad-reference-binding-top-level-const-source.t:2:25

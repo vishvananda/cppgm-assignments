@@ -1,0 +1,1 @@
+ERROR: static assertion failed at tests/general/200-class-scope-bad-static-assert.t:2:3

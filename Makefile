@@ -13,7 +13,7 @@ CPPGM_MAKE_LOW_JOB_LIMIT = $(shell \
 	limit='$(CPPGM_MAKE_JOB_LIMIT)'; cpus='$(DEFAULT_BUILD_JOBS)'; \
 	if [ "$$limit" -gt 0 ] 2>/dev/null && [ "$$cpus" -gt "$$limit" ] 2>/dev/null; then echo 1; else echo 0; fi)
 ifeq ($(CPPGM_MAKE_LOW_JOB_LIMIT),1)
-$(warning make is limited to -j$(CPPGM_MAKE_JOB_LIMIT) on a $(DEFAULT_BUILD_JOBS)-core machine; large compiler builds, especially self-host and PA39/inception builds, will be very slow. Omit -j or use -j$(DEFAULT_BUILD_JOBS).)
+$(warning make is limited to -j$(CPPGM_MAKE_JOB_LIMIT) on a $(DEFAULT_BUILD_JOBS)-core machine; large compiler builds, especially self-host and PA34/inception builds, will be very slow. Omit -j or use -j$(DEFAULT_BUILD_JOBS).)
 endif
 endif
 endif
@@ -33,20 +33,28 @@ export CPPGM_TEST_RUNNER ?= 1
 export CPPGM_TEXT_TEST_TIMEOUT_SEC ?= 10
 export CPPGM_BUILD_TEST_TIMEOUT_SEC ?= 30
 export CPPGM_PROGRAM_TEST_TIMEOUT_SEC ?= 10
-DEBUGINFO_TEST_PAS ?= pa13 pa37 pa38
+DEBUGINFO_TEST_PAS ?= pa8 pa32 pa33
 
 ALL_PAS = $(patsubst %/Makefile,%,$(wildcard pa*/Makefile))
-EXPERIMENTAL_PAS ?= pa39
+EXPERIMENTAL_PAS ?= pa34
 PAS = $(filter-out $(EXPERIMENTAL_PAS),$(ALL_PAS))
 SORTED_PAS = $(shell printf '%s\n' $(PAS) | sort -t a -k 2,2n)
 TEST_REPORT_PAS ?= $(SORTED_PAS)
 ACTIVE_TEST_REPORT_PAS ?= $(TEST_REPORT_PAS)
 REF_TEST_PAS ?= $(SORTED_PAS)
-STRICT_PAS ?= pa19 pa20 pa22 pa23 pa24
-STRICT_SUBTEST_JOBS ?= $(DEFAULT_BUILD_JOBS)
+# One assignment at a time gets the whole machine: there is nothing else to
+# share it with, unlike test-report where assignments run side by side.
+SINGLE_ASSIGNMENT_SUBTEST_JOBS ?= $(DEFAULT_BUILD_JOBS)
 DEV_BUILD_LOCK = obj/.dev-build.lock
 
-TEST_REPORT_SUBTEST_JOBS ?= 2
+# Assignment costs are heavily skewed: the largest is many seconds of work at
+# two workers while most finish in well under a second. Two workers per
+# assignment leaves the machine idle waiting on the few big ones once the short
+# ones drain, so scale the per-assignment width with the core count instead.
+# The cap keeps assignments x subtests within the core count (see
+# TEST_REPORT_ASSIGNMENT_JOBS below), and the floor of 2 preserves the previous
+# behaviour on small hosts.
+TEST_REPORT_SUBTEST_JOBS ?= $(shell jobs=$$(( $(DEFAULT_BUILD_JOBS) / 8 )); if [ "$$jobs" -lt 2 ]; then jobs=2; fi; if [ "$$jobs" -gt 8 ]; then jobs=8; fi; echo $$jobs)
 TEST_REPORT_ASSIGNMENT_JOBS ?= $(shell subjobs=$(TEST_REPORT_SUBTEST_JOBS); if [ -z "$$subjobs" ] || [ "$$subjobs" -lt 1 ] 2>/dev/null; then subjobs=1; fi; jobs=$$(( $(DEFAULT_BUILD_JOBS) / $$subjobs )); if [ "$$jobs" -lt 1 ]; then jobs=1; fi; echo $$jobs)
 TEST_REPORT_STALL_SEC ?= 90
 TEST_REPORT_BUILD_TIMEOUT_SEC ?= 60
@@ -55,14 +63,14 @@ SUBMAKE_OBJ_ARG = $(if $(strip $(OBJ)),OBJ=$(OBJ))
 SUBMAKE_GENERATED_ARG = $(if $(strip $(GENERATED)),GENERATED=$(GENERATED))
 SUBMAKE_CC_FLAGS_ARG = $(if $(strip $(CC_FLAGS)),CC_FLAGS="$(CC_FLAGS)")
 
-.PHONY: all build test ref-test ref-test-strict ref-test-debuginfo \
-	test-strict test-strict-nobuild test-debuginfo test-debuginfo-nobuild \
+.PHONY: all build test ref-test ref-test-debuginfo \
+	test-debuginfo test-debuginfo-nobuild require-clang require-clang-libcxx asan-build test-cells \
 	test-report inception clean run-cppgm run-cppgm-nobuild \
 	test-report-nobuild test-report-through-% test-report-through-%-nobuild \
 	ref-test-% \
 	test-% \
 	$(ALL_PAS)
-.NOTPARALLEL: ref-test ref-test-strict ref-test-debuginfo
+.NOTPARALLEL: ref-test ref-test-debuginfo
 
 all: build
 
@@ -103,25 +111,6 @@ ref-test:
 	done
 	@echo "===== ALL REFS REGENERATED SUCCESSFULLY! ====="
 
-ref-test-strict:
-	@if [ -z "$(strip $(STRICT_PAS))" ]; then \
-		echo "No strict assignments configured"; \
-		exit 0; \
-	fi
-	@for dir in $(STRICT_PAS); do \
-		echo "===== $$dir (ref-test-strict) ====="; \
-		$(MAKE) -C $$dir \
-			CXX=$(CXX) \
-			CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
-			CPPGM_STDLIB_FLAGS=$(CPPGM_STDLIB_FLAGS) \
-			CPPGM_TEST_RUNNER=$(CPPGM_TEST_RUNNER) \
-			$(SUBMAKE_OBJ_ARG) \
-			$(SUBMAKE_GENERATED_ARG) \
-			$(SUBMAKE_CC_FLAGS_ARG) \
-			ref-test-strict || exit 1; \
-	done
-	@echo "===== ALL STRICT WITNESS REFS REGENERATED SUCCESSFULLY! ====="
-
 ref-test-debuginfo:
 	@if [ -z "$(strip $(DEBUGINFO_TEST_PAS))" ]; then \
 		echo "No debuginfo assignments configured"; \
@@ -140,44 +129,6 @@ ref-test-debuginfo:
 			ref-test-debuginfo || exit 1; \
 	done
 	@echo "===== ALL DEBUGINFO REFS REGENERATED SUCCESSFULLY! ====="
-
-test-strict: build
-	@$(MAKE) test-strict-nobuild \
-		STRICT_PAS='$(STRICT_PAS)'
-
-test-strict-nobuild:
-	@export KEEP_GOING=1; \
-	if [ "$(CPPGM_TEST_RUNNER)" = "1" ]; then \
-		export CPPGM_BATCH_TESTS=1; \
-		export WRAPPED_BATCH_STDIN=1; \
-	else \
-		unset CPPGM_BATCH_TESTS; \
-		unset WRAPPED_BATCH_STDIN; \
-	fi; \
-	export CPPGM_TEST_JOBS=$(STRICT_SUBTEST_JOBS); \
-	if [ -z "$(strip $(STRICT_PAS))" ]; then \
-		echo "===== NO STRICT TESTS CONFIGURED ====="; \
-		exit 0; \
-	fi; \
-	status=0; \
-	failed=''; \
-	for dir in $(STRICT_PAS); do \
-		echo "===== $$dir (strict) ====="; \
-		$(MAKE) -C $$dir \
-			CXX=$(CXX) \
-			CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
-			CPPGM_STDLIB_FLAGS=$(CPPGM_STDLIB_FLAGS) \
-			CPPGM_TEST_RUNNER=$(CPPGM_TEST_RUNNER) \
-			$(SUBMAKE_OBJ_ARG) \
-			$(SUBMAKE_GENERATED_ARG) \
-			$(SUBMAKE_CC_FLAGS_ARG) \
-			CPPGM_SKIP_DEV_REBUILD=1 test-strict || { status=1; failed="$$failed $$dir"; }; \
-	done; \
-	if [ $$status -ne 0 ]; then \
-		echo "===== STRICT TESTS FAILED IN:$${failed} ====="; \
-		exit $$status; \
-	fi; \
-	echo "===== ALL STRICT TESTS PASSED SUCCESSFULLY! ====="
 
 test-debuginfo: build
 	@$(MAKE) test-debuginfo-nobuild \
@@ -208,11 +159,95 @@ test-debuginfo-nobuild:
 	echo "===== DEBUG-INFO TESTS PASSED SUCCESSFULLY! ====="
 
 inception: build
-	@$(MAKE) -C pa39 \
+	@$(MAKE) -C pa34 \
 		CXX=../dev/cppgm++ \
 		CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" \
 		CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)" \
 		compare-cppgm++-inception
+
+# Toolchain cells.  Each supported (host compiler, standard library) pair keeps
+# its own object roots, so switching cells relinks the tools in dev/ but does
+# not throw away the objects the other cell compiled.  Prefix any target to run
+# it in a cell, for example `make with-clang-test-report-through-pa33` or
+# `make with-clang-libcxx-inception`.  The supported cells are the default
+# g++/libstdc++, clang/libstdc++, and clang/libc++; g++ with libc++ is not
+# supported and has no cell.
+CLANG_CXX ?= clang++
+CLANG_CELL_OBJ ?= obj-clang
+CLANG_LIBCXX_CELL_OBJ ?= obj-clang-libcxx
+
+# Every cell in one command.  Each is a lane in its own right -- prefixing any
+# target runs it in one cell -- but a single command that walks all three is
+# what makes "does this change hold everywhere" one thing to type.  It keeps
+# going after a failing cell and names which ones failed at the end, because
+# the useful answer is the whole set, not the first one to break.
+test-cells:
+	@status=0; failed=""; \
+	for cell in default clang clang-libcxx; do \
+		echo "===== cell: $$cell ====="; \
+		case $$cell in \
+			default) target=test-report-through-pa33 ;; \
+			*) target=with-$$cell-test-report-through-pa33 ;; \
+		esac; \
+		$(MAKE) $$target || { status=1; failed="$$failed $$cell"; }; \
+	done; \
+	if [ $$status -ne 0 ]; then \
+		echo "===== failing cells:$$failed"; \
+	else \
+		echo "===== all cells passed"; \
+	fi; \
+	exit $$status
+
+test-variants:
+	@for pa in pa24 pa32; do $(MAKE) -C $$pa test-variants || exit 1; done
+
+# GNU make prefers the pattern rule that yields the shortest stem, so
+# `with-clang-libcxx-<target>` selects the libc++ cell rather than the
+# libstdc++ one with a `libcxx-` prefixed stem.
+with-clang-%: require-clang
+	@$(MAKE) $* \
+		CXX=$(CLANG_CXX) \
+		CPPGM_HOST_CXX=$(CLANG_CXX) \
+		OBJ=$(CLANG_CELL_OBJ) \
+		INCEPTION_OBJ_ROOT_BASE=../$(CLANG_CELL_OBJ)/pa34
+
+with-clang-libcxx-%: require-clang-libcxx
+	@$(MAKE) $* \
+		CXX=$(CLANG_CXX) \
+		CPPGM_HOST_CXX=$(CLANG_CXX) \
+		CPPGM_STDLIB_FLAGS=-stdlib=libc++ \
+		OBJ=$(CLANG_LIBCXX_CELL_OBJ) \
+		INCEPTION_OBJ_ROOT_BASE=../$(CLANG_LIBCXX_CELL_OBJ)/pa34
+
+# A sanitizer build of the compiler itself.  The bug class this catches -- a
+# reference into a container that a nested analysis then grows -- is invisible
+# to the ordinary lanes, because whether it corrupts anything depends on
+# allocator behaviour: the same source passed under g++ and failed under
+# clang++.  ASan reports it deterministically under either.  Build it, then run
+# the compiler by hand on the input under suspicion.
+ASAN_CELL_OBJ ?= obj-asan
+ASAN_CC_FLAGS ?= -std=gnu++11 -O1 -g -fno-omit-frame-pointer -fsanitize=address
+
+asan-build: require-clang
+	@$(MAKE) -C dev cppgm++ \
+		CXX=$(CLANG_CXX) \
+		CPPGM_HOST_CXX=$(CLANG_CXX) \
+		OBJ=../$(ASAN_CELL_OBJ) \
+		CC_FLAGS="$(ASAN_CC_FLAGS)" \
+		HOST_ALLOC_LIBS=
+
+require-clang:
+	@command -v $(CLANG_CXX) >/dev/null 2>&1 || { \
+		echo "$(CLANG_CXX) not found; set CLANG_CXX to the clang++ to use" >&2; \
+		exit 1; }
+
+require-clang-libcxx: require-clang
+	@printf '#include <version>\nint main() { return 0; }\n' > obj/.libcxx-probe.cpp 2>/dev/null || \
+		{ mkdir -p obj && printf '#include <version>\nint main() { return 0; }\n' > obj/.libcxx-probe.cpp; }
+	@$(CLANG_CXX) -std=gnu++11 -stdlib=libc++ -fsyntax-only obj/.libcxx-probe.cpp 2>/dev/null || { \
+		echo "$(CLANG_CXX) cannot compile against libc++; install libc++-dev and libc++abi-dev" >&2; \
+		rm -f obj/.libcxx-probe.cpp; exit 1; }
+	@rm -f obj/.libcxx-probe.cpp
 
 test-report: build
 	@$(MAKE) test-report-nobuild \
@@ -424,40 +459,7 @@ clean:
 	-rmdir $(DEV_BUILD_LOCK) 2>/dev/null || true
 
 $(ALL_PAS):
-	$(MAKE) build
-	$(MAKE) -C $@ \
-		CXX=$(CXX) \
-		CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
-		CPPGM_STDLIB_FLAGS=$(CPPGM_STDLIB_FLAGS) \
-		CPPGM_TEST_RUNNER=$(CPPGM_TEST_RUNNER) \
-		$(SUBMAKE_OBJ_ARG) \
-		$(SUBMAKE_GENERATED_ARG) \
-		$(SUBMAKE_CC_FLAGS_ARG) \
-		CPPGM_SKIP_DEV_REBUILD=1 test
-
-test-strict-%:
-	@if [ ! -f "$*/Makefile" ]; then \
-		echo "unknown assignment: $*" >&2; \
-		exit 2; \
-	fi
-	@$(MAKE) build
-	@if [ "$(CPPGM_TEST_RUNNER)" = "1" ]; then \
-		export CPPGM_BATCH_TESTS=1; \
-		export WRAPPED_BATCH_STDIN=1; \
-	else \
-		unset CPPGM_BATCH_TESTS; \
-		unset WRAPPED_BATCH_STDIN; \
-	fi; \
-	export CPPGM_TEST_JOBS=$(STRICT_SUBTEST_JOBS); \
-	$(MAKE) -C $* \
-		CXX=$(CXX) \
-		CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
-		CPPGM_STDLIB_FLAGS=$(CPPGM_STDLIB_FLAGS) \
-		CPPGM_TEST_RUNNER=$(CPPGM_TEST_RUNNER) \
-		$(SUBMAKE_OBJ_ARG) \
-		$(SUBMAKE_GENERATED_ARG) \
-		$(SUBMAKE_CC_FLAGS_ARG) \
-		CPPGM_SKIP_DEV_REBUILD=1 test-strict
+	@$(MAKE) test-$@
 
 ref-test-%:
 	@if [ ! -f "$*/Makefile" ]; then \
@@ -481,15 +483,10 @@ test-%:
 		exit 2; \
 	fi
 	@$(MAKE) build
-	@$(MAKE) -C $* \
-		CXX=$(CXX) \
-		CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
-		CPPGM_STDLIB_FLAGS=$(CPPGM_STDLIB_FLAGS) \
-		CPPGM_TEST_RUNNER=$(CPPGM_TEST_RUNNER) \
-		$(SUBMAKE_OBJ_ARG) \
-		$(SUBMAKE_GENERATED_ARG) \
-		$(SUBMAKE_CC_FLAGS_ARG) \
-		CPPGM_SKIP_DEV_REBUILD=1 test
+	@$(MAKE) test-report-nobuild \
+		ACTIVE_TEST_REPORT_PAS='$*' \
+		TEST_REPORT_SUBTEST_JOBS='$(SINGLE_ASSIGNMENT_SUBTEST_JOBS)' \
+		ORDERED='$(ORDERED)'
 
 reference-binaries:
 	@scripts/ensure_reference_binaries.pl

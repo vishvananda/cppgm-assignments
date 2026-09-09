@@ -1,0 +1,1 @@
+ERROR: ambiguous overloaded operator at tests/general/300-ambiguous-operator-outside-substitution-bad.t:15:4

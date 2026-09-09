@@ -1,0 +1,1 @@
+ERROR: selected special member is deleted at tests/spec/100-implicit-copy-assignment-deleted-const-member-bad.t:15:5

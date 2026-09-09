@@ -1,0 +1,1 @@
+ERROR: structured template type was not found: incomplete_target<T>::type at tests/spec/300-instantiated-member-typedef-declaration-bad.t:12:11

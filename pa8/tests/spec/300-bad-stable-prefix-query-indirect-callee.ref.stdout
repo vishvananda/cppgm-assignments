@@ -1,0 +1,1 @@
+ERROR: query metadata requires a direct function at tests/spec/300-bad-stable-prefix-query-indirect-callee.t:10

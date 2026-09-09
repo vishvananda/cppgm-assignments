@@ -1,0 +1,14 @@
+global @p [binding=internal, object=_Z1p] = {
+  i32 3
+  i32 4
+}
+global @arr [binding=strong, object=_Z3arr] = {
+  i32 10
+  i32 20
+  i32 30
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    return i32 0
+}

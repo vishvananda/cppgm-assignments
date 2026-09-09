@@ -1,0 +1,1 @@
+ERROR: invalid indirect result parameter at tests/spec/200-bad-indirect-result-nonvoid-return.t:3

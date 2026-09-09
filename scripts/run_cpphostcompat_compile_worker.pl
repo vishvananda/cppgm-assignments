@@ -12,6 +12,7 @@ use CppgmBatchWorker qw(
 	clear_progress_state
 	close_worker
 	collect_tests
+	detect_jobs
 	ensure_test_app_available
 	get_timeout_from_env
 	note_progress_state
@@ -24,18 +25,6 @@ use CppgmBatchWorker qw(
 	write_file
 	write_named_status_code
 );
-
-sub detect_worker_jobs
-{
-	my $jobs = $ENV{CPPGM_HOSTCOMPAT_COMPILE_WORKERS};
-	if (!defined($jobs))
-	{
-		$jobs = $ENV{CPPGM_TEST_JOBS};
-	}
-	return 1 if !defined($jobs);
-	return 1 if $jobs !~ m/^\d+$/;
-	return $jobs > 0 ? $jobs : 1;
-}
 
 sub process_one_test
 {
@@ -99,6 +88,12 @@ sub process_one_test
 	}
 	unlink($obj);
 	write_named_status_code("$test_out.exit_status", $status);
+	# A failed case's diagnostic text is not a portable reference: the export
+	# regenerates it (CPPGM_KEEP_FAILED_REFERENCE_STDOUT=1), the tree does
+	# not track it, as run_all_tests_common.pl does for the other lanes.
+	unlink("$test_out.stdout")
+		if $suffix eq 'ref' && $status != 0 &&
+		   ($ENV{CPPGM_KEEP_FAILED_REFERENCE_STDOUT} // '') !~ m/^(?:1|true|yes|on)$/i;
 }
 
 sub run_compile_tests
@@ -130,7 +125,7 @@ if (!$verbose && !$keep_going)
 }
 
 my $ntests = scalar(@tests);
-my $jobs = detect_worker_jobs();
+my $jobs = detect_jobs('CPPGM_HOSTCOMPAT_COMPILE_WORKERS', 'CPPGM_TEST_JOBS');
 $jobs = $ntests if $jobs > $ntests;
 
 if ($jobs <= 1)

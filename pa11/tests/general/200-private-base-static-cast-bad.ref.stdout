@@ -1,0 +1,1 @@
+ERROR: inaccessible base conversion at tests/general/200-private-base-static-cast-bad.t:9:10

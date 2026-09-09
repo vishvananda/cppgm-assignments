@@ -1,0 +1,1 @@
+ERROR: invalid #undef directive at tests/macros/250-badvaargs-undef.t:1:2

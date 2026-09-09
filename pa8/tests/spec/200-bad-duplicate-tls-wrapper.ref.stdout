@@ -1,0 +1,1 @@
+ERROR: duplicate tls wrapper at tests/spec/200-bad-duplicate-tls-wrapper.t:8

@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from member-pointer of struct Derived to int to member-pointer of struct Base to int at tests/spec/300-member-pointer-invalid-reverse-bad.t:17:26

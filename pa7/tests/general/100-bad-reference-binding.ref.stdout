@@ -1,0 +1,1 @@
+ERROR: no viable overload for inc in f candidate=function of (lvalue-reference to int) returning int object=<none> argument=int at tests/general/100-bad-reference-binding.t:2:18

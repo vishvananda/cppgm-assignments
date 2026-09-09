@@ -1,0 +1,1 @@
+ERROR: no viable overload for bad_pack in main candidate=function of (int, int) returning int object=<none> argument=int argument=int argument=int at tests/general/200-pack-not-at-end-nondeduced-bad.t:13:10

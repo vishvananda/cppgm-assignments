@@ -1,0 +1,1 @@
+ERROR: stable-prefix query requires a fixed scalar boundary with a final integer parameter at tests/spec/300-bad-stable-prefix-query-variadic.t:6

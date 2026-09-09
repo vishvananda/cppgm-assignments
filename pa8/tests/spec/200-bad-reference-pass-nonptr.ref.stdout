@@ -1,0 +1,1 @@
+ERROR: non-direct passing requires ptr at tests/spec/200-bad-reference-pass-nonptr.t:3

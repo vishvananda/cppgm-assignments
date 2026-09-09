@@ -1,0 +1,1 @@
+ERROR: static assertion failed at tests/spec/100-unused-member-function-static-assert-bad.t:9:5

@@ -1,0 +1,1 @@
+ERROR: ambiguous overload for pick among 2 candidates at tests/general/200-ambiguous-cv-pointer-partial-ordering-bad.t:20:10

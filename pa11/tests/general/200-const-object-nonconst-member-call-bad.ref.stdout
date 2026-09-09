@@ -1,0 +1,1 @@
+ERROR: no viable overload for get in main candidate=function of () returning int object=pointer to const struct Cell at tests/general/200-const-object-nonconst-member-call-bad.t:11:14

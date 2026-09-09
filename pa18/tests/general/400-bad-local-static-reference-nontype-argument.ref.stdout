@@ -1,0 +1,1 @@
+ERROR: non-type template argument is not an integral constant: local_value at tests/general/400-bad-local-static-reference-nontype-argument.t:17:27 in main [parameter=lvalue-reference to int expression=int constant=no binding=9]

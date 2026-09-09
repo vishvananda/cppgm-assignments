@@ -1,0 +1,1 @@
+ERROR: ambiguous overload for take among 2 candidates at tests/spec/300-nullptr-t-vs-long-overload-bad.t:14:10

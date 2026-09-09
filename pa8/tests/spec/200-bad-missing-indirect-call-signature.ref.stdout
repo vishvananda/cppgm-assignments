@@ -1,0 +1,1 @@
+ERROR: indirect call requires signature at tests/spec/200-bad-missing-indirect-call-signature.t:10

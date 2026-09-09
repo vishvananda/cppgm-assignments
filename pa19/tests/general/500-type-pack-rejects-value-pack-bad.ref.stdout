@@ -1,0 +1,1 @@
+ERROR: structured template type was not found: trait<Keys>::value at tests/general/500-type-pack-rejects-value-pack-bad.t:27:39

@@ -1,0 +1,1 @@
+ERROR: unterminated conditional inclusion at tests/directives/bad-include.h:2:1

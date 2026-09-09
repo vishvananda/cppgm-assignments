@@ -1,0 +1,1 @@
+ERROR: structured template type was not found: A<T>::other at tests/general/100-current-instantiation-missing-member-bad.t:12:5

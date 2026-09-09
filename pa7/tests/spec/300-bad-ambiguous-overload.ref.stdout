@@ -1,0 +1,1 @@
+ERROR: ambiguous overload for f among 2 candidates at tests/spec/300-bad-ambiguous-overload.t:7:3

@@ -1,0 +1,1 @@
+ERROR: invalid #undef directive at tests/macros/300-undef-extra.t:2:2

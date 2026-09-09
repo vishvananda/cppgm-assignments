@@ -1,0 +1,1 @@
+ERROR: call has no resolved callee type at tests/spec/200-nondeduced-context-only-bad.t:18:10

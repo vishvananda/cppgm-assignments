@@ -1,3 +1,0 @@
-global @align_only : u32 [binding=internal, object=_ZL10align_only] = 1
-global @size_ordered : u32 [binding=internal, object=_ZL12size_ordered] = 2
-global @address_ordered : u32 [binding=internal, object=_ZL15address_ordered] = 4

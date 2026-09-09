@@ -1,0 +1,1 @@
+ERROR: no viable overload for take in test candidate=function of (pointer to int) returning void object=<none> argument=int at tests/general/200-constexpr-call-is-not-null-pointer-constant-bad.t:5:15

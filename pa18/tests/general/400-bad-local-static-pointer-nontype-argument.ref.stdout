@@ -1,0 +1,1 @@
+ERROR: non-type template argument is not an integral constant: & at tests/general/400-bad-local-static-pointer-nontype-argument.t:17:25 in main [parameter=pointer to int expression=pointer to int constant=yes binding=4294967295]

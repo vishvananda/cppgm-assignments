@@ -1,0 +1,1 @@
+ERROR: invalid compound assignment at tests/general/300-floating-bitwise-compound-assignment-bad.t:6:9

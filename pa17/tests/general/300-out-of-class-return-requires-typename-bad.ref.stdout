@@ -1,0 +1,1 @@
+ERROR: dependent qualified type requires typename: owner<T>::value_type

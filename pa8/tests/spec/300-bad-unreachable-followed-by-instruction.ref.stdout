@@ -1,0 +1,1 @@
+ERROR: instruction after terminator at tests/spec/300-bad-unreachable-followed-by-instruction.t:3

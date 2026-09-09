@@ -1,0 +1,60 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $buffer : obj<16x8>
+  slot $values : obj<16x8>
+
+  block ^entry:
+    %t1 = addr $buffer
+    %t2 = addr $values
+    store i64 0, %t2
+    %t3 = index i8 %t2, 8
+    store i64 0, %t3
+    %t4 = addr $values
+    %t5 = addr $buffer
+    %t6 = index i8 [projection=field] %t5, 0
+    store ptr %t4, %t6
+    %t7 = addr $values
+    %t8 = binary mul i64 2, 8
+    %t9 = index i8 %t7, %t8
+    %t10 = addr $buffer
+    %t11 = index i8 [projection=field] %t10, 8
+    store ptr %t9, %t11
+    %t12 = addr $buffer
+    %t13 = call i32 @direct_streambuf_int___seek_impl(%t12, 1)
+    return i32 %t13
+}
+function @direct_streambuf_int___seek_impl(%this : ptr [object_bytes=16], %off : i64) -> i32 [binding=weak, object=_ZN16direct_streambufIiE9seek_implEl, inline_hint=yes] {
+  slot $this : ptr
+  slot $off : i64
+  slot $next : i64
+
+  block ^entry:
+    store ptr %this, $this
+    store i64 %off, $off
+    %t1 = load i64 $off
+    store i64 %t1, $next
+    %t2 = load i64 $next
+    %t3 = cmp lt i64 %t2, 0
+    branch %t3, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t4 = load i64 $next
+    %t5 = load ptr $this
+    %t6 = index i8 [projection=field] %t5, 8
+    %t7 = load ptr %t6
+    %t8 = load ptr $this
+    %t9 = index i8 [projection=field] %t8, 0
+    %t10 = load ptr %t9
+    %t11 = binary sub ptr %t7, %t10
+    %t12 = binary shr i64 %t11, 3
+    %t13 = cmp gt i64 %t4, %t12
+    branch %t13, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    return i32 0
+}

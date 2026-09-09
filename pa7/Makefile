@@ -1,6 +1,7 @@
-TARGET = nsdecl
+TARGET = cppgm++
+TARGET_ARGS = --emit-semantics
+export CPPGM_APP_ARGS := $(TARGET_ARGS)
 CXX = g++
-CPPGM_HOST_CXX ?= $(CXX)
 CPPGM_STDLIB_FLAGS ?=
 CPPGM_TEST_RUNNER ?= 1
 CPPGM_TEST_APP ?= ../dev/$(TARGET)
@@ -17,7 +18,6 @@ OBJ = ../obj
 VPATH = $(SRC)
 RDEPDIR = $(OBJ)/release/.d
 DDEPDIR = $(OBJ)/debug/.d
-COURSE_TEST_ROOT = $(wildcard course/pa7)
 
 $(shell mkdir -p $(RDEPDIR) $(DDEPDIR) >/dev/null)
 
@@ -53,37 +53,29 @@ $(OBJ)/debug/%.o: %.cpp
 	$(CXX) $(CC_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(DDEPDIR)/$*.Td -o $@ $<
 	mv -f $(DDEPDIR)/$*.Td $(DDEPDIR)/$*.d
 
-$(OBJ)/release/test_runner_enabled.o: $(SRC)/test_runner.cpp
+$(OBJ)/release/test_runner_enabled.o: $(SRC)/$(FRONTEND_TEST_RUNNER_SOURCE_ID).cpp
 	$(CXX) $(CC_FLAGS) $(TEST_RUNNER_SHARED_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(RDEPDIR)/test_runner_enabled.Td -o $@ $<
 	mv -f $(RDEPDIR)/test_runner_enabled.Td $(RDEPDIR)/test_runner_enabled.d
 
-$(OBJ)/debug/test_runner_enabled.o: $(SRC)/test_runner.cpp
+$(OBJ)/debug/test_runner_enabled.o: $(SRC)/$(FRONTEND_TEST_RUNNER_SOURCE_ID).cpp
 	$(CXX) $(CC_FLAGS) $(TEST_RUNNER_SHARED_FLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(DDEPDIR)/test_runner_enabled.Td -o $@ $<
 	mv -f $(DDEPDIR)/test_runner_enabled.Td $(DDEPDIR)/test_runner_enabled.d
 
-ifeq ($(COURSE_TEST_ROOT),)
 test: $(TEST_DEPS)
 	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my tests
 	@scripts/compare_results.pl ref my tests
-else
-test: $(TEST_DEPS)
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my tests
-	@scripts/compare_results.pl ref my tests
-	@scripts/run_all_tests.pl $(CPPGM_TEST_APP) my $(COURSE_TEST_ROOT)
-	@scripts/compare_results.pl ref my $(COURSE_TEST_ROOT)
-endif
-
-../dev/$(TARGET):
-	$(MAKE) -C ../dev $(TARGET) CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX)
-
-dev-shared-target:
-	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
 
 ref-test:
 	@$(REF_TEST_RUN)
 
-RUN_CHECK_DEPS = $(TEST_DEPS)
 include ../scripts/pa_run_check_targets.mk
+
+.PHONY: dev-shared-target ref-test
+../dev/$(TARGET):
+	$(MAKE) -C ../dev $(TARGET) CXX=$(CXX)
+
+dev-shared-target:
+	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) CXX=$(CXX); fi
 
 clean:
 	-rm -f $(TARGET) $(TARGET)-debug $(OBJ)/release/*.o $(OBJ)/debug/*.o
@@ -96,3 +88,5 @@ $(DDEPDIR)/%.d: ;
 
 -include $(addprefix $(RDEPDIR)/,$(addsuffix .d,$(common_obj_basenames)))
 -include $(addprefix $(DDEPDIR)/,$(addsuffix .d,$(common_obj_basenames)))
+-include $(RDEPDIR)/test_runner_enabled.d
+-include $(DDEPDIR)/test_runner_enabled.d

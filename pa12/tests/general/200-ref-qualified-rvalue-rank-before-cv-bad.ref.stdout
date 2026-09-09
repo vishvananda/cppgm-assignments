@@ -1,0 +1,1 @@
+ERROR: inaccessible member function select on pointer to struct RefCvRank in main owner-type=struct RefCvRank naming-type=struct RefCvRank [member-owner=0 access-owner=4294967295 naming-class=0 object-class=0 access=2] at tests/general/200-ref-qualified-rvalue-rank-before-cv-bad.t:14:21

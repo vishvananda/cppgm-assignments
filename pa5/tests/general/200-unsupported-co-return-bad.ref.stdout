@@ -1,0 +1,1 @@
+ERROR: expected `;` at tests/general/200-unsupported-co-return-bad.t:2:13 at token 6 (`0`)
