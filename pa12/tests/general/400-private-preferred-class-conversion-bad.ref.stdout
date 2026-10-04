@@ -1,0 +1,1 @@
+ERROR: inaccessible member function operatorA on pointer to struct X in main owner-type=struct X naming-type=struct X [member-owner=0 access-owner=4294967295 naming-class=0 object-class=0 access=2]

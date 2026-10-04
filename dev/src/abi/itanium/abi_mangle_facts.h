@@ -61,6 +61,7 @@ enum AbiTypeKind : std::uint8_t
   ABI_TYPE_MEMBER,
   ABI_TYPE_MEMBER_TEMPLATE_SPECIALIZATION,
   ABI_TYPE_DECLTYPE_EXPRESSION,
+  ABI_TYPE_DECLTYPE_ID_EXPRESSION,
   ABI_TYPE_LAMBDA_CLOSURE,
   ABI_TYPE_LOCAL_TYPE,
   ABI_TYPE_NAMESPACE_LAMBDA,
@@ -125,7 +126,8 @@ enum AbiExpressionKind
   ABI_EXPRESSION_MEMBER,
   ABI_EXPRESSION_OBJECT_MEMBER,
   ABI_EXPRESSION_EXTERNAL_ENTITY,
-  ABI_EXPRESSION_ENTITY
+  ABI_EXPRESSION_ENTITY,
+  ABI_EXPRESSION_SOURCE_NAME
 };
 
 enum AbiContextFactKind
@@ -246,6 +248,7 @@ struct AbiType
   // Local presentation kinds store their semantic ordinal here. Other kinds
   // retain the resolved expression or substitution identity documented by
   // their kind.
+  // A template parameter uses this slot for its enclosing template depth.
   std::size_t resolved_expression = ABI_NO_RESOLVED_REFERENCE;
   std::size_t resolved_context = ABI_NO_RESOLVED_REFERENCE;
   std::size_t resolved_context_identity = ABI_NO_RESOLVED_REFERENCE;

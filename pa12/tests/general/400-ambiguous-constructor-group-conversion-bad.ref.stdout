@@ -1,0 +1,1 @@
+ERROR: no viable overload for pass in main candidate=function of (struct A) returning struct A object=<none> argument=struct X at tests/general/400-ambiguous-constructor-group-conversion-bad.t:2:219

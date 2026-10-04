@@ -1,1 +1,1 @@
-ERROR: PA10 binding has no lowered storage: 6 name=enclosing presentation=enclosing kind=4
+ERROR: local class odr-uses an enclosing automatic object at tests/compile/200-local-callable-cross-function-reference-negative.t:7:31

@@ -1,0 +1,1 @@
+ERROR: local class odr-uses an enclosing automatic object at tests/general/100-local-class-enclosing-constant-reference-bad.t:1:64

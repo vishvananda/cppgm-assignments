@@ -1,0 +1,1 @@
+ERROR: ambiguous overload for result among 2 candidates at tests/general/100-template-fixed-result-lookup-ambiguous.t:6:28

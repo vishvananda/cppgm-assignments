@@ -1,7 +1,7 @@
 declare function @operatornew(%arg0 : i64) -> ptr [role=allocate_memory, binding=strong, object=cppgm_builtin_operator_new]
 declare function @operatordelete(%arg0 : ptr) -> void [unwind=no, role=free_memory, binding=strong, object=cppgm_builtin_operator_delete]
 
-global @c : i32 [binding=strong, object=_Z1c] = zero
+global @c : i32 [binding=strong] = zero
 
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   slot $a : ptr
@@ -24,7 +24,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t5 = load i32 @c
     return i32 %t5
 }
-function @A__A(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN1AC1Ev, inline_hint=yes] {
+function @A__A(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN1AC1Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

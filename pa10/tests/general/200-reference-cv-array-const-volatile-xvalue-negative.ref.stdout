@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from rvalue-reference to array of 2 volatile int to lvalue-reference to array of 2 const volatile int at tests/general/200-reference-cv-array-const-volatile-xvalue-negative.t:2:62

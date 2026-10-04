@@ -1,0 +1,1 @@
+ERROR: ambiguous bidirectional conditional class conversion at tests/general/400-conditional-class-bidirectional-conversion-bad.t:16:9

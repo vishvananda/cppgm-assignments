@@ -1,0 +1,1 @@
+ERROR: auto& rvalue initializer requires non-volatile const binding

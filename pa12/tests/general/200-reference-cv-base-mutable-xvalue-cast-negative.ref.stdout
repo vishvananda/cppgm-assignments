@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from rvalue-reference to struct D to lvalue-reference to struct B at tests/general/200-reference-cv-base-mutable-xvalue-cast-negative.t:3:31

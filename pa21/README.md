@@ -190,6 +190,17 @@ To complete PA21, implement these goals:
    EH-bearing aggregate construction should invoke nontrivial member constructors
    instead of representation-copying those members, so cleanup state describes
    the subobjects that were constructed.
+   Synthesized copy/move constructors destroy completed bases, members and
+   array elements if a later construction step throws. Representation-copy
+   prefixes still establish subobject lifetimes. A partial member-array
+   cleanup continues with earlier subobjects of the enclosing constructor.
+   Exceptions escaping a source `try` inside a constructor or destructor body
+   still destroy the appropriate bases and members. An enclosing body handler
+   may catch the exception before that cleanup; a function-try handler runs
+   after it. A delegating constructor destroys its completed target when its
+   own body fails. A second exception during unwind destruction terminates.
+   Function-template instantiation retains function-try bodies and handlers,
+   including constructor mem-initializers within the function-try block.
    Construction and destruction cleanup dependencies on class-template
    destructors should be demanded only after a recursively containing type is
    complete, and should retain that concrete owner in emitted cleanup calls.
@@ -199,13 +210,34 @@ To complete PA21, implement these goals:
    Once an exception object has been initialized, destroy the throw operand's
    temporaries and remove them from later unwind snapshots. A temporary from an
    untaken throw branch must not appear in a sibling call's cleanup path.
+   Operandless `throw;` rethrows the dynamically handled exception, including
+   from a called function or destructor. With no active exception it terminates
+   at runtime; it does not require a lexical enclosing handler.
+   Reference initialization preserves cleanup of earlier automatic objects.
+   A temporary whose lifetime is extended by the reference stays guarded until
+   initialization completes, then remains alive until scope exit; a reference
+   returned by a call does not extend the lifetime of its temporary arguments.
    If a conditional initializer arm throws before the destination object is
    constructed, do not schedule destruction of that destination on the unwind path.
+   A reference cast from a conditional class prvalue materializes the complete
+   object before selecting a base subobject; lifetime extension retains that
+   complete object and its destructor.
+   A class-valued conditional may have a `throw` operand on either side. Its
+   value arm retains ordinary construction and cleanup; its throwing arm
+   unwinds objects that were already live before the branch.
    When a potentially throwing call is reached through a branch in an active
    handler, its unwind path must finish the handler and destroy objects that
    remain live from scopes outside the corresponding `try` statement.
+   If initialization after ordinary scalar allocation throws, call the selected
+   usual deallocation function after construction cleanup and propagate the exception.
+   Successful initialization transfers the allocation to the result.
    If construction of a class subobject throws, destroy exactly the already
    constructed bases and members in reverse construction order.
+   Aggregate member and array-element initialization must retain the completed
+   prefix when a later initializer throws, including a later scalar initializer.
+   Initializer temporaries participate in that completion order and remain live
+   through the full expression. A conditional join must retain the guarded
+   temporaries from whichever arm was evaluated.
    Equal unwind cleanup suffixes may share LowIR blocks only when their complete
    active try/handler context, handler-exit operations, cleanup-region exits,
    and terminal continuation are identical.

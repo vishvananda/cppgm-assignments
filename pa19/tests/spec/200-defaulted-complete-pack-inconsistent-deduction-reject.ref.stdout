@@ -1,0 +1,1 @@
+ERROR: call has no resolved callee type at tests/spec/200-defaulted-complete-pack-inconsistent-deduction-reject.t:3:19

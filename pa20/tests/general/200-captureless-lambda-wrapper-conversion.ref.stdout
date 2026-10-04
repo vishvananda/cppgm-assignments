@@ -1,0 +1,1 @@
+ERROR: no viable overload for use in main candidate=function of (lvalue-reference to const struct Wrapper) returning int object=<none> argument=class __lambda_main_t75_79 at tests/general/200-captureless-lambda-wrapper-conversion.t:16:10

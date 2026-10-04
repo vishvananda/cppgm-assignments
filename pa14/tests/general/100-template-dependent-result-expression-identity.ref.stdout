@@ -1,0 +1,1 @@
+ERROR: ambiguous overload for result among 2 candidates at tests/general/100-template-dependent-result-expression-identity.t:5:43

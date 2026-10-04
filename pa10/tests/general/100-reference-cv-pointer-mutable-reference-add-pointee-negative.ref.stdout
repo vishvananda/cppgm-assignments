@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from pointer to int to lvalue-reference to pointer to const int at tests/general/100-reference-cv-pointer-mutable-reference-add-pointee-negative.t:2:43

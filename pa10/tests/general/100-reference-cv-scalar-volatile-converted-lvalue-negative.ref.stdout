@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from int to lvalue-reference to const volatile long int at tests/general/100-reference-cv-scalar-volatile-converted-lvalue-negative.t:2:43

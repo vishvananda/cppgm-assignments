@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from class std::initializer_list<int> to lvalue-reference to class std::initializer_list<int>

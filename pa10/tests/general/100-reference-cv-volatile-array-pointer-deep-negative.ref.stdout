@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from pointer to pointer to array of 2 int to pointer to pointer to array of 2 volatile int at tests/general/100-reference-cv-volatile-array-pointer-deep-negative.t:2:77

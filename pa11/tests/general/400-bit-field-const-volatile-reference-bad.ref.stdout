@@ -1,0 +1,1 @@
+ERROR: bit-field cannot bind a mutable or volatile lvalue reference at tests/general/400-bit-field-const-volatile-reference-bad.t:3:74

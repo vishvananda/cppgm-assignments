@@ -1,0 +1,1 @@
+ERROR: unknown expression name: T::missing at tests/spec/300-explicit-class-static-initializer-bad.t:3:42

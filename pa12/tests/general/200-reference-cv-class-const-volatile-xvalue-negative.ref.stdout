@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from rvalue-reference to struct S to lvalue-reference to const volatile struct S at tests/general/200-reference-cv-class-const-volatile-xvalue-negative.t:2:56

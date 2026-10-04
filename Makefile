@@ -13,7 +13,9 @@ CPPGM_MAKE_LOW_JOB_LIMIT = $(shell \
 	limit='$(CPPGM_MAKE_JOB_LIMIT)'; cpus='$(DEFAULT_BUILD_JOBS)'; \
 	if [ "$$limit" -gt 0 ] 2>/dev/null && [ "$$cpus" -gt "$$limit" ] 2>/dev/null; then echo 1; else echo 0; fi)
 ifeq ($(CPPGM_MAKE_LOW_JOB_LIMIT),1)
+ifeq ($(filter test-report%,$(MAKECMDGOALS)),)
 $(warning make is limited to -j$(CPPGM_MAKE_JOB_LIMIT) on a $(DEFAULT_BUILD_JOBS)-core machine; large compiler builds, especially self-host and PA34/inception builds, will be very slow. Omit -j or use -j$(DEFAULT_BUILD_JOBS).)
+endif
 endif
 endif
 endif
@@ -56,7 +58,6 @@ DEV_BUILD_LOCK = obj/.dev-build.lock
 # behaviour on small hosts.
 TEST_REPORT_SUBTEST_JOBS ?= $(shell jobs=$$(( $(DEFAULT_BUILD_JOBS) / 8 )); if [ "$$jobs" -lt 2 ]; then jobs=2; fi; if [ "$$jobs" -gt 8 ]; then jobs=8; fi; echo $$jobs)
 TEST_REPORT_ASSIGNMENT_JOBS ?= $(shell subjobs=$(TEST_REPORT_SUBTEST_JOBS); if [ -z "$$subjobs" ] || [ "$$subjobs" -lt 1 ] 2>/dev/null; then subjobs=1; fi; jobs=$$(( $(DEFAULT_BUILD_JOBS) / $$subjobs )); if [ "$$jobs" -lt 1 ]; then jobs=1; fi; echo $$jobs)
-TEST_REPORT_STALL_SEC ?= 90
 TEST_REPORT_BUILD_TIMEOUT_SEC ?= 60
 ORDERED ?= true
 SUBMAKE_OBJ_ARG = $(if $(strip $(OBJ)),OBJ=$(OBJ))
@@ -78,8 +79,15 @@ build:
 	@mkdir -p obj
 	@lockdir=$(DEV_BUILD_LOCK); \
 	while ! mkdir $$lockdir 2>/dev/null; do sleep 1; done; \
-	trap 'rmdir "$$lockdir" 2>/dev/null || true' EXIT HUP INT TERM; \
-	$(MAKE) -s -C dev all
+	output=$$(mktemp); \
+	trap 'rm -f "$$output"; rmdir "$$lockdir" 2>/dev/null || true' EXIT HUP INT TERM; \
+	if [ "$(CPPGM_REPORT_QUIET)" = "1" ]; then \
+		$(MAKE) -s -C dev all > "$$output" 2>&1; status=$$?; \
+		if [ "$$status" -ne 0 ]; then cat "$$output"; fi; \
+		exit "$$status"; \
+	else \
+		$(MAKE) -s -C dev all; \
+	fi
 
 test: build
 	@for dir in $(SORTED_PAS); do \
@@ -249,6 +257,8 @@ require-clang-libcxx: require-clang
 		rm -f obj/.libcxx-probe.cpp; exit 1; }
 	@rm -f obj/.libcxx-probe.cpp
 
+test-report test-report-through-% test-report-nobuild: CPPGM_REPORT_QUIET=1
+
 test-report: build
 	@$(MAKE) test-report-nobuild \
 		ACTIVE_TEST_REPORT_PAS='$(ACTIVE_TEST_REPORT_PAS)' \
@@ -290,6 +300,7 @@ test-report-through-%: build
 
 test-report-nobuild:
 	@export KEEP_GOING=1; \
+	export CPPGM_REPORT_QUIET=1; \
 	if [ "$(CPPGM_TEST_RUNNER)" = "1" ]; then \
 		export CPPGM_BATCH_TESTS=1; \
 		export WRAPPED_BATCH_STDIN=1; \
@@ -299,7 +310,6 @@ test-report-nobuild:
 	fi; \
 	export CPPGM_TEST_JOBS=$(TEST_REPORT_SUBTEST_JOBS); \
 	export CPPGM_BUILD_TEST_TIMEOUT_SEC=$(TEST_REPORT_BUILD_TIMEOUT_SEC); \
-	stall_sec=$(TEST_REPORT_STALL_SEC); \
 	ordered="$(ORDERED)"; \
 	tmpdir=$$(mktemp -d); \
 	cleanup() { rm -f pa*/.test_failed .test_counts; rm -rf "$$tmpdir"; }; \
@@ -307,10 +317,6 @@ test-report-nobuild:
 		if [ -n "$$output_pid" ]; then \
 			kill -TERM "$$output_pid" 2>/dev/null || true; \
 			wait "$$output_pid" 2>/dev/null || true; \
-		fi; \
-		if [ -n "$$monitor_pid" ]; then \
-			kill -TERM "$$monitor_pid" 2>/dev/null || true; \
-			wait "$$monitor_pid" 2>/dev/null || true; \
 		fi; \
 		if [ -n "$$xargs_pid" ]; then \
 			pkill -TERM -P "$$xargs_pid" 2>/dev/null || true; \
@@ -347,7 +353,11 @@ test-report-nobuild:
 	emit_completed_output() { \
 		dir="$$1"; \
 		if [ -f "$$tmpdir/$$dir.out" ] && [ ! -f "$$tmpdir/$$dir.printed" ]; then \
-			cat "$$tmpdir/$$dir.out"; \
+			if [ ! -f "$$tmpdir/$$dir.status" ] || \
+				[ "$$(cat "$$tmpdir/$$dir.status")" -ne 0 ] || \
+				[ -f "$$dir/.test_failed" ]; then \
+				cat "$$tmpdir/$$dir.out"; \
+			fi; \
 			: > "$$tmpdir/$$dir.printed"; \
 		fi; \
 	}; \
@@ -364,44 +374,6 @@ test-report-nobuild:
 			emit_completed_output "$$dir"; \
 		done; \
 	}; \
-	monitor_progress() { \
-		while kill -0 "$$xargs_pid" 2>/dev/null; do \
-			sleep 5; \
-			for dir in $(ACTIVE_TEST_REPORT_PAS); do \
-				progress_file="$$tmpdir/$$dir.progress"; \
-				stall_file="$$tmpdir/$$dir.stalled"; \
-				if [ ! -f "$$progress_file" ]; then \
-					rm -f "$$stall_file"; \
-					continue; \
-				fi; \
-				updated=$$(awk -F '\t' 'NR==1 { print $$1 }' "$$progress_file" 2>/dev/null); \
-				phase=$$(awk -F '\t' 'NR==1 { print $$3 }' "$$progress_file" 2>/dev/null); \
-				test_name=$$(awk -F '\t' 'NR==1 { print $$4 }' "$$progress_file" 2>/dev/null); \
-				if [ -z "$$updated" ]; then \
-					continue; \
-				fi; \
-				now=$$(date +%s); \
-				idle=$$((now - updated)); \
-				if [ "$$idle" -lt "$$stall_sec" ]; then \
-					rm -f "$$stall_file"; \
-					continue; \
-				fi; \
-				signature="$$updated	$$phase	$$test_name"; \
-				last_signature=""; \
-				if [ -f "$$stall_file" ]; then \
-					last_signature=$$(cat "$$stall_file"); \
-				fi; \
-				if [ "$$signature" != "$$last_signature" ]; then \
-					echo "===== $$dir waiting $$idle s at $$phase $$test_name ====="; \
-					printf '%s' "$$signature" > "$$stall_file"; \
-				fi; \
-			done; \
-		done; \
-	}; \
-	if [ "$$stall_sec" -gt 0 ] 2>/dev/null; then \
-		monitor_progress & \
-		monitor_pid=$$!; \
-	fi; \
 	if [ "$$ordered" = "false" ]; then \
 		stream_completed_outputs & \
 		output_pid=$$!; \
@@ -412,16 +384,8 @@ test-report-nobuild:
 		kill -TERM "$$output_pid" 2>/dev/null || true; \
 		wait "$$output_pid" 2>/dev/null || true; \
 	fi; \
-	if [ -n "$$monitor_pid" ]; then \
-		kill -TERM "$$monitor_pid" 2>/dev/null || true; \
-		wait "$$monitor_pid" 2>/dev/null || true; \
-	fi; \
 	for dir in $(ACTIVE_TEST_REPORT_PAS); do \
-		if [ "$$ordered" = "false" ]; then \
-			emit_completed_output "$$dir"; \
-		elif [ -f "$$tmpdir/$$dir.out" ]; then \
-			cat "$$tmpdir/$$dir.out"; \
-		fi; \
+		emit_completed_output "$$dir"; \
 	done; \
 	passed=$$(awk '{s+=$$1} END {print s}' .test_counts 2>/dev/null || echo 0); \
 	total=$$(awk '{s+=$$2} END {print s}' .test_counts 2>/dev/null || echo 0); \

@@ -1,0 +1,1 @@
+ERROR: unknown expression name: std::is_nothrow_default_constructible<Value>::value at tests/general/100-forward-declared-trait-value-bad.t:3:15

@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from array of 2 volatile int to lvalue-reference to array of 2 int at tests/general/100-reference-cv-array-drop-volatile-negative.t:2:47

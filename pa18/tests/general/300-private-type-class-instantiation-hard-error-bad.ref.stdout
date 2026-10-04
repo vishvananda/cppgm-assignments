@@ -1,0 +1,1 @@
+ERROR: inaccessible qualified type: type at tests/general/300-private-type-class-instantiation-hard-error-bad.t:6:21 while instantiating pick<Hidden>

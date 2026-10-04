@@ -1,0 +1,1 @@
+ERROR: invalid implicit conversion from array of 2 const int to lvalue-reference to array of 2 int at tests/general/100-reference-cv-array-drop-const-negative.t:2:44

@@ -34,7 +34,7 @@ function @holder_int___holder_int_(%this : ptr [object_bytes=4]) -> void [bindin
     call void @detail__relay_int___relay_int___base_entry(%t2)
     return void
 }
-function @unsafe_get(%v : ptr [pass=by_address, object_bytes=4]) -> ptr [binding=weak, object=_Z10unsafe_getILm0EJiEERKN3altIXT_E6holderIDpT0_EE4typeERKS1_IJS2_EE] {
+function @unsafe_get(%v : ptr [pass=by_address, object_bytes=4]) -> ptr [binding=weak, object=_Z10unsafe_getILm0EJiEERKN3altIXT_E6holderIJDpT0_EEE4typeERKS4_] {
   slot $v : ptr
   slot $argobj__1 : obj<1x1>
 
@@ -56,7 +56,7 @@ function @detail__relay_int___relay_int___base_entry(%this : ptr [object_bytes=4
     call void @detail__base_impl_false__int___base_impl_false__int___base_entry(%t2)
     return void
 }
-function @detail__base_impl_false__int___get__ov2(%this : ptr [object_bytes=4], %__param1 : obj<1x1>) -> ptr [binding=weak, object=_ZNK6detail9base_implILb0EJiEE3getILm0EEERKiN5boost4mp1117integral_constantImLm0EEE, inline_hint=yes] {
+function @detail__base_impl_false__int___get__ov2(%this : ptr [object_bytes=4], %__param1 : obj<1x1>) -> ptr [binding=weak, object=_ZNK6detail9base_implILb0EJiEE3getILm0EEERKN3altIXT_E6holderIJiEEE4typeEN5boost4mp1117integral_constantImXT_EEE, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : obj<1x1>
 

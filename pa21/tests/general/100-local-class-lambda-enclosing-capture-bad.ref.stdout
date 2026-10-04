@@ -1,0 +1,1 @@
+ERROR: local class lambda captures an enclosing automatic object at tests/general/100-local-class-lambda-enclosing-capture-bad.t:1:55

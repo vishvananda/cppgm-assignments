@@ -1,0 +1,1 @@
+ERROR: structured template type was not found: base::type at tests/general/100-nested-class-forward-shadow-bad.t:4:28
