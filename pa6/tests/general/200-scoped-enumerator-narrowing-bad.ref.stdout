@@ -1,0 +1,1 @@
+ERROR: tests/general/200-scoped-enumerator-narrowing-bad.t:4:28: enumerator value is not representable in the underlying type

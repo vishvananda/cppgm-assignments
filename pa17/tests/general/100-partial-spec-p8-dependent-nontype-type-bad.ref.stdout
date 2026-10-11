@@ -1,0 +1,1 @@
+ERROR: tests/general/100-partial-spec-p8-dependent-nontype-type-bad.t:5:26: a specialized non-type argument for a parameter whose type depends on the partial specialization's parameters

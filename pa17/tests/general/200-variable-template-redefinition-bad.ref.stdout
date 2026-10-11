@@ -1,0 +1,1 @@
+ERROR: tests/general/200-variable-template-redefinition-bad.t:4:23: redefinition of a variable

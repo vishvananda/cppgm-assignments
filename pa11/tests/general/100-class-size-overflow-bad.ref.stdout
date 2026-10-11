@@ -1,0 +1,1 @@
+ERROR: tests/general/100-class-size-overflow-bad.t:7:21: a class too large (its size reaches 2^60 bytes)

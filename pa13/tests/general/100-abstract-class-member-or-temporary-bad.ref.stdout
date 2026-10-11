@@ -1,0 +1,1 @@
+ERROR: tests/general/100-abstract-class-member-or-temporary-bad.t:5:14: an object of an abstract class type

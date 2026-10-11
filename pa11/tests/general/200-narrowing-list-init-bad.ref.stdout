@@ -1,0 +1,1 @@
+ERROR: tests/general/200-narrowing-list-init-bad.t:4:32: narrowing conversion in list-initialization

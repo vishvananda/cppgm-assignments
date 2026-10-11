@@ -1,1 +1,1 @@
-ERROR: static assertion failed at tests/compile/400-evaluated-retained-call-demand-bad.t:6:3
+ERROR: tests/compile/400-evaluated-retained-call-demand-bad.t:6:3: static assertion failed

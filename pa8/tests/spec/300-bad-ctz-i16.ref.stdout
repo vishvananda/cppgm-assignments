@@ -1,0 +1,1 @@
+ERROR: invalid ctz/clz type in function @f at tests/spec/300-bad-ctz-i16.t:3

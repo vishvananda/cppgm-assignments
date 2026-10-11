@@ -1,1 +1,1 @@
-ERROR: selected constructor is deleted
+ERROR: tests/spec/100-deleted-copy-constructor-bad.t:14:15: use of a deleted function

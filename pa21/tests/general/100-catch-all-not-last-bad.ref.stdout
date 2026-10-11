@@ -1,0 +1,1 @@
+ERROR: tests/general/100-catch-all-not-last-bad.t:3:69: a handler after a `...` handler (15.3p5)

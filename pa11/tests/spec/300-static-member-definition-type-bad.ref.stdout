@@ -1,1 +1,1 @@
-ERROR: static member definition has a conflicting type
+ERROR: tests/spec/300-static-member-definition-type-bad.t:4:6: conflicting declaration of a variable

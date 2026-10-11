@@ -1,0 +1,1 @@
+ERROR: classes metadata requires a direct object of matching size at tests/spec/300-bad-classes-on-scalar.t:1

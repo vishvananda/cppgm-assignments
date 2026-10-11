@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-bf16-narrowing-bad.t:3:10: narrowing conversion in list-initialization

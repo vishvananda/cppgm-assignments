@@ -8,13 +8,13 @@ while the compiler was still building its type, object, template, and backend la
 This milestone focuses on:
 
 - `auto` variable type deduction
-- ordinary `auto` function return type deduction for non-template function definitions and
-  non-template member function definitions with visible bodies (a course
-  extension beyond C++11)
+- `auto` function return type deduction for function definitions with visible
+  bodies, including member functions, function templates and member templates
+  (a C++14 feature, which the course accepts in C++11; clang and g++ reject it
+  under `-std=c++11`)
 - direct braced initialization of supported scalar and array objects
 - captureless lambdas plus the supported by-reference local / `this`-capture subset
-- range-for over bounded arrays, braced-init lists, and supported user-defined `begin` / `end`
-  ranges
+- range-for over bounded arrays and supported user-defined `begin` / `end` ranges
 
 PA20 still produces LowIR. It does not introduce a new output format.
 
@@ -90,6 +90,10 @@ The generated LowIR must be well-formed and must match the checked-in `.ref` fil
 the relaxed LowIR comparison used by the harness. That comparison still checks the
 semantic LowIR shape and required IR facts, but it does not make helper metadata
 presentation or other non-semantic text details part of the student contract.
+The instruction facts and the boundary facts the lowering states (`unwind`,
+`inline_hint`, `object_bytes`, `storage=readonly` and the others) are compared
+exactly; `../pa8/lowir.md` ("What The Comparison Absorbs And What It
+Enforces") lists both sides.
 
 ### Error Handling
 
@@ -112,8 +116,8 @@ comparison described in [the format guide](../pa8/lowir.md). The `Makefile` invo
 
 The local checked-in tests live in `tests/general/`. That directory contains
 PA20 source-to-LowIR tests, cross-feature combinations, and boundary cases over
-the broad core-language closure slice. PA20 has no `tests/spec/` directory
-because these tests focus on the combined language-to-LowIR contract.
+the broad core-language closure slice. `tests/spec/` holds a few tests
+anchored to specific clauses; the harness runs them like the general suite.
 
 For each test case `x`:
 
@@ -127,6 +131,15 @@ above. For execution feedback, use the supplied `lowir2native-ref -O0`
 backend introduced in PA8. Your own native backend is implemented in PA24.
 
 The shipped PA20 tests are the contract for this milestone.
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### PA20 Syntax Spec
 
@@ -161,6 +174,12 @@ PA20 supports the following in addition to the PA19 subset:
 - `auto` in variable declarations when exactly one declarator is present and an initializer
   is provided
 - `const auto` and similar cv-qualified `auto` variable declarations over the same subset
+- a function, member function or function template declared with an `auto`,
+  cv-qualified `auto`, `auto*`, `auto&` or `auto&&` return type and defined
+  with a body: the return type is deduced from the `return` statements as an
+  `auto` variable's type is from its initializer, once per specialization for
+  a template; `return` statements that deduce different types, or a use of
+  the function before its return type is known, are rejected
 - direct braced initialization for supported scalar objects
 - direct braced-init expressions over the supported scalar / array / class subset when the
   earlier PA11-PA19 object/value semantics already define the target
@@ -177,7 +196,6 @@ PA20 supports the following in addition to the PA19 subset:
   capture subset
 - range-for statements over:
   - bounded arrays
-  - braced-init lists that can be materialized as hidden arrays
   - supported class/member and ADL `begin` / `end` ranges whose iterator operations stay
     within the already-supported call/operator subset
 
@@ -198,10 +216,24 @@ To complete PA20, implement these goals:
 3. Captureless lambda lowering.
    Captureless lambdas should become callable lowered entities with deterministic LowIR.
    A function-local static declared in a lambda has distinct storage for each
-   lambda expression and each enclosing function-template specialization.
+   lambda expression and each enclosing function-template specialization; a
+   call through the function pointer a captureless closure converts to runs
+   the same body, so it shares the call operator's statics (N3485 5.1.2p6).
+   A lambda expression has one closure type (5.1.2p3) however many times its
+   context is lowered: a lambda in a default member initializer is one
+   closure in every constructor that initializes the member; one in an
+   in-class default argument is one at every call that uses it; one in a
+   constructor's or destructor's body is one in every entry that runs the
+   body; and one in a class template's static data member initializer or a
+   variable template's initializer is one per specialization.
+   The call operator, and the static function the conversion to a function
+   pointer returns, is an inline function (5.1.2p5) that states
+   `inline_hint=yes`, and `unwind=no` when the lambda is declared `noexcept`
+   or `throw()`; a lambda-expression called directly states its call
+   operator's `unwind=no` on the call signature.
 
 4. Range-for lowering.
-   Range-for over arrays, braced-init lists, and supported user-defined `begin` / `end`
+   Range-for over arrays and supported user-defined `begin` / `end`
    ranges should lower into ordinary loop/control-flow structure in LowIR, including
    ordinary reference loop declarations such as `const int&` and `const auto&`. A
    materialized class prvalue used as the range remains alive through the loop and is
@@ -220,7 +252,7 @@ The following are explicitly out of scope for PA20:
 - RTTI and `typeid`
 - `dynamic_cast`
 - placeholder return-type declarations without a visible definition body
-- template bodies that require deferred placeholder return deduction
+- `decltype(auto)` (C++14; not in `pa20.gram`)
 - range-declarations that require unsupported user-defined iterator or reference semantics
 - any PA20 feature path that depends on unsupported PA11-PA19 semantics
 

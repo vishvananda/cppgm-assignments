@@ -1,0 +1,1 @@
+ERROR: tests/general/100-decltype-base-not-class-bad.t:5:12: base is not a class

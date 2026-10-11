@@ -1,1 +1,1 @@
-ERROR: invalid variadic parameter list at tests/macros/300-variadic-tail-parameter-must-close.t:1:2
+ERROR: tests/macros/300-variadic-tail-parameter-must-close.t:1:22: `...` must end the macro parameters

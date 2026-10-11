@@ -1,1 +1,1 @@
-ERROR: constexpr scalar initializer is not constant
+ERROR: tests/general/300-nonconstexpr-contextual-conversion-bad.t:15:24: a call of a function that is not constexpr

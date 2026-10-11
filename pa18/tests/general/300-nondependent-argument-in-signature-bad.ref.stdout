@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nondependent-argument-in-signature-bad.t:8:28: undeclared name

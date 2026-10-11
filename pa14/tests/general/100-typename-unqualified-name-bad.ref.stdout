@@ -1,0 +1,1 @@
+ERROR: tests/general/100-typename-unqualified-name-bad.t:3:40: typename applied to an unqualified name

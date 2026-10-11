@@ -40,7 +40,9 @@ hosted headers depend on:
 
 - the `aligned` attribute takes a constant expression, not only a literal, and
   inside a class template that expression may name the template's own
-  parameters, so it is not knowable until instantiation
+  parameters, so it is not knowable until instantiation; it is accepted in
+  the `[[gnu::aligned]]` spelling too, and before a block-scope declaration or
+  after a declarator it aligns the declared object
 - a hosted type specifier such as `__uint128_t` or `__float128` spells itself as
   an identifier rather than a keyword, and introduces a functional cast the same
   way a fundamental type keyword does
@@ -164,8 +166,10 @@ preprocess and compile hosted source/header inputs successfully through the
 Hosted compatibility should use the same source-to-LowIR-to-object pipeline as
 ordinary compilation. Hosted include search, predefined macros, and builtin
 probes can affect the source program being compiled, but `--emit-lowir` should
-remain representative of the LowIR that object emission consumes. Do not add a
-hosted-only lowering path that carries backend facts outside serialized LowIR.
+remain representative of the LowIR that object emission consumes: the object
+`cppgm++ -c` writes must be the object the serialized LowIR produces (PA32's
+object round trip checks it), so the facts hosted code needs in the backend
+are LowIR facts; how they travel in memory is yours.
 
 ### Error Handling
 
@@ -202,8 +206,8 @@ PA29 has three test directories:
   by the harness.
 - `tests/run/`: narrow host-link/run compatibility smokes. These tests cover
   hosted builtins, C library entry points, and lightweight hosted C-wrapper
-  headers such as `<cassert>`, `<cmath>`, `<cstddef>`, `<cstdio>`, `<cstdlib>`,
-  `<cstring>`, and `<csignal>`. They do not require broad template-heavy C++
+  headers such as `<cassert>`, `<cmath>`, `<cstdarg>`, `<cstddef>`, `<cstdio>`,
+  `<cstdlib>`, `<cstring>`, and `<csignal>`. They do not require broad template-heavy C++
   standard-library headers or general hosted header-generated runtime support.
 
 The checked-in tests are hosted/vendor compatibility cases, standard-library
@@ -247,14 +251,30 @@ separate hosted-only naming scheme.
 
 To complete PA29, implement hosted compatibility for:
 
-- predefined macro import, `_Pragma`, `__has_*`, `#include_next`, `#warning`,
-  ignored unknown pragmas, and hosted hex-float preprocessing forms such as
-  `0x1p+4`.  A probe answers for its whole family or not at all: a name the
+- predefined macro import, `__COUNTER__`, the GNU comma paste, `_Pragma`,
+  `__has_*`, `#include_next`, `#warning`, ignored unknown pragmas, and hosted
+  hex-float preprocessing forms such as `0x1p+4`.  `#warning` lets
+  translation continue, like an ignored pragma; anything it prints goes to
+  standard error, which the tests do not check.  `__COUNTER__` expands to
+  `0` at its first use in a translation unit and to one more at each later
+  use.  In a variadic macro's replacement list, the GNU form
+  `, ## __VA_ARGS__` removes the comma when the variable arguments are empty
+  as written; otherwise the comma stays and the arguments follow it, pasting
+  nothing.  A probe answers for its whole family or not at all: a name the
   preprocessor treats as defined but does not substitute leaves the header's
   own fallback macro unused and the probe call sitting in the controlling
   expression.  `__has_cpp_attribute` takes an attribute-token, which N4868
   15.2/2 spells as an identifier or a scoped `identifier :: identifier`, and
   `__has_warning` takes a string literal; the rest take a single identifier.
+  `__has_cpp_attribute` answers nonzero only for an attribute the compiler
+  implements, here the standard `no_unique_address`, also spelled
+  `__no_unique_address__`, and `0` for any other name, scoped ones included;
+  `__has_attribute` likewise answers nonzero for the GNU and Clang
+  attributes the compiler implements (`always_inline`, `noinline`,
+  `noreturn`, `pure`, `const`, `used`, `weak`, `packed`, `aligned`,
+  `section`, `vector_size`, `gnu_inline`, `abi_tag`, `using_if_exists` and
+  `exclude_from_explicit_instantiation`, each also spelled `__name__`) and
+  `0` for any other.
   `__has_builtin` answers from the registries that hold the builtins rather
   than from a list beside them: claiming not to have one that is implemented is
   worse than lacking it, because the header then takes a fallback written in
@@ -301,7 +321,16 @@ To complete PA29, implement hosted compatibility for:
   lower to a call to the C function of the same name.  A builtin is a
   global-namespace name, so `::__builtin_x` names the same one as
   `__builtin_x`, which is how a hosted library keeps a user's macro from
-  intercepting the call; any deeper qualification names something else
+  intercepting the call; any deeper qualification names something else.  It
+  also includes the variadic builtins `<cstdarg>` expands to: beside
+  `__builtin_va_start` and `__builtin_va_arg`, which lower to the `va_start`
+  and `va_arg` of `../pa8/lowir.md`, `__builtin_va_copy` copies the
+  argument-list object and `__builtin_va_end` does nothing.
+  `__builtin_expect(e, c)` is the value of `e` converted to `long`; LowIR has
+  no form for the expectation, so it leaves no other trace.
+  `__builtin_unreachable()` lowers to `unreachable`, as in PA11.
+  `__builtin_assume` is not required; without it
+  `__has_builtin(__builtin_assume)` answers 0 and a header takes its fallback
 - hosted compiler intrinsics lowered directly to typed LowIR operations do not
   unwind; an explicit `noexcept` wrapper containing only such operations shall
   not acquire a terminate landing
@@ -313,9 +342,27 @@ To complete PA29, implement hosted compatibility for:
 - semantic and lowering compatibility for hosted source patterns used by those
   headers, including post-declarator parameter
   attributes, explicit specializations of primary-template member functions,
-  bodyless C++14 placeholder-return declarations selected by a test's language
-  mode, non-standard hex-float compile acceptance on ordinary floating types,
+  placeholder-return declarations without a body, such as a deleted overload
+  declared `auto` (a C++14 form that newer hosted headers use; PA20 leaves it
+  out of scope, and like PA20's deduced return types it is accepted in every
+  language mode), non-standard hex-float compile acceptance on ordinary
+  floating types,
   and `[[no_unique_address]]` empty-member layout through generated copy operations
+- the standard `[[noreturn]]` attribute takes no argument and appertains only
+  to the declarator-id of a function declaration (7.6.3p1): a variable,
+  including a block-scope one, a data member, a parameter, a typedef or
+  alias-declaration, a class or enumeration head, a statement, and the
+  position after a parameter list
+  (where it would appertain to the function type) are rejected. Leading
+  attributes of a block item appertain to the declaration it introduces
+- a function declared `[[noreturn]]` or GNU `noreturn` on any declaration
+  states `return=noreturn` on its declarations and definition and on the
+  call signature of a virtual call (`../pa8/lowir.md`, "Facts The C++
+  Lowering States"; a direct call has no signature to carry it), and so
+  do a function template's specializations, while an explicit specialization
+  keeps only its own declarations'; a call through a pointer states none, and
+  a call of such a function does not end its block. PA32's `-O0` driver lane
+  compares the fact
 - semantic validation of primary-source GNU inline function bodies even when
   emission is deferred; an unimplemented reserved compiler builtin may defer
   its wrapper, but ordinary lookup and type errors in an unused wrapper must
@@ -326,8 +373,8 @@ To complete PA29, implement hosted compatibility for:
   required
 - lightweight hosted C-wrapper header and C runtime interop smokes where the
   header surface is mostly builtin macros/functions or ordinary C declarations
-  (`<cassert>`, `<cmath>`, `<cstddef>`, `<cstdio>`, `<cstdlib>`, `<cstring>`,
-  `<csignal>`)
+  (`<cassert>`, `<cmath>`, `<cstdarg>`, `<cstddef>`, `<cstdio>`, `<cstdlib>`,
+  `<cstring>`, `<csignal>`)
 
 If a failing PA29 test exposes a bug in syntax, semantic analysis, template
 handling, lowering, or object emission that is shared with earlier language

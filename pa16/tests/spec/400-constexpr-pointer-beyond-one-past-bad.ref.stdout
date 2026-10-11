@@ -1,1 +1,1 @@
-ERROR: constexpr pointer/reference initializer is not constant
+ERROR: tests/spec/400-constexpr-pointer-beyond-one-past-bad.t:4:33: pointer arithmetic beyond the array's bounds

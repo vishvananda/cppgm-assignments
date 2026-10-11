@@ -1,0 +1,1 @@
+ERROR: tests/general/300-same-overrider-two-subobjects-bad.t:7:1: a virtual function has no unique final overrider

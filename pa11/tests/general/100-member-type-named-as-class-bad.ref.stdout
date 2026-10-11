@@ -1,0 +1,1 @@
+ERROR: tests/general/100-member-type-named-as-class-bad.t:3:19: class redefinition

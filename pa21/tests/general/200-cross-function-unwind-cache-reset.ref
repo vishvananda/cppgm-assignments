@@ -1,14 +1,8 @@
 declare function @__external_runtime____cxa_begin_catch(%arg0 : ptr) -> ptr [role=eh_begin_catch, linkage=c, binding=strong, object=__cxa_begin_catch]
 declare function @std_terminate() -> void [unwind=no, return=noreturn, role=terminate, binding=strong, object=_ZSt9terminatev]
-declare function @cleanup() -> void [binding=strong, object=_Z7cleanupv]
 declare function @may_throw() -> void [binding=strong, object=_Z9may_throwv]
+declare function @cleanup() -> void [binding=strong, object=_Z7cleanupv]
 
-function @cppgm_call_terminate(%exception_object : ptr) -> void [unwind=no, return=noreturn, binding=internal, no_inline=yes] {
-  block ^entry:
-    %t1 = call ptr @__external_runtime____cxa_begin_catch(%exception_object)
-    call void @std_terminate()
-    return void
-}
 function @first() -> i32 [binding=strong, object=_Z5firstv] {
   slot $guard : obj<1x1>
 
@@ -65,15 +59,15 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     branch %t3, ^cond_then_1, ^cond_else_2
 
   block ^cond_then_1:
-    store i32 0, $cond__1
+    store typed i32 0, $cond__1
     jump ^cond_end_3
 
   block ^cond_else_2:
-    store i32 1, $cond__1
+    store typed i32 1, $cond__1
     jump ^cond_end_3
 
   block ^cond_end_3:
-    %t4 = load i32 $cond__1
+    %t4 = load typed i32 $cond__1
     return i32 %t4
 }
 function @Guard___Guard(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN5GuardD1Ev, inline_hint=yes] {
@@ -82,7 +76,7 @@ function @Guard___Guard(%this : ptr [object_bytes=1]) -> void [unwind=no, bindin
 
   block ^entry:
     eh_try ^function_exception_landing_1
-    store ptr %this, $this
+    store typed ptr %this, $this
     call void @cleanup()
     eh_end
     return void
@@ -90,12 +84,18 @@ function @Guard___Guard(%this : ptr [object_bytes=1]) -> void [unwind=no, bindin
   block ^function_exception_landing_1:
     eh_catch_all, 1
     %t1 = exception ptr
-    store ptr %t1, $function_exception__1
+    store typed ptr %t1, $function_exception__1
     jump ^function_exception_action_2
 
   block ^function_exception_action_2:
-    %t2 = load ptr $function_exception__1
+    %t2 = load typed ptr $function_exception__1
     call void @cppgm_call_terminate(%t2)
+    return void
+}
+function @cppgm_call_terminate(%exception_object : ptr) -> void [unwind=no, return=noreturn, binding=internal, no_inline=yes] {
+  block ^entry:
+    %t1 = call ptr @__external_runtime____cxa_begin_catch(%exception_object)
+    call void @std_terminate()
     return void
 }
 alias object _ZN5GuardD2Ev = @Guard___Guard

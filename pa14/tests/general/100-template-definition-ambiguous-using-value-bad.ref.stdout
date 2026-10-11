@@ -1,1 +1,1 @@
-ERROR: ambiguous PA6 lookup
+ERROR: tests/general/100-template-definition-ambiguous-using-value-bad.t:14:10: ambiguous name

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nested-constexpr-member-used-before-definition-bad.t:6:16: a constexpr function called before its definition

@@ -1,1 +1,1 @@
-ERROR: inaccessible qualified type: iterator
+ERROR: tests/general/200-protected-member-typedef-access-bad.t:6:1: inaccessible member

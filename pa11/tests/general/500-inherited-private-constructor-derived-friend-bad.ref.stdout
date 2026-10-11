@@ -1,1 +1,1 @@
-ERROR: inaccessible constructor
+ERROR: tests/general/500-inherited-private-constructor-derived-friend-bad.t:14:11: inaccessible member

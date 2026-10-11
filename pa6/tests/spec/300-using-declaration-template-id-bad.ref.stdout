@@ -1,1 +1,1 @@
-ERROR: using-declaration cannot name a template-id
+ERROR: tests/spec/300-using-declaration-template-id-bad.t:3:1: a using-declaration cannot name a template-id

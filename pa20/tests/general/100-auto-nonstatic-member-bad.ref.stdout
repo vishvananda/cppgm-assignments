@@ -1,0 +1,1 @@
+ERROR: tests/general/100-auto-nonstatic-member-bad.t:3:17: auto in a non-static data member's declaration

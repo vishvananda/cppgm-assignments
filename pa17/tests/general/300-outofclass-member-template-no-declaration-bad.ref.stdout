@@ -1,0 +1,1 @@
+ERROR: tests/general/300-outofclass-member-template-no-declaration-bad.t:4:39: qualified definition does not match a declaration

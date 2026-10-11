@@ -77,6 +77,10 @@ The generated LowIR must be well-formed and must match the checked-in `.ref` fil
 the relaxed LowIR comparison used by the harness. That comparison still checks the
 semantic LowIR shape and required IR facts, but it does not make helper metadata
 presentation or other non-semantic text details part of the student contract.
+The instruction facts and the boundary facts the lowering states (`unwind`,
+`inline_hint`, `object_bytes`, `storage=readonly` and the others) are compared
+exactly; `../pa8/lowir.md` ("What The Comparison Absorbs And What It
+Enforces") lists both sides.
 
 ### Error Handling
 
@@ -114,6 +118,15 @@ backend introduced in PA8. Your own native backend is implemented in PA24.
 
 The shipped PA23 tests are the contract for this milestone.
 
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
+
 ### PA23 Syntax Spec
 
 The authoritative source syntax is the shared `cppgm++` source grammar, exposed
@@ -146,19 +159,35 @@ PA23 supports the following in addition to the PA22 subset:
 
 - virtual inheritance for shared base-subobject layout in complete objects
 - field access through shared virtual bases
-- supported constructor and hidden-argument forwarding cases: a by-value parameter of a
-  class with virtual bases carries each virtual base's subobject address as a hidden
-  pointer argument after the visible parameters, since the complete type is visible to
-  both caller and callee; a reference or pointer parameter carries no such hidden argument
-  and instead reaches its virtual bases through the object's own vtable at each use
+- supported constructor and argument forwarding cases with the Itanium calling convention:
+  a function takes `this` (for a member) and its visible arguments, and a base-object
+  constructor or destructor of a class with virtual bases also takes the VTT. No parameter
+  carries a hidden virtual-base address. A reference, a pointer, a by-value parameter or
+  an implicit object reaches its virtual bases through the object's vtable; a by-value
+  parameter is a complete object, so it may also use its static layout. A base-object
+  constructor or destructor reads its own construction vtable from the VTT
+- reaching a virtual base through a reference or pointer by that base's own vbase-offset
+  row, even when it is a virtual base of another virtual base
+- virtual-base construction by the most derived class's constructor, implicit and
+  synthesized constructors included: depth-first and left to right, so a virtual base's
+  own virtual bases are constructed before it, with destruction in reverse order. A
+  synthesized copy constructor or assignment operator reaches the virtual bases of an
+  object that may be a base subobject through that object's vtable
 - polymorphic multiple inheritance with separate vtable views for non-primary polymorphic
-  bases
+  bases, virtual destructors included
 - virtual dispatch through primary views whose virtual-base ABI carries
   function/adjustment rows, and through non-primary polymorphic base pointers
   and references
 - pointer-form `dynamic_cast<T*>` across sibling polymorphic bases in the supported object
   model
 - `typeid(expr)` through supported non-primary polymorphic base lvalue views
+- member pointers over these layouts: a pointer to a virtual member function names the
+  function's entry in its class's primary vtable (the entry that returns the overrider's
+  result unadjusted); a conversion between pointers to members of a class and of a
+  non-virtual base adjusts `adj` by that base's offset; `.*` and `->*` first convert the
+  object to the member's class, through a virtual base where needed. A conversion between
+  pointers to members of a class and of one of its virtual bases is ill-formed (4.11p2,
+  5.2.9p12), and in deduction it is a substitution failure
 
 Within this milestone, PA23 should produce valid LowIR for ordinary source programs over
 that subset. That LowIR should be accepted by PA24 `lowir2native` for the supported cases.
@@ -167,17 +196,38 @@ To complete PA23, implement these goals:
 
 1. Shared virtual-base layout.
    Complete objects with a virtual diamond should expose one shared base-subobject at a
-   deterministic offset.
+   deterministic offset. Every path through one virtual base reaches the same subobjects
+   inside it, so a non-virtual base of a shared virtual base converts unambiguously
+   however many paths reach that virtual base (10.1). The virtual bases follow the
+   non-virtual part in inheritance graph order (Itanium C++ ABI 2.4 III). Each is placed
+   as a non-virtual base is: from the data size, so a virtual base can occupy a non-POD
+   base's tail padding, and an empty virtual base at offset `0` when no empty subobject of
+   its type is there. A class with no non-virtual dynamic base takes a nearly empty
+   virtual base (one whose non-virtual part is its vptr alone) as its primary base
+   (2.4 I.b). That base sits at offset `0` and shares the class's vptr and vtable. A
+   virtual base that is some base's primary base is not placed again: it lies with the
+   subobject that claims it. The claimant is the first base subobject in inheritance graph
+   order (virtual bases taken where the walk first meets them) whose primary base it is,
+   or that subobject itself when the walk of its own bases reached the virtual base first.
+   The class's own primary base is not claimed this way. The empty subobjects of the
+   virtual primary base and of each claimed base count when later empty bases are placed.
 
 2. Polymorphic dispatch over adjusted vtable views.
    Calling a virtual through a class with virtual-base adjustment rows must select the
    requested logical slot. Calling through a later polymorphic base must lower through the
-   correct vtable view and apply the required `this` adjustment. A final overrider inherited
-   from a non-primary or virtual base must also occupy its required slot in the derived
-   class's primary vtable group, in addition to any adjusted secondary-view entry. Each
-   vtable segment must contain only the vcall-offset and virtual-base-offset rows owned by
-   that segment; in particular, vcall rows belonging to a secondary virtual-base view must
-   not enlarge the primary segment or its address point.
+   correct vtable view and apply the required `this` adjustment. A virtual function a
+   class declares has its own entry in the class's primary vtable unless it overrides a
+   function of the primary base without a return adjustment (Itanium 2.5.2). So an
+   overrider of a function of a non-primary or virtual base occupies such an entry, which
+   calls through the class use, in addition to its adjusted entries in the other tables. A
+   final overrider runs on the subobject that the table's inheritance path leads to, not
+   on another subobject of the same class. Where paths meet at a shared virtual base, an
+   overrider dominates another only if its subobject contains the other's. The function
+   has two final overriders, which is diagnosed (10.3p2), when one overrider is reached in
+   two subobjects or when two overriders lie in subobjects neither of which contains the
+   other. Each vtable segment must contain only the vcall-offset and virtual-base-offset
+   rows owned by that segment; in particular, vcall rows belonging to a secondary
+   virtual-base view must not enlarge the primary segment or its address point.
 
 3. Sibling cross-cast support.
    Pointer-form `dynamic_cast` across sibling polymorphic bases should lower into the
@@ -187,15 +237,22 @@ To complete PA23, implement these goals:
    `typeid(expr)` should observe the dynamic type through a supported non-primary
    polymorphic base reference.
 
+5. Exception boundaries of the lifecycle entries.
+   Constructing a variable or an array element with a constructor that cannot throw
+   opens no cleanup region around that call: the objects completed before it need no
+   unwind path there. An implicitly declared constructor cannot throw when none of the
+   constructors it calls can (15.4p14), also when its class has virtual bases; a
+   user-provided constructor without an exception specification may throw. A
+   destructor's implicit exception specification counts its virtual bases' destructors
+   too. Each entry of a destructor that cannot throw, the base-object entry included,
+   runs under PA21's terminate guard when its definition may throw.
+
 ### Out Of Scope
 
 The following are explicitly out of scope for PA23:
 
-- virtual-base constructor, copy, assignment, and destructor sequencing beyond the already
-  supported simple generated cases
-- polymorphic multiple inheritance with virtual destructors
-- reference-form `dynamic_cast`
-- `dynamic_cast` and RTTI cases that require `bad_cast` / `bad_typeid`
+- virtual-base constructor, copy, assignment, and destructor sequencing beyond the
+  supported cases above
 - virtual inheritance combined with the unsupported special-member or exception cases
 - toolchain-driver and host-linker integration
 
@@ -231,24 +288,87 @@ The same monotonic-extension rule applies here:
 
 For Itanium-layout vtable segments, emit any vcall-offset rows before the
 virtual-base-offset rows, followed by offset-to-top, RTTI, and the function
-slots. Track each segment's address point from the rows actually emitted for
-that segment instead of using one class-wide negative-row count.
+slots. Each segment's address point follows that segment's own negative rows;
+segments of one group may have different numbers of them. The
+virtual-base-offset rows follow the Itanium ABI (2.5.2): the first virtual
+base in inheritance graph order sits nearest the address point, after the rows
+a primary base already places there, and a VMI descriptor's `__offset_flags`
+name the row.
 
-Keep a synthesized constructor or destructor base entry's ABI identity
-separate from inlining policy. The entry may need its own object symbol or
-retained definition, but it gains `no_inline=yes` only when the source-level
-function has the corresponding prohibition.
+A virtual base's table also carries vcall offsets, and so does a class's
+primary table when its primary chain reaches a virtual primary base. There is
+one vcall offset per virtual function signature the virtual base declares:
+those of its non-virtual primary chain first, then those of its other
+non-virtual bases. They are placed as clang places them, so a virtual primary
+base's vcall offsets come before its vbase offset. An overrider reached
+through a virtual base, from that base's table or from a secondary table
+inside it, is a virtual thunk (`_ZTv<n>_<k>_`). The thunk moves `this` to the
+virtual base by the fixed part `n` and adds the vcall offset at `k`, so a
+class that another compiler derives can use it. The entry's subobject is the
+nearest class in the table's primary chain that declares an override. For a
+covariant entry it is the nearest class below the overrider's class whose own
+entry is not a thunk, as g++ picks it. A covariant result moves to the virtual
+base that its overridden result lies in, and then by the fixed offset inside
+it.
 
-Choose where a virtual base's address comes from by how the parameter is
-passed, not by whether the function happens to see the complete type. A
-by-value parameter forces its complete type on every caller, so the caller
-can compute each virtual base's address and pass it as a hidden pointer
-argument. A reference or pointer parameter does not: a caller may hold only a
-forward declaration, in which case it cannot compute a hidden virtual-base
-argument, while the definition, compiled where the type is complete, would
-expect one -- the two disagree across a translation unit. Give a reference or
-pointer parameter no hidden virtual-base argument and recover each virtual
-base's address from the object's vtable at the point of use, the way the same
-access on any other reference or pointer already does. Restricting the hidden
-argument to by-value parameters keeps the calling convention identical whether
-or not a translation unit has the complete type in view.
+A primary base of a secondary base shares that base's table and has no table
+of its own in the group. A virtual primary base may lie elsewhere in the
+class, lost to another subobject. Its entries are null where their walk to the
+declaring class passes a class that lost its own primary base, judged where
+each class of the chain lies. A call, or a pointer to the member, dispatches
+through the place of the entry that returns the overrider's result unadjusted,
+as g++ does. It never uses a covariant thunk's place, which a lost primary
+base may leave null. The group's tables follow its primary table in clang's
+order: the non-virtual bases' secondary tables depth first, then the virtual
+bases' tables in inheritance graph order.
+
+A thunk states its target's boundary facts, except that its `this`, which
+points into the object at the thunk's adjustment, states no `object_bytes`;
+a deleting destructor's thunks state `unwind=no` as D0 does.
+
+Every thunk that a class's tables include is defined with its function and
+only referred to elsewhere. A virtual destructor's deleting entry (D0) and its
+thunks are defined with the destructor too, not where the vtable is emitted.
+Only a weak vtable whose destructor is defined elsewhere keeps a weak copy of
+D0 beside it. g++ also defines a static-`this` covariant thunk (`_ZTch0_...`)
+beside a virtual-`this` one, as the target that its thunk code jumps to; no
+vtable names it, so it is not emitted here. The key function is the first
+non-inline, non-pure virtual function the class declares.
+
+The VTT follows Itanium 2.6.2. It holds the primary vtable; a sub-VTT for each
+direct non-virtual base that has virtual bases (without its virtual sub-VTTs);
+the secondary virtual pointers in inheritance graph order, one for each
+dynamic base that has virtual bases or lies in a virtual base and is not a
+non-virtual primary base; then a sub-VTT for each virtual base that has
+virtual bases. A base-object constructor stores each secondary virtual pointer
+of its VTT where the complete object placed that subobject, and takes the rest
+from its own vtable group. A class that is both a non-virtual base and a
+virtual base is constructed with the sub-VTT of the subobject being built.
+
+A construction vtable group (`_ZTC<complete><offset>_<base>`) lays the base
+out as clang lays out a construction group, with the complete object's offsets
+and vcall offsets. A virtual primary base that does not share its class's
+place there gets its own table. The entries are the base's own; g++ instead
+keeps a lost primary base's entries there and adds no vcall offsets to the
+base's own table. A destructor's entries are null.
+
+A synthesized constructor or destructor entry states `no_inline=yes` only
+when the source function carries GNU `noinline`, whether or not the entry has
+its own object symbol or a retained definition.
+
+Find a virtual base where the object says it is: its vbase-offset row in the
+object's vtable, or a static offset when the object is a complete object of a
+known type (a named variable, a temporary, a by-value parameter). A by-value
+parameter given a derived object is copy-constructed (or, from a prvalue,
+move-constructed) from the argument's base subobject, whose virtual bases are
+found through its vtable. Hidden virtual-base arguments would make the calling
+convention depend on which translation unit sees the complete type, and they
+would differ from what g++ and clang pass: a g++ caller of a base-object
+constructor or member function built here would hand it no such arguments.
+Within a base-object constructor or destructor, read the rows from the
+construction vtable that the VTT names, not from the object's vptr, which may
+still hold a base's table. The VTT never changes, so one load of the table and
+of each row serves a block (the references do this, and the comparison does
+not absorb a reload). Vtables, construction vtables and VTTs are
+`storage=readonly` data, which the optimizer reads through once the VTT is
+known.

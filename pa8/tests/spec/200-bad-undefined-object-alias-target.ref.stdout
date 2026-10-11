@@ -1,1 +1,1 @@
-ERROR: undefined object alias target at tests/spec/200-bad-undefined-object-alias-target.t:6
+ERROR: undefined top-level symbol: missing at tests/spec/200-bad-undefined-object-alias-target.t:7

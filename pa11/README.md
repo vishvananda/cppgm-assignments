@@ -76,12 +76,30 @@ but optimized LowIR output is not part of PA11.
 The authoritative LowIR definition is `../pa8/lowir.md`. PA11 extends the PA10 procedural
 subset of that IR with the object-model lowering needed by this milestone.
 
-When PA11 emits function-boundary metadata such as `unwind=no`, treat that as a
-truthful emitted fact, not as a promise that every semantically equivalent C++
-exception specification is normalized. The direct `noexcept` form on free
-functions, member functions, constructors, and destructors is in scope for the
-tested metadata path. Other explicit `noexcept(expr)` forms may lower
-conservatively without `unwind=no`.
+PA11 states the boundary facts of `../pa8/lowir.md` ("Facts The C++ Lowering
+States") for every function it emits, and the comparison checks each one:
+
+- `unwind=no` on a function whose exception-specification allows no
+  exception (15.4p12): `noexcept`, `noexcept(true)`, `throw()`, or
+  `noexcept(e)` with `e` true; on a destructor without an
+  exception-specification unless a base's or member's destructor allows
+  exceptions (12.4p3); and on an implicitly declared special member function,
+  or one defaulted on its first declaration, when every function it directly
+  invokes is non-throwing (15.4p14).
+- `inline_hint=yes` on every inline function (7.1.2): one declared `inline`
+  or `constexpr`, a member or friend defined in its class (9.3p2, 11.3p7), and
+  an implicitly declared or first-declaration-defaulted special member
+  function; a member defined outside its class without `inline` states none.
+- `no_inline=yes` on a function any declaration of which carries GNU
+  `noinline` (required from this assignment on: the `lifecycle-inline-policy`
+  control checks it, and PA32's `-O0` driver lane compares the fact), and on
+  the lowering's own `cppgm_call_terminate` helper.
+- `object_bytes=N` on `this`, `N` its class's size, in every member function
+  and every constructor and destructor entry, and on the `this` and
+  reference-member parameters of an aggregate's initialization helper.
+- `storage=readonly` on a statically initialized const object of a class
+  with no `mutable` or volatile member and no non-trivial destructor at any
+  depth (7.1.6.1p4, 12.4p2).
 
 A call to `__builtin_unreachable()` lowers directly to the PA8
 `unreachable` block terminator. It does not emit a synthetic function
@@ -136,7 +154,12 @@ future native path is not the PA11 grading contract.
 The checked-in `.ref` files define the required LowIR facts for the tests. The
 test harness checks exit status, LowIR well-formedness, and the
 course-defined normalized LowIR output rather than requiring students to match every
-non-semantic helper spelling or presentation choice.
+non-semantic helper spelling or presentation choice. The normalization renames
+temporaries, slots, blocks and parameters, ignores the order of slot
+declarations and of top-level entries, and reads a literal by its value;
+every instruction of a body must otherwise match the reference's, in its
+order. `../pa8/lowir.md` ("What The Comparison Absorbs And What It Enforces")
+is the one list of what it absorbs and of the conventions it enforces.
 
 ### Error Handling
 
@@ -184,6 +207,17 @@ ordinary non-template operators, standard `alignas` / `alignof`, and inheriting
 constructors. `tests/general/` covers object-model and LowIR-shape cases that
 are not tied to one specific C++11 clause.
 
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
+Controls that state no outcome are focused property checks run by this
+assignment's own checkers.
+
 ### PA11 Syntax Spec
 
 The authoritative source syntax is the shared `cppgm++` source grammar, exposed
@@ -223,20 +257,34 @@ PA11 supports the following in addition to the PA10 procedural subset:
 - nested class/type declarations and lookup
 - static data members and static member functions over the supported scalar and
   class subset
-- complete object layout for non-static data members in declaration order, including:
+- complete object layout for non-static data members in declaration order, as the
+  Itanium C++ ABI (2.4) and the SysV x86-64 psABI place them, including:
   - empty classes
   - alignment and padding, including preservation of a stronger requested
     class alignment while laying out a direct base and members
-  - ordinary integral and enum bit-fields, including zero-width unnamed separators
+  - ordinary integral and enum bit-fields, including zero-width unnamed separators:
+    a bit-field starts at the next free bit and moves to the next unit of its own
+    declared type only rather than straddle one, so adjacent bit-fields of
+    different declared types share storage (`struct { long a : 3; bool b : 1; }`
+    is 8 bytes); a zero-width bit-field moves to its type's alignment, and an
+    unnamed bit-field does not align the class
   - self-referential pointer members
   - previously completed class-type members
-- single inheritance with the direct base subobject at offset `0`
+- single inheritance with the direct base subobject at offset `0`; a base that is not
+  a POD for the purpose of layout claims only its non-virtual size, so the derived
+  class's members reuse its tail padding (`struct B : A { char d; }` with
+  `struct A { A(); int i; char c; }` is 8 bytes)
 - member lookup for:
   - direct fields
   - inherited fields
   - direct methods
   - inherited methods
-- `this`, implicit member lookup inside methods, and member access expressions `.` and `->`
+- `this`, implicit member lookup inside methods, and member access expressions `.` and `->`;
+  a data member reached through a volatile object, pointer, reference or `this` is
+  itself volatile (`mutable` removes only `const`), so its reads and writes are
+  `load volatile` and `store volatile`; the same holds for a bit-field's
+  storage unit and for every member and element that braced initialization
+  of a volatile aggregate writes, including value-initialized omitted ones
 - non-static member-function calls selected through overload resolution with the implicit
   object argument described above
 - ordinary non-template operator overloading over the supported object-model subset, including:
@@ -248,15 +296,25 @@ PA11 supports the following in addition to the PA10 procedural subset:
 - ordinary non-template non-member function calls found through associated-namespace lookup /
   hidden-friend ADL when the arguments stay within the supported class subset
 - in-class member-function definitions
+- an elaborated-type-specifier that first names a class in a member's
+  declaration declares it in the enclosing namespace (3.3.2p7), and a
+  non-static data member may be named without an object in an unevaluated
+  operand (`sizeof(Holder::pair)`, 5.1.1p13)
 - out-of-class definitions for ordinary non-static member functions when the parser accepts
   them as ordinary qualified function definitions, including a leading return type that
   names a private nested type in the member's class context
 - constructors and destructors defined inside the class body
 - implicit default constructors and destructors when no user-declared one exists
-- semantically trivial constructor/destructor actions may be omitted directly;
-  if a retained helper must be substituted, use the ordinary mandatory inline
-  policy rather than a separate lifecycle label, let `no_inline` take
-  precedence for that helper, and decide `object_root` retention independently
+- a constructor or destructor that is trivial (12.1p5, 12.4p5) is not called.
+  Any other is emitted and called, even when its body is empty, with one
+  exception: a destructor with no effect, whose body is empty or implicit and
+  whose subobjects' destructors have none, is not called to destroy a single
+  automatic object, nor a base or member from another destructor. It is still
+  emitted, and temporaries, array elements and allocated objects call it
+- a constructor protects each base and member it has constructed whose
+  destructor is not trivial with a cleanup region (`eh_cleanup` in
+  `../pa8/lowir.md`) that destroys it, open over the rest of the constructor,
+  its body included, whether or not anything in the region can throw
 - demand-driven LowIR emission of the ctor/dtor helpers required by the supported lifetime
   paths above
 - constructor initializer lists for:
@@ -267,6 +325,9 @@ PA11 supports the following in addition to the PA10 procedural subset:
   taking precedence
 - local-class default member initializers that use an enclosing integral
   constant expression without odr-using the enclosing automatic object
+- a local class declared in a constructor's or destructor's body is one class
+  for every entry that runs the body (the complete object's and a base
+  subobject's), its members emitted once
 - aggregate initialization for the supported PA11 object subset, including namespace-scope
   aggregate arrays whose elements contain string-literal pointer members
 - local and namespace-scope class object lifetime:
@@ -295,7 +356,8 @@ PA11 supports the following in addition to the PA10 procedural subset:
 - pseudo-destructor and explicit destructor-name syntax over supported scalar
   and class expressions
 - standard `alignas` and `alignof`, including rejection of a requested class
-  alignment weaker than its natural alignment
+  alignment weaker than its natural alignment; an alignment-specifier on a
+  block-scope object gives its automatic storage the requested alignment
 - inheriting constructors through `using Base::Base`
 - use of complete class types in:
   - `sizeof(type-id)`
@@ -362,7 +424,17 @@ Useful intermediate representations include:
 - class metadata that preserves fields, direct base, access, nested names, static
   members, friends, and member-function bindings
 - one shared layout service for ordinary fields, bit-fields, anonymous members,
-  and alignment directives
+  and alignment directives, tracking a class's size and data size (its size
+  without tail padding) separately
+- a storage unit per run of adjacent bit-fields: the naturally aligned objects
+  of the fields' declared types nest, so the largest ones partition the run; a
+  unit that would reach bytes outside the run (another member, or tail padding
+  a derived class may reuse) can be narrowed to the narrowest integer that
+  holds its fields, and reads and writes then use that unit; a packed
+  (`#pragma pack`) bit-field that no single 1-, 2-, 4- or 8-byte access within
+  its class holds is read and written piecewise, as naturally sized pieces of
+  the bytes it spans (assembled in a 64-bit unit, or a 128-bit one when they
+  are more than 8), as g++ does
 - resolved member expressions and method calls over the same call-semantics IR shape used by
   PA7/PA10
 - explicit constructor/destructor actions attached to declarations or generated function bodies
@@ -375,3 +447,10 @@ Useful intermediate representations include:
   emitted instructions
 - demand-driven helper emission keyed by semantic entities rather than source
   spelling, so unused constructors/destructors do not perturb earlier outputs
+
+An object lives in an `obj<NxA>` slot, and its address passes to its
+constructor and destructor as `this`. PA32 splits a slot into scalar values
+only when every use of its address is a direct load or store, a copy, a
+zeroing or a call's indirect result, so an object can live in registers only
+after its constructor and destructor calls are inlined. Keep them ordinary calls to ordinary
+functions that the inliner can take.

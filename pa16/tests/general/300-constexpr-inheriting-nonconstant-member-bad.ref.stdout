@@ -1,0 +1,1 @@
+ERROR: tests/general/300-constexpr-inheriting-nonconstant-member-bad.t:9:13: a constexpr variable of a type that is not a literal type

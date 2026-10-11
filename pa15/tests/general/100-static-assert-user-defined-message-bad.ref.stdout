@@ -1,1 +1,1 @@
-ERROR: static_assert message requires a string literal at tests/general/100-static-assert-user-defined-message-bad.t:4:1
+ERROR: tests/general/100-static-assert-user-defined-message-bad.t:4:1: a static_assert message that is not a string literal

@@ -13,33 +13,33 @@ function @YB___YB(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak
   slot $this : ptr
 
   block ^entry:
-    store ptr %this, $this
+    store typed ptr %this, $this
     eh_cleanup ^destructor_cleanup_1
     eh_end
-    jump ^destructor_return_epilogue_3
+    jump ^destructor_return_epilogue_2
 
-  block ^destructor_return_epilogue_3:
-    %t1 = load ptr $this
+  block ^destructor_return_epilogue_2:
+    %t1 = load typed ptr $this
     %t2 = index i8 [projection=field] %t1, 0
     call void @YA___YA(%t2)
-    jump ^destructor_end_2
+    jump ^destructor_end_3
 
   block ^destructor_cleanup_1:
-    %t3 = load ptr $this
+    %t3 = load typed ptr $this
     %t4 = index i8 [projection=field] %t3, 0
     call void @YA___YA(%t4)
     eh_end
     resume
 
-  block ^destructor_end_2:
+  block ^destructor_end_3:
     return void
 }
 function @YA___YA(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN2YAD1Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
-    store ptr %this, $this
-    store i32 1, @g
+    store typed ptr %this, $this
+    store typed i32 1, @g
     return void
 }
 alias object _ZN2YBD2Ev = @YB___YB

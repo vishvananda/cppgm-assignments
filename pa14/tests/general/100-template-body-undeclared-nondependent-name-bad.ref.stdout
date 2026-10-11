@@ -1,0 +1,1 @@
+ERROR: tests/general/100-template-body-undeclared-nondependent-name-bad.t:4:36: undeclared name

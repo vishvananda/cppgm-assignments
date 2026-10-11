@@ -1,1 +1,1 @@
-ERROR: out-of-class definition names a nonstatic data member
+ERROR: tests/spec/300-nonstatic-member-out-of-class-definition-bad.t:4:5: an out-of-class definition names a non-static data member

@@ -1,1 +1,1 @@
-ERROR: constexpr variable does not have literal type
+ERROR: tests/general/500-constexpr-variable-nonliteral-bad.t:9:22: a constexpr variable of a type that is not a literal type

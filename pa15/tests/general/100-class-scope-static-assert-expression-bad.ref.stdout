@@ -1,1 +1,1 @@
-ERROR: static assertion failed at tests/general/100-class-scope-static-assert-expression-bad.t:6:3
+ERROR: tests/general/100-class-scope-static-assert-expression-bad.t:6:3: static assertion failed

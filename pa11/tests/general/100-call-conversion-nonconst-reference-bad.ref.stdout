@@ -1,1 +1,1 @@
-ERROR: no viable overload for use in main candidate=function of (lvalue-reference to struct X) returning void object=<none> argument=int at tests/general/100-call-conversion-nonconst-reference-bad.t:11:3
+ERROR: tests/general/100-call-conversion-nonconst-reference-bad.t:11:3: no viable function for the call

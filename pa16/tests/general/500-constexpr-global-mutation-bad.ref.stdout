@@ -1,1 +1,1 @@
-ERROR: static_assert requires an integral constant expression at tests/general/500-constexpr-global-mutation-bad.t:8:1
+ERROR: tests/general/500-constexpr-global-mutation-bad.t:4:3: a modification of an object whose lifetime began outside the evaluation

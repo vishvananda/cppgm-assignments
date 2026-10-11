@@ -1,1 +1,1 @@
-ERROR: invalid macro parameter at tests/macros/300-redef.t:3:2
+ERROR: tests/macros/300-redef.t:3:13: duplicate macro parameter name

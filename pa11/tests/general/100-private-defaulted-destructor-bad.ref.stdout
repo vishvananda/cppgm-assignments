@@ -1,1 +1,1 @@
-ERROR: inaccessible destructor
+ERROR: tests/general/100-private-defaulted-destructor-bad.t:11:5: inaccessible member

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-dynamic-cast-incomplete-class-bad.t:4:33: a dynamic_cast to or from an incomplete class

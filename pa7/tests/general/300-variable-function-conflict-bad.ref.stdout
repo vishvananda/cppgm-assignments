@@ -1,1 +1,1 @@
-ERROR: function conflicts with ordinary binding
+ERROR: tests/general/300-variable-function-conflict-bad.t:4:6: function conflicts with an earlier declaration

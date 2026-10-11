@@ -1,0 +1,1 @@
+ERROR: tests/general/200-auto-var-in-own-initializer-bad.t:3:56: undeclared function name

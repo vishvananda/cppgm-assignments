@@ -88,9 +88,9 @@ objects are host-linked.
 
 Hosted objects should still be generated from the same LowIR facts exposed by
 `cppgm++ --emit-lowir`. If hosted header emission needs symbol ownership,
-object symbol spellings, TLS wrapper facts, or runtime hooks, those facts
-should be represented in LowIR metadata, declarations, definitions, or object
-aliases rather than in a hosted-only side channel.
+object symbol spellings, TLS wrapper facts, or runtime hooks, those facts are
+LowIR facts (metadata, declarations, definitions, object aliases), so that the
+object serialized LowIR produces equals the direct one.
 
 The PA31 tests observe:
 
@@ -133,6 +133,25 @@ symbols just because a broad standard-library header was included. For example,
 including `<functional>`, using `std::forward`, using placement `new`, or
 instantiating an `unordered_set` should not by itself cause unrelated libc++ or
 libstdc++ helper definitions to appear as defined symbols in the output object.
+
+The course solution decides what to emit by the closure below; a different
+closure whose objects link and run is acceptable. The closure starts from the
+definitions the translation unit owns (its non-inline functions and variables with external linkage, and
+the vtable of each class whose key function it defines, as the Itanium ABI
+decides) and adds, until nothing new appears, every vague-linkage definition
+that something already in it refers to:
+
+- an inline function, function template specialization or member of a class
+  template specialization that emitted code calls or takes the address of
+- the vtable of a class with no key function, where emitted code refers to
+  it, with the virtual functions, type information and thunks it names
+- a static local variable of an emitted inline function or specialization,
+  and its guard variable
+
+At `-O0` the closure follows the code as lowered. At `-O1` and above, from
+PA32 on, it is computed after inlining and pruning: an inline function whose
+every call has been inlined is no longer referenced and is not emitted, so an
+optimized object defines far fewer symbols than the `-O0` one.
 
 ### Hosted ABI Names
 

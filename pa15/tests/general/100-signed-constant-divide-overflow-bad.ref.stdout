@@ -1,1 +1,1 @@
-ERROR: signed division overflow at tests/general/100-signed-constant-divide-overflow-bad.t:1:33
+ERROR: tests/general/100-signed-constant-divide-overflow-bad.t:1:15: an arithmetic operation with an undefined result

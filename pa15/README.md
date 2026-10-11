@@ -85,8 +85,12 @@ and cleanup bodies.
 
 The test harness checks that the generated LowIR is well formed and matches the
 checked-in `.ref` files after canonicalizing presentation details that are not
-part of the assignment contract. Exact textual LowIR matching is not a PA15
-grading requirement.
+part of the assignment contract: the names of temporaries, slots, blocks and
+parameters, the order of slot declarations and of top-level entries, and the
+spelling of literals (`../pa8/lowir.md`, "What The Comparison Absorbs And What
+It Enforces", is the one list). Exact textual LowIR matching is not a PA15
+grading requirement, but every instruction of a body must match the
+reference's after that canonicalization, in its order.
 
 ### Error Handling
 
@@ -133,6 +137,15 @@ checked result; exact diagnostic text is not checked.
 PA15 is tested against generated LowIR text. That LowIR is intended to become
 input for the later PA24 `lowir2native` backend, but that future native path is
 not the PA15 grading contract.
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### Optional Student Test Ideas
 
@@ -202,9 +215,13 @@ PA15 supports the following in addition to the PA14 subset:
   - `sizeof(type-id)` and `alignof(type-id)`
   - supported cast expressions that fold to integral constant values
 - explicit specialization of supported class templates
-- explicit specialization of supported function templates
-- late explicit-specialization visibility and stale-primary refresh in the
-  supported class/function template cases
+- explicit specialization of supported function templates; an explicit
+  specialization of a function template states `inline_hint=yes` only when it
+  is itself declared `inline` or `constexpr`, whatever the template's
+  declaration says (14.7.3p12)
+- an explicit specialization declared after uses of its primary template
+  takes effect for the uses that follow it (14.7.3p6), in the supported class
+  and function template cases
 - constant-valued template bindings over the supported subset, including class-scope
   `static const` / `static constexpr` members and other ordinary metaprogramming helper
   bindings that feed lookup, template arguments, or `static_assert`

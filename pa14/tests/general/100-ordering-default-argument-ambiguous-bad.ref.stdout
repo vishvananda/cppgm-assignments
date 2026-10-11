@@ -1,0 +1,1 @@
+ERROR: tests/general/100-ordering-default-argument-ambiguous-bad.t:6:21: ambiguous call to overloaded function

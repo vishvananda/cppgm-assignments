@@ -1,1 +1,1 @@
-ERROR: constexpr callable uses a non-literal result or parameter type
+ERROR: tests/spec/500-constexpr-void-function-bad.t:4:1: a constexpr function's return type is not a literal type

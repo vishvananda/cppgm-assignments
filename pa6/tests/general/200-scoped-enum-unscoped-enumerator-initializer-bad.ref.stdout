@@ -1,0 +1,1 @@
+ERROR: tests/general/200-scoped-enum-unscoped-enumerator-initializer-bad.t:5:14: a scoped enumeration value does not convert implicitly to an integer

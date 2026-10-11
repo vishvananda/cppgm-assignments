@@ -1,1 +1,1 @@
-ERROR: direct base must name a complete non-union class
+ERROR: tests/general/300-member-template-parameter-name-collision-bad.t:11:26: base is not a class

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-explicit-spec-too-many-template-headers-bad.t:5:23: an explicit specialization of a member with the wrong number of template<>

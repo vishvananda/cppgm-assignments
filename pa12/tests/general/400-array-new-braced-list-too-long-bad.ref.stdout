@@ -1,0 +1,1 @@
+ERROR: tests/general/400-array-new-braced-list-too-long-bad.t:3:29: more initializers than the array new-expression's elements

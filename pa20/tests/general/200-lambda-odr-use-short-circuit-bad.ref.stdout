@@ -1,0 +1,1 @@
+ERROR: tests/general/200-lambda-odr-use-short-circuit-bad.t:4:49: a lambda odr-uses an automatic variable it does not capture (5.1.2p11)

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-template-declaration-rules-bad.t:4:14: a template declared in a block scope

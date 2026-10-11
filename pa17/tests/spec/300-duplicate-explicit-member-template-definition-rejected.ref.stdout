@@ -1,1 +1,1 @@
-ERROR: duplicate function template definition
+ERROR: tests/spec/300-duplicate-explicit-member-template-definition-rejected.t:10:30: redefinition of a function

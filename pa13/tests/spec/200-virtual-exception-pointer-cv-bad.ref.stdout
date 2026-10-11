@@ -1,1 +1,1 @@
-ERROR: virtual override has a looser exception specification
+ERROR: tests/spec/200-virtual-exception-pointer-cv-bad.t:7:79: an overrider allows exceptions its overridden function does not

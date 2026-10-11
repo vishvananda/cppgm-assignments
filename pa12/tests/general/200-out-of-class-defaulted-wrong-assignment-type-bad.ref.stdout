@@ -1,1 +1,1 @@
-ERROR: explicitly defaulted assignment has the wrong type
+ERROR: tests/general/200-out-of-class-defaulted-wrong-assignment-type-bad.t:9:6: only special member functions can be defaulted

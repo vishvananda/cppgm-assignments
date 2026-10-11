@@ -1,0 +1,1 @@
+ERROR: tests/general/300-explicit-spec-default-argument-bad.t:5:12: a default argument in an explicit specialization

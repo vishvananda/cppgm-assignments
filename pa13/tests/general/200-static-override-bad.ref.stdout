@@ -1,1 +1,1 @@
-ERROR: static member function cannot have a virtual specifier
+ERROR: tests/general/200-static-override-bad.t:8:14: a static member function overrides a virtual function

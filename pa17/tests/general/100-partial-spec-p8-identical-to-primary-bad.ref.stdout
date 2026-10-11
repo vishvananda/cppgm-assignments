@@ -1,0 +1,1 @@
+ERROR: tests/general/100-partial-spec-p8-identical-to-primary-bad.t:4:35: a partial specialization whose arguments are its template's own parameters

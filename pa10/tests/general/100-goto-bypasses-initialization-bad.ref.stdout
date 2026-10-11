@@ -1,0 +1,1 @@
+ERROR: tests/general/100-goto-bypasses-initialization-bad.t:3:11: goto bypasses a variable's initialization

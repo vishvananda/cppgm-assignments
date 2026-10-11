@@ -1,1 +1,1 @@
-ERROR: static_assert requires an integral constant expression at tests/general/500-constexpr-class-return-dangling-member-bad.t:14:1
+ERROR: tests/general/500-constexpr-class-return-dangling-member-bad.t:14:15: a pointer to an object whose lifetime has ended

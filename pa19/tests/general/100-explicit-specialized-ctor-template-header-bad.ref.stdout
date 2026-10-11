@@ -1,1 +1,1 @@
-ERROR: member of an explicit class specialization has a template header
+ERROR: tests/general/100-explicit-specialized-ctor-template-header-bad.t:12:1: an explicit specialization matches no function template

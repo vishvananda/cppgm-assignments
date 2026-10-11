@@ -1,0 +1,1 @@
+ERROR: tests/general/100-inaccessible-base-dtor-deletes-default-ctor-bad.t:7:21: use of a deleted function

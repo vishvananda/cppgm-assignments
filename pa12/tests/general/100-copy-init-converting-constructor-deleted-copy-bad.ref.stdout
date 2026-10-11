@@ -1,1 +1,1 @@
-ERROR: selected constructor is deleted
+ERROR: tests/general/100-copy-init-converting-constructor-deleted-copy-bad.t:2:112: use of a deleted function

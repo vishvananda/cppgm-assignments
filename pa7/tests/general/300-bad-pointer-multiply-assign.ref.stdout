@@ -1,1 +1,1 @@
-ERROR: invalid compound assignment at tests/general/300-bad-pointer-multiply-assign.t:3:9
+ERROR: tests/general/300-bad-pointer-multiply-assign.t:3:3: invalid operands to a compound assignment

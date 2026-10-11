@@ -90,11 +90,11 @@ but optimized LowIR output is not part of PA10.
 The authoritative LowIR definition is `../pa8/lowir.md`. PA10 only needs the procedural
 subset of that IR, but it must emit valid PA8 LowIR.
 
-Example:
+Example, for `int main() { return 0; }`:
 
-    function @main() -> i64 {
+    function @main() -> i32 [role=entry] {
       block ^entry:
-        return i64 0
+        return i32 0
     }
 
 PA10 writes a single concatenated LowIR program consisting of:
@@ -109,17 +109,13 @@ in `../pa8/lowir.md`: `declare global`, `declare function`, `global`, then
 before comparison. Your output must still be repeatable for the same
 inputs; `../pa8/lowir.md` defines the canonical reference presentation and
 notes where internal LowIR symbol names are only a presentation tie-breaker.
-Externally meaningful C++ symbols must be produced through PA9's shared typed
-ABI encoder. Build the encoder target from resolved declarations and types;
-the ABI fact-file parser is a standalone-tool adapter and is not part of the
-source-to-LowIR path.
-
-The in-memory LowIR program uses compact semantic identity. Assign each
-top-level symbol one `SymbolId`, store its presentation spelling once through a
-program `StringId`, and use that `SymbolId` in declarations, definitions,
-operands, structured-global addresses, and alias targets. Render the spelling
-only when writing LowIR text or a diagnostic; do not copy an owning symbol name
-into each record or reference.
+Externally meaningful C++ symbols carry their Itanium ABI names (PA9's
+rules): what `abimangle` produces for the same facts. Reusing PA9's encoder
+from resolved declarations and types is the direct way; converting semantic
+state to fact text and parsing it back is a slow path to avoid. One compact
+identity per top-level symbol, with its spelling kept once and rendered only
+when LowIR text or a diagnostic is written, keeps symbol handling cheap; no
+test observes it.
 
 Your output must also preserve order-sensitive LowIR regions when they are present: instruction order inside
 blocks, item order inside structured globals, vtable slot order, and action
@@ -137,10 +133,12 @@ course-defined normalized LowIR output rather than requiring students to match e
 non-semantic helper spelling or presentation choice. What that normalization
 absorbs, and what it does not, is one list in `../pa8/lowir.md` ("What The
 Comparison Absorbs And What It Enforces"). Read it before the first failing
-fixture. In short, the comparison ignores names, order and layout, reads a
-literal by its value, and lets the operands of a commutative operation
-appear in either order; and it enforces three conventions the course fixes
-in words rather than absorbing:
+fixture. In short, the comparison renames temporaries, slots, blocks and
+parameters, ignores the order of slot declarations and of top-level entries,
+reads a literal by its value, and lets the operands of a commutative
+operation appear in either order; every instruction of a body must
+otherwise match the reference's, in its order. It enforces the conventions
+the course fixes in words rather than absorbing, chief among them:
 
 - Branch sense follows the source: a conditional branch tests the value the
   source wrote, in the source's sense (`!=` is `cmp ne`, `!x` is
@@ -153,10 +151,32 @@ in words rather than absorbing:
   assignment before the address of its left, and where the language leaves
   the order open, left to right (operands, call arguments, and the loads
   each needs).
+- Instruction facts are part of the instruction (`../pa8/lowir.md`,
+  "Instruction Facts"): every non-volatile load and store of a pointer, a
+  floating type or an integer wider than a byte is `typed` unless it goes
+  through a union member or a bit-field's storage unit; the `add`, `sub` and
+  `mul` of signed `int` and `long` source arithmetic (and of `++`, `--` and
+  the compound assignments) are `nowrap`; and the division of a pointer
+  difference by its element size is `exact`.
+- The boundary facts are part of the output (`../pa8/lowir.md`, "Facts The
+  C++ Lowering States"): a function whose exception-specification allows no
+  exception (`noexcept`, `noexcept(true)`, `throw()`, or `noexcept(e)` with
+  `e` true) states `unwind=no`; a statically initialized global of a const,
+  non-volatile type that is not `thread_local` states `storage=readonly`;
+  and a reference parameter to a complete object type states
+  `object_bytes=N`, `N` the size of the object it refers to.
 
-A fixture that fails on one of those three is telling you which convention
+A fixture that fails on one of these is telling you which convention
 your output departs from; the canonical diff the harness writes beside the
 output shows where.
+
+The facts are what later stages may rely on: PA32's optimizer can assume a
+typed store does not change a typed load of another type, remove the
+exception region around a call that cannot unwind, fold a load from readonly
+data to its value, and load through a reference before a loop that may not
+run; PA24's backend can skip renormalizing a result that does not wrap.
+Stating them now costs one flag each; deriving them again after lowering is
+not possible.
 
 For supported scalar conversions, PA10 may canonicalize widened integral immediates directly
 to their final LowIR literal value instead of spelling those same conversions through
@@ -219,6 +239,17 @@ The PA10 test suite uses:
 
 PA10 is tested against the generated LowIR text.
 
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
+Controls that state no outcome are focused property checks run by this
+assignment's own checkers.
+
 ### PA10 Syntax Spec
 
 The authoritative source syntax is the shared `cppgm++` source grammar, exposed
@@ -258,21 +289,30 @@ This PA10 milestone supports the following:
   compatible declarations
 - a required `main` definition
 - functions returning integral, pointer, or `bool` results from the supported PA7 subset
-- up to four parameters in the supported PA7 procedural type subset
+- up to five parameters in the supported PA7 procedural type subset
 - global integral/pointer/function-pointer objects with constant initializers or zero-init,
   including object addresses and constant array-element addresses
-- internal namespace-scope `const` scalar objects represented as
-  `storage=readonly` in LowIR when they are neither volatile nor
-  `thread_local`; volatile scalars, class objects, and thread-local objects
-  retain their respective conservative storage contracts
+- narrow string literals used as pointer values, such as call arguments and
+  pointer or pointer-array initializers: each literal's backing array is an
+  internal structured global with `storage=readonly`
+- `storage=readonly` on every statically initialized global definition of a
+  const, non-volatile type that is not `thread_local`: a scalar, a pointer,
+  or an array of them (an array's qualifiers are its element type's,
+  3.9.3p5); a volatile, thread-local, dynamically initialized or non-const
+  object states none, and PA11 extends the rule to class objects
 - volatile scalar lvalue-to-rvalue conversions and stores represented by
   `load volatile` and `store volatile` at the LowIR boundary, including local,
   pointer-indirect, and class-member access; the marker belongs to the access,
   while an adjacent nonvolatile member access remains ordinary
 - recognized memory builtins use ordinary pointer parameters and preserve the
-  function-level runtime identity and effects needed by later stages;
-  non-overlapping `memcpy` boundaries carry `alias=noalias`, while potentially
-  overlapping `memmove` boundaries do not
+  function-level runtime identity and effects needed by later stages: their
+  declarations carry `object=cppgm_builtin_memcpy` and
+  `object=cppgm_builtin_memmove` with `unwind=no` (`../pa8/lowir.md`, "Facts
+  The C++ Lowering States"); non-overlapping `memcpy` boundaries carry
+  `alias=noalias`, while potentially overlapping `memmove` boundaries do not
+- block-scope function declarations and `extern` variable declarations, which
+  name members of the innermost enclosing namespace (3.5p6) and have no
+  automatic storage
 - local scalar objects, scalar/function references, function pointers/references, and bounded
   arrays in the supported PA7 procedural type subset; an omitted array bound is inferred
   from its initializer, missing elements are zero-initialized, and excess elements are
@@ -304,8 +344,9 @@ This PA10 milestone supports the following:
   pointer values, pointer compound assignment with element-size scaling, and
   pointer differences measured in elements; because the byte difference of
   two pointers into the same array is exactly divisible by the element size,
-  a positive power-of-two size may be lowered as an arithmetic right shift,
-  while other element sizes retain signed division
+  a positive power-of-two size is lowered as an arithmetic right shift,
+  while other element sizes retain signed division; either way the division
+  is `exact`
 - array-to-pointer and function-to-pointer decay produce an ordinary LowIR
   `ptr` using the existing address, index, parameter, or `copy ptr` operations;
   do not add a decay-specific unary operation or parameter-passing annotation
@@ -336,11 +377,10 @@ canonical comparison result directly.
 
 Compiler-generated slots and helper names must remain distinct from source
 identifiers so a source declaration cannot redirect an internal temporary.
-The source lowering path should carry compact value, slot, block, and symbol
-identities into the shared typed LowIR model. Store required display spellings
-once in the program string pool, and retain a numeric ordinal for generated
-temporaries; do not construct or hash a presentation string for every operand
-reference.
+(Carrying compact value, slot, block and symbol identities into the typed
+LowIR model, with each spelling kept once and generated temporaries numbered,
+avoids building or hashing a presentation string per operand; no test
+observes it.)
 
 The generated LowIR for this supported subset is intended to be accepted by the
 later PA24 `lowir2native` backend.
@@ -348,7 +388,8 @@ later PA24 `lowir2native` backend.
 
 The following are explicitly out of scope for this PA10 milestone:
 
-- string literals and string-literal-backed object initialization
+- object initialization backed by a string literal, such as a character array
+  initialized from one
 - global or local initialization forms that require a richer constant-evaluation or aggregate
   initialization layer than PA7 currently provides
 - function-local static objects and guard variables
@@ -398,3 +439,21 @@ It is useful for the lowering layer to derive result types from the LowIR
 operation as it creates a temporary. In particular, keeping the canonical
 `i64` comparison result there avoids duplicating result-type decisions at
 each later use.
+
+The LowIR this assignment emits is the optimizer's input at PA32, which is
+why its shape is simple rather than efficient. Every local lives in a slot
+and every use loads it: PA32 promotes slots to values, so there is no need to
+avoid the loads here. `unreachable` states a fact the optimizer uses to
+delete code after a call that does not return; it is not a trap to execute.
+The instruction facts (Instruction Facts in `../pa8/lowir.md`) are the
+semantic facts the optimizer cannot recover from LowIR alone: C++'s type-based
+aliasing and its undefined signed overflow. State them where the rules say,
+even though nothing before PA32 reads them.
+
+Lower each function straight into the PA8 model, and decide by demand from
+the start which definitions to lower. A definition the translation unit need
+not emit, such as an inline function, an implicit member or a template
+instantiation, is lowered only when something already emitted refers to it.
+Later assignments bring such definitions in from headers by the thousand,
+and most are never used; lowering them all and discarding the unused ones
+costs time on every compile.

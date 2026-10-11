@@ -1,1 +1,1 @@
-ERROR: direct base must name a complete non-union class
+ERROR: tests/general/300-final-nondependent-template-base-bad.t:8:26: a final class used as a base class

@@ -1,1 +1,1 @@
-ERROR: selected constructor is deleted
+ERROR: tests/spec/100-defaulted-move-constructor-deleted-base-bad.t:4:38: use of a deleted function

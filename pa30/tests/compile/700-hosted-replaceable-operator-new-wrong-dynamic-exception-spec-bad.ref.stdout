@@ -1,1 +1,1 @@
-ERROR: conflicting function exception specification
+ERROR: tests/compile/700-hosted-replaceable-operator-new-wrong-dynamic-exception-spec-bad.t:7:1: redeclaration with an incompatible exception-specification

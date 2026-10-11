@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nontemplate-hides-base-template-explicit-args-bad.t:5:28: a template-id names no member function template

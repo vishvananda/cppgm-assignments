@@ -1,0 +1,1 @@
+ERROR: tests/general/300-local-class-member-template-bad.t:3:25: a member template of a local class

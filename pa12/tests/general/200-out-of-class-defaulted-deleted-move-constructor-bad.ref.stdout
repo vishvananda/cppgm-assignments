@@ -1,1 +1,1 @@
-ERROR: out-of-class defaulted constructor is deleted
+ERROR: tests/general/200-out-of-class-defaulted-deleted-move-constructor-bad.t:16:1: an explicitly defaulted function is defined as deleted

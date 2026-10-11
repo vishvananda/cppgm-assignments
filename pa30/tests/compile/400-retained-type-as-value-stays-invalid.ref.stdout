@@ -1,1 +1,1 @@
-ERROR: type name used as retained value: T
+ERROR: tests/compile/400-retained-type-as-value-stays-invalid.t:4:10: type name used as a value

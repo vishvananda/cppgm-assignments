@@ -1,1 +1,1 @@
-ERROR: noreturn attribute requires a function
+ERROR: tests/compile/500-standard-noreturn-variable-bad.t:1:14: noreturn attribute requires a function

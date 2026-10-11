@@ -1,0 +1,1 @@
+ERROR: tests/general/300-explicit-spec-unspecialized-enclosing-bad.t:4:19: an explicit specialization in a template is not supported

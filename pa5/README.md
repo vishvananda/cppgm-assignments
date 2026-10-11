@@ -149,19 +149,14 @@ rooted at:
 translation-unit
 ```
 
-The dump must use explicit syntax nodes for supported constructs. The checked-in
-`.ref` files define the exact indentation, ordering, spelling, and leaf-token
-format expected by the tests. Common node families include:
-
-- declarations such as `empty-declaration`, `simple-declaration`,
-  `function-definition`, `class-specifier`, `enum-specifier`,
-  `template-declaration`, and `static-assert-declaration`
-- declarator and type-id syntax
-- statement nodes such as `compound-statement`, `if-statement`,
-  `return-statement`, and `expression-statement`
-- expression nodes such as `id-expression`, `literal`, `call-expression`,
-  `new-expression`, `cast-expression`, and `lambda-expression`
-- unresolved syntax nodes that later semantic assignments will classify
+The dump must use explicit syntax nodes for supported constructs. Each line
+is one node: two spaces of indentation per level of nesting, the node's
+kind, and for some kinds one payload. [Node Vocabulary](#node-vocabulary)
+lists every kind the references use and the payload each carries; the
+checked-in `.ref` files are the oracle for the order of a node's children.
+Only the dump is compared. The tree in memory may take any shape, node set
+and ownership that produces it; nothing requires one node class per dump
+line, and the kinds are the printer's spellings, not a class list.
 
 PA5 output is a syntax tree, not a semantic dump. For example, base specifiers
 and constructor mem-initializers should preserve the unresolved names and
@@ -206,7 +201,10 @@ PA7 passes consume, including:
 - `static_assert`
 - declarator-derived syntax, including pointers, references, arrays, function
   parameter clauses, exception specifications, cv/ref qualifiers, default
-  arguments, and trailing return types
+  arguments, and trailing return types. A declarator's pack `...` precedes its
+  declarator-id (`T... values`); an ellipsis after the last parameter, with or
+  without a comma (`f(int, ...)`, `g(char value...)`), is the parameter
+  clause's own and dumps under `parameter-clause`
 - structured `type-id` syntax in casts, `new`, `typeid`, `alignof`,
   `sizeof(type)`, and `noexcept`
 - compound statements, selection statements, iteration statements, labels,
@@ -275,7 +273,7 @@ Plan for ambiguity. Some C++ syntax cannot be classified fully until later
 semantic passes exist. PA5 should still preserve the required structure in the
 tree so later assignments can classify it without reparsing source text.
 
-### Handoff
+### Handoff (non-normative)
 
 The next assignment builds scopes, bindings, and canonical types on this AST.
 Keep declarations, declarators, names, expressions, and source locations
@@ -284,10 +282,187 @@ names without replacing the parser or reparsing token spellings from its dump.
 Use stable node ownership and keep printing separate from parsing; no particular
 arena, class hierarchy, or reference implementation layout is required.
 
+Plan the node shape for what every later stage asks of every node. PA7
+attaches a type and a value category to every expression, PA14 instantiates
+template bodies, and PA10 lowers every node of every function. Facts that
+every node of a kind carries are best reached from the node itself, and node
+kinds are best an enumeration rather than a string; a generic tree whose
+facts live in hash tables keyed by node, probed on every visit, works for
+the fixtures and becomes the front end's dominant cost on the standard
+library headers later assignments parse. Nodes hold kinds and identities,
+not the dump's spellings: the printer renders `KW_INT:int` or a qualified name
+when it writes the dump, and no later stage compares those strings.
+
 ### Multi-file test groups
 
 For a root `name.t`, companions such as `name.t2` are additional primary
 source files in the same invocation, in lexical order. They remain separate
-translation units; the harness counts the group once. Both batch and ordinary
-execution use this file interface. Headers and other support files stay with
+translation units; the harness counts the group once. Headers and other
+support files stay with
 the owning case and are not concatenated into one source file.
+
+### Node Vocabulary
+
+The references use the node kinds below and no others. A line is a kind
+alone or a kind and one payload:
+
+- `<token>` is a token's kind and spelling joined by a colon, as PA2 names
+  them: `KW_STRUCT:struct`, `OP_PLUS:+`, `TT_IDENTIFIER:override`.
+- `<name>` is a name as the source spells it; one the source spells with
+  several tokens is written with them joined and no spaces: `~C`,
+  `operatorint`, `__owns_one_state<C>`, `decltype(n::base())`.
+- `<text>` is the construct's own tokens, joined without spaces.
+
+Declarations:
+
+```text
+translation-unit
+empty-declaration
+simple-declaration
+init-declarator-list
+init-declarator
+function-definition
+alias-declaration <name>
+using-declaration
+using-directive
+namespace-definition <name>        `<unnamed>` for an unnamed namespace
+inline                             first child of an inline namespace-definition
+namespace-alias-definition <name>
+target <name>                      the namespace a using-directive or alias names
+linkage-specification <text>       `C` or `C++`
+static-assert-declaration
+message <text>                     a static-assert-declaration's string literal
+explicit-instantiation-declaration
+class-specifier <name>             no payload for an unnamed class
+class-key <token>
+class-forward-declaration <name>
+member-specifiers
+specifier <token>                  `explicit` is written as its spelling alone
+access-specifier <token>
+base-clause
+base-specifier
+base-name <name>
+virtual <token>                    a virtual base specifier
+virt-specifier <token>
+special-member-declaration <name>  a constructor, destructor (`~C`) or conversion function (`operatorint`)
+special-member-definition <name>
+ctor-initializer
+mem-initializer
+mem-initializer-id <name>
+bit-field-declaration
+bit-field-declarator
+enum-specifier <name>              no payload for an unnamed enumeration
+enum-key <token>
+enumerator <name>
+```
+
+Templates:
+
+```text
+template-declaration
+template-parameter-clause
+template-parameter-list
+type-parameter
+non-type-template-parameter
+template-template-parameter
+parameter-key <token>
+parameter-pack ...
+default-template-argument
+ellipsis ...
+pack-expansion <token>             OP_DOTS:...
+pack-expansion-expression
+sizeof-pack-expression <name>
+```
+
+Specifiers, declarators and initializers:
+
+```text
+decl-specifier-seq
+decl-specifier <token>
+type-specifier-seq
+type-specifier <token>
+type-name <name>                   a name the parser knows as a type
+identifier <name>                  any other name
+cv-qualifier <token>
+decltype-specifier <text>
+global-scope
+type-id
+declarator
+abstract-declarator
+nested-declarator
+ptr-operator <token>
+array-suffix
+parameter-clause
+parameter-declaration
+function-qualifier <text>          `noexcept`, `throw()`, `throw(int,Y*)`
+noexcept-specification
+trailing-return-type [<name>]      the payload repeats a return type that is one type-name
+initializer
+paren-initializer
+braced-init-list
+special-initializer <text>         a defaulted or deleted definition's `default` or `delete`
+default-argument
+```
+
+Statements:
+
+```text
+compound-statement
+expression-statement
+return-statement
+if-statement
+condition
+condition-declaration
+then                               an if-statement's branches
+else
+while-statement
+do-statement
+for-statement
+for-init-statement
+iteration                          a for-statement's iteration expression
+range-for-statement
+range-declaration
+range-initializer
+switch-statement
+case-statement
+default-statement
+break-statement
+continue-statement
+goto-statement <name>
+labeled-statement <name>
+try-block
+function-try-block
+handler
+exception-declaration
+throw-statement
+```
+
+Expressions:
+
+```text
+id-expression <name>
+literal <text>
+keyword-literal <token>            true, false, nullptr, this
+parenthesized-expression
+unary-expression <token>
+postfix-expression <token>
+binary-expression <token>
+assignment-expression <token>
+conditional-expression
+call-expression
+argument-list
+paren-argument-list
+subscript-expression
+member-expression <token>
+cast-expression <token>            a cast keyword; a C-style cast writes `OP_LPAREN:` with no spelling
+sizeof-expression
+type-trait-expression <token>      alignof, noexcept, typeid
+new-expression
+placement <text>
+delete-expression
+array-delete                       a delete-expression's `[]`
+lambda-expression
+lambda-introducer <text>
+lambda-declarator
+lambda-specifier <token>
+```

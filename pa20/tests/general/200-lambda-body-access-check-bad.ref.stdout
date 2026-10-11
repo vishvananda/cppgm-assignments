@@ -1,0 +1,1 @@
+ERROR: tests/general/200-lambda-body-access-check-bad.t:5:21: inaccessible member

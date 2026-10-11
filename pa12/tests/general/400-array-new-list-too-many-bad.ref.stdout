@@ -1,0 +1,1 @@
+ERROR: tests/general/400-array-new-list-too-many-bad.t:3:24: more initializers than the array new-expression's elements

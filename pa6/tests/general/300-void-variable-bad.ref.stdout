@@ -1,1 +1,1 @@
-ERROR: variable has type void
+ERROR: tests/general/300-void-variable-bad.t:5:6: variable of type void

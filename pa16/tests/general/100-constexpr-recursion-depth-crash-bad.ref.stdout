@@ -1,0 +1,1 @@
+ERROR: tests/general/100-constexpr-recursion-depth-crash-bad.t:4:55: constexpr calls nested too deeply

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-constexpr-ellipsis-nonconstant-argument-bad.t:5:17: a variable is not usable in a constant expression

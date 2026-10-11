@@ -1,0 +1,1 @@
+ERROR: tests/general/200-alias-template-redeclared-different-bad.t:4:19: an alias template redeclared with a different template or type

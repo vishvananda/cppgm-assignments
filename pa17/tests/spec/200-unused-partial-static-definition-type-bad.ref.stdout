@@ -1,1 +1,1 @@
-ERROR: retained static member definition has a conflicting type
+ERROR: tests/spec/200-unused-partial-static-definition-type-bad.t:7:19: conflicting declaration of a variable

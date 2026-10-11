@@ -1,1 +1,1 @@
-ERROR: invalid nondependent binary operands
+ERROR: tests/spec/100-unused-template-sizeof-addition-bad.t:1:42: operands a built-in binary operator does not take in a template definition

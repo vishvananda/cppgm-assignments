@@ -103,10 +103,23 @@ the complete-then-deleting virtual destructor slot pair, are part of the LowIR
 contract in `../pa8/lowir.md` even though the top-level position of the vtable
 global itself is presentation.
 
+Vtables, the RTTI objects they point to and those objects' names are
+`storage=readonly` data (`../pa8/lowir.md`, "Facts The C++ Lowering States").
+A virtual call's signature states the called function's boundary facts:
+`unwind=no` and `return=noreturn` by its declaration, and `object_bytes` on
+`this` by its class. The virtual call of the deleting destructor that
+`delete p` makes states the destructor's, `unwind=no` when the destructor is
+non-throwing (12.4p3).
+
 The checked-in `.ref` files define the required LowIR facts for the tests. The
 test harness checks exit status, LowIR well-formedness, and the
 course-defined normalized LowIR output rather than requiring students to match every
-non-semantic helper spelling or presentation choice.
+non-semantic helper spelling or presentation choice. The normalization renames
+temporaries, slots, blocks and parameters, ignores the order of slot
+declarations and of top-level entries, and reads a literal by its value;
+every instruction of a body must otherwise match the reference's, in its
+order. `../pa8/lowir.md` ("What The Comparison Absorbs And What It Enforces")
+is the one list of what it absorbs and of the conventions it enforces.
 
 ### Error Handling
 
@@ -154,6 +167,15 @@ polymorphic and LowIR-shape cases that are not tied to one specific C++11
 clause.
 
 PA13 is tested against the generated LowIR text.
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### PA13 Syntax Spec
 
@@ -213,12 +235,15 @@ PA13 supports the following in addition to the PA12 subset:
 - virtual `delete` over that supported set, including the deleting-destructor
   entry and selection of a PA12-supported class-specific deallocation function
 - emitted vtable data for supported polymorphic classes
-- constructor/destructor vpointer writes for supported polymorphic classes
+- constructor/destructor vpointer writes for supported polymorphic classes;
+  an explicitly defaulted default constructor of such a class is not trivial
+  (12.1p5) and installs the vpointer like an implicit one
 - deterministic vtable slot order, including declaration order for ordinary virtual
   functions and the destructor slot order used by the checked references
 - deterministic emitted destructor-entry order for each class: base entry,
   deleting entry, then complete entry, even when later cleanup sharing changes
-  which entry is demanded first
+  which entry is demanded first (like all top-level order, a presentation
+  convention that the relaxed comparison does not grade)
 
 Within this milestone, PA13 should produce valid LowIR for ordinary single-inheritance
 polymorphic code over the supported PA12 subset. That LowIR is intended to be
@@ -230,7 +255,9 @@ The following are explicitly out of scope for PA13:
 
 - multiple inheritance
 - virtual inheritance
-- RTTI and `dynamic_cast`
+- RTTI and `dynamic_cast`, except the typeinfo objects (`_ZTI`, `_ZTS`)
+  that each polymorphic class's vtable points to, which are required here
+  with the vtable header that holds that pointer and the offset-to-top
 - pointer-adjusting thunks or any ABI that requires base-subobject pointer adjustment
 - class-level `final`
 - full abstract-class enforcement beyond the pure-declaration/vtable cases above
@@ -281,3 +308,11 @@ Useful intermediate representations include:
   order does not depend on the order in which call sites demand those entries
 - a direct-call vs. virtual-call distinction in the semantic IR so codegen does not have to
   rediscover polymorphism from source syntax
+
+A virtual call is an ordinary load of the vpointer, a load from the vtable
+and an indirect call. Keep it that way, with vtables as `storage=readonly`
+structured data and vpointer writes as ordinary stores in the constructors.
+Then PA32 needs no virtual-call machinery to turn a call on an object of known
+type into a direct one: once the constructor is inlined, memory forwarding
+knows the vpointer, a load from readonly data at a constant offset yields the
+function's address, and an indirect call through an `addr` becomes direct.

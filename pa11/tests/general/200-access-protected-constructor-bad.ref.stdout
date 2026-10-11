@@ -1,0 +1,1 @@
+ERROR: tests/general/200-access-protected-constructor-bad.t:5:29: protected member accessed through an object of another class

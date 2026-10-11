@@ -1,1 +1,1 @@
-ERROR: no viable constructor for 1 argument(s) from 2 candidate(s)
+ERROR: tests/general/200-lambda-pointer-constructor-template-deduction-reject.t:5:8: no viable function for the call

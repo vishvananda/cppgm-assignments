@@ -1,1 +1,1 @@
-ERROR: copy initialization selected an explicit constructor
+ERROR: tests/general/100-copy-list-explicit-best-constructor-bad.t:9:13: copy-list-initialization selects an explicit constructor

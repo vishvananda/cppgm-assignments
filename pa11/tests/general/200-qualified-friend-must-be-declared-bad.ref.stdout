@@ -1,1 +1,1 @@
-ERROR: qualified friend function was not declared
+ERROR: tests/general/200-qualified-friend-must-be-declared-bad.t:5:15: a qualified friend declaration names no declared function

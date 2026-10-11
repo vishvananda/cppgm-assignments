@@ -1,1 +1,1 @@
-ERROR: dependent qualified type requires typename: T::type
+ERROR: tests/general/300-dependent-qualified-type-missing-typename-bad.t:2:27: syntax error

@@ -1,1 +1,1 @@
-ERROR: selected constructor is deleted
+ERROR: tests/general/100-deleted-constructor-selected-bad.t:9:20: use of a deleted function

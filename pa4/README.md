@@ -84,7 +84,9 @@ and text. You can run it before supporting includes or conditionals. Preserve
 the course-defined recursion rules in `macros.md`; a host preprocessor is not
 an exact oracle for those rules. The directives handout specifies the default
 include search and predefined values. Hosted-system-header compatibility is
-later work.
+later work: PA29 adds the GNU and Clang extensions that the host's headers
+use, such as `__COUNTER__`, the `__has_*` probes and the GNU comma paste
+`, ## __VA_ARGS__`.
 
 ## Starter and tests
 
@@ -107,13 +109,47 @@ make run INPUT='tests/directives/400-multiple-source-files.t*'
 both groups. The wrappers arrange the working directory needed for relative
 includes. For a case named `name.t`, any numbered companions such as `name.t2`
 are additional primary source files for that invocation, in lexical order.
-References compare the output file and exit status, with the existing
-normalization for date, time, and author macros. Diagnostic text is not graded.
+References compare the output file and exit status exactly; no fixture
+prints the values of `__DATE__`, `__TIME__` or `__CPPGM_AUTHOR__`, and the
+comparator does not normalize them. Diagnostic text is not graded.
 
 Use `../dev/preproc-ref` to investigate a test and the root testing guide for
 reference policy. You may run the tool directly with temporary files while
 developing; no separate stdin implementation or macro-only executable is
 required. Finish with the cumulative through-PA4 report from the root.
+
+## Later scale (optional)
+
+The macro and directive guides describe the clearest way to get every rule
+right, and it is a fine way to finish PA4. Later assignments preprocess the
+host's standard library headers for every translation unit, and PA34
+compiles the compiler itself: hundreds of thousands of tokens per compile,
+most of them from macros, include guards and groups that are skipped. At
+that scale the representation decides the cost, not the rules. One representation
+that scales, and the one the course solution uses:
+
+- Find a macro through the identifier's interned entry (a field that says
+  whether, and as what, the name is defined), not by probing a table keyed by
+  spelling on every rescan.
+- Keep each token's set of unavailable macro names as a small interned id,
+  so that a produced token copies one number instead of a set of names.
+- Expand by pulling tokens from a stack of active expansions, with arguments
+  kept as ranges of the invocation's tokens. Memory then follows the nesting
+  depth, not the length of the output, and nothing rewrites a long token
+  sequence in place.
+- Record leading whitespace and the start of a line as flags on the next
+  token instead of keeping whitespace and new-line tokens.
+- Give each file one range in a single location space, so a token's position
+  is one number; work out a file and line only when a diagnostic, `__LINE__`
+  or a debug location asks.
+- Remember a header whose whole text sits inside one `#ifndef` guard, and
+  skip it on a later inclusion while the guard macro stays defined. Lex an
+  inactive group only far enough to find its directives, without interning
+  its identifiers or looking up macros.
+
+None of this changes PA4's output, so it can come later, but it is easier
+to leave room for it now. Any design that meets the output here and the
+speed gates later is acceptable.
 
 ## What carries forward
 

@@ -1,1 +1,1 @@
-ERROR: class template member has a missing nested owner
+ERROR: tests/general/300-bad-missing-nested-member-template-owner.t:14:18: undeclared name in a nested-name-specifier

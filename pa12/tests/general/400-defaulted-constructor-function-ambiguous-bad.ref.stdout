@@ -1,1 +1,1 @@
-ERROR: invalid or ambiguous class copy conversion
+ERROR: tests/general/400-defaulted-constructor-function-ambiguous-bad.t:2:171: no unambiguous user-defined conversion initializes the class object

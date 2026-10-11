@@ -1,0 +1,1 @@
+ERROR: tests/general/300-explicit-spec-in-class-scope-bad.t:4:53: an explicit specialization outside namespace scope

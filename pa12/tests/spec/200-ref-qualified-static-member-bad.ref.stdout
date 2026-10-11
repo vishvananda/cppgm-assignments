@@ -1,1 +1,1 @@
-ERROR: ref-qualifier requires an ordinary non-static member function
+ERROR: tests/spec/200-ref-qualified-static-member-bad.t:3:15: a ref-qualifier on a function that is not a non-static member function

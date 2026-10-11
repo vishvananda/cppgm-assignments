@@ -20,9 +20,7 @@ Complete PA8 before starting this assignment.
 
 You will want to reuse:
 
-- the shared tool and batch-driver structure from the earlier assignments
-- the PA6-PA7 typed scope, declaration, and semantic models
-- the PA8 compiler/backend boundary
+- the shared tool structure from the earlier assignments
 - the Itanium C++ ABI mangling rules in `../doc/itanium-mangling.txt`
 
 The normalized facts intentionally describe language features that later
@@ -31,7 +29,7 @@ for the encoder; the corresponding source-language milestones are not
 prerequisites.
 
 The tests assume a POSIX-like shell environment with `make`, `bash`, `perl`,
-and a working host C++ compiler for building the test executable.
+and a working host C++ compiler for building `abimangle`.
 
 ### Starter Kit
 
@@ -44,23 +42,26 @@ The starter kit provides:
 - `pa9/scripts/`, the ABI fact test harness
 - `pa9/tests/abi/`, the checked-in ABI fact tests and reference files
 - shared support sources and headers under `dev/src/`
-- an optional ABI fact scaffold in `dev/src/abi/itanium/abi_mangle.h`
+- the ABI vocabulary in `dev/src/abi/itanium/abi_mangle.h`: the Itanium code
+  tables and the fact-file words as enums
 
 Put code changes in `dev/`, especially `dev/abimangle.cpp` and reusable
 helpers under `dev/src/`. Do not edit generated `.my` files. Preserve supplied test inputs.
 Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-The assignment-facing scaffold is the typed fact data model and the declared
-parse/serialize/mangle API in `dev/src/abi/itanium/abi_mangle.h`. Keep the reusable typed
-ABI model and encoder under `dev/src/`; keep the line-oriented fact reader at
-the `abimangle` tool boundary. Later compiler stages must construct typed ABI
-targets and call the same encoder directly. They must not serialize semantic
-state to fact text and parse it back.
+`abi_mangle.h` gives the vocabulary; the typed ABI model, the fact reader and
+the encoder are yours. From PA10 on, the compiler's symbols must equal what
+`abimangle` produces for the same facts; how the compiler reaches its encoder
+is yours. One encoder under `dev/src/` serving both, with the line-oriented
+fact reader kept at the `abimangle` tool boundary, is the direct way to keep
+them equal; converting semantic state to fact text and parsing it back is a
+slow path to avoid.
 
-Encoding tables, Itanium terminal spelling, compiler semantic lowering, and
-other implementation logic are intentionally outside the PA9 wrapper and
-test harness.
+The code tables in `abi_mangle.h` cover builtin types, standard substitutions,
+terminals and operators. Substitution, the structure of each encoding,
+compiler semantic lowering and other implementation logic are your work,
+outside the PA9 wrapper and test harness.
 
 Use `abimangle-ref` to inspect example output.
 Tests run your implementation against the checked-in contract fixtures.
@@ -117,8 +118,8 @@ to parse `__float128` as C++ source in PA9.
 
 The normalized builtin words `complex-float`, `complex-double`, and
 `complex-longdouble` denote GNU complex floating types and use the Itanium type
-encodings `Cf`, `Cd`, and `Ce`. These are typed ABI facts; consumers must not
-construct them by appending raw mangled fragments.
+encodings `Cf`, `Cd`, and `Ce`. These are typed ABI facts: the fact file never
+spells a mangled fragment, and the encoder produces the encoding.
 
 Integral `value` facts are interpreted according to their typed value. Signed
 negative values use the Itanium `n`-plus-magnitude spelling, including the
@@ -194,6 +195,7 @@ Target forms:
 - `function ...` with optional following terminal and `param ...` lines
 - `variable ...`
 - `typeinfo ...`
+- `typeinfo-name ...`
 - `vtable ...`
 - `vtt ...`
 - `construction-vtable ...`
@@ -201,15 +203,21 @@ Target forms:
 - `thunk ... function ...`
 - `virtual-base-thunk ... function ...`
 
+The records that describe a function (terminals, `function-qualifier`,
+`result`, `param` and the other component lines) follow only a target that
+names a function: `function ...`, or the `function ...` of a thunk. After any
+other target they make the fact file invalid. A `function-qualifier` record
+names at most one of `lvalue-ref` and `rvalue-ref`.
+
 The thunk target uses `thunk <this-adjust> function ...` when only `this`
 needs adjustment and `thunk <this-adjust> <result-adjust> function ...` for a
 fixed covariant-result adjustment.  A covariant result reached through a
 virtual base uses the typed form
 `thunk <this-adjust> virtual-result <fixed-adjust> <vcall-offset> function ...`.
 The fixed component is applied after loading the dynamic adjustment from the
-returned object's vtable at the supplied vcall-offset slot.  Production ABI
-symbol construction and fact-file mangling must use the same typed thunk
-target; the text form is its public scaffold serialization.
+returned object's vtable at the supplied vcall-offset slot.  The compiler's
+thunk symbols must equal what `abimangle` produces for the same facts; the
+text form is the fact file's spelling of the target.
 
 Function operator terminals use semantic names, not raw Itanium terminal
 fragments:
@@ -233,7 +241,12 @@ followed by normalized component lines. Template-id components use
 `function-template-arg <arg-ref>`, with `function-template-prefix <key>` when
 the function-template prefix is substitutable; local entities use
 `local-context ...` or `lambda-context ...` followed by the same terminal,
-qualifier, result, and parameter lines as ordinary functions.
+qualifier, result, and parameter lines as ordinary functions. A local entity's
+discriminator (the occurrence operand of `local-context`) follows its whole
+entity name, after a member terminal: the destructor of a function's third
+local class `Local` is `...EN5LocalD1E_1v`, not `...EN5Local_1D1Ev`. A member
+template used as a template-template argument is one substitution candidate,
+entered after its owner specialization, so a repeated use is that substitution.
 
 Namespace-scope lambda closure types use
 `type namespace-lambda <source-name> [namespace-qualifier...]`. Their call
@@ -298,10 +311,11 @@ The checked-in tests are numbered from simpler names toward more complete ABI
 situations:
 
 - `100-*`: basic functions, variables, named types, builtin types, pointers,
-  arrays, member pointers, typeinfo, vtables, VTTs, and variadic forms
+  arrays, member pointers, typeinfo, vtables, VTTs, variadic forms, and
+  malformed fact files
 - `200-*`: ABI tags, local entities, local and namespace-scope lambdas,
-  ABI-tagged special type names, operators, conversion terminals, TLS wrappers,
-  and thunks
+  ABI-tagged special type names, member-function qualifiers, operators,
+  conversion terminals, TLS wrappers, and thunks
 - `300-*`: entity-valued template arguments, template-template arguments,
   standard substitutions, construction vtables, and dependent integral values
 - `400-*`: dependent aliases and dependent member/owner types
@@ -379,8 +393,8 @@ To complete this assignment, implement this behavior:
 2. Represent the ABI facts with enough typed structure to apply the Itanium C++
    ABI mangling grammar.
 3. Encode the supported fact records into deterministic mangled names.
-4. Implement substitution-table behavior in host-compatible order for the
-   tested cases.
+4. Implement substitution-table behavior in the order the Itanium ABI gives,
+   as clang implements it, for the tested cases.
 
 If `abimangle` accepts a fact file and writes a different ABI name from the
 checked-in reference, the issue belongs in this assignment.
@@ -407,8 +421,8 @@ A simple implementation strategy is to keep three concerns separate:
 - ABI name encoding from those typed records
 - substitution-table state for one mangled name
 
-The `abi_mangle.h` scaffold follows that shape. You may extend its typed model
-and APIs as the tested ABI vocabulary grows, but the standalone tool and later
+The `abi_mangle.h` scaffold supplies the words and codes for that shape: the
+typed records store its enums, not fact words. The standalone tool and later
 compiler stages should share one structured encoder implementation.
 
 Substitution is part of the ABI grammar, not just text de-duplication. The
@@ -424,10 +438,18 @@ reparsed. Some ABI facts contain source spellings, but type structure,
 template arguments, dependent expressions, and local contexts should remain
 structured until the encoder emits the final mangled name.
 
+The compiler of later assignments mangles every symbol it emits, thousands
+per translation unit once the standard library headers are in it. If each
+ABI entity (a name, a type, a template argument list) is built once and
+shared, a substitution check is an identity comparison and the table maps
+identities to indices; comparing structures or spellings for every
+candidate repeats that work on every name. A mangled name is output: produce
+it when the symbol is emitted, not as a key for finding entities.
+
 ### Stage Handoff
 
 The next stage is PA10, where `cppgm++ --emit-lowir` first emits compiler-owned
-symbols. PA10 must lower resolved semantic entities into the typed ABI targets
-introduced here and call the shared encoder directly. Later class, template,
-native-object, exception, and hosted-runtime assignments extend those typed
-targets rather than introducing a second mangling path.
+symbols. From then on the compiler's symbols must equal what `abimangle`
+produces for the same entities; one encoder serving both is the direct way to
+keep them equal, and later class, template, native-object, exception, and
+hosted-runtime assignments extend the same facts.

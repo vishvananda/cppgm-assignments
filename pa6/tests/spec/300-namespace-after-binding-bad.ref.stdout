@@ -1,1 +1,1 @@
-ERROR: namespace conflicts with existing binding
+ERROR: tests/spec/300-namespace-after-binding-bad.t:3:1: namespace name conflicts with an earlier declaration

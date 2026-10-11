@@ -1,1 +1,1 @@
-ERROR: ambiguous PA6 lookup
+ERROR: tests/general/300-distinct-using-directive-types-bad.t:6:1: ambiguous name

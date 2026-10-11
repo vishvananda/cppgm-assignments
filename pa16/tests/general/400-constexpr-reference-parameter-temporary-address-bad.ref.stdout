@@ -1,1 +1,1 @@
-ERROR: constexpr pointer/reference initializer is not constant
+ERROR: tests/general/400-constexpr-reference-parameter-temporary-address-bad.t:10:30: a constant designates an object without static storage duration

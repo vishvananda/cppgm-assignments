@@ -1,1 +1,1 @@
-ERROR: invalid array bound
+ERROR: tests/general/300-cross-tu-constant-not-visible.t2:2:12: variable is not usable in a constant expression

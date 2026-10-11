@@ -1,0 +1,1 @@
+ERROR: tests/general/100-injected-class-name-constructor-bad.t:4:32: a class's qualified injected-class-name names its constructor, not a type

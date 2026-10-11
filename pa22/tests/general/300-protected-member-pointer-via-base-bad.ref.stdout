@@ -1,0 +1,1 @@
+ERROR: tests/general/300-protected-member-pointer-via-base-bad.t:5:59: protected member accessed through an object of another class

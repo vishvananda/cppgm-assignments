@@ -1,1 +1,1 @@
-ERROR: reference member is not initialized
+ERROR: tests/general/100-user-constructor-uninitialized-reference-bad.t:5:16: a reference member is not initialized

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-member-template-through-private-base-bad.t:5:21: inaccessible member

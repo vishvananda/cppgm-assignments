@@ -1,0 +1,1 @@
+ERROR: tests/general/200-variable-redefinition-bad.t:3:5: redefinition of a variable

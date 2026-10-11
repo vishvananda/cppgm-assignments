@@ -1,1 +1,1 @@
-ERROR: invalid comparison operands at tests/general/200-scoped-enum-integral-comparison-bad.t:5:21
+ERROR: tests/general/200-scoped-enum-integral-comparison-bad.t:5:15: comparison between a scoped enumeration and another type

@@ -1,1 +1,1 @@
-ERROR: class has no usable default constructor
+ERROR: tests/general/100-const-scalar-member-default-construction-bad.t:8:16: use of a deleted function

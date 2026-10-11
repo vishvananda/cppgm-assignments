@@ -1,1 +1,1 @@
-ERROR: virtual override has a looser exception specification
+ERROR: tests/spec/300-virtual-exception-implicit-destructor-bad.t:7:66: a destructor allows exceptions the destructor it overrides does not

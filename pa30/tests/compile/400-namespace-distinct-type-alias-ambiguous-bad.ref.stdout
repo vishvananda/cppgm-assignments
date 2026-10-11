@@ -1,1 +1,1 @@
-ERROR: ambiguous PA6 lookup
+ERROR: tests/compile/400-namespace-distinct-type-alias-ambiguous-bad.t:12:1: ambiguous name

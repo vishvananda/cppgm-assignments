@@ -1,0 +1,1 @@
+ERROR: tests/general/100-unused-inline-member-body-unchecked-bad.t:6:38: inaccessible member

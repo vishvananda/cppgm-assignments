@@ -9,8 +9,9 @@ its translation to machine instructions. Reuse this backend in both
 
 Complete PA24 and PA32 first. Continue working in `dev/lowir2native.cpp` and
 your shared backend under `dev/src/`. The assignment wrapper points there.
-The supplied `mir_model.h` and register definitions are scaffolding you may
-adapt or replace. [Design notes](design-notes.md) suggest a starting approach.
+The supplied `mir_model.h` and register definitions are the MIR vocabulary
+the course solution also uses; the MIR's containers are yours.
+[Design notes](design-notes.md) suggest a starting approach.
 
 ### Required behavior
 
@@ -64,12 +65,17 @@ size, and state focused requirements for effects such as volatile accesses
 and exception operations. The numbers in the sidecar are the actual limits;
 you do not need to reproduce the reference registers, offsets, instruction
 order or block layout. A missing expectation means execution alone is checked.
+The predicates count mnemonics as the PA24 dump spells them (`load.*` and
+`store.*` for memory accesses, `eh_push` and `eh_pop` for regions, an
+implicit prologue; see PA24's machine-IR text).
 The `.ref.mir` and `.ref.cmir` files are examples, not optimized-output oracles.
 
 These bounds provide a deterministic, lightweight code-quality bar. They are
 not measurements of execution time: fewer static instructions do not always
 mean faster code. No timing threshold, Cachegrind installation or allocator
-statistics are required to complete PA33.
+statistics are required to complete PA33. Execution time is still what the
+bar stands for: PA34 builds the compiler with itself, so the code this backend
+generates becomes the compiler's own speed.
 
 For a failed expectation, inspect the reported predicate or run:
 
@@ -94,8 +100,8 @@ make test-debuginfo
 make check TEST='tests/o1/100-return-copy-coalesce.t'
 ```
 
-`make test` runs the O1, O2 and O3 MIR and behavior buckets, the native
-correctness controls, and self-checking C++ programs under `tests/driver/`.
+`make test` runs the O1, O2 and O3 MIR and behavior buckets and the
+self-checking C++ programs under `tests/driver/`.
 The driver programs must exit zero and write no stdout at all three levels,
 when built directly, through PA25 compiler objects (`.obj`), and through PA26
 native objects (`.o`) linked with `CPPGM_HOST_CXX`, and through the compiler's
@@ -117,5 +123,9 @@ cases and applies bounds only where an expectation is supplied.
 
 PA33 does not require a new LowIR optimizer, source-language changes,
 interprocedural machine optimization, instruction scheduling or vectorization.
-A bounded allocator and a small set of well-justified improvements are enough
-if they meet the supplied predicates and preserve earlier contracts.
+What it requires is meeting the supplied predicates while preserving earlier
+contracts. The predicates reward keeping values in registers over their whole
+live ranges, across calls (in callee-saved registers) and around loops, more
+than local rewrites of a conservative frame form; a liveness-based allocator
+over the PA24 machine IR is the direct way to meet them, and the one later
+work keeps improving.

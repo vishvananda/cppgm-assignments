@@ -1,1 +1,1 @@
-ERROR: virtual override has a looser exception specification
+ERROR: tests/general/100-dependent-virtual-exception-wide-bad.t:7:93: an overrider allows exceptions its overridden function does not

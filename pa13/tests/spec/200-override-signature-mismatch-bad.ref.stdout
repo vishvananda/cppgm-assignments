@@ -1,1 +1,1 @@
-ERROR: override has no matching base virtual
+ERROR: tests/spec/200-override-signature-mismatch-bad.t:15:3: a function marked override overrides no base class member function

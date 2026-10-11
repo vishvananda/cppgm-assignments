@@ -1,0 +1,1 @@
+ERROR: tests/general/100-no-unique-final-overrider-bad.t:6:1: a virtual function has no unique final overrider

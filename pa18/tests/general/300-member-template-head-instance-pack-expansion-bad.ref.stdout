@@ -1,0 +1,1 @@
+ERROR: tests/general/300-member-template-head-instance-pack-expansion-bad.t:10:25: a dependent name does not name a type in its instantiated qualifier

@@ -1,0 +1,1 @@
+ERROR: unknown LowIR type: volatile at tests/spec/300-bad-fact-order.t:3

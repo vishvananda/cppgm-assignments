@@ -1,0 +1,1 @@
+ERROR: tests/general/100-auto-declarators-differ-bad.t:3:26: auto deduced as different types by one declaration's declarators (7.1.6.4p7)

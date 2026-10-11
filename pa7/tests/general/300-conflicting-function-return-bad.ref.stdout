@@ -1,1 +1,1 @@
-ERROR: conflicting function return type
+ERROR: tests/general/300-conflicting-function-return-bad.t:2:6: functions that differ only in their return type

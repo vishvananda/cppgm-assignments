@@ -1,0 +1,1 @@
+ERROR: typed requires a pointer, floating or wider-than-byte integer access in function @f at tests/spec/300-bad-typed-byte-load.t:3

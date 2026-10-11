@@ -8,7 +8,7 @@ single-inheritance object model:
 - capturing lambdas
 - `std::initializer_list` semantic interoperation
 - RTTI and `typeid`
-- pointer-form `dynamic_cast`
+- pointer- and reference-form `dynamic_cast`
 - exception-aware construction and full-expression cleanup
 
 PA21 still produces LowIR. It does not introduce a new output format.
@@ -78,6 +78,10 @@ The generated LowIR must be well-formed and must match the checked-in `.ref` fil
 the relaxed LowIR comparison used by the harness. That comparison still checks the
 semantic LowIR shape and required IR facts, but it does not make helper metadata
 presentation or other non-semantic text details part of the student contract.
+The instruction facts and the boundary facts the lowering states (`unwind`,
+`inline_hint`, `object_bytes`, `storage=readonly` and the others) are compared
+exactly; `../pa8/lowir.md` ("What The Comparison Absorbs And What It
+Enforces") lists both sides.
 
 ### Error Handling
 
@@ -101,8 +105,8 @@ comparison described in [the format guide](../pa8/lowir.md). The `Makefile` invo
 The local checked-in tests live in `tests/general/`. That directory contains
 PA21 source-to-LowIR tests for capturing lambdas, initializer-list
 interoperation, RTTI, `typeid`, `dynamic_cast`, and exception-source lowering
-interactions. PA21 has no `tests/spec/` directory because these tests focus on
-the combined language-to-LowIR contract.
+interactions. `tests/spec/` holds a test anchored to a specific clause; the
+harness runs it like the general suite.
 
 For each test case `x`:
 
@@ -116,6 +120,15 @@ above. For execution feedback, use the supplied `lowir2native-ref -O0`
 backend introduced in PA8. Your own native backend is implemented in PA24.
 
 The shipped PA21 tests are the contract for this milestone.
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### PA21 Syntax Spec
 
@@ -156,7 +169,8 @@ PA21 supports the following in addition to the PA20 subset:
   PA11/PA12/PA19 object and template subset
 - `typeid(type-id)`
 - `typeid(expr)` for supported polymorphic lvalue expressions
-- `dynamic_cast<T*>(expr)` for supported polymorphic single-inheritance pointer conversions
+- `dynamic_cast<T*>(expr)` and `dynamic_cast<T&>(expr)` for supported polymorphic
+  single-inheritance conversions
 
 Within this milestone, PA21 should produce valid LowIR for ordinary source programs over
 that subset. That LowIR should be accepted by PA24 `lowir2native` for the supported cases.
@@ -172,24 +186,37 @@ To complete PA21, implement these goals:
 2. `std::initializer_list` interoperation.
    Supported braced-list calls should materialize deterministic lowered storage and expose
    the expected `__begin` / `__size` semantics to range-for lowering.
+   A backing array with static storage duration, including one extended by a
+   namespace-scope reference, is destroyed at exit element by element, last
+   element first. An automatic backing array lives as long as its list: once
+   it exists, every potentially throwing call later in its scope, including
+   one in a condition, unwinds through cleanup that destroys the elements in
+   reverse order and the earlier automatic objects.
 
 3. RTTI and `typeid`.
    The compiler should emit deterministic RTTI globals and lower both static and dynamic
-   `typeid` queries into ordinary LowIR address/load/branch operations.
+   `typeid` queries into ordinary LowIR address/load/branch operations. A dynamic
+   `typeid` whose operand applies unary `*` to a pointer tests the pointer first:
+   when it is null it calls the runtime's `bad_typeid` function, which throws
+   `std::bad_typeid` and does not return (5.2.8p2). A reference or a named object
+   cannot be null and is not tested.
 
-4. Pointer-form `dynamic_cast`.
-   The compiler should lower supported polymorphic single-inheritance pointer casts into
-   ordinary LowIR control flow without introducing new IR operations.
+4. Pointer- and reference-form `dynamic_cast`.
+   The compiler should lower supported polymorphic single-inheritance pointer and
+   reference casts into ordinary LowIR control flow without introducing new IR
+   operations. A reference cast runs the same runtime search as a pointer cast; when
+   the search fails it calls the runtime's `bad_cast` function, which throws
+   `std::bad_cast` and does not return (5.2.7p9).
 
 5. Full-expression cleanup through condition control flow.
    Temporary-owning call arguments inside nested `&&` and `||` expressions
    should be destroyed exactly on evaluated paths, and every nested logical
-   result used by an outer condition should retain a valid LowIR result slot.
+   result used by an outer condition yields a value the outer condition tests.
    Guarded local-static initialization should destroy initializer temporaries
    on the initialization edge before that edge joins the already-initialized path.
-   EH-bearing aggregate construction should invoke nontrivial member constructors
-   instead of representation-copying those members, so cleanup state describes
-   the subobjects that were constructed.
+   An aggregate whose initialization may throw constructs each nontrivial
+   member by a constructor call (not a representation copy), and the cleanup
+   region after each call destroys exactly the members constructed so far.
    Synthesized copy/move constructors destroy completed bases, members and
    array elements if a later construction step throws. Representation-copy
    prefixes still establish subobject lifetimes. A partial member-array
@@ -199,17 +226,49 @@ To complete PA21, implement these goals:
    may catch the exception before that cleanup; a function-try handler runs
    after it. A delegating constructor destroys its completed target when its
    own body fails. A second exception during unwind destruction terminates.
+   A destructor declared without an exception specification has the one its
+   implicit declaration would have (12.4p3, 15.4p14), normally non-throwing,
+   and states `unwind=no` exactly when that one is non-throwing; a base's or
+   member's `noexcept(false)` destructor makes it potentially throwing. A call
+   through a pointer, reference or pointer to member whose declaration (a
+   variable, parameter or data member) is non-throwing states `unwind=no` on
+   its call signature, as `noexcept` of the call answers true (5.3.7p3); a
+   call through the result of a call or a conditional states none, and the
+   call keeps its unwind path either way. A
+   non-throwing function, such a destructor included, whose definition may
+   throw runs its whole definition under a terminate guard: one region whose
+   handler calls `std::terminate` (15.5.1). A definition may throw when it
+   calls a function that may throw, has a throw-expression, or initializes
+   or destroys a subobject in a way that may throw; a delete-expression
+   counts as its destructor call does, since the deallocation functions do
+   not throw. A definition in which nothing can unwind opens no guard.
    Function-template instantiation retains function-try bodies and handlers,
    including constructor mem-initializers within the function-try block.
-   Construction and destruction cleanup dependencies on class-template
-   destructors should be demanded only after a recursively containing type is
-   complete, and should retain that concrete owner in emitted cleanup calls.
-   A caller-created copy for a destructible class value parameter transfers to
-   the callee. The callee destroys that parameter, while the caller keeps only
-   the unwind cleanup needed for objects it still owns.
+   A cleanup call names the destructor of the concrete specialization that
+   owns the subobject; instantiating that destructor must not require the
+   enclosing class to be complete earlier than the standard allows (14.7.1),
+   so a recursively containing type is accepted.
+   A class return value built in the caller's destination by a constructor,
+   copy or call that may throw unwinds the function's automatic objects
+   first; each arm of a class conditional does so too, and a completed result
+   stays owned until the return's cleanup succeeds.
+   A by-value class parameter with a non-trivial destructor stays owned by the
+   caller (Itanium C++ ABI 3.1.2.3): the caller destroys it at the end of the
+   full-expression containing the call, and on the unwind path when the callee,
+   a later argument or a later part of that full-expression throws. The callee
+   never destroys its parameter, and an inheriting constructor forwards the
+   parameter's address unchanged.
    Once an exception object has been initialized, destroy the throw operand's
-   temporaries and remove them from later unwind snapshots. A temporary from an
+   temporaries; no later cleanup region destroys them again. A temporary from an
    untaken throw branch must not appear in a sibling call's cleanup path.
+   A pointer exception is caught by value (the runtime's begin-catch result is
+   the thrown pointer, converted to the handler's type), so a handler declared
+   as a reference to a pointer binds to a copy of the caught pointer. A
+   pointer handler also matches a qualification conversion, a conversion to
+   an unambiguous public base at the first level, an object pointer as cv
+   `void*`, and `std::nullptr_t` (15.3p3); a class's type_info describes a
+   single base with `__si_class_type_info` only when that base is public,
+   non-virtual and at offset zero.
    Operandless `throw;` rethrows the dynamically handled exception, including
    from a called function or destructor. With no active exception it terminates
    at runtime; it does not require a lexical enclosing handler.
@@ -228,8 +287,14 @@ To complete PA21, implement these goals:
    When a potentially throwing call is reached through a branch in an active
    handler, its unwind path must finish the handler and destroy objects that
    remain live from scopes outside the corresponding `try` statement.
+   A deallocation function declared without an exception specification is
+   non-throwing (15.4p15).
    If initialization after ordinary scalar allocation throws, call the selected
    usual deallocation function after construction cleanup and propagate the exception.
+   Array new initializes its elements in order, from a braced-init-list's clauses
+   and then by value-initialization or default construction; if one throws,
+   destroy the elements already constructed in reverse order, then call the
+   selected usual deallocation function.
    Successful initialization transfers the allocation to the result.
    If construction of a class subobject throws, destroy exactly the already
    constructed bases and members in reverse construction order.
@@ -238,9 +303,10 @@ To complete PA21, implement these goals:
    Initializer temporaries participate in that completion order and remain live
    through the full expression. A conditional join must retain the guarded
    temporaries from whichever arm was evaluated.
-   Equal unwind cleanup suffixes may share LowIR blocks only when their complete
-   active try/handler context, handler-exit operations, cleanup-region exits,
-   and terminal continuation are identical.
+   Two unwind paths whose remaining cleanup sequence and handler context are
+   identical share one block, the later path jumping into the earlier block
+   where the sequences coincide (the references share them so, and the
+   comparison does not absorb the alternative).
 
 ### Out Of Scope
 
@@ -251,8 +317,6 @@ The following are explicitly out of scope for PA21:
   features
 - `std::initializer_list` class elements that require unsupported construction,
   copy, destruction, or later object-model behavior
-- `typeid` cases that require `bad_typeid`
-- `dynamic_cast` reference forms
 - `dynamic_cast<void*>`
 - multiple inheritance and virtual inheritance
 - any PA21 feature path that depends on unsupported later object-model or ABI work
@@ -291,3 +355,32 @@ The same monotonic-extension rule applies here:
 - in practice, RTTI globals, closure helpers, and dynamic-cast support should stay
   on-demand rather than eagerly changing the behavior of ordinary earlier programs that do
   not use those features
+
+#### What later stages need from the exception shape
+
+A function with a destructible local and a call that may throw has a cleanup
+region, so in real C++ code, this compiler's own source included, most
+functions have one. The shape this assignment emits is therefore the common
+case for PA32's optimizer and for the PA24 and PA33 backend, not a rare path
+they can treat conservatively. A few properties decide how much of that code
+they can improve:
+
+- Close full-expression regions before control-flow joins, and give the
+  paths that merge the same protected-call state (PA26 states this as a
+  requirement for host objects). PA32 removes a region that nothing inside
+  can unwind out of, and promotes slots across the function; both rely on
+  every block having one stack of active regions.
+- Handler edges are implicit in LowIR: an exception leaves from the region
+  opener's block, not from the call that throws. An optimizer that does not
+  model those edges must keep a value in memory where a handler might read
+  it, and cannot inline a callee that contains exception instructions. The
+  course solution's PA32 is in that position: it inlines such a callee only
+  when constant arguments fold its exception instructions away. Region
+  granularity is therefore a performance decision as well as a correctness
+  one.
+- A backend that treats each landing pad as a successor of every call that
+  can unwind into it can keep values in registers across those calls, as
+  the host model of PA26 allows. A runtime whose handler records restore
+  callee-saved registers to their values when the region was entered does
+  not, and in the course runtime a function with regions keeps its
+  cross-block values in memory.

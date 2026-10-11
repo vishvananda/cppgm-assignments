@@ -1,1 +1,1 @@
-ERROR: continue outside loop
+ERROR: tests/general/300-continue-outside-loop-bad.t:3:3: continue outside a loop

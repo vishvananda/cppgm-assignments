@@ -1,1 +1,1 @@
-ERROR: invalid sizeof operand type
+ERROR: tests/general/200-bad-sizeof-incomplete-class.t:2:7: size of an incomplete class

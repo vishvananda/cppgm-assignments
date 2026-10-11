@@ -1,1 +1,1 @@
-ERROR: address-of bit-field unsupported at tests/general/400-address-of-bit-field-bad.t:9:27
+ERROR: tests/general/400-address-of-bit-field-bad.t:9:27: taking the address of a bit-field

@@ -13,14 +13,14 @@ function @take_unsigned(%__param0 : i64) -> i32 [binding=strong, object=_Z13take
   slot $__param0 : i64
 
   block ^entry:
-    store i64 %__param0, $__param0
+    store typed i64 %__param0, $__param0
     return i32 0
 }
 function @take_pointer(%__param0 : ptr) -> i32 [binding=strong, object=_Z12take_pointerPi] {
   slot $__param0 : ptr
 
   block ^entry:
-    store ptr %__param0, $__param0
+    store typed ptr %__param0, $__param0
     return i32 0
 }
 function @array_reference() -> ptr [binding=strong, object=_Z15array_referencev] {
@@ -36,10 +36,10 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     copyobj 12x4 @__constexpr_template__1, %t1
     %t2 = call i32 @fixed_calls()
     %t3 = cmp ne i32 %t2, 0
-    branch %t3, ^if_then_1, ^lor_rhs_4
+    branch %t3, ^if_then_1, ^lor_rhs_3
 
-  block ^lor_rhs_4:
-    %t4 = call i32 @fixed_calls__ov2()
+  block ^lor_rhs_3:
+    %t4 = call i32 @fixed_calls__2()
     %t5 = cmp ne i32 %t4, 0
     branch %t5, ^if_then_1, ^if_else_2
 
@@ -47,9 +47,9 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     return i32 1
 
   block ^if_else_2:
-    jump ^if_end_3
+    jump ^if_end_4
 
-  block ^if_end_3:
+  block ^if_end_4:
     %t6 = addr $array
     %t7 = call i32 @dependent_operand(%t6)
     %t8 = const i64 8
@@ -80,7 +80,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^if_end_10
 
   block ^if_end_10:
-    %t18 = call i32 @deferred_value__ov2()
+    %t18 = call i32 @deferred_value__2()
     %t19 = cmp ne i32 %t18, 5
     branch %t19, ^if_then_11, ^if_else_12
 
@@ -116,10 +116,10 @@ function @fixed_calls() -> i32 [binding=weak, object=_Z11fixed_callsIiEiv] {
   block ^if_end_3:
     %t5 = call i32 @take_pointer(0)
     %t6 = cmp ne i32 %t5, 0
-    branch %t6, ^if_then_4, ^lor_rhs_7
+    branch %t6, ^if_then_4, ^lor_rhs_6
 
-  block ^lor_rhs_7:
-    %t7 = copy ptr nullptr
+  block ^lor_rhs_6:
+    %t7 = copy ptr 0
     %t8 = call i32 @take_pointer(%t7)
     %t9 = cmp ne i32 %t8, 0
     branch %t9, ^if_then_4, ^if_else_5
@@ -128,17 +128,17 @@ function @fixed_calls() -> i32 [binding=weak, object=_Z11fixed_callsIiEiv] {
     return i32 2
 
   block ^if_else_5:
-    jump ^if_end_6
+    jump ^if_end_7
 
-  block ^if_end_6:
+  block ^if_end_7:
     %t10 = call ptr @array_reference()
     %t11 = index i32 [projection=array_element] %t10, 0
-    %t12 = load i32 %t11
+    %t12 = load typed i32 %t11
     %t13 = cmp ne i32 %t12, 7
     %t14 = convert trunc i32 i64 %t13
     return i32 %t14
 }
-function @fixed_calls__ov2() -> i32 [binding=weak, object=_Z11fixed_callsIlEiv] {
+function @fixed_calls__2() -> i32 [binding=weak, object=_Z11fixed_callsIlEiv] {
   block ^entry:
     %t1 = const i64 8
     %t2 = binary add i64 %t1, 2
@@ -155,10 +155,10 @@ function @fixed_calls__ov2() -> i32 [binding=weak, object=_Z11fixed_callsIlEiv] 
   block ^if_end_3:
     %t5 = call i32 @take_pointer(0)
     %t6 = cmp ne i32 %t5, 0
-    branch %t6, ^if_then_4, ^lor_rhs_7
+    branch %t6, ^if_then_4, ^lor_rhs_6
 
-  block ^lor_rhs_7:
-    %t7 = copy ptr nullptr
+  block ^lor_rhs_6:
+    %t7 = copy ptr 0
     %t8 = call i32 @take_pointer(%t7)
     %t9 = cmp ne i32 %t8, 0
     branch %t9, ^if_then_4, ^if_else_5
@@ -167,12 +167,12 @@ function @fixed_calls__ov2() -> i32 [binding=weak, object=_Z11fixed_callsIlEiv] 
     return i32 2
 
   block ^if_else_5:
-    jump ^if_end_6
+    jump ^if_end_7
 
-  block ^if_end_6:
+  block ^if_end_7:
     %t10 = call ptr @array_reference()
     %t11 = index i32 [projection=array_element] %t10, 0
-    %t12 = load i32 %t11
+    %t12 = load typed i32 %t11
     %t13 = cmp ne i32 %t12, 7
     %t14 = convert trunc i32 i64 %t13
     return i32 %t14
@@ -181,9 +181,9 @@ function @dependent_operand(%value : ptr) -> i32 [binding=weak, object=_Z17depen
   slot $value : ptr
 
   block ^entry:
-    store ptr %value, $value
-    %t1 = load ptr $value
-    %t2 = load i32 %t1
+    store typed ptr %value, $value
+    %t1 = load typed ptr $value
+    %t2 = load typed i32 %t1
     %t3 = const i64 8
     %t4 = convert sext i64 i32 %t2
     %t5 = binary add i64 %t4, %t3
@@ -198,7 +198,7 @@ function @deferred_value() -> i32 [binding=weak, object=_Z14deferred_valueIiEiv]
     %t4 = convert trunc i32 i64 %t3
     return i32 %t4
 }
-function @deferred_value__ov2() -> i32 [binding=weak, object=_Z14deferred_valueIcEiv] {
+function @deferred_value__2() -> i32 [binding=weak, object=_Z14deferred_valueIcEiv] {
   block ^entry:
     %t1 = const i64 1
     %t2 = convert sext i64 i32 5
@@ -206,11 +206,11 @@ function @deferred_value__ov2() -> i32 [binding=weak, object=_Z14deferred_valueI
     %t4 = convert trunc i32 i64 %t3
     return i32 %t4
 }
-function @shorted(%array : ptr [pass=by_address, object_bytes=12]) -> i32 [binding=weak, object=_Z7shortedIiEiRA_i] {
+function @shorted(%array : ptr [pass=by_address, object_bytes=12]) -> i32 [binding=weak, object=_Z7shortedIiEiRAqustT_Li3EdvLi1ELi0E_i] {
   slot $array : ptr
 
   block ^entry:
-    store ptr %array, $array
+    store typed ptr %array, $array
     %t1 = const i64 12
     %t2 = convert trunc i32 i64 %t1
     return i32 %t2

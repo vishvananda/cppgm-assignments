@@ -1,0 +1,1 @@
+ERROR: tests/general/200-static-cast-downcast-private-base-bad.t:5:41: conversion to an inaccessible base class

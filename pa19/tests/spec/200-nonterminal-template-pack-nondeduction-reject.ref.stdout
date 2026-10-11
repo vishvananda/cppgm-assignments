@@ -1,1 +1,1 @@
-ERROR: call has no resolved callee type at tests/spec/200-nonterminal-template-pack-nondeduction-reject.t:3:12
+ERROR: tests/spec/200-nonterminal-template-pack-nondeduction-reject.t:3:12: no viable function for the call

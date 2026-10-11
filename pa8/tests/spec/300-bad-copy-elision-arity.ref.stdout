@@ -1,1 +1,1 @@
-ERROR: copy elision requires a direct void call with destination and source at tests/spec/300-bad-copy-elision-arity.t:12
+ERROR: copy elision requires a direct void call with destination and source in function @main at tests/spec/300-bad-copy-elision-arity.t:11

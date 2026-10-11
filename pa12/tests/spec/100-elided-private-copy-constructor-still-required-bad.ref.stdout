@@ -1,1 +1,1 @@
-ERROR: inaccessible constructor
+ERROR: tests/spec/100-elided-private-copy-constructor-still-required-bad.t:22:9: inaccessible member

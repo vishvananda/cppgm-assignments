@@ -1,1 +1,1 @@
-ERROR: inaccessible class member at tests/general/300-protected-using-base-object-bad.t:15:18
+ERROR: tests/general/300-protected-using-base-object-bad.t:15:19: protected member accessed through an object of another class

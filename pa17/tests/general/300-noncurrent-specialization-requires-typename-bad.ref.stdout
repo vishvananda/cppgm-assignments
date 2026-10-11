@@ -1,1 +1,1 @@
-ERROR: dependent qualified type requires typename: owner<U>::value_type
+ERROR: tests/general/300-noncurrent-specialization-requires-typename-bad.t:11:5: a dependent qualified name needs typename to name a type

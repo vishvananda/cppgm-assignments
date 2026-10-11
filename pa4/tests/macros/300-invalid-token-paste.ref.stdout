@@ -1,1 +1,1 @@
-ERROR: unterminated block comment at tests/macros/300-invalid-token-paste.t:2:10
+ERROR: tests/macros/300-invalid-token-paste.t:2:1: token pasting does not form a valid preprocessing token

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-qualified-member-inaccessible-base-bad.t:6:21: inaccessible member

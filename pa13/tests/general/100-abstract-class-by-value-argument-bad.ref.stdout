@@ -1,1 +1,1 @@
-ERROR: function parameter has abstract class type
+ERROR: tests/general/100-abstract-class-by-value-argument-bad.t:1:42: an object of an abstract class type

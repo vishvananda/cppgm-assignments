@@ -1,1 +1,1 @@
-ERROR: redefinition of static data member
+ERROR: tests/spec/300-static-specialization-duplicate-definition-bad.t:6:15: redefinition of a variable

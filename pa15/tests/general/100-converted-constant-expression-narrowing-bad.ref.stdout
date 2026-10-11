@@ -1,0 +1,1 @@
+ERROR: tests/general/100-converted-constant-expression-narrowing-bad.t:4:1: a narrowing conversion of a template argument

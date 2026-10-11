@@ -1,1 +1,1 @@
-ERROR: constexpr variable requires initializer
+ERROR: tests/general/500-bad-constexpr-scalar-missing-initializer.t:4:15: const object without an initializer

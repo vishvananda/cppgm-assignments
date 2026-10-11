@@ -1,1 +1,1 @@
-ERROR: class template member owner is not a declared specialization
+ERROR: tests/spec/100-unmatched-partial-member-owner-rejected.t:14:5: qualified declarator-id must name a namespace or class member

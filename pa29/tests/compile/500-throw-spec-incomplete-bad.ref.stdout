@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-throw-spec-incomplete-bad.t:5:43: an incomplete class type in an exception-specification (15.4p2)

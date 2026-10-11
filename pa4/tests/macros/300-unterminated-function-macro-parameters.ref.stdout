@@ -1,1 +1,1 @@
-ERROR: unterminated macro parameter list at tests/macros/300-unterminated-function-macro-parameters.t:1:2
+ERROR: tests/macros/300-unterminated-function-macro-parameters.t:1:10: expected a macro parameter name

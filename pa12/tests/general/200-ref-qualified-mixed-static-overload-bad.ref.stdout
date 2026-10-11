@@ -1,1 +1,1 @@
-ERROR: member overload set mixes ref-qualified and unqualified declarations
+ERROR: tests/general/200-ref-qualified-mixed-static-overload-bad.t:6:8: a static and a non-static member function with the same parameters

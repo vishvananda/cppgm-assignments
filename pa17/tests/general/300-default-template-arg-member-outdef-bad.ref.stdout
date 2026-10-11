@@ -1,0 +1,1 @@
+ERROR: tests/general/300-default-template-arg-member-outdef-bad.t:4:28: a default template argument on a member defined outside its class template

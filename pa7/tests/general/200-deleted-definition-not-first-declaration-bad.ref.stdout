@@ -1,0 +1,1 @@
+ERROR: tests/general/200-deleted-definition-not-first-declaration-bad.t:3:19: deleted definition of a function declared before

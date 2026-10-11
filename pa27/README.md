@@ -62,6 +62,7 @@ The starter kit provides:
 - `pa27/Makefile`
 - `pa27/scripts/`, the host-interoperability test harness
 - `pa27/tests/general/`, the PA27 tests and checked-in reference files
+- `pa27/tests/controls/`, focused checks of the GNU `section` attribute
 
 Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Preserve supplied test inputs.
@@ -136,6 +137,12 @@ interoperability, host final-link behavior, symbol spelling/coalescing, and
 object inspection where the object surface is directly checked. They are
 not direct N3485 clause tests.
 
+`make test` also runs the `section-*.cpp` controls in `tests/controls/`
+(`../scripts/check_pa27_section_contract.pl`): a section name that is a safe
+token must reach the LowIR as `section=` and the object as a section of that
+name, and an unsafe or conflicting section attribute must be rejected.
+`make check TEST=tests/controls/<name>.cpp` runs one.
+
 For each test anchor `x.t`, companion C++ sources are named:
 
 ```text
@@ -193,6 +200,72 @@ names:
 - canonical qualified names matter, including inline namespaces when they are
   part of the ABI name
 
+Where Itanium leaves a name to the implementation, the reference follows
+clang. The object-inspection tests check the spelling of a symbol another
+unit can name (external and weak symbols); a unit-local symbol they check
+only by its binding and by a pattern that admits clang's and GCC's
+spellings, and only when the program needs it (a private helper such as the
+thunk behind a closure's function-pointer conversion is not required under
+any name), so the forms below for local entities (`$_<n>`, `__invoke`, the
+`_ZGR` numbering) describe the reference and are not required:
+
+- a namespace-scope variable or function of internal linkage carries the `L`
+  marker (`_ZL4data`, `_ZN2nsL1vE`, `_ZL4sfunv`), except inside an unnamed
+  namespace, whose `_GLOBAL__N_1` prefix is already unit-local
+- a function's static variable and its guard are local names
+  (`_ZZ3getvE5local`, `_ZGVZ3getvE5local`); where the function is inline or
+  a template specialization every unit names them alike, so they are one
+  object across units; a constructor's or destructor's statics are named in
+  its complete entry (`_ZZN1SC1EvE5count`, where GCC writes `C4`) and are
+  one object for both entries
+- a temporary whose lifetime a static-storage variable's initializer
+  extends (a reference's, or an initializer_list's array) is named after
+  the variable (Itanium 5.1.4.5): the first is `_ZGR1g_`, and the others
+  are numbered in a pre-order walk of the initializer (`_ZGR4list_` for a
+  reference's initializer_list object, `_ZGR4list0_` for its array); the
+  symbols are unit-local, since every unit reaches the temporary through
+  the variable
+- a closure type has a mangling number (`Ul<sig>E<n>_`) when its lambda lies
+  in an inline function or a template specialization, a lambda body
+  included, in a default member initializer, a class template's static
+  data member initializer or a variable template's initializer (named in the
+  data member, `_ZNK8WithInit2fpMUlvE_clEv`,
+  `_ZN5TableIiE4sizeMUlvE_8__invokeEv`, `_ZNK2vtIiEMUlvE_clEv`; GCC omits
+  the `M` for a variable template) or
+  in an in-class default argument (named in the function and parameter,
+  `...Ed_NKUlvE_clEv`); any other closure type, and an unnamed class that
+  no typedef names for linkage, is a unit-local `$_<n>` with local
+  symbols (a lambda in a non-template class's static data member
+  initializer is named in its class, `_ZN5Plain3$_08__invokeEv`); a
+  captureless closure's static invoker is `__invoke` (GCC's is `_FUN`)
+- a `$_<n>` number is assigned when the name is first mangled: a
+  function-local unnamed class or closure takes the next number within its
+  function, and any other one takes the count of `$_` names the translation
+  unit has assigned so far
+- a function template's signature that depends on an expression keeps the
+  expression as clang mangles it. A dependent decltype is `DT<expr>E`, a
+  dependent template argument is `X<expr>E` and a dependent array bound is
+  `A<expr>_`; a parameter the result names is `fp_`, and one a later
+  parameter names is `fL0p_`. A non-dependent sizeof or template argument is
+  written as its value (`Lm8E`, `Lb1E`), and a non-dependent class's static
+  member as its declaration (`L_ZNSt14numeric_limitsImE6digitsE`). A callee
+  that is a class's member function is written as its declaration, and an
+  unqualified function callee as its name. A dependent name's qualifier is
+  written without the template's default arguments
+  (`sr11call_traitsIS1_T_FvT0_EEE8overload`), and a template-id that an
+  alias parameter binds is written as its unqualified name
+  (`sr9is_scalarIT_EE5value`)
+- a numbered closure type, and a local class of an inline function or
+  template specialization, is one entity in every unit: its member
+  functions, the static invoker, the static variables in their bodies and
+  the template specializations over it are weak (`W _ZZ1hvENKUlvE_clEv`),
+  unit-local only where the function they belong to is
+- a lambda expression has one closure type however many times its context
+  is lowered: a lambda in a default member initializer is one closure in
+  every constructor that initializes the member; one in an in-class default
+  argument is one at every call that uses it; and one in a class template's
+  static data member initializer is one per specialization
+
 Reference:
 
 - Local copy of Itanium C++ ABI, Chapter 5.1 "External Names (a.k.a.
@@ -203,20 +276,22 @@ Reference:
 To complete PA27, implement ordinary host-toolchain interoperability of emitted
 object files within the supported subset:
 
-1. Emit host-linker-compatible relocatable objects, including PIE-safe GOT
-   materialization for the addresses of imported data and functions.
+1. Emit host-linker-compatible relocatable objects. The course links them
+   without PIE; an imported object's address may be materialized through
+   the GOT (as the reference does, which a default-PIE link also accepts)
+   or by a PC-relative or absolute reference the host linker resolves.
 2. Expose a hosted entrypoint through the host CRT.
 3. Preserve cross-translation-unit behavior under host link.
 4. Emit target-correct duplicate-definition semantics for header and template
    code.
 5. Interoperate with host-built objects, archives, shared libraries, and tested
    `thread_local` variables through practical function/global boundaries.
-6. Preserve the earlier class-value semantics in host-object mode. Compiler-object
-   metadata must not append a whole-object representation copy after a nontrivial
-   memberwise copy or move body.
-7. Omit an unreferenced translation-unit-local function definition from the
-   native object while retaining local functions whose addresses or bodies are
-   required by emitted runtime code.
+6. Preserve the earlier class-value semantics in host-object mode: a
+   nontrivial copy or move constructor or assignment runs its memberwise
+   body exactly once, with no whole-object copy after it.
+7. Retain every local function whose address or body emitted code requires.
+   Omitting an unreferenced translation-unit-local function is the course
+   solution's choice and is not graded.
 8. Retain a reachable constructor or destructor base-entry definition needed
    at the object boundary even when optimization removes its last direct call.
    Retention does not by itself prohibit inlining that entry at other call
@@ -255,6 +330,17 @@ those facts to the PA9 mangler and store the resulting raw symbol on the
 LowIR/object symbol. This keeps lower object-format and toolchain-driver code
 focused on preserving the spelling it was given instead of reconstructing C++
 ABI names from text fragments.
+
+Give every definition the narrowest binding the language allows. Put each
+inline function and template specialization, and each other definition with
+vague linkage, in its own COMDAT group with a weak symbol, and give a
+definition with internal linkage a local symbol. Both make a definition
+discardable: a translation unit that stops referring to it can leave it out,
+because another unit that needs a vague-linkage definition emits its own
+copy and nothing outside the unit names a local one. Item 7 relies on the
+second; PA32's single-call inlining and pruning rely on both. Keep each
+section's relocations in their own list, sorted by offset, so that emitting
+or dropping one definition never scans the relocations of the whole object.
 
 ### After PA27
 

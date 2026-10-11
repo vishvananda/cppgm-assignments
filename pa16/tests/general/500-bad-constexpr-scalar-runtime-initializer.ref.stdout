@@ -1,1 +1,1 @@
-ERROR: constexpr scalar initializer is not constant
+ERROR: tests/general/500-bad-constexpr-scalar-runtime-initializer.t:6:23: a call of a function that is not constexpr

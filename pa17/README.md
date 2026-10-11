@@ -51,7 +51,7 @@ The PA17 invocation is the unoptimized LowIR mode:
 
 Behaviour is undefined unless the command-line arguments match that shape, with
 the same source-file ordering and `-o` relaxations as the earlier source-to-LowIR
-milestones. Preserve the earlier dump modes. Native driver behavior and optimized
+milestones. Preserve PA7's dump mode. Native driver behavior and optimized
 LowIR output are not required in PA17.
 
 ### Dependent qualified types
@@ -130,10 +130,9 @@ You are free to use them for debugging, tracing, or diagnostic messages.
 
 PA17 tests live under `tests/`. The suite is split by test role:
 
-- `tests/spec/` contains N3485/spec-anchored specialization/entity tests. Each
-  provided C++ language test in this directory starts with a leading comment of the
-  form `// N3485 focus: 14.x.y [clause.name] ...` so a reviewer can find the
-  governing text in `../doc/n3485.txt`.
+- `tests/spec/` contains N3485/spec-anchored specialization/entity tests. Most
+  carry a `// N3485 focus: 14.x.y [clause.name] ...` comment near the top,
+  naming the governing text in `../doc/n3485.txt`.
 - `tests/general/` contains broader cross-feature and realistic
   template-entity examples that are useful for PA17 but are not one-rule spec
   probes.
@@ -151,6 +150,15 @@ template completion:
 - alias and variable template entity modeling
 - explicit specialization and explicit-instantiation ownership
 - the declaration/instantiation behavior required to make that model coherent
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### PA17 Syntax Boundary
 
@@ -173,7 +181,12 @@ PA17 owns the template declaration graph and specialization model over the
 implemented language surface, including:
 
 - alias templates
-- variable templates (a course extension beyond C++11)
+- variable templates (a C++14 feature, which the course accepts in C++11, as
+  clang and g++ do with a warning); each specialization is its own object, its
+  symbol carrying the template arguments (`_Z5widthIiE`,
+  `_ZN5store5countIcEE`, `_ZN5table5countIiEE`); a static data member template
+  may be defined outside its class, an ordinary class or a class template, and
+  the definition's initializer is analyzed in the class's scope
 - template-template parameters and template-template argument matching
 - member templates, including templated member operators and templated call
   operators
@@ -196,8 +209,13 @@ implemented language surface, including:
 - an explicit definition of a member template for a concrete class-template
   specialization replaces the definition instantiated from the primary and may
   not itself be defined more than once
-- an out-of-class member-template definition attaches to specializations selected
-  by earlier calls in the translation unit and remains available for their demand
+- a member template called before its out-of-class definition is still
+  instantiated from that definition (14.6.4.1), whatever the order of the call
+  and the definition
+- a block-scope static in a function-template or member-template
+  specialization whose substituted initializer is a constant expression is
+  constant-initialized data with no guard, as in an ordinary function (PA16),
+  even when the initializer names other specializations' functions
 - the dependent-name and instantiation behavior strictly required to make the
   specialization model work
 
@@ -208,8 +226,7 @@ The following are explicitly out of scope for PA17:
 - full function-template deduction over the intended language surface
 - function-template partial ordering
 - SFINAE and substitution-failure completion
-- the remaining no-eager-instantiation / dependent-call timing work that is
-  better framed as substitution behavior
+- dependent-call and instantiation-timing behavior (PA18)
 - initializer-list template behavior
 - hosted/vendor-only extensions that happen to use templates
 - post-C++11 template-language features other than the variable templates above

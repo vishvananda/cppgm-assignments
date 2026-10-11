@@ -1,1 +1,1 @@
-ERROR: unterminated macro parameter list at tests/macros/300-unterminated-function-macro-parameter.t:1:2
+ERROR: tests/macros/300-unterminated-function-macro-parameter.t:1:10: expected `,` or `)` in the macro parameters

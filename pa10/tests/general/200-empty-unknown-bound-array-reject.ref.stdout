@@ -1,1 +1,1 @@
-ERROR: unknown-bound array requires an initializer element
+ERROR: tests/general/200-empty-unknown-bound-array-reject.t:2:5: variable of incomplete type

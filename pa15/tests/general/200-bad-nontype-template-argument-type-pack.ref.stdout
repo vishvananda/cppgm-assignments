@@ -1,1 +1,1 @@
-ERROR: template argument pack kind does not match parameter
+ERROR: tests/general/200-bad-nontype-template-argument-type-pack.t:5:1: a pack expansion of the wrong kind for its template parameter

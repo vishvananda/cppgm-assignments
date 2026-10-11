@@ -1,1 +1,1 @@
-ERROR: ambiguous PA6 lookup
+ERROR: tests/general/300-namespace-typedef-value-ambiguity-bad.t:3:93: syntax error

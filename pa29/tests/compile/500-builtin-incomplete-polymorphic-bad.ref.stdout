@@ -1,1 +1,1 @@
-ERROR: polymorphic trait requires a complete class type
+ERROR: tests/compile/500-builtin-incomplete-polymorphic-bad.t:1:31: a type trait of an incomplete class type

@@ -1,1 +1,1 @@
-ERROR: call has no resolved callee type at tests/general/100-bad-deduction.t:4:21
+ERROR: tests/general/100-bad-deduction.t:4:21: no viable function for the call

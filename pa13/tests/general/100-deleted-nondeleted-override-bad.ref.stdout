@@ -1,0 +1,1 @@
+ERROR: tests/general/100-deleted-nondeleted-override-bad.t:4:21: a deleted function and a function not deleted override one another

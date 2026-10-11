@@ -1,0 +1,1 @@
+ERROR: tests/general/100-block-scope-specifier-constraints-bad.t:6:26: mutable on a variable that is no non-const, non-reference data member

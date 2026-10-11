@@ -1,0 +1,1 @@
+ERROR: tests/general/100-catch-pointer-to-incomplete-bad.t:6:48: a handler of pointer to incomplete type (15.3p1)

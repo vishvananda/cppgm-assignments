@@ -1,1 +1,1 @@
-ERROR: constexpr constructor has non-literal subobjects in struct invalid
+ERROR: tests/general/500-constexpr-second-base-nonliteral-bad.t:14:59: a constexpr constructor initializes a subobject by a constructor that is not constexpr

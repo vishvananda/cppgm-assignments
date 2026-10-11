@@ -1,1 +1,1 @@
-ERROR: no viable constructor for 1 argument(s) from 3 candidate(s)
+ERROR: tests/general/200-private-member-not-aggregate-bad.t:5:23: no viable function for the call

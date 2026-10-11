@@ -1,1 +1,1 @@
-ERROR: virtual override has a looser exception specification
+ERROR: tests/spec/200-virtual-exception-private-base-bad.t:7:77: an overrider allows exceptions its overridden function does not

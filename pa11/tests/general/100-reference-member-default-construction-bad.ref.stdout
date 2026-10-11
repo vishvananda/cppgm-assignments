@@ -1,1 +1,1 @@
-ERROR: class has no usable default constructor
+ERROR: tests/general/100-reference-member-default-construction-bad.t:8:20: use of a deleted function

@@ -1,1 +1,1 @@
-ERROR: incompatible conditional arms at :0:0 (struct Source and const struct Target) in inspect (id-expression: source; id-expression: target)
+ERROR: tests/general/400-conditional-class-explicit-conversion-bad.t:10:10: incompatible operands of ?:

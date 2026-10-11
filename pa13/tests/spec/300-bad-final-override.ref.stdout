@@ -1,1 +1,1 @@
-ERROR: virtual function overrides final function
+ERROR: tests/spec/300-bad-final-override.t:7:32: overriding a final virtual function

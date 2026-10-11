@@ -1,0 +1,1 @@
+ERROR: tests/general/300-derived-class-overrider-not-dominating-bad.t:8:1: a virtual function has no unique final overrider

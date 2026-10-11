@@ -1,0 +1,1 @@
+ERROR: tests/general/200-ttp-typename-key-bad.t:3:10: a template template-parameter introduced by typename

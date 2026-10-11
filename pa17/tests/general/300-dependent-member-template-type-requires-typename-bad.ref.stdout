@@ -1,1 +1,1 @@
-ERROR: dependent qualified type requires typename: T::template rebind<int>
+ERROR: tests/general/300-dependent-member-template-type-requires-typename-bad.t:6:11: a dependent qualified name needs typename to name a type

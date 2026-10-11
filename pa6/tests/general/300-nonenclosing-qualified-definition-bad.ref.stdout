@@ -1,1 +1,1 @@
-ERROR: qualified declaration is outside an enclosing scope
+ERROR: tests/general/300-nonenclosing-qualified-definition-bad.t:11:7: qualified definition in a scope that does not enclose the member

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-braced-narrowing-integer-constant-bad.t:3:49: narrowing conversion in list-initialization

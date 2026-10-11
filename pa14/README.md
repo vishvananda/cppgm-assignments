@@ -111,8 +111,12 @@ lower through the existing PA10-PA13 LowIR conventions.
 
 The test harness checks that the generated LowIR is well formed and matches the
 checked-in `.ref` files after canonicalizing presentation details that are not
-part of the assignment contract. Exact textual LowIR matching is not a PA14
-grading requirement.
+part of the assignment contract: the names of temporaries, slots, blocks and
+parameters, the order of slot declarations and of top-level entries, and the
+spelling of literals (`../pa8/lowir.md`, "What The Comparison Absorbs And What
+It Enforces", is the one list). Exact textual LowIR matching is not a PA14
+grading requirement, but every instruction of a body must match the
+reference's after that canonicalization, in its order.
 
 ### Error Handling
 
@@ -159,6 +163,15 @@ checked result; exact diagnostic text is not checked.
 PA14 is tested against the generated LowIR text. That LowIR is intended to
 become input for the later PA24 `lowir2native` backend, but that future native
 path is not the PA14 grading contract.
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### Optional Student Test Ideas
 
@@ -227,10 +240,11 @@ PA14 supports the following in addition to the PA13 subset:
 - basic template argument deduction for direct supported function-template calls
   from ordinary argument types, without function-template partial ordering or
   SFINAE
-- on-demand instantiation of the supported class-template and function-template cases,
-  including deferring unused conversion-function bodies and dependent defaulted
-  special-member dependencies, and waiting until an out-of-line owning destructor
-  is defined before demanding a completeness-dependent member destructor
+- on-demand instantiation of the supported class-template and function-template cases:
+  a member's body is instantiated only when it is odr-used (14.7.1p1-p2), so an
+  unused conversion function's body and a dependent defaulted special member
+  stay uninstantiated, and a program whose out-of-line destructor follows the
+  class-template use that needs it is accepted
 - a static data member named only in an unevaluated operand, such as the operand
   of `sizeof`, does not demand storage or instantiate its out-of-class definition;
   an evaluated value use or address use continues to demand the required definition
@@ -253,9 +267,16 @@ PA14 supports the following in addition to the PA13 subset:
 - class-template instantiation preserves the class-scope rule that a name which
   has become a typedef-name cannot be redefined by another typedef declaration
 - compatible function-template declarations and definitions in either order
-- dependent-base lookup provenance attached to the particular base-specifier,
-  so a nested class with a fixed base keeps ordinary base lookup and a local
-  class in a function template independently classifies its own dependent base
+- a specialization of an `inline` function template, or of a member defined in
+  its class template, is an inline function and states `inline_hint=yes`; one
+  of a function template not declared inline does not (explicit
+  specializations, which PA15 adds, follow their own declarations)
+- a template's `noexcept(e)` is evaluated for each specialization, which states
+  `unwind=no` when its `e` is true (`f<int>` of
+  `template<class X> int f(X) noexcept(sizeof(X) == 4)`, not `f<char>`)
+- a nested class with a fixed base does ordinary base lookup, and a local
+  class in a function template classifies its own base as dependent or not on
+  its own, whatever the enclosing template's bases are
 - out-of-class definitions of nested classes declared inside the supported class templates,
   when those nested classes stay within the already supported PA11-PA13 class/value/
   polymorphic machinery
@@ -339,3 +360,21 @@ Useful intermediate representations include:
   - collecting template declarations
   - deducing or resolving template arguments
   - instantiating ordinary specialized declarations
+
+Instantiation decides much of the front end's speed on real code, where one
+header instantiates thousands of specializations. Cloning a demanded
+dependent body and checking the clone is a sound way to instantiate; so is
+sharing the non-dependent parts between instantiations, provided a shared
+node costs the same to read as an ordinary one. What does not scale is
+re-parsing or replaying source text per instantiation, or reaching every
+shared node through an extra lookup on each read.
+
+Find a specialization through a table keyed by its template and its
+canonical argument list, with each argument an interned type or constant,
+so that asking for `vector<int>` again is one probe. Scanning a template's
+specializations and comparing their arguments one by one grows with the
+number of instantiations, which is what a standard library header has most
+of. If expressions carry their analyzed facts on the nodes, as PA5
+suggests, each instantiation needs its own copy of the dependent body; that
+is a sound trade, but it puts the copy on the front end's hottest path, so
+keep it a plain walk over the nodes.

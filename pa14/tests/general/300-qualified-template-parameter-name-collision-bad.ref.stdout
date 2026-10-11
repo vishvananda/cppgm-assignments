@@ -1,1 +1,1 @@
-ERROR: direct base must name a complete non-union class
+ERROR: tests/general/300-qualified-template-parameter-name-collision-bad.t:9:26: base class is incomplete

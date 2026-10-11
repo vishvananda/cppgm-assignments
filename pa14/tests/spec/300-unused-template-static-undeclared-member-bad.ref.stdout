@@ -1,1 +1,1 @@
-ERROR: out-of-class definition has no data member declaration
+ERROR: tests/spec/300-unused-template-static-undeclared-member-bad.t:4:22: qualified definition does not match a declaration

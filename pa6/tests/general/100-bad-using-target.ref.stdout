@@ -1,1 +1,1 @@
-ERROR: using-declaration target not found
+ERROR: tests/general/100-bad-using-target.t:1:7: undeclared name in a nested-name-specifier

@@ -1,1 +1,1 @@
-ERROR: default argument uses an automatic local object
+ERROR: tests/general/100-local-class-enclosing-default-argument-bad.t:1:40: a local class odr-uses an automatic variable of an enclosing function (9.8p1)

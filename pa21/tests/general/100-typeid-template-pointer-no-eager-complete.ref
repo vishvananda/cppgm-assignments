@@ -1,7 +1,7 @@
 declare global @__external_rtti_vtable____class_type_info [role=rtti_class, binding=strong, object=_ZTVN10__cxxabiv117__class_type_infoE]
-declare global @__external_rtti_vtable____pointer_type_info [role=rtti_data, binding=strong, object=_ZTVN10__cxxabiv119__pointer_type_infoE]
+declare global @__external_rtti_vtable____pointer_type_info [role=rtti_pointer, binding=strong, object=_ZTVN10__cxxabiv119__pointer_type_infoE]
 
-global @__typeinfo_name_type_10lazy_tupleIJA_iEE [binding=weak, object=_ZTS10lazy_tupleIJA_iEE] = {
+global @__typeinfo_name__struct_lazy_tuple_int_0__ [storage=readonly, binding=weak, object=_ZTS10lazy_tupleIJA_iEE] = {
   i8 49
   i8 48
   i8 108
@@ -23,11 +23,11 @@ global @__typeinfo_name_type_10lazy_tupleIJA_iEE [binding=weak, object=_ZTS10laz
   i8 69
   i8 0
 }
-global @__rtti_type_10lazy_tupleIJA_iEE [binding=weak, object=_ZTI10lazy_tupleIJA_iEE] = {
+global @__rtti_struct_lazy_tuple_int_0__ [storage=readonly, binding=weak, object=_ZTI10lazy_tupleIJA_iEE] = {
   ptr addr @__external_rtti_vtable____class_type_info + 16
-  ptr addr @__typeinfo_name_type_10lazy_tupleIJA_iEE
+  ptr addr @__typeinfo_name__struct_lazy_tuple_int_0__
 }
-global @__typeinfo_name_type_P10lazy_tupleIJA_iEE [binding=weak, object=_ZTSP10lazy_tupleIJA_iEE] = {
+global @__typeinfo_name_type_P10lazy_tupleIJA_iEE [storage=readonly, binding=weak, object=_ZTSP10lazy_tupleIJA_iEE] = {
   i8 80
   i8 49
   i8 48
@@ -50,11 +50,11 @@ global @__typeinfo_name_type_P10lazy_tupleIJA_iEE [binding=weak, object=_ZTSP10l
   i8 69
   i8 0
 }
-global @__rtti_type_P10lazy_tupleIJA_iEE [binding=weak, object=_ZTIP10lazy_tupleIJA_iEE] = {
+global @__rtti_type_P10lazy_tupleIJA_iEE [storage=readonly, binding=weak, object=_ZTIP10lazy_tupleIJA_iEE] = {
   ptr addr @__external_rtti_vtable____pointer_type_info + 16
   ptr addr @__typeinfo_name_type_P10lazy_tupleIJA_iEE
   i32 8
-  ptr addr @__rtti_type_10lazy_tupleIJA_iEE
+  ptr addr @__rtti_struct_lazy_tuple_int_0__
 }
 
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
@@ -67,14 +67,14 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     branch %t3, ^cond_then_1, ^cond_else_2
 
   block ^cond_then_1:
-    store i32 0, $cond__1
+    store typed i32 0, $cond__1
     jump ^cond_end_3
 
   block ^cond_else_2:
-    store i32 1, $cond__1
+    store typed i32 1, $cond__1
     jump ^cond_end_3
 
   block ^cond_end_3:
-    %t4 = load i32 $cond__1
+    %t4 = load typed i32 $cond__1
     return i32 %t4
 }

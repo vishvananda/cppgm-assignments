@@ -1,1 +1,1 @@
-ERROR: excess array initializer elements
+ERROR: tests/general/200-bad-excess-array-initializer.t:3:19: too many initializers for the array

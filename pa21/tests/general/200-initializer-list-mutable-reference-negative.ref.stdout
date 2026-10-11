@@ -1,1 +1,1 @@
-ERROR: invalid implicit conversion from class std::initializer_list<int> to lvalue-reference to class std::initializer_list<int>
+ERROR: tests/general/200-initializer-list-mutable-reference-negative.t:15:45: an lvalue reference to a type that is not const bound to a list's temporary

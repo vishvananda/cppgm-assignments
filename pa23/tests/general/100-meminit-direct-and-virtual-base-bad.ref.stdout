@@ -1,0 +1,1 @@
+ERROR: tests/general/100-meminit-direct-and-virtual-base-bad.t:5:25: the mem-initializer names both a direct base and a virtual base

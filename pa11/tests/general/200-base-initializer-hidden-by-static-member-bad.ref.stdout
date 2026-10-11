@@ -1,1 +1,1 @@
-ERROR: constructor initializer target is not a data member
+ERROR: tests/general/200-base-initializer-hidden-by-static-member-bad.t:7:27: the mem-initializer does not name a non-static data member of the class

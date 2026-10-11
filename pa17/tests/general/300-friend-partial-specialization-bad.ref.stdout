@@ -1,0 +1,1 @@
+ERROR: tests/general/300-friend-partial-specialization-bad.t:4:43: a friend declaration of a partial specialization

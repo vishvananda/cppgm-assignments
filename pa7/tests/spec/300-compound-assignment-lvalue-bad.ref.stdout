@@ -1,1 +1,1 @@
-ERROR: assignment requires modifiable lvalue at tests/spec/300-compound-assignment-lvalue-bad.t:4:11
+ERROR: tests/spec/300-compound-assignment-lvalue-bad.t:4:3: assignment to something that is not a modifiable lvalue

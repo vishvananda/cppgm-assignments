@@ -1,1 +1,1 @@
-ERROR: call has no resolved callee type at tests/general/100-bad-function-template-deduction-cv-mismatch-call.t:5:10
+ERROR: tests/general/100-bad-function-template-deduction-cv-mismatch-call.t:5:10: no viable function for the call

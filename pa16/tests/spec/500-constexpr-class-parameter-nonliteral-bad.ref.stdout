@@ -1,1 +1,1 @@
-ERROR: constexpr callable uses a non-literal result or parameter type
+ERROR: tests/spec/500-constexpr-class-parameter-nonliteral-bad.t:9:1: a constexpr function's parameter type is not a literal type

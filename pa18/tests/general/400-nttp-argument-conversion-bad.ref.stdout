@@ -1,0 +1,1 @@
+ERROR: tests/general/400-nttp-argument-conversion-bad.t:6:21: a template argument does not convert to its pointer parameter's type

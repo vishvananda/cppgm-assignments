@@ -1,1 +1,1 @@
-ERROR: missing or invalid macro name at tests/macros/300-define-missing-macro-name.t:1:2
+ERROR: tests/macros/300-define-missing-macro-name.t:1:2: a macro name must be an identifier

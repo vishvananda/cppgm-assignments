@@ -1,1 +1,1 @@
-ERROR: offsetof cannot name a bit-field
+ERROR: tests/compile/500-offsetof-bitfield-bad.t:5:50: offsetof of a bit-field

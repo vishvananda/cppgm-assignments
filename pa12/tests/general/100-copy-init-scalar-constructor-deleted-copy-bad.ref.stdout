@@ -1,1 +1,1 @@
-ERROR: selected constructor is deleted
+ERROR: tests/general/100-copy-init-scalar-constructor-deleted-copy-bad.t:2:96: use of a deleted function

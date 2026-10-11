@@ -1,1 +1,1 @@
-ERROR: invalid covariant virtual return type
+ERROR: tests/general/200-invalid-covariant-return-bad.t:8:15: an overrider's return type is neither the overridden function's nor covariant with it

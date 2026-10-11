@@ -45,7 +45,7 @@ The PA18 invocation is the unoptimized LowIR mode:
 
 Behaviour is undefined unless the command-line arguments match that shape, with
 the same source-file ordering and `-o` relaxations as the earlier source-to-LowIR
-milestones. Preserve the earlier dump modes. Native driver behavior and optimized
+milestones. Preserve PA7's dump mode. Native driver behavior and optimized
 LowIR output are not required in PA18.
 
 ### Output Format
@@ -94,9 +94,8 @@ You are free to use them for debugging, tracing, or diagnostic messages.
 PA18 tests live under `tests/`. The suite is split by test role:
 
 - `tests/spec/` contains N3485/spec-anchored deduction, substitution, and
-  SFINAE tests. Each provided C++ language test in this directory starts with a
-  leading comment of the form `// N3485 focus: 14.x.y [clause.name] ...` so a
-  reviewer can find the governing text in `../doc/n3485.txt`.
+  SFINAE tests. Most carry a `// N3485 focus: 14.x.y [clause.name] ...`
+  comment near the top, naming the governing text in `../doc/n3485.txt`.
 - `tests/general/` contains broader generic-program examples that are useful
   for PA18 but are not one-rule spec probes.
 
@@ -115,6 +114,15 @@ of template completion:
   corners
 - SFINAE and substitution failure
 - no-eager-instantiation timing and dependent-call behavior
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### PA18 Syntax Boundary
 
@@ -156,9 +164,9 @@ the implemented surface, including:
 - dependent-call, dependent-alias, and no-eager-instantiation behavior when the
   primary assertion is a single PA18-owned feature rather than a broad
   multi-feature composition
-- dozens of distinct dependent function-template result types may coexist in
-  one translation unit, and equivalent redeclarations retain the same result
-  meaning after all of those declarations have been processed
+- equivalent redeclarations of a function template with a dependent result
+  type name the same template, however many such templates a translation unit
+  declares (14.5.6.1)
 
 ### Out Of Scope
 

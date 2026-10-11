@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-nondependent-new-bound-at-definition-bad.t:6:41: no viable function for the call

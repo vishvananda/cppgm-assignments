@@ -1,0 +1,1 @@
+ERROR: tests/general/100-static-on-member-definition-bad.t:5:12: static on a static data member's definition outside its class

@@ -1,1 +1,1 @@
-ERROR: member overload set mixes ref-qualified and unqualified declarations
+ERROR: tests/spec/200-ref-qualified-mixed-overload-bad.t:4:8: member functions with the same parameters, some with a ref-qualifier and some without

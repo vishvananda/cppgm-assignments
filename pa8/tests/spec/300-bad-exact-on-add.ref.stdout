@@ -1,0 +1,1 @@
+ERROR: exact requires an integer div, udiv, shr or ushr in function @f at tests/spec/300-bad-exact-on-add.t:3

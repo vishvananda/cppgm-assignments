@@ -1,1 +1,1 @@
-ERROR: dependent qualified type requires typename: selected<sizeof...(Types)>::type
+ERROR: tests/general/300-dependent-qualified-pack-type-requires-typename-bad.t:12:11: a dependent qualified name needs typename to name a type

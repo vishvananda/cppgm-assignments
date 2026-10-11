@@ -1,1 +1,1 @@
-ERROR: redefinition of retained static data member
+ERROR: tests/spec/300-unused-template-static-duplicate-definition-bad.t:6:22: redefinition of a variable

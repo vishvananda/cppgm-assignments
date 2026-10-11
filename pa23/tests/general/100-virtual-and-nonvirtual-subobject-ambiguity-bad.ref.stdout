@@ -1,0 +1,1 @@
+ERROR: tests/general/100-virtual-and-nonvirtual-subobject-ambiguity-bad.t:8:26: a non-static member of an ambiguous base class subobject

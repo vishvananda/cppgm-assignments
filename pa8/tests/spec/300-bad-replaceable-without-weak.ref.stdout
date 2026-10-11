@@ -1,0 +1,1 @@
+ERROR: replaceable metadata requires binding=weak at tests/spec/300-bad-replaceable-without-weak.t:1

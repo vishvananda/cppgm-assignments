@@ -1,0 +1,1 @@
+ERROR: tests/general/100-static-cast-from-virtual-base-reference-bad.t:4:36: a cast from a virtual base class to its derived class

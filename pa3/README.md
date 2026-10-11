@@ -72,6 +72,8 @@ In particular if any of the following conditions are true it is course defined f
 - The right operand of division or modulous is zero
 - The right operand of a shift operator is negative or greater than or equal to 64
 
+A signed result outside the range of `intmax_t` is also an `error`, since such an expression is not a constant expression (5.19p2).  This applies to `+`, `-`, `*`, `/`, `%` and unary `-`: `9223372036854775807 + 1` and `(-9223372036854775807 - 1) / -1` are both `error`.  Unsigned arithmetic wraps modulo 2^64 and is never an error, and neither is a left shift (see below).
+
 ### Example
 
 For an input of:
@@ -136,12 +138,13 @@ Some types that are NOT integral types are:
     nullptr_t
     array of <anything>
 
-An `identifier_or_keyword` is simply an identifier in `preprocessing-token` context (meaning the `identifier` from PA1 and not from PA2).  In particular it treats keywords the same as identifiers.  There are two special cases.  They are:
+An `identifier_or_keyword` is simply an identifier in `preprocessing-token` context (meaning the `identifier` from PA1 and not from PA2).  In particular it treats keywords the same as identifiers.  There are three special cases.  They are:
 
  - `true`, which is effectively evaluated as `1`
+ - `false`, which is effectively evaluated as `0`
  - `defined` which has special meaning in a controlling expression
 
-> Note: For PA3, in the context of a preprocessor controlling expression only, we shall course-define the treatment of the identifier `true` to be evaluated the same as the integer literal `1`, and the identifier `false` to be evaluated the same as the integer literal `0`.  Note that this may conflict slightly with the standard requirements.
+> Note: For PA3, in the context of a preprocessor controlling expression only, we shall course-define the treatment of the identifier `true` to be evaluated the same as the integer literal `1`, and the identifier `false` to be evaluated the same as the integer literal `0`.  This agrees with 16.1p4, which exempts `true` and `false` from the replacement of remaining identifiers by `0`.
 
 At this point try to read 16.1 Conditional Inclusion, there will be many "forward" references to terminology that has not been required reading in the course yet, so don't worry if you don't understand everything.  The parts which you do understand should be sufficient to complete this assignment.
 
@@ -263,9 +266,9 @@ and the following are unsigned:
 
 This can also be looked up with `std::numeric_limits<T>::is_signed`
 
-Parse the token sequence by the `controlling-expression` grammar into a parse tree.  If it does not match the grammar output "error".
+Parse the token sequence by the `controlling-expression` grammar.  If it does not match the grammar output "error".
 
-Walk the tree in post-order evaluating each sub-expression up to the root.  The behaviour of each of the used operators are documented in clause 5 of the standard.  You do not need to read the entire clause, just the parts that deal with those operators used in the controlling expression grammar.
+Evaluate each sub-expression up to the root (whether you build a tree first or evaluate as you parse), except that, as in C++, the second operand of `&&` is evaluated only when the first is nonzero, the second operand of `||` only when the first is zero, and only the selected operand of `?:`.  An operand that is not evaluated produces no error (`0 && 1/0` is `0`), though the unselected operand of `?:` still takes part in the result type (`false ? 5/0u : -5` is `18446744073709551611u`).  The behaviour of each of the used operators are documented in clause 5 of the standard.  You do not need to read the entire clause, just the parts that deal with those operators used in the controlling expression grammar.
 
 You should read and understand the concepts of _Integral Promotion_ (4.7), _Integer Conversion Rank_ (4.13) and the _Usual Arithmetic Conversions_ (5.0.10).
 
@@ -275,6 +278,7 @@ It is course defined that:
 
 - signed integral types (2s-compliment) are sign extended when promoted to a larger type.
 - right shift operations on a signed left operand sign preserve (shift in bits the same as sign bits)
+- a left shift discards the bits shifted out of the 64-bit value, so it never overflows: `1 << 63` is `-9223372036854775808` and `1 << 60 << 60` is `0`
 
 ### Design Notes (Optional)
 
@@ -286,7 +290,7 @@ Although the PA3 grammar is LR(1), and you could in theory solve the assignment 
 
 Most agree that a top-down approach makes it easier to deal with the special cases needed to parse C++.  For example, both GCC and Clang use a hand-written top-down approach.  It is true that some have succeeeded in writing LR parsers for C++ using disambiguation techniques like GLR, however we will be recommending and supporting "the typical top-down approach" in this course.  You should understand that there is contention on this point.
 
-> Side Note: If you are determined to ignore our advice and use LR parsing than you may hand-write an LR parser generation tool, and build and execute this tool from your Makefile.  As per the usual course restrictions, you may not use a third-party parser generation tool - you have to write it yourself.  The algorithms to do this are described in the second half of chapter 4 of the dragon book.  GLR is not covered in the dragon.  GLR just means that you solve shift/reduce and reduce/reduce conflicts by searching both options in parallel - but no such conflicts exist in this particular grammar.  To LR parse the larger C++ grammar you will need GLR.
+> Side Note: If you are determined to ignore our advice and use LR parsing than you may hand-write an LR parser generation tool, and build and execute this tool from your Makefile.  As elsewhere in the course, the generator must be your own code; do not use a third-party parser generator.  The algorithms to do this are described in the second half of chapter 4 of the dragon book.  GLR is not covered in the dragon.  GLR just means that you solve shift/reduce and reduce/reduce conflicts by searching both options in parallel - but no such conflicts exist in this particular grammar.  To LR parse the larger C++ grammar you will need GLR.
 
 The recommended way to parse is to write a hand-written predictive top-down parser.  To deal with the left recursion in the PA3 grammar, you simply use iteration and manually preserve the associativity.
 
@@ -297,6 +301,6 @@ For example:
 
 Such a production will match `X`, `X + X`, `X + X + X` and so on.  So we first parse `X`, then we lookahead to see if there is a `+`.  If there is, we parse `+ X` and repeat.  If not we return what we have.  As the operator is left associative we build our parse tree (or evaluation order) leftward.
 
-If you implement the parser in this way than in order to parse a simple expression like `42`, it will result in a deep call stack from `controlling-expression` all the way up to `primary`.  That is ok as a solution to this assignment, we are not too worried about performance.  You should be aware that there is a technique in which you can collapse the calls to all the different binary operator expressions into one call.  This is achieved by keeping a precedence table and making decisions about how to build the parse tree based upon it.  If you have extra time after finishing this assignment, we encourage you to look into and implement this optimization.
+If you implement the parser in this way than in order to parse a simple expression like `42`, it will result in a deep call stack from `controlling-expression` all the way up to `primary`.  That is acceptable for PA3's inputs; later the same evaluator runs on every `#if` in the host's headers, so the technique below is worth adopting when you have time.  There is a technique in which you can collapse the calls to all the different binary operator expressions into one call.  This is achieved by keeping a precedence table and making decisions about how to build the parse tree based upon it.  If you have extra time after finishing this assignment, we encourage you to look into and implement this optimization.
 
 It is also recommended that you keep your controlling expression parsing code separate from your future C++ expression parsing code.  Although you could use some common base for both, there are significant differences that are most likely not worth creating an abstract base for.  It will be better to keep the PA3 code encapsulated within your preprocessor.

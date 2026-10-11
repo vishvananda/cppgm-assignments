@@ -1,1 +1,1 @@
-ERROR: invalid or ambiguous class copy conversion
+ERROR: tests/general/400-copy-init-user-conversion-chain-reject.t:4:26: no unambiguous user-defined conversion initializes the class object

@@ -9,7 +9,7 @@ function @make_value
   abi
     return obj<8x8> -> rax
   frame
-    stack_size 16
+    stack_size N
     scratch_bytes 0
     frame_pointer keep
     epilogues shared
@@ -24,15 +24,17 @@ function @unwrap
   abi
     return i64 -> rax
   frame
-    stack_size 16
+    stack_size N
     scratch_bytes 0
     frame_pointer keep
     epilogues shared
     slot $x -> [rbp-<off0>] : obj<8x8>
+    temp %t -> [rbp-<off1>] : obj<8x8>
 
   block ^entry
     call @make_value [args=()]
-    store.i64 [rbp-<off0>], rax
+    store.i64 [rbp-<off1>], rax
+    copy_bytes 8x8, [rbp-<off0>], [rbp-<off1>]
     load.i64 rax, [rbp-<off0>]
     ret rax
 
@@ -40,7 +42,7 @@ function @main
   abi
     return i64 -> rax
   frame
-    stack_size 0
+    stack_size N
     scratch_bytes 0
     frame_pointer keep
     epilogues shared

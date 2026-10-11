@@ -1,1 +1,1 @@
-ERROR: duplicate or conflicting class member
+ERROR: tests/general/100-duplicate-data-member-bad.t:5:7: redeclaration of a name in the same scope

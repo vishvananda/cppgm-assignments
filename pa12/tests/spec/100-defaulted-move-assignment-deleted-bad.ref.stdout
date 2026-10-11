@@ -1,1 +1,1 @@
-ERROR: selected special member is deleted at tests/spec/100-defaulted-move-assignment-deleted-bad.t:17:5
+ERROR: tests/spec/100-defaulted-move-assignment-deleted-bad.t:17:3: use of a deleted function

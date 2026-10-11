@@ -1,5 +1,4 @@
-declare function @Outer_char___Inner__Inner(%arg0 : ptr [object_bytes=4], %arg1 : i32) -> void [binding=strong, object=_ZN5OuterIcE5InnerC1Ei, inline_hint=yes]
-declare function @Outer_char___ordinary(%arg0 : ptr [object_bytes=1]) -> i32 [binding=strong, object=_ZNK5OuterIcE8ordinaryEv]
+declare function @Outer_char___ordinary(%arg0 : ptr [object_bytes=1]) -> i32 [binding=weak, object=_ZNK5OuterIcE8ordinaryEv]
 declare function @Tracked___Tracked(%arg0 : ptr [object_bytes=1]) -> void [unwind=no, binding=strong, object=_ZN7TrackedD1Ev]
 
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
@@ -27,31 +26,44 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     eh_try ^cleanup_action_2
     %t4 = addr $outer
     %t5 = call i32 @Outer_char___ordinary(%t4)
-    store i32 %t5, $call__1
-    %t6 = load i32 $call__1
+    store typed i32 %t5, $call__1
+    %t6 = load typed i32 $call__1
     %t7 = addr $inner
     %t8 = index i8 [projection=field] %t7, 0
-    %t9 = load i32 %t8
-    %t10 = binary add i32 %t6, %t9
+    %t9 = load typed i32 %t8
+    %t10 = binary add nowrap i32 %t6, %t9
     eh_end
     %t11 = addr $outer
     call void @Outer_char____Outer(%t11)
     return i32 %t10
 }
+function @Outer_char___Inner__Inner(%this : ptr [object_bytes=4], %value : i32) -> void [binding=weak, object=_ZN5OuterIcE5InnerC1Ei] {
+  slot $this : ptr
+  slot $value : i32
+
+  block ^entry:
+    store typed ptr %this, $this
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = load typed ptr $this
+    %t3 = index i8 [projection=field] %t2, 0
+    store typed i32 %t1, %t3
+    return void
+}
 function @Outer_char____Outer(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN5OuterIcED1Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
-    store ptr %this, $this
+    store typed ptr %this, $this
     eh_cleanup ^destructor_cleanup_1
     eh_end
-    %t1 = load ptr $this
+    %t1 = load typed ptr $this
     %t2 = index i8 [projection=field] %t1, 0
     call void @Tracked___Tracked(%t2)
     jump ^destructor_end_2
 
   block ^destructor_cleanup_1:
-    %t3 = load ptr $this
+    %t3 = load typed ptr $this
     %t4 = index i8 [projection=field] %t3, 0
     call void @Tracked___Tracked(%t4)
     eh_end
@@ -60,4 +72,5 @@ function @Outer_char____Outer(%this : ptr [object_bytes=1]) -> void [unwind=no, 
   block ^destructor_end_2:
     return void
 }
+alias object _ZN5OuterIcE5InnerC2Ei = @Outer_char___Inner__Inner
 alias object _ZN5OuterIcED2Ev = @Outer_char____Outer

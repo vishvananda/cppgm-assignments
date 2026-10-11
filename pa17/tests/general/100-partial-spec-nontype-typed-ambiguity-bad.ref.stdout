@@ -1,0 +1,1 @@
+ERROR: tests/general/100-partial-spec-nontype-typed-ambiguity-bad.t:1:1: a specialization matches several partial specializations, none more specialized

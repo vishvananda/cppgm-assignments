@@ -1,1 +1,1 @@
-ERROR: invalid vector intrinsic arity at tests/compile/400-hosted-fixed-vector-builtin-arity-bad.t:4:10
+ERROR: tests/compile/400-hosted-fixed-vector-builtin-arity-bad.t:4:10: wrong number of arguments to a vector lane builtin

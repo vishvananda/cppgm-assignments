@@ -1,1 +1,1 @@
-ERROR: invalid covariant virtual return type
+ERROR: tests/general/200-cv-covariant-return-bad.t:8:25: a covariant return type more cv-qualified than the overridden function's

@@ -1,1 +1,1 @@
-ERROR: unknown-bound array requires an initializer element
+ERROR: tests/general/300-empty-pack-unknown-bound-array-lowir.t:16:9: variable of incomplete type

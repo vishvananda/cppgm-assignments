@@ -1,0 +1,1 @@
+ERROR: tests/general/100-capture-ellipsis-not-pack-bad.t:3:39: a capture pack expansion that names no function parameter pack (14.5.3p5)

@@ -1,1 +1,1 @@
-ERROR: phi must name every ordinary predecessor exactly once at tests/spec/100-bad-phi-missing-predecessor.t:16
+ERROR: phi must name every ordinary predecessor exactly once in function @main at tests/spec/100-bad-phi-missing-predecessor.t:15

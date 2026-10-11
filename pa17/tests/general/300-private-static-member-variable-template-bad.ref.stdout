@@ -1,0 +1,1 @@
+ERROR: tests/general/300-private-static-member-variable-template-bad.t:4:21: inaccessible member

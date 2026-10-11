@@ -1,1 +1,1 @@
-ERROR: unknown nondependent name in template definition: later
+ERROR: tests/general/100-template-definition-nested-condition-scope-bad.t:5:12: undeclared name

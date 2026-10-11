@@ -1,1 +1,1 @@
-ERROR: structured template type was not found: std::char_traits<Character>::int_type at tests/general/100-forward-declared-character-trait-bad.t:3:9
+ERROR: tests/general/100-forward-declared-character-trait-bad.t:3:14: incomplete class in a nested-name-specifier

@@ -1,1 +1,1 @@
-ERROR: invalid PA6 type identity
+ERROR: tests/general/100-bad-braced-init-list-ellipsis-call-in-unused-class-typedef.t:10:20: no viable function for the call

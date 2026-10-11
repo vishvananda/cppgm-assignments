@@ -1,0 +1,1 @@
+ERROR: tests/general/100-partial-spec-p8-pack-not-last-bad.t:4:30: a pack expansion other than a partial specialization's last argument

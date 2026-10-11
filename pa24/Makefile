@@ -14,7 +14,7 @@ RDEPDIR = $(OBJ)/release/.d
 DDEPDIR = $(OBJ)/debug/.d
 CONTROL_TEST_ROOT ?= tests/controls
 # Our own shape references live in the regression lane, outside the course
-# contract (tests/regression; see docs/student-export-root/TESTING_AND_REFERENCES.md).
+# contract (tests/regression; see TESTING_AND_REFERENCES.md).
 REGRESSION_ORACLE_TEST_ROOTS = $(wildcard tests/regression/strict tests/regression/structural tests/regression/behavior)
 PERF_TOLERANCE_PERCENT ?= 10
 
@@ -42,8 +42,7 @@ $(OBJ)/debug/%.o: %.cpp
 
 # The course suite (test-course) judges by behaviour, contract shape where
 # the shape is the contract, and envelope; the regression suite
-# (test-regression) pins the course solution's dumps.  test-variants runs the
-# course suite under each design variant of dev/src/backend_variant.h.
+# (test-regression) pins the course solution's dumps.
 test: test-course
 
 test-course: $(TEST_DEPS)
@@ -56,18 +55,25 @@ endif
 	@set -e; if [ -d "$(CONTROL_TEST_ROOT)" ]; then \
 		perl ../scripts/check_pa24_native_contracts.pl \
 			$(CPPGM_TEST_APP) "$(CONTROL_TEST_ROOT)"; \
-		perl ../scripts/check_pa24_native_contracts.pl \
-			$(CPPGM_TEST_APP) \
-			tests/behavior/900-scratch-carried-frame-reloads.t; \
-		perl ../scripts/check_pa24_native_contracts.pl \
-			$(CPPGM_TEST_APP) \
-			tests/behavior/900-deferred-address-parameter-carrier-reuse.t; \
-		perl ../scripts/check_pa24_native_contracts.pl \
-			$(CPPGM_TEST_APP) \
-			tests/behavior/800-cost-directed-small-zeroinit.t; \
 	fi
 
+# The course solution's selection policies (its copy and zero thresholds,
+# frame-pointer and epilogue choice, switch compare chain, carried reloads and
+# parameter carriers) are checked here, outside the course contract.
+REGRESSION_CONTROL_TEST_ROOT = tests/regression/controls
+REGRESSION_CONTROL_BEHAVIOR_TESTS = \
+	tests/behavior/900-scratch-carried-frame-reloads.t \
+	tests/behavior/900-deferred-address-parameter-carrier-reuse.t \
+	tests/behavior/800-cost-directed-small-zeroinit.t
+
 test-regression: $(TEST_DEPS)
+	@set -e; if [ -d "$(REGRESSION_CONTROL_TEST_ROOT)" ]; then \
+		perl ../scripts/check_pa24_native_contracts.pl \
+			$(CPPGM_TEST_APP) "$(REGRESSION_CONTROL_TEST_ROOT)"; \
+	fi; \
+	for test in $(REGRESSION_CONTROL_BEHAVIOR_TESTS); do \
+		perl ../scripts/check_pa24_native_contracts.pl $(CPPGM_TEST_APP) "$$test"; \
+	done
 ifneq ($(CPPGM_BATCH_TESTS),)
 	@set -e; for root in $(REGRESSION_ORACLE_TEST_ROOTS); do \
 		perl ../scripts/run_lowir_native_tests_worker.pl \
@@ -93,34 +99,47 @@ else
 	done
 endif
 
-BACKEND_VARIANTS ?= pool-reverse frame-pad rpo-layout colouring linear-scan
-test-variants: $(TEST_DEPS)
-	@set -e; for variant in $(BACKEND_VARIANTS); do \
-		echo "== $(TARGET) course suite under variant $$variant"; \
-		CPPGM_BACKEND_VARIANT=$$variant $(MAKE) --no-print-directory test-course; \
-	done
+# Without TEST, `make ref-test` regenerates the regression lane's references
+# as well; the course runner prunes `regression/` from `tests`.  Structural
+# references carry a canonical `.ref.cmir` beside the dump, so every
+# structural root is recanonicalized, whichever fixtures were regenerated.
+STRUCTURAL_TEST_ROOTS = $(wildcard tests/structural tests/regression/structural)
+
+ifeq ($(strip $(TEST)),)
+ref-test: ref-test-regression
+endif
 
 ref-test:
 	@$(REF_TEST_RUN)
-	@if [ -d tests/structural ]; then perl ../scripts/canonicalize_lowir_native_refs.pl tests/structural; fi
+	@set -e; for root in $(STRUCTURAL_TEST_ROOTS); do \
+		perl ../scripts/canonicalize_lowir_native_refs.pl "$$root"; \
+	done
+
+ref-test-regression:
+	@set -e; for root in $(REGRESSION_ORACLE_TEST_ROOTS); do \
+		scripts/run_all_tests.pl $(REF_TEST_APP) ref "$$root"; \
+	done
+	@if [ -d tests/regression/structural ]; then \
+		perl ../scripts/canonicalize_lowir_native_refs.pl tests/regression/structural; \
+	fi
 
 REF_TEST_RUN = case "$(TEST)" in \
-	$(CONTROL_TEST_ROOT)/*) echo "$(TEST): focused native predicate has no reference sidecar" ;; \
+	$(CONTROL_TEST_ROOT)/*|$(REGRESSION_CONTROL_TEST_ROOT)/*) echo "$(TEST): focused native predicate has no reference sidecar" ;; \
 	*) scripts/run_all_tests.pl $(REF_TEST_APP) ref "$(if $(strip $(TEST)),$(TEST),tests)" ;; \
 esac
 
 CHECK_RUN = case "$(TEST)" in \
-	$(CONTROL_TEST_ROOT)/*) perl ../scripts/check_pa24_native_contracts.pl $(CPPGM_TEST_APP) "$(TEST)" ;; \
+	$(CONTROL_TEST_ROOT)/*|$(REGRESSION_CONTROL_TEST_ROOT)/*) perl ../scripts/check_pa24_native_contracts.pl $(CPPGM_TEST_APP) "$(TEST)" ;; \
 	*) scripts/run_all_tests.pl $(CPPGM_TEST_APP) check "$(TEST)" ;; \
 esac
 CHECK_COMPARE = case "$(TEST)" in \
-	$(CONTROL_TEST_ROOT)/*) true ;; \
+	$(CONTROL_TEST_ROOT)/*|$(REGRESSION_CONTROL_TEST_ROOT)/*) true ;; \
 	*) scripts/compare_results.pl ref check "$(TEST)" ;; \
 esac
 
 include ../scripts/pa_run_check_targets.mk
 
-.PHONY: dev-shared-target ref-test
+.PHONY: dev-shared-target ref-test ref-test-regression
 $(CPPGM_TEST_APP):
 	$(MAKE) -C ../dev $(TARGET) CXX=$(CXX) OBJ=$(OBJ)
 

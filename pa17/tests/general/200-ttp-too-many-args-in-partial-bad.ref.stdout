@@ -1,0 +1,1 @@
+ERROR: tests/general/200-ttp-too-many-args-in-partial-bad.t:4:54: too many template arguments

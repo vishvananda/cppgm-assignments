@@ -1,1 +1,1 @@
-ERROR: constructor cannot have a virtual specifier
+ERROR: tests/general/100-virtual-constructor-bad.t:3:3: a constructor declared virtual

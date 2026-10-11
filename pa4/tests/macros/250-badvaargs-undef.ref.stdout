@@ -1,1 +1,1 @@
-ERROR: invalid #undef directive at tests/macros/250-badvaargs-undef.t:1:2
+ERROR: tests/macros/250-badvaargs-undef.t:1:8: __VA_ARGS__ outside a variadic macro's replacement list

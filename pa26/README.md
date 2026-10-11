@@ -150,6 +150,11 @@ surface:
 - call-site coalescing safety across unprotected unwind barriers and distinct
   cleanup or catch continuations
 
+The cases compile at `-O0`. `make test` then builds one of them,
+`300-host-eh-nested-catch-forward-at-o1`, again at `-O1`, where its handler
+tables describe a function after optimization, and compares the program's
+output and exit status again; `make check` runs only the `-O0` build.
+
 For each test anchor `x.t`, companion C++ sources are named:
 
 ```text
@@ -185,35 +190,36 @@ runtime-helper object surface for `cppgm++ -c` within the supported subset:
 1. Lower `throw` expressions to host ABI throw helper calls.
 2. Lower typed catches to host landing-pad selector dispatch and
    `__cxa_begin_catch` / `__cxa_end_catch` calls.
-3. Emit host personality and unwind metadata for EH-bearing functions.
+3. Emit unwind metadata (a CIE and an FDE) for every function, since an
+   exception passes through frames that have no handler, and the host
+   personality and LSDA for EH-bearing functions.
 4. Emit LSDA/call-site/action/type-info facts sufficient for basic catch and
    cleanup paths.
 5. Preserve cleanup/resume paths using `_Unwind_Resume`.
 6. Keep private course-only exception runtime symbols out of host-EH objects,
    and encode the host personality without a direct PC-relative data relocation
    that would make a default-PIE host link unsafe.
-7. Close full-expression EH regions before control-flow joins and require
-   matching protected-call state at statement, conditional, short-circuit, and
-   loop merges.
+7. Enter every landing pad with one set of active regions: a path into a
+   block carries the same protected-call state as every other path into it
+   (`../pa8/lowir.md`, "Structural Rules").
 8. Preserve translation-unit-local object binding for generated functions in a
    non-ODR-mergeable local context; do not export a local lambda call operator
    as a weak or global host symbol.
 9. If adjacent LSDA call-site ranges are coalesced, keep an unprotected
    potentially-throwing range as a barrier and never combine ranges with
    different landing pads or action continuations.
-10. Share one translation-unit-local terminate action across function exception
-    boundaries. It receives the active exception object, calls
-    `__cxa_begin_catch`, and then calls `std::terminate`; individual landings
-    shall not repeat the begin-catch call.
-11. Within one function, route semantic resume operations through one physical
-    `_Unwind_Resume` terminal that reloads the active exception from the
-    function's host-EH slot. Keep the source cleanup paths distinct in LowIR
-    and MIR.
-12. Keep the LSDA call-site table sparse. In an LSDA-bearing function, a
-    potentially throwing call outside a protected region still needs an
-    explicit null-landing entry so unwinding continues through the function,
-    but ordinary instruction gaps need no entry. Adjacent unprotected calls
-    between the same protected regions may share one null-landing range.
+10. Reach `std::terminate` through the host runtime when an exception
+    leaves a non-throwing function: a landing that calls `__cxa_begin_catch`
+    and then `std::terminate`, or the runtime's `__cxa_call_terminate`. How
+    many landings or helpers do it, and what they are named, is not graded;
+    the program's behavior is.
+11. End every cleanup landing by calling `_Unwind_Resume` with the exception
+    object it received. How many resume sites a function has is your choice.
+12. Cover every potentially throwing call in an LSDA-bearing function with a
+    call-site entry, a null landing pad where nothing handles it, so that
+    unwinding continues through the function. Whether entries also cover the
+    instructions between calls, and whether adjacent unprotected calls share
+    an entry, is the table's layout and is not graded.
 
 If object inspection shows missing or malformed host EH metadata for a basic
 throw/catch/cleanup case, fix the host-EH lowering or object-emission path.
@@ -246,6 +252,22 @@ host ABI symbols and platform EH metadata:
 
 Do not construct host EH facts from source text. The object backend should work
 from typed semantic/runtime-role information and final machine layout.
+
+Generate each function's call-frame instructions from the frame facts the
+encoder records as it emits the prologue and epilogues: each push, the stack
+reservation, where the prologue sits, and each epilogue, with its own rows
+when returns have their own epilogues. Do not write them from a fixed
+`push rbp; mov rbp, rsp` template. Build the LSDA's call-site table from the
+final addresses of the calls after block layout. With both, later
+optimization can omit the frame pointer, push callee-saved registers, start
+the prologue after an early exit, give each return its own epilogue, and move
+cold blocks and landing pads to the end of the function, all without
+changing the unwind writer. A table built from an assumed frame shape or an
+assumed block order has to be rewritten for each of those. Keep layout and
+the call-site table in step: when layout removes a jump so that one block
+falls into the next, the calls of the next block still need the entries of
+their own region, and a landing pad is entered only by unwinding, never by
+falling into it.
 
 A compact terminate boundary can pass the typed exception value to a single
 internal helper. This keeps the handler-entry ABI sequence in one place while

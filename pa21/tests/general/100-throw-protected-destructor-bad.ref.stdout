@@ -1,1 +1,1 @@
-ERROR: thrown exception object is not destructible
+ERROR: tests/general/100-throw-protected-destructor-bad.t:13:3: inaccessible member

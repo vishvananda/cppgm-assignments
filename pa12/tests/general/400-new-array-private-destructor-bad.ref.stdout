@@ -1,1 +1,1 @@
-ERROR: inaccessible array-new destructor
+ERROR: tests/general/400-new-array-private-destructor-bad.t:4:12: inaccessible member

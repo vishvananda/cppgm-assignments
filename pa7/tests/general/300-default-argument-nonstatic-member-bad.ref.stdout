@@ -1,0 +1,1 @@
+ERROR: tests/general/300-default-argument-nonstatic-member-bad.t:3:33: non-static data member used without an object

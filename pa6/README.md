@@ -168,14 +168,28 @@ function forms. Canonical signatures separately apply parameter adjustment;
 PA7's call tests observe that identity. The source view is deliberate and
 does not require using unadjusted parameter types for function matching.
 
-Using declarations that introduce a visible type name are emitted as
-`type-alias` bindings in the current scope. Supported value-name using
+A using declaration that introduces a type name emits the binding the name
+already has, in the current scope: `type` for a class or enumeration and
+`type-alias` for a typedef name. Supported value-name using
 declarations are emitted through the resulting `function`, `variable`,
 `parameter`, or `enumerator` binding rather than through a separate
 `using-declaration` line.
 
-Namespace aliases and using directives affect lookup. They do not need their
-own output line unless the checked-in reference format for a test requires one.
+Namespace aliases and using directives affect lookup. They have no output
+line of their own.
+
+Unnamed types have generated names. An unnamed class or enumeration that a
+typedef declares takes the typedef name (7.1.3p9) and is dumped under it,
+with both its `type` binding and the `type-alias` (`type C class C`,
+`type-alias C class C`). Otherwise an unnamed enumeration is
+`__anonymous_enum<N>`, N counting from 1 in order of definition within the
+translation unit, and an anonymous union is
+`__anonymous_union_type__<k>_<e>`, where k and e are positions in the
+translation unit's token sequence after preprocessing, counted from 0: k is
+the `union` keyword's, and e is the token's after the closing brace, or the
+token's after the `;` when the declaration begins with the keyword itself
+(`union { ... };`; `static union { ... };` begins with `static`). PA7 shows
+the union's unnamed object as `__anonymous_union_storage__<k>_<e>`.
 
 Standard output and standard error are ignored by the automated PA6 tests.
 
@@ -226,7 +240,9 @@ PA6 must support:
 - unqualified lookup of visible type aliases, template type parameters,
   namespaces, and supported value names
 - qualified lookup through namespaces, class scopes, and scoped enum scopes for
-  the supported declaration forms
+  the supported declaration forms; a nested-name-specifier naming an unscoped
+  enumeration also qualifies its enumerators, which live in the enclosing scope
+  (7.2p11)
 - fundamental, class, enum, cv-qualified, pointer, reference, array, and
   function types
 - array bounds formed from supported integral literals (including character
@@ -239,10 +255,14 @@ PA6 must support:
   evaluate an unselected operand
 - `static_assert` over the supported integral constant-expression subset
 - rejection of implicit conversion or comparison between a scoped-enum value
-  and an integer
+  and an integer, including a scoped enumerator used as the initializer of
+  another enumeration's enumerator (7.2p5)
 - `constexpr` object declarations treated as `const` objects for PA6 type and
   constant-value purposes
-- the supported `decltype(...)` forms listed in the tests and reference output
+- the supported `decltype(...)` forms: an unparenthesized id-expression
+  naming a variable, function, enumerator or static data member (the
+  entity's declared type, 7.1.6.2p4), and a parenthesized lvalue such as
+  `decltype((x))` (an lvalue reference to its type)
 - deterministic scope-tree output
 
 PA6 also rejects the following declaration forms:
@@ -302,8 +322,8 @@ Comparison rules:
 The local suite is split by role:
 
 - `tests/spec/` contains small tests tied to specific C++11 scope, declaration,
-  lookup, or type-formation clauses. These files begin with an `N3485 focus`
-  comment.
+  lookup, or type-formation clauses. Most begin with an `N3485 focus` comment
+  naming the clause.
 - `tests/general/` contains broader PA6 scope/type tests, cross-feature
   semantic combinations, and useful intake cases that are not a single-clause
   oracle.
@@ -329,10 +349,28 @@ Keep native image construction and later initialization lowering outside the PA6
 core. Those ideas become useful again later, but this assignment should leave
 behind a reusable scope/type model.
 
+Keep names structured and interned. Lookup runs for every name in every
+template instantiation; a qualified name kept as its components' interned
+identities is compared and hashed cheaply, while a name rebuilt as text and
+hashed on each lookup repeats that work millions of times on real headers.
+The same holds for types: give each canonical type a compact identity so
+that type equality is an identity comparison.
+
+Keep the cost of one lookup proportional to the scopes it actually
+searches. A table per scope, or one table keyed by scope and interned name,
+answers each step in one probe. A lookup that allocates or clears a
+structure sized to every scope of the translation unit, or walks every
+binding of an enclosing namespace, makes compile time grow with the square
+of the input: each new class, function or namespace adds a scope that every
+later lookup pays for. The same goes for constant values (enumerators,
+array bounds, `static_assert` operands): keep them as small values, not as
+records that own strings or maps and are copied with every binding and
+expression.
+
 ### Multi-file test groups
 
 For a root `name.t`, companions such as `name.t2` are additional primary
 source files in the same invocation, in lexical order. They remain separate
-translation units; the harness counts the group once. Both batch and ordinary
-execution use this file interface. Headers and other support files stay with
+translation units; the harness counts the group once. Headers and other
+support files stay with
 the owning case and are not concatenated into one source file.

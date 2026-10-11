@@ -1,1 +1,1 @@
-ERROR: a template declaration must declare a single entity
+ERROR: tests/spec/300-template-static-declarator-list-bad.t:3:1: a template declaration must declare a single entity

@@ -1,1 +1,1 @@
-ERROR: default argument lambda captures this
+ERROR: tests/general/200-default-argument-lambda-this-bad.t:1:29: `this` captured outside a non-static member function (5.1.2p8)

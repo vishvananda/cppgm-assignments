@@ -1,0 +1,1 @@
+ERROR: tests/general/100-const-class-member-default-init-bad.t:5:19: a const object leaves a member uninitialized

@@ -1,1 +1,1 @@
-ERROR: duplicate class definition: YDuplicate (YDuplicate)
+ERROR: tests/general/100-duplicate-class-definition-bad.t:7:8: class redefinition

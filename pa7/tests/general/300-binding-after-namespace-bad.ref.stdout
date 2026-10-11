@@ -1,1 +1,1 @@
-ERROR: binding conflicts with namespace
+ERROR: tests/general/300-binding-after-namespace-bad.t:3:5: variable name conflicts with an earlier declaration

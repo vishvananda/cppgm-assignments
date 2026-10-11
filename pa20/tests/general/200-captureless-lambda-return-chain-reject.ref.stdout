@@ -1,1 +1,1 @@
-ERROR: invalid or ambiguous class copy conversion
+ERROR: tests/general/200-captureless-lambda-return-chain-reject.t:3:25: invalid implicit conversion

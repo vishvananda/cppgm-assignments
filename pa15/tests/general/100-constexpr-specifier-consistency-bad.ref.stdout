@@ -1,0 +1,1 @@
+ERROR: tests/general/100-constexpr-specifier-consistency-bad.t:5:1: declarations of a function that disagree on constexpr

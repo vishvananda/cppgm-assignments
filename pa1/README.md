@@ -74,8 +74,9 @@ Internally you may throw an exception and put a catch handler in `main` that the
 ### Development Environment
 
 Use Linux x86-64 and the toolchain described in the root [README](../README.md).
-Implement the tokenizer using your own reusable C++ code and the supplied
-support interfaces.
+Implement the tokenizer using your own reusable C++ code; the supplied
+`IPPTokenStream` and its debug implementation are a convenience for writing
+the dump, not a required interface.
 
 ### Output Format
 
@@ -99,7 +100,7 @@ In the remaining cases, it is up to each participant to choose for themselves.
 
 ### Features
 
-Several transformations will need to be applied in a pipeline as described in section 2.2.{1,2,3} of the standard.  The following summary is given as a rough reference:
+The following transformations apply, as if in sequence, as section 2.2.{1,2,3} of the standard describes.  The following summary is given as a rough reference:
 
 Decode each UTF-8 code unit sequence from the input file to its unicode code point.
 
@@ -205,7 +206,8 @@ investigate behavior. A clean root through report completes this assignment.
 
 See [Testing and references](../TESTING_AND_REFERENCES.md) for comparison and
 reference policy. Report suspected reference bugs to this project's maintainers
-with a reduced input and the reference bundle or source revision.
+with a reduced input and the reference bundle revision
+(`reference-binaries/manifest.tsv`).
 
 ## Preprocessing Token Grammar Summary
 
@@ -227,7 +229,7 @@ The grammar for `preprocessing-token` is as follows with some notes added.  It i
                 not fit into another preprocessing token
                 except `'` and `"`
 
-This is used so that garbage will still tokenize in some cases because the section it contains may be removed later anyway during preprocessing (by exclusion from an `#if 0` or similar).  The test suite (as is the standard) is quite forgiving about whether a malformed token causes an error or gets parsed using `non-whitespace-character`.
+This is used so that garbage will still tokenize in some cases because the section it contains may be removed later anyway during preprocessing (by exclusion from an `#if 0` or similar).  The test suite (as is the standard) is quite forgiving about whether a malformed token causes an error or gets parsed using `non-whitespace-character`; the freedom applies to inputs the suite does not pin.  The `-bad` fixtures (an unterminated comment or literal, an invalid universal-character-name value, an invalid raw-string delimiter, an invalid escape inside a literal, invalid UTF-8) require `EXIT_FAILURE`.
 
 It is _course defined_ that `'` and `"` do not match `non-whitespace-character`. This is a standard-compliant feature (see 2.5.2).
 
@@ -479,6 +481,33 @@ Also, there is some cross-over between `whitespace-sequence` comment starts `//`
 Usually you will need to match the longest token (some exceptions are comments, raw strings and the `<` `::` case).  So greedily "keep going" in the state machine until you cannot go and further, then emit the discovered token and return to the start state.
 
 To emit a token there is an interface provided in the skeleton code called `IPPTokenStream`.  It has one function for each token type.  In most cases you will need to store and then UTF-8 encode the code point sequence corresponding to the token to pass to the data argument.  The token data is expected to have the translation tasks applied (for one example _line splicing_), but not the literal tasks (for example decoding `simple-escape-sequences` is not required at this stage) (which occur later in translation phase 7 and is not part of this assignment).
+
+#### Later scale (optional)
+
+The pipeline above is the clearest way to get every translation rule right,
+and it is a fine way to finish PA1. What follows is one representation that
+scales, and the one the course solution uses; any design that meets the
+output here and the speed gates later is acceptable. Later assignments lex all of the host's
+standard library headers for every translation unit, and PA34 compiles the
+compiler itself: millions of bytes per compile. There, a pipeline that
+handles one code point at a time through several state machines, or stores
+a record for every character, becomes the compiler's largest cost. What
+scales is to read each file into one buffer; to scan the common case, plain
+ASCII with no trigraph, line splice or universal character name, directly
+in that buffer, falling back to the full translation only for the bytes that
+need it; to produce tokens on demand rather than storing them; and to intern
+each identifier's spelling once, as it is lexed. None of this changes PA1's
+output, so it can come later, but it is easier to leave room for now.
+
+Two more choices matter at that scale. `IPPTokenStream` and its debug
+implementation are how the scaffold's `pptoken` writes the dump; the harness
+reads only standard output. They
+pass each token's text as a `std::string`, which suits a dump but not the
+compiler's own token path, where later stages read compact token records
+from the lexer directly. And a token's position can be one offset in a
+single location space that covers every file, with the line and column
+worked out only when a diagnostic or a debug location needs them; a line
+and column stored for every character or token is the cost to avoid.
 
 ### Self-Tokenizing (Optional/Ungraded)
 

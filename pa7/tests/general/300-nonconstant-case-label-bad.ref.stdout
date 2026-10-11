@@ -1,1 +1,1 @@
-ERROR: nonconstant case label
+ERROR: tests/general/300-nonconstant-case-label-bad.t:5:10: a parameter is not usable in a constant expression

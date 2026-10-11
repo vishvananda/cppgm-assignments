@@ -1,1 +1,1 @@
-ERROR: invalid constant shift count at tests/compile/400-constant-left-shift-width-bad.t:1:19
+ERROR: tests/compile/400-constant-left-shift-width-bad.t:1:16: a shift outside its defined range

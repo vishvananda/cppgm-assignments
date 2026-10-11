@@ -1,1 +1,1 @@
-ERROR: invalid switch condition
+ERROR: tests/general/300-switch-floating-condition-declaration-bad.t:5:17: switch condition is not of integral or enumeration type

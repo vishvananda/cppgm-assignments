@@ -1,0 +1,1 @@
+ERROR: tests/general/100-initializer-list-without-header-bad.t:3:25: std::initializer_list used without its declaration (8.5.4p2)

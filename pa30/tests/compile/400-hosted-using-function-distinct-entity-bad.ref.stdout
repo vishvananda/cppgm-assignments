@@ -1,1 +1,1 @@
-ERROR: using function conflicts with declaration
+ERROR: tests/compile/400-hosted-using-function-distinct-entity-bad.t:7:1: using-declaration conflicts with a function of the same signature

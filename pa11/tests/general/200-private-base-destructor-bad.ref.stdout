@@ -1,1 +1,1 @@
-ERROR: object type is not destructible
+ERROR: tests/general/200-private-base-destructor-bad.t:11:6: use of a deleted function

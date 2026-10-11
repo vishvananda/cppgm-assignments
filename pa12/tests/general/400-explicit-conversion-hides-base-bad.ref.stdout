@@ -1,1 +1,1 @@
-ERROR: invalid or ambiguous class copy conversion
+ERROR: tests/general/400-explicit-conversion-hides-base-bad.t:2:143: no unambiguous user-defined conversion initializes the class object

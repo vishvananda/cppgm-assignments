@@ -1,1 +1,1 @@
-ERROR: conflicting function exception specification
+ERROR: tests/general/300-dynamic-exception-specification-different-set-bad.t:3:6: redeclaration with an incompatible exception-specification

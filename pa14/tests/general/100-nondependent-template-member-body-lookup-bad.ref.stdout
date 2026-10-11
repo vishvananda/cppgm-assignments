@@ -1,1 +1,1 @@
-ERROR: unknown nondependent name in template definition: missing_name
+ERROR: tests/general/100-nondependent-template-member-body-lookup-bad.t:3:27: undeclared name

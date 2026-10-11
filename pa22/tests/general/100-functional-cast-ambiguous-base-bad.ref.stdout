@@ -1,0 +1,1 @@
+ERROR: tests/general/100-functional-cast-ambiguous-base-bad.t:8:26: conversion to an ambiguous base class

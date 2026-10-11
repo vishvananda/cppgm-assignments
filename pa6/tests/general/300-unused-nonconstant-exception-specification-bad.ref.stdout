@@ -1,1 +1,1 @@
-ERROR: nonconstant noexcept expression
+ERROR: tests/general/300-unused-nonconstant-exception-specification-bad.t:5:26: a call of a function that is not constexpr

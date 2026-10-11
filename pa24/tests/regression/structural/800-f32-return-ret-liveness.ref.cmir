@@ -9,27 +9,26 @@ function @makef
   abi
     return f32 -> xmm0
   frame
-    stack_size 48
+    stack_size N
     scratch_bytes 48
     frame_pointer keep
     epilogues shared
 
   block ^entry
     fmov.f32 xmm0, 1.5f
-    ret
+    ret xmm0
 
 function @main
   abi
     return i64 -> rax
   frame
-    stack_size 48
+    stack_size N
     scratch_bytes 48
     frame_pointer keep
     epilogues shared
 
   block ^entry
     call @makef [args=()]
-    fmov.f32 xmm0, xmm0
     fcmp.f32 xmm0, 1.5f
     jp ^wrong
     je ^right

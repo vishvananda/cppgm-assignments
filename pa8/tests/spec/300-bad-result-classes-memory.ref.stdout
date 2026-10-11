@@ -1,0 +1,1 @@
+ERROR: a memory-class result is returned through an indirect_result parameter at tests/spec/300-bad-result-classes-memory.t:1

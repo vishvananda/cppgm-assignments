@@ -1,1 +1,1 @@
-ERROR: member call on non-class object at tests/general/300-most-vexing-local-function-member-call-bad.t:13:11
+ERROR: tests/general/300-most-vexing-local-function-member-call-bad.t:13:10: member access on a non-class

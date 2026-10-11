@@ -1,1 +1,1 @@
-ERROR: invalid in-class static data member initializer for value
+ERROR: tests/general/100-invalid-in-class-static-initializer-bad.t:5:14: a static data member initialized in its class must be const integral or constexpr

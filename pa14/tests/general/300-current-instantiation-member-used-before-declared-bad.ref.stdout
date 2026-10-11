@@ -1,0 +1,1 @@
+ERROR: tests/general/300-current-instantiation-member-used-before-declared-bad.t:3:30: undeclared name

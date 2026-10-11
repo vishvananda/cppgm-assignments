@@ -1,1 +1,1 @@
-ERROR: inconsistent placeholder function return types
+ERROR: tests/general/100-bad-auto-function-return.t:4:3: return statements deduce different return types (7.1.6.4p9)

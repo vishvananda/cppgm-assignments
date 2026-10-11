@@ -1,0 +1,1 @@
+ERROR: tests/general/200-lambda-abstract-return-bad.t:5:53: an object of an abstract class type

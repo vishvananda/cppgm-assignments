@@ -1,0 +1,1 @@
+ERROR: tests/general/400-new-const-scalar-array-uninit-bad.t:3:40: a const object needs an initializer

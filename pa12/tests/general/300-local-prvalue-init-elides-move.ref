@@ -1,3 +1,17 @@
+function @S__S__base_entry(%this : ptr [object_bytes=1]) -> void [binding=strong, object=_ZN1SC2Ev, object_root=yes] {
+  slot $this : ptr
+
+  block ^entry:
+    store typed ptr %this, $this
+    return void
+}
+function @S__S(%this : ptr [object_bytes=1]) -> void [binding=strong, object=_ZN1SC1Ev] {
+  slot $this : ptr
+
+  block ^entry:
+    store typed ptr %this, $this
+    return void
+}
 function @make(%ret : ptr [pass=indirect_result, object_bytes=1]) -> void [binding=strong, object=_Z4makev] {
   block ^entry:
     call void @S__S(%ret)
@@ -10,18 +24,4 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t1 = addr $s
     call void @make(%t1)
     return i32 0
-}
-function @S__S__base_entry(%this : ptr [object_bytes=1]) -> void [binding=strong, object=_ZN1SC2Ev, object_root=yes] {
-  slot $this : ptr
-
-  block ^entry:
-    store ptr %this, $this
-    return void
-}
-function @S__S(%this : ptr [object_bytes=1]) -> void [binding=strong, object=_ZN1SC1Ev] {
-  slot $this : ptr
-
-  block ^entry:
-    store ptr %this, $this
-    return void
 }

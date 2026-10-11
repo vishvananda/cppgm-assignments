@@ -1,1 +1,1 @@
-ERROR: namespace definition reopens a namespace alias
+ERROR: tests/general/300-namespace-alias-reopened-bad.t:11:1: a namespace alias cannot be extended

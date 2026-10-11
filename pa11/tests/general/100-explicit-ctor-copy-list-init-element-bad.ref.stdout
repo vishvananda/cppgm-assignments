@@ -1,0 +1,1 @@
+ERROR: tests/general/100-explicit-ctor-copy-list-init-element-bad.t:6:21: copy-list-initialization selects an explicit constructor

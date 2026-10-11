@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-standard-noreturn-class-head-bad.t:5:10: noreturn attribute on a class

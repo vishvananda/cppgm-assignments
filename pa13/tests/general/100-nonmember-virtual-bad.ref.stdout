@@ -1,1 +1,1 @@
-ERROR: virtual specifier is only allowed in a class definition
+ERROR: tests/general/100-nonmember-virtual-bad.t:3:14: virtual outside the initial declaration of a class member function

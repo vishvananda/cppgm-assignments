@@ -1,1 +1,1 @@
-ERROR: direct base must name a complete non-union class
+ERROR: tests/general/300-union-class-template-base-bad.t:10:26: unions have no base classes

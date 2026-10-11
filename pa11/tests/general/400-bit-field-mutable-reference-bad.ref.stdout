@@ -1,1 +1,1 @@
-ERROR: bit-field cannot bind a mutable or volatile lvalue reference at tests/general/400-bit-field-mutable-reference-bad.t:4:29
+ERROR: tests/general/400-bit-field-mutable-reference-bad.t:4:37: a bit-field glvalue outside the supported forms

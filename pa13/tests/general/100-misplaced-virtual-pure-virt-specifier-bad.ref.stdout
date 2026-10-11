@@ -1,0 +1,1 @@
+ERROR: tests/general/100-misplaced-virtual-pure-virt-specifier-bad.t:5:24: virtual in a declaration that declares no function

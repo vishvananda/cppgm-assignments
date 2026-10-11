@@ -1,1 +1,1 @@
-ERROR: explicitly defaulted constructor has the wrong type
+ERROR: tests/general/200-out-of-class-defaulted-nonspecial-constructor-bad.t:9:1: only special member functions can be defaulted

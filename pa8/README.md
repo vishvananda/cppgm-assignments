@@ -19,6 +19,19 @@ from C++, and PA24 will compile it to native code. Keep the model, reader,
 validator and writer in reusable modules under `dev/src/` so those assignments
 extend your work.
 
+No test observes your model: the graded interfaces are the reader, the
+validator, the writer and the construction exercises. Design the model all
+the same for the optimizer that will edit it. PA32 rewrites one function at
+a time, many times over: it inserts, removes and replaces instructions and
+blocks, renames uses, and asks how many uses a value has. A model in which a
+function owns its instructions and blocks, where an edit touches only that
+function and use counts are cheap to keep current, serves all of that; one
+that packs a whole program into flat append-only pools, or that can only be
+rebuilt from text, makes every later rewrite a rebuild.
+`dev/src/lowir_model.h` gives the format's vocabulary and no containers. The
+model's shape is yours, using the header is optional, and storing its enums
+rather than words is advice.
+
 ### Prerequisites and starter kit
 
 Complete the earlier syntax and semantic assignments. The useful prior ideas
@@ -29,8 +42,10 @@ The starter kit provides:
 
 - `dev/lowir.cpp`, the editable command-line scaffold, and the assignment's
   `lowir.cpp` symlink to it;
-- `dev/src/lowir_model.h`, a simple example model you may adapt or replace;
-- `dev/src/ir_symbol_model.h`, the shared metadata vocabulary;
+- `dev/src/lowir_model.h`, the LowIR vocabulary (every enumerable concept of
+  the format as an enum with its spellings and readers, and the 8-byte
+  `Type`), which the course solution also builds on;
+- `dev/src/ir_symbol_model.h`, the metadata vocabulary;
 - [the format reference](lowir.md), [the grammar](pa8.gram), and its HTML
   explorer under `grammar/`;
 - the tests, reference outcomes and harnesses under `pa8/`;
@@ -82,9 +97,13 @@ The required representation includes the forms exercised by `tests/spec/`:
 - constants and copies, addresses and indexed addresses, memory operations,
   arithmetic/comparisons/conversions, direct and explicitly typed indirect calls;
 - jumps, branches, switches, phi values and terminators;
+- `select`, the `ctz` and `clz` unary operators, and the instruction facts
+  `typed`, `nowrap` and `exact` (`lowir.md`, "Instruction Facts");
 - the atomic and exception instruction records used by the fixtures;
 - the symbol, parameter, function, storage, projection and debug metadata used
-  by those fixtures, including the required placement and value constraints.
+  by those fixtures, including the required placement and value constraints,
+  among them the object ABI facts `classes`, `result_classes` and
+  `replaceable`.
 
 Use `lowir.md` for each field's type and meaning, and `pa8.gram` for syntax.
 The full format reference also documents later additions. A feature appearing
@@ -141,6 +160,30 @@ Inspecting reference output is useful for learning; copying a reference body
 or invoking the reference implementation to perform your work bypasses the
 exercise. No C++-to-LowIR frontend is needed for these programs.
 
+### Design Notes (Non-Normative)
+
+The model built here outlives this assignment: PA10 lowers C++ into it, PA32
+optimizes it and PA24 compiles it. Three choices made now decide how much
+that later work costs.
+
+- Keep one model in memory for every stage. The lowering builds it, the
+  optimizer edits it and the backend reads it, in one process. The text
+  reader and writer are tools for tests, `lowir`, `lowiropt` and
+  `--emit-lowir`; the compile path never writes LowIR text and parses it
+  back, and the host objects of PA26 onward carry machine code, not a
+  serialized copy of the program.
+- Give every fact a spelling. PA32 requires an object compiled from emitted
+  LowIR to equal the one compiled directly, so a fact that later stages read
+  must survive the writer and the reader. A flag kept only in memory is a
+  fact no later stage may rely on: add its text form when you add the flag.
+- Number temporaries, slots and blocks densely within each function, so an
+  analysis keeps its facts in arrays indexed by those numbers rather than in
+  maps keyed by names. Keep each value's use count, or its list of uses,
+  current as instructions change: the optimizer asks how a value is used
+  constantly, and recounting every use after each edit is measurably
+  expensive in an optimizer. Removed instructions can leave holes; compact a
+  function after a pipeline rather than after every edit.
+
 ### Testing
 
 From this directory:
@@ -190,4 +233,6 @@ your implementation of `lowir2native`.
 
 Finish the assignment with the root cumulative `make test-report-through-pa8`.
 DWARF, debugger integration, optimization, object linking and native code
-emission belong to later assignments.
+emission belong to later assignments; `tests/debuginfo/` and
+`make test-debuginfo` in this directory are the debug-location lanes that
+PA24, PA32 and PA33 run, not part of PA8.

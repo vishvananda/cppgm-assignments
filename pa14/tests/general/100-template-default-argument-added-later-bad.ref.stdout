@@ -1,0 +1,1 @@
+ERROR: tests/general/100-template-default-argument-added-later-bad.t:5:19: a default argument added by a later declaration of a function template

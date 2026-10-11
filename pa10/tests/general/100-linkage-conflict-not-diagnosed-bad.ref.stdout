@@ -1,0 +1,1 @@
+ERROR: tests/general/100-linkage-conflict-not-diagnosed-bad.t:5:12: a static declaration of a variable declared with external linkage

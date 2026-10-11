@@ -93,12 +93,15 @@ New in PA25:
 - include search: `-I <dir>` and `-I<dir>`
 - library search: `-L <dir>`, `-L<dir>`, `-l <name>`, and `-l<name>`
 - target selection: `--target <target>` or `--target=<target>`
+- flags the fixtures pass, accepted and applied as the host compiler applies
+  them: `-D<name>` and `-D<name>=<value>`, `-pedantic` and `-pedantic-errors`,
+  `-fvisibility=hidden` and `-fvisibility-inlines-hidden`, `-O<n>` (PA32
+  gives the levels their meaning; until then they are accepted) and `-g0`
 
 Not yet required here:
 
 - hosted preprocess mode `-E`
-- hosted preprocessor-control flags such as `-D`, `-U`, `-include`, and
-  `-isystem`
+- hosted preprocessor-control flags such as `-U`, `-include`, and `-isystem`
 - driver query flags such as `--version`, `-v`, `-dumpmachine`,
   `-dumpversion`, and `-print-search-dirs`
 - static archives and shared libraries as link inputs
@@ -290,6 +293,18 @@ To complete PA25, implement these goals:
    logical-right, and arithmetic-right shifts must also work for runtime counts,
    including counts on either side of the 64-bit half boundary.
 8. Source-driven runtime-program validation without host-library dependence.
+   The runtime calls `main` with the process's arguments: a `main` declared
+   `int main(int argc, char** argv)` receives the argument count and the
+   argument strings, with `argv[argc]` null. Exceptions in that runtime are
+   caught as the Itanium C++ ABI catches them; in particular a pointer
+   exception is caught by value, so a pointer handler receives the thrown
+   pointer, after any qualification, public-base or `void*` conversion the
+   handler's type requires. How the runtime finds a handler is not part of
+   that contract: handler records pushed and popped as regions open and
+   close, and unwind tables like the host's, both meet it. The runtime also
+   provides `__dso_handle` and `__cxa_thread_atexit`, so the main thread's
+   `thread_local` objects are destroyed at exit, before process-exit
+   destructors, as the host C library does.
 
 ### Out Of Scope
 
@@ -306,8 +321,8 @@ The following are out of scope for PA25:
 - dependency generation flags
 - precompiled headers
 - build-system conveniences such as depfiles or compilation databases
-- hosted preprocessor and hosted-header compatibility, which belong in PA29
-  and PA31
+- hosted preprocessor and hosted-header compatibility, which belong in
+  PA29-PA31
 - standalone ABI name construction, which belongs in PA9
 - host-linker-compatible object output, which belongs in PA26/PA27
 
@@ -326,6 +341,16 @@ In particular:
 - Do not carry a private PA25 object encoding forward as the host-object
   solution. PA26/PA27 replace the internal compiler-object contract with a
   host-linker-compatible object contract.
+- A compiler object needs what linking needs: code, data, symbols and
+  relocations, and the course solution's holds those and nothing else. A
+  design that keeps a serialized program in the object for link mode to
+  compile again is acceptable if the parity checks pass; the host objects of
+  PA26 onward carry nothing of the kind.
+- A handler-record runtime, like the course solution's, is the simpler way
+  to meet goal 8. A record restores the callee-saved registers as they were
+  when its region was entered, so a function with regions keeps in memory
+  the values its landings may read (PA21's design notes say what that
+  costs); PA26's table-driven host model does not have that cost.
 
 ### Stage Handoff
 

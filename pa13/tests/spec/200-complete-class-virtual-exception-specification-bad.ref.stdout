@@ -1,1 +1,1 @@
-ERROR: virtual override has a looser exception specification
+ERROR: tests/spec/200-complete-class-virtual-exception-specification-bad.t:10:10: an overrider allows exceptions its overridden function does not

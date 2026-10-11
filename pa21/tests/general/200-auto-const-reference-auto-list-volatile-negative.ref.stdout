@@ -1,1 +1,1 @@
-ERROR: auto& rvalue initializer requires non-volatile const binding
+ERROR: tests/general/200-auto-const-reference-auto-list-volatile-negative.t:2:36: an lvalue reference to a type that is not const bound to a list's temporary

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-qualified-current-class-dependent-base-type-typename-bad.t:5:37: a dependent qualified name needs typename to name a type

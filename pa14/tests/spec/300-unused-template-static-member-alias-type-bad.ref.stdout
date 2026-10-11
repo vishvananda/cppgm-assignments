@@ -1,1 +1,1 @@
-ERROR: retained static member definition has a conflicting type
+ERROR: tests/spec/300-unused-template-static-member-alias-type-bad.t:6:19: conflicting declaration of a variable

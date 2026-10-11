@@ -1,0 +1,1 @@
+ERROR: tests/general/300-static-operator-assign-bad.t:4:21: a static member operator function

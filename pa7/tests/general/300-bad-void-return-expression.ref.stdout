@@ -1,1 +1,1 @@
-ERROR: void function returns a value
+ERROR: tests/general/300-bad-void-return-expression.t:3:3: return with a value in a function returning void

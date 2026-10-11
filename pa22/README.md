@@ -79,6 +79,10 @@ The generated LowIR must be well-formed and must match the checked-in `.ref` fil
 the relaxed LowIR comparison used by the harness. That comparison still checks the
 semantic LowIR shape and required IR facts, but it does not make helper metadata
 presentation or other non-semantic text details part of the student contract.
+The instruction facts and the boundary facts the lowering states (`unwind`,
+`inline_hint`, `object_bytes`, `storage=readonly` and the others) are compared
+exactly; `../pa8/lowir.md` ("What The Comparison Absorbs And What It
+Enforces") lists both sides.
 
 ### Error Handling
 
@@ -103,8 +107,9 @@ comparison described in [the format guide](../pa8/lowir.md). The `Makefile` invo
 The local checked-in tests live in `tests/general/`. That directory contains
 PA22 source-to-LowIR tests over non-virtual multiple inheritance, multi-base
 generated members, member pointers, `dynamic_cast<void*>`, and ambiguity
-rejection. PA22 has no `tests/spec/` directory because these tests focus on the
-combined language-to-LowIR contract.
+rejection. `tests/spec/` holds tests anchored to specific clauses, most of
+them member pointers in templates; the harness runs them like the general
+suite.
 
 For each test case `x`:
 
@@ -118,6 +123,15 @@ above. For execution feedback, use the supplied `lowir2native-ref -O0`
 backend introduced in PA8. Your own native backend is implemented in PA24.
 
 The shipped PA22 tests are the contract for this milestone.
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### PA22 Syntax Spec
 
@@ -165,7 +179,11 @@ To complete PA22, implement these goals:
 
 1. Multiple-base layout and field access.
    Distinct base subobjects should have deterministic offsets, and member access should lower
-   through those offsets correctly.
+   through those offsets correctly.  The offsets are the Itanium C++ ABI's (2.4 II): each
+   non-virtual base at the data size so far rounded up to its alignment, reusing a
+   preceding non-POD base's tail padding; an empty base at offset `0` unless an empty
+   subobject of its type is already there, otherwise from the data size on by its
+   alignment until no two empty subobjects of one type share an offset.
 
 2. Base-method lookup and `this` adjustment.
    Calling a method inherited from a later base must lower the implicit object argument to the
@@ -180,6 +198,27 @@ To complete PA22, implement these goals:
    adjustment so `.*` and `->*` lower through the correct object address.
    Their contextual conversion to `bool` must distinguish a non-null target from a null
    member pointer without treating the adjustment word as an independent truth value.
+   A data member pointer uses the Itanium C++ ABI representation (2.3), so its values
+   cross object boundaries with host-compiled code: the member's byte offset in its
+   class (`&S::m` is 0 for a first member), and -1 for null. Null constants,
+   value-initialization and zero-initialization of objects that contain data member
+   pointers (static storage included) produce -1; a base-to-derived or derived-to-base
+   conversion adjusts only a non-null value; comparison with null and contextual
+   conversion to `bool` test against -1; `.*` and `->*` add the offset unchanged.
+   A member function pointer uses the Itanium representation (2.3) as well: two
+   words, `ptr` then `adj`. `ptr` is the function's address or, for a virtual
+   function, 1 plus the byte offset of its entry in the vtable, so an odd `ptr`
+   marks a virtual function. `adj` is the byte adjustment added to the object's
+   address to form `this`. Null is both words zero; a base-to-derived or
+   derived-to-base conversion adjusts `adj` of a non-null value only;
+   contextual conversion to `bool` tests `ptr`. `.*` and `->*` add `adj` to the
+   object's address, then call `ptr` or, when `ptr` is odd, the entry `ptr - 1`
+   bytes into the vtable of the adjusted object.
+   The call's signature states `unwind=no` when the member pointer's
+   declaration is non-throwing, and `object_bytes` on the object only when the
+   member pointer's class has no base class, since `adj` may move the object to
+   a base subobject (5.5p6). A statically initialized const member pointer, and
+   a const array of them, states `storage=readonly`.
 
 5. Remaining single-vptr RTTI case.
    `dynamic_cast<void*>` should lower for the existing polymorphic single-inheritance ABI
@@ -196,7 +235,6 @@ The following are explicitly out of scope for PA22:
 - polymorphic multiple inheritance
 - member-pointer behavior that depends on virtual-base or polymorphic
   multiple-inheritance adjustment
-- `dynamic_cast` reference forms
 - `dynamic_cast` cases that depend on multiple or virtual polymorphic base layouts
 - the remaining RTTI cases that require a broader multi-vptr or virtual-base ABI
 

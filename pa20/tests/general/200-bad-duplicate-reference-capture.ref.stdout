@@ -1,1 +1,1 @@
-ERROR: duplicate explicit lambda capture at tests/general/200-bad-duplicate-reference-capture.t:4:31
+ERROR: tests/general/200-bad-duplicate-reference-capture.t:4:15: an entity captured twice (5.1.2p8)

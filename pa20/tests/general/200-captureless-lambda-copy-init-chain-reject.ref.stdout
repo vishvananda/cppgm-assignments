@@ -1,1 +1,1 @@
-ERROR: invalid or ambiguous class copy conversion
+ERROR: tests/general/200-captureless-lambda-copy-init-chain-reject.t:5:11: no unambiguous user-defined conversion initializes the class object

@@ -1,1 +1,1 @@
-ERROR: variable conflicts with function binding
+ERROR: tests/general/300-function-variable-conflict-bad.t:4:5: redeclaration of a name in the same scope

@@ -1,1 +1,1 @@
-ERROR: nonmember operator requires a class or enumeration parameter
+ERROR: tests/general/300-nonmember-operator-requires-class-or-enum-bad.t:1:1: an operator function needs a parameter of class or enumeration type

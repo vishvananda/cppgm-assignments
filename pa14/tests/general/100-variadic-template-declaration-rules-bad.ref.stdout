@@ -1,0 +1,1 @@
+ERROR: tests/general/100-variadic-template-declaration-rules-bad.t:4:27: a pack expansion that names no parameter pack

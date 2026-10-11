@@ -1,1 +1,1 @@
-ERROR: virtual override has a looser exception specification
+ERROR: tests/spec/300-virtual-exception-implicit-finite-union-bad.t:6:1: an overrider allows exceptions its overridden function does not

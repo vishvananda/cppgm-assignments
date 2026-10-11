@@ -1,0 +1,1 @@
+ERROR: nowrap requires an integer add, sub, mul or shl in function @f at tests/spec/300-bad-nowrap-on-float.t:3

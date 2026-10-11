@@ -1,1 +1,1 @@
-ERROR: inaccessible class member at tests/general/200-protected-member-base-object-bad.t:10:18
+ERROR: tests/general/200-protected-member-base-object-bad.t:10:19: protected member accessed through an object of another class

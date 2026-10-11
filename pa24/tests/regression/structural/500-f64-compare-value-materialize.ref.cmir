@@ -9,13 +9,12 @@ function @main
   abi
     return i64 -> rax
   frame
-    stack_size 48
+    stack_size N
     scratch_bytes 48
     frame_pointer keep
     epilogues shared
 
   block ^entry
-    feq.f64 rax, 1.5, 1.5
-    mov r8, rax
+    feq.f64 r8, 1.5, 1.5
     add r8, r8
     ret r8

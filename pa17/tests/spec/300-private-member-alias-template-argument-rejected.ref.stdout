@@ -1,1 +1,1 @@
-ERROR: inaccessible qualified type: hidden
+ERROR: tests/spec/300-private-member-alias-template-argument-rejected.t:15:5: inaccessible member

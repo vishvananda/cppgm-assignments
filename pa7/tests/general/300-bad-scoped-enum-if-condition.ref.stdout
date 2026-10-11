@@ -1,1 +1,1 @@
-ERROR: invalid explicit conversion
+ERROR: tests/general/300-bad-scoped-enum-if-condition.t:5:7: invalid implicit conversion

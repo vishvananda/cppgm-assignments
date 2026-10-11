@@ -1,1 +1,1 @@
-ERROR: explicit instantiation class-key mismatch
+ERROR: tests/general/300-explicit-instantiation-union-key-mismatch-bad.t:9:16: class-key does not agree with the template's

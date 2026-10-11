@@ -1,1 +1,1 @@
-ERROR: requested alignment is weaker than the natural class alignment
+ERROR: tests/general/300-under-aligned-class-bad.t:1:1: a class alignment-specifier weaker than its natural alignment

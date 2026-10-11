@@ -1,1 +1,1 @@
-ERROR: duplicate default template argument on inspect
+ERROR: tests/general/300-bad-noexcept-alpha-redeclaration-default.t:8:10: default template argument redefined

@@ -1,15 +1,7 @@
-global @stored : i32 [storage=readonly, binding=internal, object=stored] = 5
-global @address : ptr [storage=readonly, binding=internal, object=address] = addr @stored
+global @stored : i32 [storage=readonly, binding=internal, object=_ZL6stored] = 5
+global @address : ptr [storage=readonly, binding=internal, object=_ZL7address] = addr @stored
 
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   block ^entry:
     return i32 0
-}
-function @address_of(%value : ptr [pass=by_address, object_bytes=4]) -> ptr [binding=weak, object=_Z10address_ofRKi, inline_hint=yes] {
-  slot $value : ptr
-
-  block ^entry:
-    store ptr %value, $value
-    %t1 = load ptr $value
-    return ptr %t1
 }

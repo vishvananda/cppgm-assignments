@@ -1,1 +1,1 @@
-ERROR: no viable nondependent call in template definition
+ERROR: tests/spec/100-unused-template-sizeof-argument-bad.t:2:42: no function the nondependent call can call in a template definition

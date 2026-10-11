@@ -1,0 +1,1 @@
+ERROR: tests/general/100-constexpr-constructor-requirements-bad.t:5:44: a constexpr constructor initializes a subobject by a constructor that is not constexpr

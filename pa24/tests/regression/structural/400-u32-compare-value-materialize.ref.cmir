@@ -9,15 +9,15 @@ function @main
   abi
     return i64 -> rax
   frame
-    stack_size 0
+    stack_size N
     scratch_bytes 0
     frame_pointer keep
     epilogues shared
 
   block ^entry
-    mov r8, 1
+    mov <gpr0>, 1
     mov rdx, 2
-    cmp.u32 r8, rdx
+    cmp.u32 <gpr0>, rdx
     setb r8
     movzx r8, r8
     add r8, r8

@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-standard-noreturn-function-type-bad.t:5:15: noreturn attribute applied to a type

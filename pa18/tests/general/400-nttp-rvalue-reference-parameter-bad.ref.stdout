@@ -1,0 +1,1 @@
+ERROR: tests/general/400-nttp-rvalue-reference-parameter-bad.t:4:10: a non-type template parameter of a type 14.1p4 does not allow

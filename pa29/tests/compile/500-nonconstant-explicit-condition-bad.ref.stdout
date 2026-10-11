@@ -1,1 +1,1 @@
-ERROR: explicit-specifier requires a constant boolean condition
+ERROR: tests/compile/500-nonconstant-explicit-condition-bad.t:5:12: a call of a function that is not constexpr

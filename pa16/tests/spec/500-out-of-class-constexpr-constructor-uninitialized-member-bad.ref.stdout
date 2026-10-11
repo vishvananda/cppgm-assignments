@@ -1,1 +1,1 @@
-ERROR: constexpr constructor leaves a scalar member uninitialized
+ERROR: tests/spec/500-out-of-class-constexpr-constructor-uninitialized-member-bad.t:11:1: a constexpr constructor leaves a non-static data member uninitialized

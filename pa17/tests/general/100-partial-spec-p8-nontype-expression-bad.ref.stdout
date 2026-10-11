@@ -1,0 +1,1 @@
+ERROR: tests/general/100-partial-spec-p8-nontype-expression-bad.t:4:24: a partial specialization's template parameter that its arguments do not deduce

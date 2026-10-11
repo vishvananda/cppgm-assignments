@@ -1,1 +1,1 @@
-ERROR: missing or invalid macro name at tests/macros/250-badvargs3.t:1:2
+ERROR: tests/macros/250-badvargs3.t:1:9: __VA_ARGS__ outside a variadic macro's replacement list

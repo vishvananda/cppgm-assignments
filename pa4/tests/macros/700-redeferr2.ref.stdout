@@ -1,1 +1,1 @@
-ERROR: incompatible macro redefinition at tests/macros/700-redeferr2.t:2:2
+ERROR: tests/macros/700-redeferr2.t:2:2: macro redefined differently

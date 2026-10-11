@@ -1,1 +1,1 @@
-ERROR: invalid macro parameter at tests/macros/250-badvaargs-param.t:1:2
+ERROR: tests/macros/250-badvaargs-param.t:1:11: __VA_ARGS__ outside a variadic macro's replacement list

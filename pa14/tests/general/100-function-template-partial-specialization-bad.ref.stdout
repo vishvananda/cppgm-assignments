@@ -1,0 +1,1 @@
+ERROR: tests/general/100-function-template-partial-specialization-bad.t:5:23: template-ids are not supported here

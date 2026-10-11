@@ -1,0 +1,1 @@
+ERROR: tests/general/200-scoped-enum-qualified-enumerator.t:7:7: a scoped enumeration value does not convert implicitly to an integer

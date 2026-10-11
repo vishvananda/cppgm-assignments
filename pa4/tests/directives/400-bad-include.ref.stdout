@@ -1,1 +1,2 @@
-ERROR: unterminated conditional inclusion at tests/directives/bad-include.h:2:1
+ERROR: tests/directives/bad-include.h:1:2: unterminated conditional directive
+note: included from tests/directives/400-bad-include.t:3

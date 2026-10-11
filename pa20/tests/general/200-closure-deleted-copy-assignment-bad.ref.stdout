@@ -1,0 +1,1 @@
+ERROR: tests/general/200-closure-deleted-copy-assignment-bad.t:3:43: use of a deleted function

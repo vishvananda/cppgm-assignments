@@ -1,0 +1,1 @@
+ERROR: invalid select type in function @f at tests/spec/300-bad-select-float.t:3

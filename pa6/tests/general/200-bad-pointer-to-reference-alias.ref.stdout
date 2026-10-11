@@ -1,1 +1,1 @@
-ERROR: pointer to reference type
+ERROR: tests/general/200-bad-pointer-to-reference-alias.t:2:3: pointer to reference

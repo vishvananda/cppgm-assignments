@@ -1,1 +1,1 @@
-ERROR: unqualified explicit instantiation is in the wrong namespace
+ERROR: tests/general/300-explicit-instantiation-unqualified-wrong-namespace-bad.t:13:16: an explicit instantiation outside its template's namespace

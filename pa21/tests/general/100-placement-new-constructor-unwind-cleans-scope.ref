@@ -1,6 +1,6 @@
 declare function @guard__guard(%arg0 : ptr [object_bytes=1]) -> void [binding=strong, object=_ZN5guardC1Ev]
-declare function @guard___guard(%arg0 : ptr [object_bytes=1]) -> void [unwind=no, binding=strong, object=_ZN5guardD1Ev]
 declare function @item__item(%arg0 : ptr [object_bytes=1]) -> void [binding=strong, object=_ZN4itemC1Ev]
+declare function @guard___guard(%arg0 : ptr [object_bytes=1]) -> void [unwind=no, binding=strong, object=_ZN5guardD1Ev]
 
 global @storage : i64 [binding=strong] = zero
 
@@ -9,9 +9,9 @@ function @operatornew__ov2(%__param0 : i64, %p : ptr) -> ptr [unwind=no, binding
   slot $p : ptr
 
   block ^entry:
-    store i64 %__param0, $__param0
-    store ptr %p, $p
-    %t1 = load ptr $p
+    store typed i64 %__param0, $__param0
+    store typed ptr %p, $p
+    %t1 = load typed ptr $p
     return ptr %t1
 }
 function @build() -> void [binding=strong, object=_Z5buildv] {

@@ -1,1 +1,1 @@
-ERROR: invalid PA6 type identity
+ERROR: tests/general/100-bad-braced-array-nonconst-lvalue-ref-argument.t:8:10: no viable function for the call

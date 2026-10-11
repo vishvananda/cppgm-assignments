@@ -1,1 +1,1 @@
-ERROR: union has multiple default member initializers
+ERROR: tests/spec/300-union-multiple-default-member-initializers-bad.t:1:1: a union has several default member initializers

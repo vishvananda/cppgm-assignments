@@ -1,1 +1,1 @@
-ERROR: invalid nondependent indirection operand
+ERROR: tests/spec/100-unused-template-sizeof-indirection-bad.t:1:42: indirection through an operand that is not a pointer in a template definition

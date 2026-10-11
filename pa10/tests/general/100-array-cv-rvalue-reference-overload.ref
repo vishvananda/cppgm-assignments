@@ -13,14 +13,14 @@ function @select_array(%__param0 : ptr [pass=by_address, object_bytes=12]) -> i3
   slot $__param0 : ptr
 
   block ^entry:
-    store ptr %__param0, $__param0
+    store typed ptr %__param0, $__param0
     return i32 1
 }
 function @select_array__ov2(%__param0 : ptr [pass=by_address, object_bytes=12]) -> i32 [binding=strong, object=_Z12select_arrayOA3_Ki] {
   slot $__param0 : ptr
 
   block ^entry:
-    store ptr %__param0, $__param0
+    store typed ptr %__param0, $__param0
     return i32 2
 }
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
@@ -35,9 +35,9 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t3 = addr $values
     %t4 = call i32 @select_array(%t3)
     %t5 = cmp ne i32 %t4, 1
-    branch %t5, ^if_then_1, ^lor_rhs_4
+    branch %t5, ^if_then_1, ^lor_rhs_3
 
-  block ^lor_rhs_4:
+  block ^lor_rhs_3:
     %t6 = addr $const_values
     %t7 = call i32 @select_array(%t6)
     %t8 = cmp ne i32 %t7, 1
@@ -47,8 +47,8 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     return i32 1
 
   block ^if_else_2:
-    jump ^if_end_3
+    jump ^if_end_4
 
-  block ^if_end_3:
+  block ^if_end_4:
     return i32 0
 }

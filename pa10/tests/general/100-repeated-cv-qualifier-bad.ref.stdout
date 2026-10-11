@@ -1,0 +1,1 @@
+ERROR: tests/general/100-repeated-cv-qualifier-bad.t:3:7: a cv-qualifier repeated in a decl-specifier-seq (7.1.6p2)

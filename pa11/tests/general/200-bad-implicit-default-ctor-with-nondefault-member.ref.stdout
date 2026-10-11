@@ -1,1 +1,1 @@
-ERROR: class has no usable default constructor
+ERROR: tests/general/200-bad-implicit-default-ctor-with-nondefault-member.t:1:1: no default constructor for the class

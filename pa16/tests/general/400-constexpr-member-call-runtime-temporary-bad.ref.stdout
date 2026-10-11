@@ -1,1 +1,1 @@
-ERROR: static_assert requires an integral constant expression at tests/general/400-constexpr-member-call-runtime-temporary-bad.t:13:1
+ERROR: tests/general/400-constexpr-member-call-runtime-temporary-bad.t:13:19: a call of a function that is not constexpr

@@ -1,1 +1,1 @@
-ERROR: invalid nondependent subscript operands
+ERROR: tests/spec/100-unused-template-sizeof-subscript-bad.t:1:42: subscript operands that are not a pointer and an integer in a template definition

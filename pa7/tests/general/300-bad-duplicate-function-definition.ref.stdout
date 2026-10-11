@@ -1,1 +1,1 @@
-ERROR: duplicate function definition
+ERROR: tests/general/300-bad-duplicate-function-definition.t:6:1: redefinition of a function

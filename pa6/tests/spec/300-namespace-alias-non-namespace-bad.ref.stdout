@@ -1,1 +1,1 @@
-ERROR: namespace alias target not found
+ERROR: tests/spec/300-namespace-alias-non-namespace-bad.t:3:15: undeclared name

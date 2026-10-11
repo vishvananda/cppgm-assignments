@@ -1,1 +1,1 @@
-ERROR: redefinition of retained static data member
+ERROR: tests/spec/300-unused-nested-template-static-duplicate-definition-bad.t:7:22: redefinition of a variable

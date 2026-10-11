@@ -1,1 +1,1 @@
-ERROR: invalid nondependent member object
+ERROR: tests/spec/100-unused-template-sizeof-member-bad.t:1:42: member access to an object of non-class type in a template definition

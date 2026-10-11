@@ -1,1 +1,1 @@
-ERROR: typeid requires std::type_info at tests/general/200-typeid-rejects-unqualified-typeinfo-bad.t:7:11
+ERROR: tests/general/200-typeid-rejects-unqualified-typeinfo-bad.t:7:11: typeid without a declaration of std::type_info (5.2.8p6)

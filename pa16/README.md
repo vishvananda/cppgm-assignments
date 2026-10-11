@@ -37,6 +37,8 @@ The starter kit contains:
 - a `cppgm++.cpp` assignment entry point, linked to the editable compiler source
   in `../dev/cppgm++.cpp`
 - the standard assignment `Makefile` and harness scripts
+- the grammar for this assignment, `pa16.gram` (no HTML explorer ships for
+  PA16)
 - a checked-in local test suite under `tests/`
 
 Extend the `cppgm++` implementation you built in earlier assignments; the
@@ -79,8 +81,12 @@ and cleanup bodies.
 
 The test harness checks that the generated LowIR is well formed and matches the
 checked-in `.ref` files after canonicalizing presentation details that are not
-part of the assignment contract. Exact textual LowIR matching is not a PA16
-grading requirement.
+part of the assignment contract: the names of temporaries, slots, blocks and
+parameters, the order of slot declarations and of top-level entries, and the
+spelling of literals (`../pa8/lowir.md`, "What The Comparison Absorbs And What
+It Enforces", is the one list). Exact textual LowIR matching is not a PA16
+grading requirement, but every instruction of a body must match the
+reference's after that canonicalization, in its order.
 
 ### Error Handling
 
@@ -113,6 +119,15 @@ successful tests, the validator checks the reference LowIR and your generated
 LowIR for basic structural correctness, then compares the canonicalized LowIR
 against the checked-in reference. For rejected tests, the exit status is the
 checked result; exact diagnostic text is not checked.
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
 
 ### PA16 Syntax Boundary
 
@@ -149,10 +164,7 @@ complete compiler-owned semantic layer for the supported C++11 language surface,
 collection of special cases.
 
 More concretely, over the already-implemented language subset, PA16 should cover the full
-C++11 `constexpr` forms that later template and library code expect include
-dependent function-template return and parameter types. Their literal-type
-requirements are checked on the dependent declaration, and are not reapplied
-after a valid declaration is instantiated with concrete template arguments:
+C++11 `constexpr` forms that later template and library code expect:
 
 - scalar, floating, `nullptr`, and enum constant expressions
 - unary, arithmetic, comparison, bitwise, logical, conditional, cast, `sizeof`,
@@ -164,6 +176,11 @@ after a valid declaration is instantiated with concrete template arguments:
   evaluating those initializers use the constructor's class context, so a
   derived constructor may invoke an accessible protected base constructor
 - `constexpr` member-function calls on constant objects
+- `constexpr` function templates and `constexpr` member functions of class
+  templates, including dependent return and parameter types: the literal-type
+  requirements are checked on the template's declaration, and a
+  specialization whose instantiated types are not literal is still a valid
+  function, only not `constexpr` (7.1.5p6)
 - constant object values, not just integral scalars:
   - aggregate/class values
   - array values
@@ -182,9 +199,28 @@ after a valid declaration is instantiated with concrete template arguments:
   - constant initialization when the initializer is a constant expression
   - dynamic class-object local statics with the required guard/check behavior, including
     direct initialization from a class-prvalue factory call
+  - a temporary bound to a local static reference persists for the
+    reference's lifetime (12.2p5): it occupies static storage, not the
+    initializing call's frame, and is destroyed at exit with the other
+    static objects (thread storage for a `thread_local` reference)
+  - one object per declaration wherever the body is lowered more than once: a
+    constructor's or destructor's complete and base-subobject entries share
+    their statics (N3485 6.7p4)
 - ordinary namespace objects whose constant-initialization probe encounters a
   core constant-expression failure use dynamic initialization; only contexts
   that require a constant expression are rejected for that failure
+- a `constexpr` object is const, so one that is statically initialized states
+  `storage=readonly` when its class has no `mutable` member and no
+  non-trivial destructor, as PA11's const objects do; the temporary that a
+  constant-initialized reference binds is readonly by its own type
+  (`const int& r = 3` binds a readonly `const int`, `int&& r = 3` a writable
+  `int`)
+
+A call that constant evaluation replaces by its value does not make the
+function used in emitted code, so a `constexpr` function whose every call is
+evaluated at compile time (in a `static_assert`, a template argument, an
+array bound, an enumerator or a constant initializer) need not be emitted.
+The comparison accepts output with or without such unreferenced definitions.
 
 PA16 also owns the semantic validation side of C++11 `constexpr`, not just evaluation. In
 particular, the compiler should enforce the C++11-facing rules that matter for the
@@ -205,6 +241,13 @@ The implementation may support a strict superset of C++11 evaluation rules inter
 such as local variables, assignment, and loops inside constexpr evaluation. That is fine
 and often useful for later milestones, but it does not reduce the requirement that the
 standard C++11 forms above be covered cleanly and intentionally.
+
+Constant evaluation is bounded, as Annex B allows. Support at least 512
+nested `constexpr` calls, Annex B's figure. An evaluation that nests deeper,
+or does more work than your evaluator's own limit, is not a constant
+expression: a context that requires one is rejected, and a namespace object
+falls back to dynamic initialization as above. Runaway recursion must end in
+a clean rejection, not a crash or a hang.
 
 ### Out Of Scope
 

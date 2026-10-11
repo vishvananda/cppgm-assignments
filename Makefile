@@ -38,7 +38,7 @@ export CPPGM_PROGRAM_TEST_TIMEOUT_SEC ?= 10
 DEBUGINFO_TEST_PAS ?= pa8 pa32 pa33
 
 ALL_PAS = $(patsubst %/Makefile,%,$(wildcard pa*/Makefile))
-EXPERIMENTAL_PAS ?= pa34
+EXPERIMENTAL_PAS ?= pa34 pa35
 PAS = $(filter-out $(EXPERIMENTAL_PAS),$(ALL_PAS))
 SORTED_PAS = $(shell printf '%s\n' $(PAS) | sort -t a -k 2,2n)
 TEST_REPORT_PAS ?= $(SORTED_PAS)
@@ -65,7 +65,7 @@ SUBMAKE_GENERATED_ARG = $(if $(strip $(GENERATED)),GENERATED=$(GENERATED))
 SUBMAKE_CC_FLAGS_ARG = $(if $(strip $(CC_FLAGS)),CC_FLAGS="$(CC_FLAGS)")
 
 .PHONY: all build test ref-test ref-test-debuginfo \
-	test-debuginfo test-debuginfo-nobuild require-clang require-clang-libcxx asan-build test-cells \
+	test-debuginfo test-debuginfo-nobuild require-clang require-clang-libcxx asan-build \
 	test-report inception clean run-cppgm run-cppgm-nobuild \
 	test-report-nobuild test-report-through-% test-report-through-%-nobuild \
 	ref-test-% \
@@ -184,31 +184,6 @@ CLANG_CXX ?= clang++
 CLANG_CELL_OBJ ?= obj-clang
 CLANG_LIBCXX_CELL_OBJ ?= obj-clang-libcxx
 
-# Every cell in one command.  Each is a lane in its own right -- prefixing any
-# target runs it in one cell -- but a single command that walks all three is
-# what makes "does this change hold everywhere" one thing to type.  It keeps
-# going after a failing cell and names which ones failed at the end, because
-# the useful answer is the whole set, not the first one to break.
-test-cells:
-	@status=0; failed=""; \
-	for cell in default clang clang-libcxx; do \
-		echo "===== cell: $$cell ====="; \
-		case $$cell in \
-			default) target=test-report-through-pa33 ;; \
-			*) target=with-$$cell-test-report-through-pa33 ;; \
-		esac; \
-		$(MAKE) $$target || { status=1; failed="$$failed $$cell"; }; \
-	done; \
-	if [ $$status -ne 0 ]; then \
-		echo "===== failing cells:$$failed"; \
-	else \
-		echo "===== all cells passed"; \
-	fi; \
-	exit $$status
-
-test-variants:
-	@for pa in pa24 pa32; do $(MAKE) -C $$pa test-variants || exit 1; done
-
 # GNU make prefers the pattern rule that yields the shortest stem, so
 # `with-clang-libcxx-<target>` selects the libc++ cell rather than the
 # libstdc++ one with a `libcxx-` prefixed stem.
@@ -241,8 +216,7 @@ asan-build: require-clang
 		CXX=$(CLANG_CXX) \
 		CPPGM_HOST_CXX=$(CLANG_CXX) \
 		OBJ=../$(ASAN_CELL_OBJ) \
-		CC_FLAGS="$(ASAN_CC_FLAGS)" \
-		HOST_ALLOC_LIBS=
+		CC_FLAGS="$(ASAN_CC_FLAGS)"
 
 require-clang:
 	@command -v $(CLANG_CXX) >/dev/null 2>&1 || { \
@@ -298,6 +272,9 @@ test-report-through-%: build
 		TEST_REPORT_SUBTEST_JOBS='$(TEST_REPORT_SUBTEST_JOBS)' \
 		ORDERED='$(ORDERED)'
 
+# Each assignment's suite runs with make -i: a failing lane is recorded from
+# make's "(ignored)" error line instead of stopping the lanes after it, so
+# the report shows every failure, not only the first of each recipe.
 test-report-nobuild:
 	@export KEEP_GOING=1; \
 	export CPPGM_REPORT_QUIET=1; \
@@ -334,7 +311,7 @@ test-report-nobuild:
 		dir="$$1"; \
 		echo "===== $$dir =====" > "$$2/$$dir.out"; \
 		status=0; \
-		env MAKEFLAGS= $(MAKE) --no-print-directory -j1 -C "$$dir" \
+		env MAKEFLAGS= $(MAKE) --no-print-directory -j1 -i -C "$$dir" \
 			CXX="$$CXX" \
 			CPPGM_HOST_CXX="$$CPPGM_HOST_CXX" \
 			CPPGM_PROGRESS_FILE="$$2/$$dir.progress" \
@@ -346,6 +323,7 @@ test-report-nobuild:
 			$(if $(strip $(CC_FLAGS)),CC_FLAGS="$(CC_FLAGS)") \
 			CPPGM_SKIP_DEV_REBUILD=1 \
 			test >> "$$2/$$dir.out" 2>&1 || status=$$?; \
+		if grep -q "\] Error [0-9][0-9]* (ignored)" "$$2/$$dir.out"; then status=1; fi; \
 		printf "%s\n" "$$status" > "$$2/$$dir.status"; \
 		: > "$$2/$$dir.done"; \
 		exit "$$status"' _ {} "$$tmpdir" < "$$tmpdir/pas.list" & \

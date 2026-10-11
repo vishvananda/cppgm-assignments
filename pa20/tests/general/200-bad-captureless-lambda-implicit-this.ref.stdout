@@ -1,1 +1,1 @@
-ERROR: implicit member has no bounded base path
+ERROR: tests/general/200-bad-captureless-lambda-implicit-this.t:7:30: non-static data member used without an object

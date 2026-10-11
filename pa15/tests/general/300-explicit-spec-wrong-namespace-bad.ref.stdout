@@ -1,0 +1,1 @@
+ERROR: tests/general/300-explicit-spec-wrong-namespace-bad.t:4:33: an explicit specialization outside its template's namespace

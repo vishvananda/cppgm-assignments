@@ -1,1 +1,1 @@
-ERROR: conflicting function exception specification
+ERROR: tests/general/100-function-noexcept-redeclaration-mismatch-bad.t:2:1: redeclaration with an incompatible exception-specification

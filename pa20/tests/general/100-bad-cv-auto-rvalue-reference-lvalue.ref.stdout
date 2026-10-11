@@ -1,1 +1,1 @@
-ERROR: invalid implicit conversion from int to rvalue-reference to const int
+ERROR: tests/general/100-bad-cv-auto-rvalue-reference-lvalue.t:3:28: invalid implicit conversion

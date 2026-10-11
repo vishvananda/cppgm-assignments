@@ -1,0 +1,1 @@
+ERROR: tests/general/300-friend-class-template-default-argument-bad.t:3:21: a default template argument in a friend class template declaration

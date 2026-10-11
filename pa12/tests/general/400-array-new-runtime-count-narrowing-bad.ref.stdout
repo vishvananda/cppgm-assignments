@@ -1,0 +1,1 @@
+ERROR: tests/general/400-array-new-runtime-count-narrowing-bad.t:3:48: narrowing conversion in list-initialization

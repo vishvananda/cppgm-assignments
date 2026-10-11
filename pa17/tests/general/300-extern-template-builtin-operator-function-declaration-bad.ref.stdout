@@ -1,1 +1,1 @@
-ERROR: nonmember operator requires a class or enumeration parameter
+ERROR: tests/general/300-extern-template-builtin-operator-function-declaration-bad.t:4:17: an operator function needs a parameter of class or enumeration type

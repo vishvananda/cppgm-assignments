@@ -16,7 +16,7 @@ function @main
   abi
     return i64 -> rax
   frame
-    stack_size 0
+    stack_size N
     scratch_bytes 0
     frame_pointer keep
     epilogues shared
@@ -25,9 +25,7 @@ function @main
     mov r8, @cells
     lea r9, [r8+<off0>]
     sub r9, r8
-    mov rax, r9
-    mov rcx, 24
-    cmp.i64 rax, rcx
+    cmp.ptr r9, 24
     je ^case_three
     jmp ^default
 

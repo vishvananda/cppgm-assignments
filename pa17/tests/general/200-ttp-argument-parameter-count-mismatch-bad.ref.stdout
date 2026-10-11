@@ -1,0 +1,1 @@
+ERROR: tests/general/200-ttp-argument-parameter-count-mismatch-bad.t:6:21: a template template-argument whose template parameters do not match

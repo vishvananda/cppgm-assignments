@@ -1,0 +1,1 @@
+ERROR: tests/general/300-anon-union-variant-ctor-deleted-bad.t:6:16: use of a deleted function

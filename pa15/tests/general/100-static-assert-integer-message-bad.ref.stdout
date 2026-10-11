@@ -1,1 +1,1 @@
-ERROR: static_assert message requires a string literal
+ERROR: tests/general/100-static-assert-integer-message-bad.t:3:21: syntax error

@@ -1,1 +1,1 @@
-ERROR: direct base must name a complete non-union class
+ERROR: tests/general/300-forward-class-template-base-bad.t:7:26: base class is incomplete

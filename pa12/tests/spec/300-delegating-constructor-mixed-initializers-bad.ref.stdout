@@ -1,1 +1,1 @@
-ERROR: delegating initializer must be the only initializer
+ERROR: tests/spec/300-delegating-constructor-mixed-initializers-bad.t:7:9: a delegating mem-initializer is not the only mem-initializer

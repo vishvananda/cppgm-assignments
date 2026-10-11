@@ -1,0 +1,1 @@
+ERROR: tests/general/300-friend-explicit-specialization-bad.t:4:12: an explicit specialization outside namespace scope

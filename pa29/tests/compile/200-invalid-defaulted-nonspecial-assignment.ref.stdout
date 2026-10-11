@@ -1,1 +1,1 @@
-ERROR: only a special member function may be defaulted
+ERROR: tests/compile/200-invalid-defaulted-nonspecial-assignment.t:3:31: only special member functions can be defaulted

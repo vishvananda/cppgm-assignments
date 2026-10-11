@@ -1,0 +1,1 @@
+ERROR: tests/general/300-using-inaccessible-member-template-bad.t:6:24: inaccessible member

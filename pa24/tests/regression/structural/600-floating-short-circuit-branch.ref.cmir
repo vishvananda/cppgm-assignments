@@ -19,7 +19,7 @@ function @check
     param %p -> rdi : ptr
     return void -> void
   frame
-    stack_size 48
+    stack_size N
     scratch_bytes 48
     frame_pointer keep
     epilogues shared
@@ -32,8 +32,7 @@ function @check
     jmp ^end
 
   block ^rhs
-    load.i32 r8, [rdi+<off0>]
-    cmp.i32 r8, 0
+    cmp.i32 [rdi+<off0>], 0
     jne ^then
     jmp ^end
 
@@ -48,7 +47,7 @@ function @main
   abi
     return i64 -> rax
   frame
-    stack_size 0
+    stack_size N
     scratch_bytes 0
     frame_pointer keep
     epilogues shared

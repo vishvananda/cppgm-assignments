@@ -1,1 +1,1 @@
-ERROR: typeid comparison requires std::type_info operator at tests/general/200-typeid-comparison-requires-operator-bad.t:9:22
+ERROR: tests/general/200-typeid-comparison-requires-operator-bad.t:9:10: invalid operands to a comparison

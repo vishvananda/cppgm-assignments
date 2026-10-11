@@ -1,1 +1,1 @@
-ERROR: case/default outside switch
+ERROR: tests/general/300-bad-default-outside-switch.t:3:3: default label outside a switch statement

@@ -1,1 +1,1 @@
-ERROR: static constant definition must not have an initializer
+ERROR: tests/general/500-static-constant-definition-reinitializer-bad.t:8:15: the definition of a static data member initialized in its class repeats the initializer

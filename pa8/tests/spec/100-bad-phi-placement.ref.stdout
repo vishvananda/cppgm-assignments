@@ -1,1 +1,1 @@
-ERROR: phi instructions must precede ordinary instructions at tests/spec/100-bad-phi-placement.t:9
+ERROR: phi instructions must precede ordinary instructions in function @main at tests/spec/100-bad-phi-placement.t:8

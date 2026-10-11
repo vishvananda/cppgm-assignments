@@ -1,0 +1,1 @@
+ERROR: tests/general/100-enumerator-conflicts-with-variable-bad.t:4:16: enumerator conflicts with an earlier declaration

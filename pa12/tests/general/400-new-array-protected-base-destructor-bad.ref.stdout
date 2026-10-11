@@ -1,1 +1,1 @@
-ERROR: inaccessible array-new destructor
+ERROR: tests/general/400-new-array-protected-base-destructor-bad.t:7:34: protected member accessed through an object of another class

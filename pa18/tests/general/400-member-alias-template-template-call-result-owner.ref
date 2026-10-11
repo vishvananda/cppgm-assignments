@@ -1,6 +1,6 @@
-declare function @extractor_requested_feature___operator__(%arg0 : ptr [object_bytes=1], %arg1 : ptr [pass=by_address, object_bytes=1]) -> i32 [binding=weak, object=_ZNK9extractorI17requested_featureEclIN9parameter3aux18flat_like_arg_listIJNS4_19flat_like_arg_tupleI9other_tagNS4_15tagged_argumentIS7_KdEEN4mp117mp_trueEEENS6_I13requested_tagNS8_ISE_14requested_typeEESC_EEEEEEEN16extractor_resultIT_S0_E4typeERKSK_, inline_hint=yes]
+declare function @extractor_requested_feature___operator__(%arg0 : ptr [object_bytes=1], %arg1 : ptr [pass=by_address, object_bytes=1]) -> i32 [binding=weak, object=_ZNK9extractorI17requested_featureEclIN9parameter3aux18flat_like_arg_listIJNS4_19flat_like_arg_tupleI9other_tagNS4_15tagged_argumentIS7_KdEEN4mp117mp_trueEEENS6_I13requested_tagNS8_ISE_14requested_typeEESC_EEEEEEEN16extractor_resultIT_S0_E4typeERKSK_]
 
-global @extract [binding=internal, object=extract] = {
+global @extract [storage=readonly, binding=internal, object=_ZL7extract] = {
   zero 1
 }
 
@@ -18,11 +18,11 @@ function @use(%args : ptr [pass=by_address, object_bytes=1]) -> void [binding=we
   slot $value : i32
 
   block ^entry:
-    store ptr %args, $args
+    store typed ptr %args, $args
     %t1 = addr @extract
-    %t2 = load ptr $args
+    %t2 = load typed ptr $args
     %t3 = call i32 @extractor_requested_feature___operator__(%t1, %t2)
-    store i32 %t3, $value
-    %t4 = load i32 $value
+    store typed i32 %t3, $value
+    %t4 = load typed i32 $value
     return void
 }

@@ -1,1 +1,1 @@
-ERROR: inaccessible qualified type: hidden
+ERROR: tests/general/300-inaccessible-nondependent-template-base-bad.t:11:25: inaccessible member

@@ -1,1 +1,1 @@
-ERROR: rvalue reference is not an allowed exception type
+ERROR: tests/spec/100-virtual-exception-rvalue-reference-bad.t:3:38: an rvalue reference type in an exception-specification

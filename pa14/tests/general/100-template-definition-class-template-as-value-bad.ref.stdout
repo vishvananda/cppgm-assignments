@@ -1,1 +1,1 @@
-ERROR: type name used as retained value: holder
+ERROR: tests/general/100-template-definition-class-template-as-value-bad.t:7:10: type name used as a value

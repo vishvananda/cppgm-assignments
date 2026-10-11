@@ -1,0 +1,1 @@
+ERROR: tests/general/200-default-template-arg-redefined-bad.t:4:10: default template argument redefined

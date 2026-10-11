@@ -1,0 +1,1 @@
+ERROR: tests/general/100-qualified-class-definition-outside-enclosing-scope-bad.t:5:19: class definition in a scope that does not enclose it

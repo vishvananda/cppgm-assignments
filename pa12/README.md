@@ -102,13 +102,26 @@ For supported class value types, PA12 extends the PA11 lowering convention by in
 - indirect LowIR return destinations for return-by-value class objects
 - explicit LowIR-level materialization of supported copy/move/value transfers
 
+A class uses those indirect boundaries when it is non-trivial for the purposes
+of calls (Itanium C++ ABI 3.1.2.3): it has a non-trivial copy or move
+constructor that is not deleted, a non-trivial destructor, or only deleted copy
+and move constructors. Base classes, size and template spelling do not change
+that choice. The callee's parameter, or the caller's result object, is then the
+object the selected constructor initialized (5.2.2p4, 8.5p15). Other class
+values may cross the boundary directly as `obj<NxA>`; a result larger than 16
+bytes still uses caller storage. The caller owns a by-value class argument
+whose destructor is non-trivial: it is a temporary of the full-expression
+containing the call, destroyed there after the callee returns, and the callee
+never destroys its parameter.
+
 Every pointer boundary that denotes a complete object also carries the PA8
 `object_bytes=N` extent in emitted O0 LowIR. This includes the implicit object
 parameter of supported member functions, class references and indirect class
 arguments, and indirect result storage. An ordinary source pointer does not
-gain an extent merely from its pointee type. The extent is semantic LowIR
-metadata and must survive text and compiler-object replay; it is not a native
-calling-convention annotation.
+gain an extent merely from its pointee type. The extent says that `N` bytes
+are readable when the function is entered; it is semantic LowIR metadata,
+compared like the other boundary facts, and must survive text and
+compiler-object replay; it is not a native calling-convention annotation.
 
 Synthesized copy/move constructors, assignment helpers, and related
 temporary-materialization support are part of the PA12 semantic model, but `cppgm++` only
@@ -116,32 +129,41 @@ needs to emit the helper definitions that the lowered program actually requires.
 copy/move/value helpers do not need to appear just because they are synthesizable.
 
 The indirect destination and source parameters of a same-class copy or move
-constructor denote distinct live objects during construction. Their emitted
-LowIR boundary metadata may therefore mark both parameters `alias=noalias`.
-Assignment operators do not have that property and must remain conservative.
+constructor denote distinct live objects during construction, so the emitted
+LowIR marks both `alias=noalias`, in every entry of the constructor and in a
+copy or move constructor with further defaulted parameters too (12.8p2). A
+constructor template, a converting constructor and an assignment operator,
+whose operands may be one object, state none.
 
-Focused course controls validate these boundary facts and temporary-lifetime
-relationships without comparing a complete LowIR module. They inspect only
-the two constructor parameters versus the assignment-operator control, or the
-ordering and identity of construction, selected use, and destruction within
-one full expression. The lifetime reducer is also compiled and executed.
-These controls run your `cppgm++ --emit-lowir -O0` frontend, then use the
-supplied `lowir2native-ref` backend to execute its output. Native code emission
-and the compile/link driver remain PA24 and PA25 work.
+Focused course controls (the controls in `tests/controls/` that state no
+outcome, checked by `../scripts/check_pa12_survivor_properties.pl`) validate
+these boundary facts and object identity and lifetime relationships without
+comparing a complete LowIR module: the two constructor parameters versus an
+assignment operator's, the ordering and identity of construction, selected
+use and destruction within one full expression, a parameter object's extent
+and identity, the size, cookie and length check of an array new, and a named
+return object. Most also compile and execute the program. These controls run
+your `cppgm++ --emit-lowir -O0` frontend, then use the supplied
+`lowir2native-ref` backend to execute its output. Native code emission and
+the compile/link driver remain PA24 and PA25 work.
 
 When a same-type conditional class prvalue is materialized in a private
 temporary and then selected for copy or move construction into its final
 complete-object destination, PA12 records the standard source-language
-permission on that outer direct call as `[elision=copy]`.  This is serialized
+permission on that outer direct call as `[elision=copy]`, by the rule of
+`../pa8/lowir.md`: a copy-initialization from a prvalue conditional of the
+object's own class, never a direct-initialization, a `return` operand or a
+derived prvalue sliced into a base; the comparison checks it.  This is serialized
 optimization information, not an O0 elision: the emitted O0 LowIR retains the
 distinct temporary, transfer call, and normal/exceptional destruction.  The
 focused control checks those relationships and executes the O0 behavior
 without prescribing complete generated LowIR text.
 
-For supported indirect return-by-value cases, PA12 may also lower an eligible top-level
-named local directly in `%ret` instead of building a separate local object and then
-copying or moving it into the return destination. That direct return-slot form is part of
-the accepted PA12 output contract.
+For supported indirect return-by-value cases, PA12 lowers an eligible top-level named
+local directly in `%ret` instead of building a separate local object and then copying or
+moving it into the return destination. The references use that direct return-slot form,
+and the comparison does not absorb the alternative (`../pa8/lowir.md`, "What The
+Comparison Absorbs And What It Enforces").
 
 Ref-qualified member functions extend the PA11 member-call model: overload resolution still
 uses the implicit object argument, and the object expression's value category participates in
@@ -152,15 +174,20 @@ implicit object used by LowIR lowering is not part of that declared parameter li
 particular, an out-of-class move-assignment definition retains its rvalue-reference parameter
 in the ABI identity.
 
-Nested operand and overload analysis must preserve the identity of the
-enclosing binary operator and the lifetime of its full expression. Interning
-additional candidate or conversion spellings while resolving an overloaded
-operator must not change the enclosing operator or its result.
+Temporaries and by-value arguments whose destructors are not trivial are
+destroyed on the exceptional path as well as the normal one, inside cleanup
+regions. The course solution places those regions by the shape of the
+full-expression, not by whether its calls can throw, so the references have
+regions around calls that cannot throw, and the comparison checks them like
+any other region. A temporary's destructor is called even when its body is
+empty: PA11's exception for a destructor with no effect covers only a single
+automatic object and a base or member destroyed by another destructor.
 
-For supported synthesized copy/move special members, PA12 may lower a leading trivially
+For supported synthesized copy/move special members, PA12 lowers a leading trivially
 copyable storage prefix directly as `copyobj <span> <src>, <dst>` instead of spelling that
 prefix as separate field operations or a `__builtin_memcpy` helper call in the emitted
-LowIR. That direct storage-copy form is also part of the accepted PA12 output contract.
+LowIR. The references use that direct storage-copy form, and the comparison does not
+absorb the alternative.
 
 When a synthesized copy/move constructor or assignment body handles adjacent
 nonvolatile bit-fields in one supported 8-, 16-, 32-, or 64-bit allocation
@@ -168,24 +195,41 @@ unit, it shall transfer that allocation unit once.  A zero-width bit-field or
 a change of storage offset or width starts a new unit.  Fields whose layout
 cannot be transferred safely shall retain field-wise value semantics.
 
-For supported trivially copy-constructible class value transfers, PA12 may also lower the
+A base subobject owns only its class's non-virtual size: the rest of the
+class's size can hold a derived class's member or virtual base (PA11 layout,
+Itanium C++ ABI 2.4).  A class value transfer -- a trivial copy or move, a
+synthesized storage copy, or a bit-field allocation unit -- therefore covers
+at most that many bytes (`copyobj 1x4` for a 4-byte class whose data ends in
+its first byte), and value-initializing a base subobject zeroes only those
+bytes.  A mem-initializer `Base()` value-initializes a base whose default
+constructor is not user-provided -- implicit, or defaulted on its first
+declaration -- so the base is zeroed before any constructor runs.  A base
+initialized from a prvalue of its own class (an elided copy) or, if it is an
+aggregate, from a braced list takes that value; where the class's size
+exceeds its nvsize the value is built in a temporary and its nvsize bytes
+copied, since a derived class's member or virtual base may already sit past
+them.  A by-value parameter of a base class given a derived object is
+constructed from that object: the constructor taking the base binds to the
+object's base subobject with the object's value category, so an lvalue is
+copied and a prvalue moved.
+
+For supported trivially copy-constructible class value transfers, PA12 lowers the
 copy/move construction step itself directly as `copyobj <span> <src>, <dst>` instead of
-spelling a call to a synthesized trivial copy/move constructor helper. That direct
-value-transfer form is part of the accepted PA12 output contract.
+spelling a call to a synthesized trivial copy/move constructor helper. The references use
+that direct value-transfer form, and the comparison does not absorb the alternative.
 
-Supported synthesized constructors, destructors, and copy/move assignment operators may
-also carry LowIR boundary metadata such as `[unwind=no]` when the compiler can determine
-that the synthesized body is semantically non-throwing. That metadata is part of the
-accepted PA12 output contract when it appears in the checked-in `.ref` files.
+A synthesized constructor, destructor or copy/move assignment operator, and
+one defaulted on its first declaration, states `unwind=no` when every function
+it directly invokes is non-throwing (15.4p14); the comparison checks it.
 
-PA12 also recognizes the argument-free GNU function attribute
-`cppgm_stable_prefix` (and its double-underscore spelling). It is valid on a
-fixed-arity function with a supported scalar result and a final integer
-parameter. The frontend emits the PA8 `[query=stable_prefix]` boundary fact;
-`-O0` preserves the call and program behavior. The attribute is a semantic
-promise that a normally returning query at a higher or equal final index
-preserves the observable result at an already queried lower index for the same
-earlier arguments. It does not request an optimization by itself.
+A class value that crosses a boundary directly as `obj<NxA>` states its
+eightbytes' classes, `classes` on the parameter and `result_classes` on the
+function or call signature, when some eightbyte is SSE or holds no member, or
+when a parameter goes in memory (`../pa8/lowir.md`, Object ABI Conventions):
+`struct { double a, b; }` is `sse_sse`, `{ double d; long i; }` is
+`sse_integer`, an empty class is `none`, and a class with a `long double`
+member is passed `memory`. The comparison checks them, and PA24's back end
+passes such values in XMM registers by them.
 
 For supported synthesized destructors, trivial union subobject destructor steps may be
 omitted from enclosing synthesized destructors.
@@ -193,7 +237,12 @@ omitted from enclosing synthesized destructors.
 The checked-in `.ref` files define the required LowIR facts for the tests. The
 test harness checks exit status, LowIR well-formedness, and the
 course-defined normalized LowIR output rather than requiring students to match every
-non-semantic helper spelling or presentation choice.
+non-semantic helper spelling or presentation choice. The normalization renames
+temporaries, slots, blocks and parameters, ignores the order of slot
+declarations and of top-level entries, and reads a literal by its value;
+every instruction of a body must otherwise match the reference's, in its
+order. `../pa8/lowir.md` ("What The Comparison Absorbs And What It Enforces")
+is the one list of what it absorbs and of the conventions it enforces.
 
 ### Error Handling
 
@@ -243,6 +292,17 @@ value-semantics and LowIR-shape cases that are not tied to one specific C++11
 clause.
 
 PA12 is tested against the generated LowIR text.
+
+Self-checking controls in `tests/controls/` state their expected outcome in
+their leading comment (`expect exit N` or `expect reject`) or in an
+`x.expect` sidecar. `make test` compiles each with your
+`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`lowir2native-ref -O0` and requires the stated exit status (and the output in
+`x.stdout`, when present), or requires your frontend to reject the program.
+The LowIR text of a control is not compared. `make test-controls` runs only
+the controls; `make check TEST=tests/controls/<name>.cpp` runs one.
+Controls that state no outcome are focused property checks run by this
+assignment's own checkers.
 
 ### PA12 Syntax Spec
 
@@ -327,12 +387,28 @@ PA12 supports the following in addition to the PA11 subset:
   including class-specific allocation/deallocation selection, explicit global
   qualification, and suppression of scalar initialization after a supported
   non-throwing allocation returns null
-- array `new` / `delete[]` expressions over the supported object subset
+- array `new` / `delete[]` expressions over the supported object subset; the
+  request is a `std::size_t`, and the count is kept in an Itanium C++ ABI
+  (2.7) cookie of max(sizeof(size_t), alignof(T)) bytes before the array
+  unless T has a trivial destructor and its usual array deallocation
+  function takes no size
+- a runtime array `new` count that is negative, or whose request would exceed
+  the implementation limit (`PTRDIFF_MAX` bytes, the limit a constant count
+  is diagnosed against), obtains no storage: before the allocation function
+  is called, the expression calls the `bad_array_new_length` runtime role,
+  which throws `std::bad_array_new_length` (5.3.4p7); a count type that cannot
+  hold such a value needs no check
+- an array `new` braced-init-list copy-initializes the first elements from its
+  initializer-clauses (8.5.1) and value-initializes the rest (8.5.1p7); an
+  empty list value-initializes every element. A count smaller than the number
+  of clauses is ill-formed when constant and obtains no storage at run time,
+  as above. A constant count the list fills needs no default constructor
 - union definitions and union object lifetime in the supported non-template
   class subset, including block-scope anonymous-member injection and an
   explicit variant initializer taking precedence over another variant's
   default member initializer; at most one variant may have a default member
-  initializer
+  initializer; a namespace-scope anonymous union must be `static` in a named
+  or the global namespace but not in an unnamed one (9.5p5)
 - conditional class-value cases in the supported copy/move subset, including
   cv-combined glvalue operands, lvalue/prvalue conversion, and destruction of a
   containing branch temporary only after its selected member result has been
@@ -371,7 +447,8 @@ The following are explicitly out of scope for PA12:
 - copy-elision perfection and the full set of standard temporary-materialization rules
 - advanced move-generation rules beyond the common supported field-wise/base-wise cases
   above, and the full standard move-semantics corner cases
-- exception-aware cleanup during value transfers
+- throwing and catching exceptions (PA21); the cleanup regions described
+  above are required all the same
 - template-aware value semantics
 - lambda expressions, range-for, and later general convenience syntax that is not
   needed by the PA12 value-semantics tests
@@ -437,3 +514,12 @@ Useful intermediate representations include:
 - a single linear classifier over completed member-layout facts that marks the
   first transferable bit-field in an allocation unit and suppresses later
   fields covered by that transfer
+
+One small value returned from one function and passed to another is three
+or four whole-object copies in this LowIR: field stores into the result, a
+`copyobj` or a `return` of the object, and a `copyobj` into the argument's
+storage. That is the intended shape. PA32 splits such slots into scalar
+values when every use of their addresses is a direct load or store, a
+`copyobj` or `zeroinit` at a constant offset, or an indirect result. A copy
+lowered as a loop, a byte sequence or a call to a helper keeps the object in
+memory.

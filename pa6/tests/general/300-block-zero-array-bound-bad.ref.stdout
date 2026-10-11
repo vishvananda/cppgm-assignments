@@ -1,1 +1,1 @@
-ERROR: zero-length array is outside PA6
+ERROR: tests/general/300-block-zero-array-bound-bad.t:3:14: array bound is zero

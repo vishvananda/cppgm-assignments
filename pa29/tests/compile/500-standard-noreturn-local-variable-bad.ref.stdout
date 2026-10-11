@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-standard-noreturn-local-variable-bad.t:6:16: noreturn attribute requires a function

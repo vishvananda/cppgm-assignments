@@ -1,1 +1,1 @@
-ERROR: reference requires an initializer
+ERROR: tests/general/300-uninitialized-reference-bad.t:5:4: reference declared without an initializer

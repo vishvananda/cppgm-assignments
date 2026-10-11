@@ -1,0 +1,1 @@
+ERROR: tests/general/200-pointer-to-narrow-integer-cast-bad.t:3:26: invalid explicit conversion

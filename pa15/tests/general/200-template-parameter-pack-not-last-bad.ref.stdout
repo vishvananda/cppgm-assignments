@@ -1,0 +1,1 @@
+ERROR: tests/general/200-template-parameter-pack-not-last-bad.t:3:39: a class template parameter pack is not last

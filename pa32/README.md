@@ -49,7 +49,7 @@ The starter kit supplies:
 
 - `pa32/Makefile`
 - `pa32/lowiropt.cpp`, linked to the editable `dev/lowiropt.cpp`
-- a `dev/lowiropt.cpp` scaffold based on `dev/lowiropt-scaffold.cpp`
+- a student-editable `dev/lowiropt.cpp` starter scaffold
 - shared compiler support under `dev/src/`
 - test directories under `pa32/tests/`
 - harness scripts under `pa32/scripts/`
@@ -173,7 +173,24 @@ What the course fixtures then check, for each `x.t`:
 - the output lowers through the object path at `-O0`
   (`cppgm++ -c -O0 x.lowir`) whenever the input does.  `make test` sets
   `CPPGM_LOWER_CHECK_APP` so the harness runs that floor; an optimizer's
-  output is not correct until the backend accepts it.
+  output is not correct until the backend accepts it;
+- the optimized program behaves as the input's: both are built through the
+  reference backend (`lowir2native-ref -O0`) and run, and the optimized one
+  must exit the same way and print the same output (`make test` sets
+  `CPPGM_LOWIR_BEHAVIOR_APP`).  An entry without parameters runs as
+  written.  Otherwise a generated driver is the entry: it calls a
+  parameterized entry with fixed scalar arguments or, when the fixture has
+  no entry, every function of external binding whose parameters and result
+  are scalars, and returns the sum of their results.  A helper the fixture
+  declares and nothing defines gets a generated provider that returns zero,
+  and when its declaration allows unwinding both programs also run with a
+  provider that throws, so the handlers run too.  An `x.driver.lowir` beside
+  a fixture replaces the generated driver and providers: it is appended as
+  written, its `@main` is the entry, and the fixture's own `@main` is renamed
+  `@__behavior_entry`.  The lane's summary line says how many inputs ran,
+  how, and why the others did not (a pointer parameter or result, a helper
+  no provider can define, a program that does not finish); an input the
+  reference backend cannot build fails the lane.
 
 An `x.ref.expect` sidecar has two kinds of line.  Outcome lines state what
 the fixture is about in terms of the LowIR it reads and writes:
@@ -182,8 +199,8 @@ the fixture is about in terms of the LowIR it reads and writes:
 `none(phi) in ^merge` for a choice that must collapse.  Budget lines bound
 the output's size: `instructions <= N`, `blocks <= N`, `count(call)`,
 `count(load)`, `count(store)`, `count(phi)`, and `instructions <= N in
-@function`.  The budgets were generated from the course solution's output
-at 10% tolerance plus one. Each sidecar states the actual required bounds
+@function`.  The budgets were generated from an earlier course solution's
+output at 10% tolerance plus one. Each sidecar states the actual required bounds
 and outcomes. The adjacent `x.ref` is an informational example; matching its
 instruction sequence is not required.
 
@@ -199,6 +216,46 @@ To evaluate one sidecar by hand:
 $ perl ../scripts/expect_ir.pl tests/o1/x.my tests/o1/x.ref.expect
 ```
 
+### Design Notes (Non-Normative)
+
+The fixtures are small; the optimizer's real input is PA34's self-build of
+the whole compiler, where functions are large, calls sit inside loops and
+most bodies have cleanups. A few principles matter there more than any one
+pass:
+
+- Run the passes over each function repeatedly, to a fixed point or a
+  budget, rather than once over the program. Inlining exposes constants that
+  folding removes, which exposes branches that simplification removes, which
+  shrinks callers below the inlining threshold.
+- Count what every admission rule excludes. A rule that skips a function
+  for its size, its exception handling or a call in a loop costs nothing on
+  the fixtures and may exclude most of a real program; know the fraction.
+- Keep facts that cost nothing to keep. `typed`, `nowrap` and `exact` come
+  from the lowering (`../pa8/lowir.md`, "Instruction Facts"); an optimizer
+  that preserves them through copies and drops them where it speculates can
+  use `typed` to keep a value in a register across a store of another type.
+- When an optimization makes the output slower because the backend lowers
+  the result badly, fix the backend. Withholding the optimization leaves both
+  problems in place, and the rule that withholds it has to be found and
+  undone once the backend improves.
+- Know what blocks inlining in real code. A callee that contains exception
+  instructions is the common case (any destructible local and a call), and
+  LowIR's handler edges are implicit (see PA21's design notes). The course
+  solution inlines such a callee only when constant arguments fold its
+  exception instructions away; an optimizer that tracks the handler stack can
+  admit a callee whose regions leave it balanced.
+- Keep the optimizer's own work bounded. PA34 compiles the whole compiler
+  at `-O3` with this optimizer; [the design notes](design-notes.md) describe
+  how the course solution avoids repeating work.
+
+No course fixture pins a cap: a sidecar states what must be simplified
+(outcome lines) and how large the output may be (budgets with room above
+the course solution's counts), and an upper bound on a function the
+optimizer removed holds. The course solution's own caps (which loop callees
+stay calls, what a single-call callee may cost, when a small callee made of
+calls stays out of line, how far a loop unrolls) are pinned only in
+`tests/regression`, outside your exit criteria.
+
 ### Design example
 
 [Design notes](design-notes.md) describe the course solution’s passes and
@@ -207,9 +264,11 @@ implementation choices. They are a worked example, not additional requirements.
 ### Validation Modes
 
 Successful outputs must pass the LowIR structural validator, the fixture’s
-`.ref.expect` predicates, and the object-lowering check. Source-driver cases
-also compare execution before and after LowIR serialization. Failed cases
-are checked by exit status. See Quality Bar for the sidecar syntax.
+`.ref.expect` predicates, the object-lowering check and, for inputs with
+an entry function, the execution check through the reference backend.
+Source-driver cases also compare execution before and after LowIR
+serialization. Failed cases are checked by exit status. See Quality Bar
+for the sidecar syntax.
 
 ### Testing
 
@@ -227,6 +286,7 @@ Before moving on, run `make test-report-through-pa32` from the repository root.
 - `tests/o1`
 - `tests/o2`
 - `tests/o3`
+- `tests/driver/o0`
 - `tests/driver/o1`
 - `tests/driver/o2`
 - `tests/driver/o3`
@@ -240,6 +300,10 @@ source-language clauses.
 - `tests/o1` runs `lowiropt -O1` on handwritten LowIR.
 - `tests/o2` runs `lowiropt -O2` on handwritten LowIR.
 - `tests/o3` runs `lowiropt -O3` on handwritten LowIR.
+- `tests/driver/o0` runs `cppgm++ --emit-lowir -g0 -O0` on source programs
+  whose boundary facts come from attributes that PA27-PA29 introduce (GNU
+  `noinline`, `pure` and `const`, `[[noreturn]]`): the C++ lowering's own
+  output, compared as PA10-PA23 compare theirs, facts included.
 - `tests/driver/o1` runs `cppgm++ --emit-lowir -g0 -O1` on source programs.
 - `tests/driver/o2` runs `cppgm++ --emit-lowir -g0 -O2` on source programs.
 - `tests/driver/o3` runs `cppgm++ --emit-lowir -g0 -O3` on source programs.
@@ -280,12 +344,17 @@ This also runs `tests/object-roundtrip` in debuginfo mode, comparing direct
 The direct debug-info tests run `lowiropt -O*` over LowIR containing
 `!dbg(...)` metadata. The driver debug-info tests run
 `cppgm++ --emit-lowir -gline-tables-only -O*` and check that source locations
-survive the source-to-LowIR optimizer path.
+survive the source-to-LowIR optimizer path: the locations of
+`../pa8/lowir.md` "Debug Locations", which each surviving, moved or copied
+instruction keeps.
 
 For each `.t` test, the harness records the tool exit status and compares the
 generated output against the oracle for that test directory. Failed reference
 cases are judged by exit status; successful reference cases are judged by the
-directory's LowIR validation mode.
+directory's LowIR validation mode. Outside `tests/driver/o0`, the comparison
+validates the facts of `../pa8/lowir.md` "Facts The C++ Lowering States" but
+does not compare them: an optimizer may add a fact it proves, such as
+`unwind=no` on a function whose body cannot throw, or drop one.
 
 ### Out Of Scope
 

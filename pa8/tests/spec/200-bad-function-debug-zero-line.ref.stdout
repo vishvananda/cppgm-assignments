@@ -1,1 +1,1 @@
-ERROR: invalid positive integer: 0 at tests/spec/200-bad-function-debug-zero-line.t:1
+ERROR: invalid positive integer: line of !dbg(main.cpp, 0, 1) at tests/spec/200-bad-function-debug-zero-line.t:1

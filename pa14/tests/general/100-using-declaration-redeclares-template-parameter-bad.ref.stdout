@@ -1,1 +1,1 @@
-ERROR: using declaration redeclares template parameter
+ERROR: tests/general/100-using-declaration-redeclares-template-parameter-bad.t:7:3: a template parameter redeclared within its scope

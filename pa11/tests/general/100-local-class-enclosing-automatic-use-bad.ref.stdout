@@ -1,1 +1,1 @@
-ERROR: local class odr-uses an enclosing automatic object at tests/general/100-local-class-enclosing-automatic-use-bad.t:1:51
+ERROR: tests/general/100-local-class-enclosing-automatic-use-bad.t:1:51: a local class odr-uses an automatic variable of an enclosing function (9.8p1)

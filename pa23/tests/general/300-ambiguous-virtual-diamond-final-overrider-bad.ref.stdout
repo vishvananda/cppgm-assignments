@@ -1,1 +1,1 @@
-ERROR: no unique final overrider
+ERROR: tests/general/300-ambiguous-virtual-diamond-final-overrider-bad.t:16:1: a virtual function has no unique final overrider

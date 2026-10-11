@@ -1,1 +1,1 @@
-ERROR: invalid explicit conversion
+ERROR: tests/general/400-direct-init-explicit-conversion-followed-by-standard-bad.t:4:10: invalid implicit conversion

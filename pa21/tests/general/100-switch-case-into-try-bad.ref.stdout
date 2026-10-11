@@ -1,0 +1,1 @@
+ERROR: tests/general/100-switch-case-into-try-bad.t:3:43: case label inside a try block, handler (15p2) or statement expression the switch encloses

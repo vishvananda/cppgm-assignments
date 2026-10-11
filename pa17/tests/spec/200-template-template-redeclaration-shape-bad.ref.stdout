@@ -1,1 +1,1 @@
-ERROR: class template template-parameter shape mismatch
+ERROR: tests/spec/200-template-template-redeclaration-shape-bad.t:7:10: template redeclared with a different template parameter list

@@ -1,1 +1,1 @@
-ERROR: invalid or ambiguous class copy conversion
+ERROR: tests/general/400-aggregate-member-conversion-ambiguous-bad.t:2:195: no conversion to the member's class

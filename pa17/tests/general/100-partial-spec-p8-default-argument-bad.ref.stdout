@@ -1,0 +1,1 @@
+ERROR: tests/general/100-partial-spec-p8-default-argument-bad.t:4:32: a default template argument in a partial specialization's template parameter list

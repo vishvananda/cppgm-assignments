@@ -1,1 +1,1 @@
-ERROR: selected constructor is deleted
+ERROR: tests/general/200-deleted-constructor-selected-over-viable-bad.t:12:8: use of a deleted function

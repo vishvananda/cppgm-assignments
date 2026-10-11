@@ -1,1 +1,1 @@
-ERROR: conflicting retained special-member exception specification
+ERROR: tests/general/300-out-of-class-special-member-noexcept-mismatch-bad.t:7:1: redeclaration with an incompatible exception-specification

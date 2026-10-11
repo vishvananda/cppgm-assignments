@@ -1,1 +1,1 @@
-ERROR: type name used as retained value: value
+ERROR: tests/general/100-template-definition-typedef-as-value-bad.t:5:10: type name used as a value

@@ -1,1 +1,1 @@
-ERROR: explicit instantiation target is not a supported template
+ERROR: tests/spec/300-explicit-static-member-initializer-bad.t:3:42: name before :: is not a class, namespace or enumeration

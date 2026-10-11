@@ -1,1 +1,1 @@
-ERROR: template parameter redeclared in its scope
+ERROR: tests/general/300-uninstantiated-member-redeclares-template-parameter-bad.t:13:3: a template parameter redeclared within its scope

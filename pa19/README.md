@@ -51,7 +51,7 @@ The PA19 invocation is the unoptimized LowIR mode:
 
 Behaviour is undefined unless the command-line arguments match that shape, with
 the same source-file ordering and `-o` relaxations as the earlier source-to-LowIR
-milestones. Preserve the earlier dump modes. Native driver behavior and optimized
+milestones. Preserve PA7's dump mode. Native driver behavior and optimized
 LowIR output are not required in PA19.
 
 ### Output Format
@@ -128,9 +128,12 @@ When working through PA19 failures, keep the earlier template assignments
 passing. A PA19 fix should not relax, special-case, or regress the basic
 functionality already covered by PA14, PA15, PA17, and PA18. Before treating an
 integration fix as complete, run the earlier template PAs and PA19 through the
-report harness:
+report harness from the repository root:
 
     $ make test-report ACTIVE_TEST_REPORT_PAS='pa14 pa15 pa17 pa18 pa19'
+
+PA19 ships no self-checking controls: unlike PA10–PA18 and PA20–PA23 it has
+no `tests/controls/`, and every PA19 case is graded by its LowIR.
 
 ### PA19 Syntax Boundary
 

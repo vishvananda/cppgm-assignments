@@ -1,1 +1,1 @@
-ERROR: invalid covariant virtual return type
+ERROR: tests/general/200-inaccessible-covariant-return-bad.t:16:15: conversion to an inaccessible base class

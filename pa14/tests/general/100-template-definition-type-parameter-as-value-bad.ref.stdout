@@ -1,1 +1,1 @@
-ERROR: type name used as retained value: T
+ERROR: tests/general/100-template-definition-type-parameter-as-value-bad.t:4:10: type name used as a value

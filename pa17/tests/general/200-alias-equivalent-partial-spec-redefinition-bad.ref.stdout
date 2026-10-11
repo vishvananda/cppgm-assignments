@@ -1,0 +1,1 @@
+ERROR: tests/general/200-alias-equivalent-partial-spec-redefinition-bad.t:6:26: class redefinition

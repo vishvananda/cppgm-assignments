@@ -9,22 +9,13 @@ function @main
   abi
     return i64 -> rax
   frame
-    stack_size 0
+    stack_size N
     scratch_bytes 0
     frame_pointer keep
     epilogues shared
 
   block ^entry
-    mov rax, 1
-    mov rdx, 1
-    mov rcx, 0
-    mov rsi, 1
-    cmp.i64 rdx, rsi
-    jg ^good
-    jl ^bad
-    cmp.i64 rax, rcx
-    jae ^good
-    jmp ^bad
+    cmp_branch.ge.i128 0x00000000000000010000000000000001, 0x00000000000000010000000000000000, ^good, ^bad
 
   block ^bad
     mov rax, 1

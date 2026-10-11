@@ -1,1 +1,1 @@
-ERROR: narrowing list-initialization conversion
+ERROR: tests/spec/200-list-init-narrowing-bad.t:7:13: narrowing conversion in list-initialization

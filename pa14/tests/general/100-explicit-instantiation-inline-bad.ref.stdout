@@ -1,0 +1,1 @@
+ERROR: tests/general/100-explicit-instantiation-inline-bad.t:4:10: a specifier an explicit instantiation may not have
