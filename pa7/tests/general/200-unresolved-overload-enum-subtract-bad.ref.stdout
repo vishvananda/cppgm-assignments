@@ -1,0 +1,1 @@
+ERROR: tests/general/200-unresolved-overload-enum-subtract-bad.t:5:3: overloaded function name without a target type
