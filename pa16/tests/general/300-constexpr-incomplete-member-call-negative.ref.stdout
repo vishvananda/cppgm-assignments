@@ -1,0 +1,1 @@
+ERROR: tests/general/300-constexpr-incomplete-member-call-negative.t:6:32: a constexpr function called before its definition
