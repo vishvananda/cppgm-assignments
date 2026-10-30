@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-constinit-reject-dynamic-constructor.t:1:1: a __constinit variable is not constant-initialized

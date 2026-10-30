@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-clang-byte-shift-variable-reject.t:2:101: a byte-shift count that is no integral constant expression

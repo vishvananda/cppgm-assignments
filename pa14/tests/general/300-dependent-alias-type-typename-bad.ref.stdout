@@ -1,0 +1,1 @@
+ERROR: tests/general/300-dependent-alias-type-typename-bad.t:1:55: a dependent qualified name needs typename to name a type

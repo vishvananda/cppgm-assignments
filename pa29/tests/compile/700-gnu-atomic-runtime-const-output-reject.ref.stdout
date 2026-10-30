@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-gnu-atomic-runtime-const-output-reject.t:2:51: an atomic builtin writing through a pointer to const

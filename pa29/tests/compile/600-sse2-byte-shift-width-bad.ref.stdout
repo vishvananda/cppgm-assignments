@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-byte-shift-width-bad.t:2:41: invalid implicit conversion

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-body-sizeof-incomplete-pointee-bad.t:2:48: size of an incomplete class

@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-constant-query-reference-member-read-bad.t:7:23: an access through an unrelated reference type

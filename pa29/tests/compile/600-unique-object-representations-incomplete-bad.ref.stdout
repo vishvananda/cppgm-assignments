@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-unique-object-representations-incomplete-bad.t:2:24: a type trait of an incomplete class type

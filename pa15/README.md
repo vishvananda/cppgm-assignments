@@ -202,7 +202,9 @@ PA15 supports the following in addition to the PA14 subset:
   for a function template with multiple parameter packs; every partition keeps
   its own argument-to-pack boundaries when specializations are reused
 - pack expansions in supported declarations, direct calls, and instantiated
-  body shapes
+  body shapes; an empty expanded parenthesized local initializer
+  value-initializes its object, including zero initialization of scalars and
+  array elements. A written function declaration remains a declaration
 - integral constant-expression template arguments over the supported subset:
   - literals, including ordinary character literals
   - keyword literals `true` / `false`
@@ -213,12 +215,16 @@ PA15 supports the following in addition to the PA14 subset:
   - conditional `?:`
   - `sizeof...(parameter-pack)`
   - `sizeof(type-id)` and `alignof(type-id)`
+  - body-local `sizeof(expression)` arguments retain dependence on their
+    operand's type until substitution, while fixed invalid operands and
+    nonconstant arguments are diagnosed when the template is defined
   - supported cast expressions that fold to integral constant values
 - explicit specialization of supported class templates
 - explicit specialization of supported function templates; an explicit
   specialization of a function template states `inline_hint=yes` only when it
   is itself declared `inline` or `constexpr`, whatever the template's
-  declaration says (14.7.3p12)
+  declaration says (14.7.3p12); later declarations or definitions without
+  `inline` retain an earlier inline declaration of that same specialization
 - an explicit specialization declared after uses of its primary template
   takes effect for the uses that follow it (14.7.3p6), in the supported class
   and function template cases

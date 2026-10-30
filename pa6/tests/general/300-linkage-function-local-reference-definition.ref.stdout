@@ -1,0 +1,1 @@
+ERROR: tests/general/300-linkage-function-local-reference-definition.t:3:6: reference declared without an initializer

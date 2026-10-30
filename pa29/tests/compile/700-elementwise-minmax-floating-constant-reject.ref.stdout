@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-elementwise-minmax-floating-constant-reject.t:1:15: not an integral constant expression

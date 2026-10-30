@@ -289,6 +289,10 @@ PA11 supports the following in addition to the PA10 procedural subset:
   object argument described above
 - ordinary non-template operator overloading over the supported object-model subset, including:
   - member operators such as `operator[]`
+  - implicit-object ranking for member-only operators introduced by a class
+    using-declaration, including cv-qualified overloads and further-derived objects
+  - nondependent qualified return types through aliases before operator-function-ids,
+    including when the aliased class is resolved during semantic lookup
   - hidden-friend and namespace-scope non-member operators found through ordinary lookup / ADL
   - chained reference-returning operators such as `operator<<`
   - rejection of a non-member overloaded operator unless at least one operand has class or
@@ -358,7 +362,11 @@ PA11 supports the following in addition to the PA10 procedural subset:
 - standard `alignas` and `alignof`, including rejection of a requested class
   alignment weaker than its natural alignment; an alignment-specifier on a
   block-scope object gives its automatic storage the requested alignment
-- inheriting constructors through `using Base::Base`
+- inheriting constructors through `using Base::Base`; inherited constructors cannot replace
+  copy/move construction through reference-related single arguments, including
+  specializations of inherited constructor templates (P0136/CWG 2356);
+  constructors declared in the class and multi-argument calls keep their usual
+  overload behavior
 - use of complete class types in:
   - `sizeof(type-id)`
   - `sizeof(expr)`

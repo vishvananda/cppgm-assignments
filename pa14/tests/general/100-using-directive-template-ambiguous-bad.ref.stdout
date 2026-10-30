@@ -1,0 +1,1 @@
+ERROR: tests/general/100-using-directive-template-ambiguous-bad.t:4:21: ambiguous call to overloaded function

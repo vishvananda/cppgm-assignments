@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-flag-output-reference-bad.t:2:2: unsupported GNU asm template: a flag output referenced as an asm operand

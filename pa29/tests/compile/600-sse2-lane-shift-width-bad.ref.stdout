@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-lane-shift-width-bad.t:3:35: invalid implicit conversion

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-covariant-template-definition-bad.t:2:52: name before :: is not a class, namespace or enumeration

@@ -586,15 +586,18 @@ enum class Keyword : std::uint8_t
 	Slot,
 	Block,
 	Zero, // `= zero`, the `zero <bytes>` data item
-	As    // call ... as (<parameters>) -> <type>
+	As,   // call ... as (<parameters>) -> <type>
+	DebugType,
+	DebugScope,
+	DebugLocal
 };
 
-const unsigned kKeywordCount = static_cast<unsigned>(Keyword::As) + 1;
+const unsigned kKeywordCount = static_cast<unsigned>(Keyword::DebugLocal) + 1;
 
 inline const char* spelling(Keyword keyword)
 {
 	static const char* const kKeywords[kKeywordCount] = { "declare", "global", "function", "alias", "object", "slot",
-		"block", "zero", "as" };
+		"block", "zero", "as", "debug_type", "debug_scope", "debug_local" };
 	return kKeywords[static_cast<unsigned>(keyword)];
 }
 

@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-carry-without-producer-bad.t:2:2: unsupported GNU asm template: a condition flag without a supported producer

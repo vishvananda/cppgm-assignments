@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-byte-shift-arity-bad.t:2:16: wrong number of arguments to a whole-register byte shift

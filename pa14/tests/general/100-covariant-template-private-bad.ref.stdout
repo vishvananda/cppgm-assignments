@@ -1,0 +1,1 @@
+ERROR: tests/general/100-covariant-template-private-bad.t:5:15: conversion to an inaccessible base class

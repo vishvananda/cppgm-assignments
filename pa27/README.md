@@ -17,6 +17,16 @@ and writes the resulting names into real object files:
   here.
 - Header-emitted inline/template definitions must use host-correct symbol
   spelling and duplicate-definition/coalescing rules.
+- `-fPIC` / `-fpic` must produce position-independent host objects: references
+  to non-local data definitions, including vague-linkage definitions, use the
+  GOT so a shared library links and observes interposed definitions.
+  `-fno-PIC` / `-fno-pic` restore ordinary defined-data access; the last option wins.
+- `-funsigned-char` / `-fno-signed-char` select unsigned plain `char`;
+  `-fsigned-char` / `-fno-unsigned-char` restore signed plain `char`. The last
+  option wins. Plain `char` remains distinct from both explicitly signed
+  character types, including at the host object boundary. Preprocessing
+  character values, `__CHAR_UNSIGNED__`, constants and debug types follow
+  the selected representation.
 
 The PA27 harness does not normally use `cppgm++` as the final linker. It runs:
 
@@ -153,6 +163,7 @@ x.t.2
 
 Optional sidecars control or check the host flow:
 
+- `x.flags`: extra compiler flags for each source
 - `x.system-includes`: system include search directories passed to `cppgm++`
   as `-isystem <dir>`
 - `x.link.flags`: extra flags passed to the host link driver
@@ -163,13 +174,31 @@ Optional sidecars control or check the host flow:
 
 The checked-in PA27 tests cover:
 
+- DWARF 4 source-line tables and function ranges in hosted objects requested
+  with `-g`, and their suppression by a later `-g0`; serialized LowIR preserves
+  the same locations. Full `-g` additionally records named local stack objects,
+  canonical source types, class members, arrays, enums, typedefs, ordinary base
+  offsets, and virtual method declarations for dynamic type inspection.
+  `-gline-tables-only` and `-g1` retain only source-line information.
+  `-O0` and `-Og -g` preserve named source storage for debugging; optimized
+  builds can report unavailable variables as optimized out.
+- native DWARF lexical block ranges distinguish nested and sibling source
+  locals, including repeated display names and macro expansion coordinates
 - hosted `main(argc, argv)` behavior through the host CRT
+- at least 16-byte placement of local array variables spanning 16 bytes or
+  more, as the AMD64 psABI requires, while preserving the source type alignment
+- functions named only as non-type template arguments remain semantically checked;
+  native objects emit their bodies when code or data actually needs them
 - host linking across multiple `cppgm++`-generated objects
 - host linking against host-built objects
 - host linking against static archives and shared libraries
 - import/export of host-built `thread_local` variables in the tested subset
 - GNU `section` attributes on global objects whose nonempty ELF section name
   contains only ASCII letters, digits, `_`, and `.`
+- explicit GNU weak function/global declarations remain weak undefined ELF
+  references: absent definitions have a null address, while host definitions
+  satisfy the same references. Ordinary vague-linkage declarations still
+  require a definition from another object
 - duplicate-definition/coalescing behavior for inline and template output
 - host symbol spelling for user-defined entities and selected template cases
 

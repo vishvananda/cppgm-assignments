@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-constinit-reject-data-member.t:1:26: __constinit requires a variable with static or thread storage duration

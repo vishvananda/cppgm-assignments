@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-byte-max-arity-bad.t:4:40: wrong number of arguments to a packed byte minimum or maximum

@@ -1,0 +1,1 @@
+ERROR: tests/preproc/400-host-legacy-comment-unterminated-bad.t:1:1: unterminated block comment

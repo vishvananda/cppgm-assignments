@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-cas-missing-accumulator-bad.t:2:2: unsupported GNU asm template: an unsupported compare-exchange binding

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-value-dependent-array-deleted-adl-bad.t:8:3: use of a deleted function

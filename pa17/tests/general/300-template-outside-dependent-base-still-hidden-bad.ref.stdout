@@ -1,0 +1,1 @@
+ERROR: tests/general/300-template-outside-dependent-base-still-hidden-bad.t:3:56: undeclared name

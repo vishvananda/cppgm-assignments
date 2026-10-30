@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse2-word-shuffle-arity-reject.t:2:35: too few macro arguments

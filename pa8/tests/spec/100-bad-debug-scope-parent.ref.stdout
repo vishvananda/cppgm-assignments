@@ -1,0 +1,1 @@
+ERROR: debug scope parent must precede child at tests/spec/100-bad-debug-scope-parent.t:2

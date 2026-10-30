@@ -1,0 +1,1 @@
+ERROR: tests/general/300-explicit-member-inherited-private-bad.t:3:45: inaccessible member

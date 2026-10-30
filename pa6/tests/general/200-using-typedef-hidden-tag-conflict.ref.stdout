@@ -1,0 +1,1 @@
+ERROR: tests/general/200-using-typedef-hidden-tag-conflict.t:4:1: using-declaration conflicts with an earlier declaration

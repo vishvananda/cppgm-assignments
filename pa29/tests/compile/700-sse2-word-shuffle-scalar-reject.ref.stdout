@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse2-word-shuffle-scalar-reject.t:2:31: invalid explicit conversion

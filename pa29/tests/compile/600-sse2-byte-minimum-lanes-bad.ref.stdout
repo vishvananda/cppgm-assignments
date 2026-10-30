@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-byte-minimum-lanes-bad.t:2:39: invalid implicit conversion

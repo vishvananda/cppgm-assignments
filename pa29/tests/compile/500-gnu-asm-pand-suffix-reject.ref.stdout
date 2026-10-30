@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-pand-suffix-reject.t:2:14: unsupported GNU asm template: an instruction outside the lifted set

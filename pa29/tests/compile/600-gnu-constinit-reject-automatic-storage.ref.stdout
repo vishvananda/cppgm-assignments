@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-constinit-reject-automatic-storage.t:1:24: syntax error

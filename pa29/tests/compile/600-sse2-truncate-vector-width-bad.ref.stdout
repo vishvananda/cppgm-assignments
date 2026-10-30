@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-truncate-vector-width-bad.t:2:39: invalid implicit conversion

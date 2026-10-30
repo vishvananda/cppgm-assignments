@@ -1,0 +1,1 @@
+ERROR: tests/general/300-operator-arity-only-prefix-bad.t:4:30: invalid operand of increment or decrement

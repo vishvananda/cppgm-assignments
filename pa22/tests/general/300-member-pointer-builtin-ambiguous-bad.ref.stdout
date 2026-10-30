@@ -1,0 +1,1 @@
+ERROR: tests/general/300-member-pointer-builtin-ambiguous-bad.t:7:21: ambiguous overloaded operator

@@ -1,0 +1,1 @@
+ERROR: tests/general/400-array-alias-new-unknown-bad.t:2:23: an array new-expression without a bound

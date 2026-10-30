@@ -1,0 +1,1 @@
+ERROR: tests/general/300-operator-return-dependent-typename-bad.t:1:30: a dependent qualified name needs typename to name a type

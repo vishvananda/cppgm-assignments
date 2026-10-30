@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nonvalue-member-instantiation-side-effect-bad.t:3:50: member name does not denote a data member or member function

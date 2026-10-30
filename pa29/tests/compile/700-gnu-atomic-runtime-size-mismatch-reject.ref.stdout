@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-gnu-atomic-runtime-size-mismatch-reject.t:3:45: a generic atomic builtin's operand of another size than the object

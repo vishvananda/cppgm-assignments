@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-builtin-launder-arity-bad.t:1:16: __builtin_launder takes one argument

@@ -1,0 +1,1 @@
+ERROR: tests/preproc/300-has-include-macro-extra.t:2:5: expected `)` after the header name

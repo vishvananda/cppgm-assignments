@@ -1,0 +1,1 @@
+ERROR: tests/general/300-used-member-class-template-invalid-body-bad.t:3:35: undeclared name in a nested-name-specifier

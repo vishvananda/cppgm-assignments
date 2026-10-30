@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-gnu-atomic-runtime-arity-reject.t:2:29: wrong number of arguments to an atomic builtin

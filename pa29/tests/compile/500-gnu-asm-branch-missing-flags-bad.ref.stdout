@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-branch-missing-flags-bad.t:2:2: unsupported GNU asm template: a condition flag without a supported producer

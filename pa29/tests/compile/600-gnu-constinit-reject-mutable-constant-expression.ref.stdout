@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-constinit-reject-mutable-constant-expression.t:1:35: a variable is not usable in a constant expression

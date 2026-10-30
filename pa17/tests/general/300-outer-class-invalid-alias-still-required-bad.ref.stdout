@@ -1,0 +1,1 @@
+ERROR: tests/general/300-outer-class-invalid-alias-still-required-bad.t:2:29: undeclared name

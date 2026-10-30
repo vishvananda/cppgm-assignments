@@ -1,0 +1,1 @@
+ERROR: tests/general/200-friend-derived-protected-base-object-bad.t:9:43: protected member accessed through an object of another class

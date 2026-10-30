@@ -1,0 +1,1 @@
+ERROR: tests/general/200-function-template-array-vs-reference-ambiguous.t:3:34: ambiguous call to overloaded function

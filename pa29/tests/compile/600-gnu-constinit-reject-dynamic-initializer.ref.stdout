@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-constinit-reject-dynamic-initializer.t:2:24: a __constinit variable is not constant-initialized

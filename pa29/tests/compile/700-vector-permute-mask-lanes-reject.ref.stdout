@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-vector-permute-mask-lanes-reject.t:3:21: a vector permutation requires matching vectors and an integral lane mask

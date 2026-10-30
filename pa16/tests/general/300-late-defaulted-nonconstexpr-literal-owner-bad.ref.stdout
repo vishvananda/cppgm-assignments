@@ -1,0 +1,1 @@
+ERROR: tests/general/300-late-defaulted-nonconstexpr-literal-owner-bad.t:4:29: a constexpr member function of a class that is not a literal type

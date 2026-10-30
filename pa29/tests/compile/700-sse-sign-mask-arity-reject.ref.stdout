@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse-sign-mask-arity-reject.t:1:16: wrong number of arguments to a packed sign mask

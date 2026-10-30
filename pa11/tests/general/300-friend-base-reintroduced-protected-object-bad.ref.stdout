@@ -1,0 +1,1 @@
+ERROR: tests/general/300-friend-base-reintroduced-protected-object-bad.t:12:46: protected member accessed through an object of another class

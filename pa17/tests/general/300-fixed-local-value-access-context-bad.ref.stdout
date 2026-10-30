@@ -1,0 +1,1 @@
+ERROR: tests/general/300-fixed-local-value-access-context-bad.t:6:19: inaccessible member

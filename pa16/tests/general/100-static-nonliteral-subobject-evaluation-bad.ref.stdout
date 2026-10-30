@@ -1,0 +1,1 @@
+ERROR: tests/general/100-static-nonliteral-subobject-evaluation-bad.t:4:25: an object with a non-trivial destructor in a constant expression

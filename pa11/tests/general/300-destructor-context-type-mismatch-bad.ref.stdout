@@ -1,0 +1,1 @@
+ERROR: tests/general/300-destructor-context-type-mismatch-bad.t:5:27: the destructor name does not name the object's type

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-static-nonliteral-subobject-variable-bad.t:4:18: a constexpr variable of a type that is not a literal type

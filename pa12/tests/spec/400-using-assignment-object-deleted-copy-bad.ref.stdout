@@ -1,0 +1,1 @@
+ERROR: tests/spec/400-using-assignment-object-deleted-copy-bad.t:9:39: use of a deleted function

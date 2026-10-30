@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-elementwise-minmax-enum-reject.t:1:39: an elementwise minimum or maximum requires matching arithmetic types

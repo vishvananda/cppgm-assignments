@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-vector-permute-mixed-input-reject.t:3:25: a vector permutation requires matching vectors and an integral lane mask

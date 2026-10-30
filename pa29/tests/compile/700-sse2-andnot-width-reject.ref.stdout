@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse2-andnot-width-reject.t:2:41: invalid implicit conversion

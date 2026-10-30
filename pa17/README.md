@@ -54,6 +54,15 @@ the same source-file ordering and `-o` relaxations as the earlier source-to-LowI
 milestones. Preserve PA7's dump mode. Native driver behavior and optimized
 LowIR output are not required in PA17.
 
+### Inherited member types in template arguments
+
+A concrete specialization can inherit a member type through a base selected by
+another template. A pointer or reference type-id naming that member remains a
+type argument even when the parser cannot resolve the selected base. Preserve
+the parsed qualified name for semantic lookup and continue its declarator.
+A following operator with an operand remains an expression; a genuinely
+dependent qualified type still requires `typename`.
+
 ### Dependent qualified types
 
 Within a retained template definition, a qualified member type whose qualifier
@@ -75,6 +84,24 @@ qualified-id without `typename` does not name a type, a declarator whose
 parenthesized operand is only such a name declares a variable with a
 direct-initializer rather than a function with an unnamed parameter.
 
+A concrete alias template-id can name a class the parser does not yet know,
+through a specialization's member alias. Its qualified member is still
+nondependent, including inside another template definition. It may name a member
+template without the `template` introducer; semantic lookup determines whether
+the resulting template-id denotes a type or an expression.
+The same rule applies to a qualified return type before an operator-function-id.
+A fixed member alias template can select that return type through another
+template specialization; a value member still cannot serve as a type, and a
+genuinely dependent return type still requires `typename`.
+
+### Fixed arguments and access context
+
+A retained body's fixed template argument can reuse its value when the body is
+instantiated, provided its conversion and access obligations are unchanged.
+Private or protected access, including an inherited declaration's access path,
+can depend on specialization-specific friendship. Preserve these checks for the
+actual specialization; a value computed in another context grants no access.
+
 ### Qualified template-name hiding
 
 Function and variable templates declared directly in a class participate in
@@ -84,6 +111,13 @@ a hidden base non-template must not be admitted merely because the derived
 declaration has no concrete binding until template deduction.  Naming a
 variable template without its required template arguments is invalid; lookup
 does not fall through to a hidden base data member.
+
+### Partial-specialization ordering
+
+When deduction skips a dependent member type or expression, ordering still
+checks its substituted type against the transformed argument. A dependent
+member constraint can make a partial more specialized than an unconstrained
+parameter; distinct constraints remain ambiguous when neither orders the other.
 
 ### Output Format
 
@@ -149,6 +183,8 @@ template completion:
 - class partial specialization and specialization selection
 - alias and variable template entity modeling
 - explicit specialization and explicit-instantiation ownership
+  (a member-template specialization retains its own earlier `inline`
+  declaration across a later definition without that specifier)
 - the declaration/instantiation behavior required to make that model coherent
 
 Self-checking controls in `tests/controls/` state their expected outcome in
@@ -259,5 +295,17 @@ an argument from its result.
 
 Use canonical argument keys, PA16 constant values and template-entity bindings.
 Keep specialization selection separate from the demanded declaration,
-initializer or body. Retain deterministic partial-specialization selection and
+initializer or body. An instantiated member partial retains its selected
+argument pattern and instance context together with a link to the original
+analyzed definition. Do not select the partial again through the original
+class's aliases merely to obtain its deferred body. Unselected member partial
+bodies remain uninstantiated. The fallback to original declarations considers
+only partials declared outside the class: inline declarations were already
+matched in the instance. Keep a selected incomplete partial when that lookup
+finds no definition, instead of reverting to the primary. Retain deterministic partial-specialization selection and
 explicit links to the class or namespace owning each generated entity.
+
+During partial ordering, a direct array-bound parameter retains its synthesized
+non-type value in the transformed type. Deduction relates those typed values,
+including repeated bounds and arrays nested under pointers or references; a
+compound bound expression remains a non-deduced context.

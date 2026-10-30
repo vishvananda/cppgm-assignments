@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-clang-byte-shift-width-reject.t:2:55: invalid implicit conversion

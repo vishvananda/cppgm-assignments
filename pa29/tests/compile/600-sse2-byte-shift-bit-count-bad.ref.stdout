@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-byte-shift-bit-count-bad.t:2:52: a byte-shift bit count must be eight times an 8-bit immediate

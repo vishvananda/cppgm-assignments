@@ -38,6 +38,11 @@ You will want to reuse:
 The GNU/Clang concessions this assignment owns include several the selected
 hosted headers depend on:
 
+- hosted source-file comments may contain opaque legacy 8-bit bytes; line
+  splicing, trigraphs and comment delimiters retain their usual behavior.
+  This does not relax UTF-8 diagnostics for tokens or literals, or the strict
+  PA1 tokenizer's input contract
+
 - the `aligned` attribute takes a constant expression, not only a literal, and
   inside a class template that expression may name the template's own
   parameters, so it is not knowable until instantiation; it is accepted in
@@ -46,6 +51,18 @@ hosted headers depend on:
 - a hosted type specifier such as `__uint128_t` or `__float128` spells itself as
   an identifier rather than a keyword, and introduces a functional cast the same
   way a fundamental type keyword does
+- GNU `mode(identifier)` selects the complete declared scalar's machine
+  representation, including the 64-bit `word`, `pointer` and `unwind_word`
+  modes used by the hosted unwinder; it preserves qualifiers and signedness
+  and validates the declaration's category. Dependent declared modes retain
+  an interned type transform until substitution; GNU ignores an unassociated
+  dependent alias RHS's mode, while an alias-name attribute still applies.
+  The complex modes `SC`, `DC`, `XC` and `TC` select float, double,
+  extended and binary128 complex representations while retaining the
+  complex category, qualifiers and dependent transform identity
+- GCC's `__constinit` requires static or thread storage and static
+  initialization, without adding `const` or requiring a literal class type;
+  dependent definitions are checked when instantiated
 - `_Atomic` is not `volatile`: a class with an `_Atomic` member is still a
   literal type and may have a `constexpr` constructor
 
@@ -221,6 +238,7 @@ Optional sidecars include:
 - `x.no-exceptions`: compile a `tests/compile` input with `-fno-exceptions`
 - `x.cxx-standard`: compile in the named `c++11`, `c++14`, or `c++17`
   language mode
+- `x.flags`: additional compiler flags for a `tests/run` input
 - `x.ref.impl.exit_status`, `x.ref.program.exit_status`, and
   `x.ref.program.stdout`: implementation and program-result references for
   `tests/run` host-link/run smokes
@@ -234,6 +252,13 @@ GNU `q`/`Q` floating suffixes denote `__float128`, as specified in
 in both normal compilation and the typed `cppgm++ -E` stream. Emit binary128
 bytes for these literals; `l`/`L` still denote `long double`. This PA29
 extension does not change the strict C++11 literal grammar of PA2–PA4.
+
+Hosted `-Wno-narrowing` suppresses list-initialization narrowing diagnostics,
+as described in [GCC's C++ dialect options](https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Dialect-Options.html).
+The actual scalar conversions still occur, and narrowing remains a failure in
+SFINAE contexts. `-Wnarrowing` or `-Werror=narrowing` restores the diagnostic;
+the last of these specific options wins. Without suppression, the compiler
+continues to reject narrowing conversions.
 
 ### Hosted ABI Name Guidance
 
@@ -259,7 +284,19 @@ To complete PA29, implement hosted compatibility for:
 
 - predefined macro import, `__COUNTER__`, the GNU comma paste, `_Pragma`,
   `__has_*`, `#include_next`, `#warning`, ignored unknown pragmas, and hosted
-  hex-float preprocessing forms such as `0x1p+4`.  `#warning` lets
+  hex-float preprocessing forms such as `0x1p+4`. Hosted preprocessing also
+  executes conditional and macro-definition directives encountered while
+  collecting a function-like macro's arguments, as GNU CPP does. A redefinition
+  affects argument prescan, while the open call retains its original
+  replacement list; `__COUNTER__` remains one sequence per translation unit.
+  A system header may replace a macro's previous definition, as GNU CPP does
+  with system-header redefinition diagnostics suppressed; ordinary source
+  redefinitions still require identical definitions.
+  Hosted rescanning follows GNU CPP's active replacement contexts: a macro
+  stays disabled while its replacement is read, and tokens rejected for
+  that reason remain unavailable on later rescans. PA4's non-hosted interface
+  retains the course-defined nesting rules in [PA4's macro guide](../pa4/macros.md).
+  PA4's non-hosted text-sequence boundaries are unchanged. `#warning` lets
   translation continue, like an ignored pragma; anything it prints goes to
   standard error, which the tests do not check.  `__COUNTER__` expands to
   `0` at its first use in a translation unit and to one more at each later
@@ -278,9 +315,15 @@ To complete PA29, implement hosted compatibility for:
   `__has_attribute` likewise answers nonzero for the GNU and Clang
   attributes the compiler implements (`always_inline`, `noinline`,
   `noreturn`, `pure`, `const`, `used`, `weak`, `packed`, `aligned`,
-  `section`, `vector_size`, `gnu_inline`, `abi_tag`, `using_if_exists` and
+  `section`, `vector_size`, `mode`, `gnu_inline`, `abi_tag`, `using_if_exists` and
   `exclude_from_explicit_instantiation`, each also spelled `__name__`) and
   `0` for any other.
+  A conditional whose condition is `__builtin_constant_p`, optionally
+  parenthesized or explicitly converted, permits folding reference
+  reinterpretations in its selected expression. The reference retains the
+  original storage identity: an unrelated view cannot read that storage.
+  Called function bodies use their own constant-expression rules; ordinary
+  conditionals and the non-hosted query keep their existing rules.
   `__has_builtin` answers from the registries that hold the builtins rather
   than from a list beside them: claiming not to have one that is implemented is
   worse than lacking it, because the header then takes a fallback written in
@@ -288,6 +331,12 @@ To complete PA29, implement hosted compatibility for:
   already there.
   Probes for guarantees the compiler does not make, such as
   `__has_declspec_attribute`, answer no rather than failing
+- GNU `always_inline` direct calls in host objects substitute the available
+  body at every optimization level, including constructors and destructors.
+  Substitution preserves cleanup, noexcept termination, local-static identity
+  and source locations. An ineligible required call is diagnosed. The course
+  LowIR view and its optional `force_inline` profitability flag retain their
+  existing contract; the object LowIR view includes source-required substitution.
 - GNU/Clang parser concessions commonly exercised by the selected hosted
   headers, including dependent nested-angle disambiguation, nested qualified
   template-ids used as outer template arguments, builtin-trait identifiers
@@ -301,6 +350,28 @@ To complete PA29, implement hosted compatibility for:
   takes part in copy initialization, so a parse that accepts the form and
   discards the condition silently mis-ranks overloads.  Attributes interleave
   with the specifiers around it rather than preceding them all
+- GNU `cpuid` statements with fixed `a`, `b`, `c`, `d` register outputs
+  and read/write or matching inputs for the leaf and subleaf. Execute the
+  real CPU instruction through the typed LowIR `cpu_query` runtime role;
+  retain all four results, 32-bit writes clearing wider register halves,
+  operand evaluation once, condition flags and the native callee-save ABI
+- GNU register-only `pand` statements over two 128-bit `x` vector operands,
+  including matching constraints. Lift all operand bits to integer AND,
+  evaluate each operand once, and preserve preceding condition flags
+- namespace basic asm data definitions: lift `.pushsection`, `.section`,
+  `.popsection`, `.ascii`, `.asciz` / `.string`, and `.byte` to nonloaded
+  PROGBITS section bytes. Custom section names use the token-safe LowIR subset
+  and begin with a letter, `_` or `.`; predefined loader, unwind, comment and
+  `.gnu.` sections are outside this form. String escapes include octal and
+  hexadecimal bytes, `\b`, `\f`, `\n`, `\r`, `\t`, quotes and backslashes;
+  supported explicit flags are empty or `MS` (mergeable byte strings, entry
+  size 1). Decode ordinary C++ literals and GAS string escapes once during
+  analysis, retain typed section facts, and emit their bytes and flags directly
+  through LowIR `storage=metadata` / `metadata_strings`. Executable section
+  flags, instruction templates and other directives are diagnosed, never
+  silently discarded or passed to an external assembler. Each definition must
+  restore its incoming section with balanced push/pop directives; a `.section`
+  switch is supported inside such a balanced definition
 - builtin traits, transforms, intrinsics, and builtin families used during
   hosted compile acceptance, including lowering `__builtin_abort` as a
   non-returning call to the host C runtime; fixed-arity hosted integer
@@ -400,6 +471,109 @@ The PA29 tests do not require:
 - recursive hosted-header coverage reporting
 - bootstrap or self-host builds
 
+### SSE2 unpack builtins
+
+The GNU `__builtin_ia32_punpck*128` family interleaves the low or high
+half of two 128-bit vectors with 8-, 16-, 32-, or 64-bit lanes. Preserve
+all lane bits and evaluate each operand once. The provided-builtin registry
+reports the implemented family, and semantic facts retain the selected half
+and lane type for the existing vector lowering path.
+
+### SSE2 packed integer lane shifts
+
+The GNU SSE2 `psll*`, `psrl*` and `psra*` immediate-form builtins shift
+16-, 32- and 64-bit lanes (arithmetic right for 16 and 32 bits). Their int
+count may be a runtime value. Oversized and negative counts yield zero for
+left/logical right and sign-fill for arithmetic right. Evaluate both operands
+once and bound the count before forming a LowIR shift.
+
+### SSE2 immediate lane shuffles
+
+`__builtin_ia32_pshufd` selects four 32-bit lanes using the low 8 bits of a constant int;
+`__builtin_ia32_shufpd` selects one double lane from each of two sources using
+the low 2 bits of a constant int. GCC masks constant selectors to those
+widths, including negative values. Preserve every lane bit, including NaN payloads and signed
+zero, and evaluate operands once. Record selector/type facts during analysis;
+a selector in an always-inline wrapper or template can remain deferred.
+
+`__builtin_ia32_shufps` selects two float lanes from each of two sources
+using an 8-bit immediate, preserving all payload bits.
+
+`__builtin_ia32_pshuflw` and `__builtin_ia32_pshufhw` select four 16-bit
+lanes within the low or high 64-bit half using an 8-bit immediate. Preserve
+the other four lanes bit for bit, and retain the same single-evaluation and
+deferred-selector rules.
+
+After mandatory inlining substitutes a wrapper call, a deferred shuffle
+selector must be constant. A runtime selector through the public intrinsic
+wrapper remains an error. This check uses typed LowIR facts and leaves
+ordinary generated code and named debug storage unchanged.
+
+### SSE lane sign masks
+
+`__builtin_ia32_pmovmskb128`, `__builtin_ia32_movmskps` and
+`__builtin_ia32_movmskpd` collect the sign bits of 16 byte, 4 float or
+2 double lanes into the low bits of an int. Read floating representations
+as integer bits, preserving signed zero and NaN signs without floating
+exceptions. Evaluate the input once and leave unused result bits zero.
+
+### Generic GNU atomic runtime operations
+
+The pointer-based `__atomic_load`, `__atomic_store`, `__atomic_exchange` and
+`__atomic_compare_exchange` support complete objects beyond the inline
+1-, 2-, 4- and 8-byte forms. Record this requirement in the existing typed
+call facts and use the generic runtime ABI in host object mode: prepend
+the object byte size; pass pointers and integer memory orders; omit the
+compare-exchange weak parameter while evaluating its expression once.
+Keep const-destination and operand-size checks. Other builtin forms retain
+their existing size restrictions. Linking needs a compatible runtime
+provider (`libatomic` on Linux, supplied by the host link command).
+
+The weak argument's value does not change the runtime ABI. cppgm preserves
+its expression's side effects once, as Clang does; GCC 15 discards that
+expression in the generic form. The required evaluation control records
+this host-oracle difference separately from the common ABI protocol.
+
+### GNU vector permutations
+
+`__builtin_shuffle(vector, mask)` and `__builtin_shuffle(first, second, mask)`
+permute lanes of one or two matching vectors. The integral mask has the
+same width and lane count. Mask lanes select modulo N or 2N, including
+negative and runtime values; the second input follows the first in memory
+lane order. Preserve all lane bits, including floating NaNs and signed zero,
+and evaluate each operand once. Use typed vector/mask facts and linear lane
+lowering. The existing limit of 64 lanes also applies here.
+
+The GCC/Clang `__builtin_shufflevector(first, second, index...)` form uses
+constant indexes into two matching inputs. Its result has one lane per
+index. An index of -1 leaves that lane unspecified; choosing zero is valid.
+Validate and retain these constants in typed facts. Both public GCC and
+Clang SSE wrappers can then use the same permutation lowering.
+
+### SSE2 saturating packed conversions
+
+`__builtin_ia32_packuswb128` clamps signed 16-bit lanes to [0,255], then
+packs them into bytes. `__builtin_ia32_packsswb128` clamps to [-128,127];
+`__builtin_ia32_packssdw128` clamps signed 32-bit lanes to [-32768,32767]
+and packs them into words. The first input fills the low half of the
+128-bit result and the second fills the high half. Evaluate both once.
+Use the recorded input/output lane types and signed comparisons before
+narrowing; truncating first loses the saturation behavior.
+
+### SSE2 packed bitwise and-not
+
+`__builtin_ia32_pandn128` takes two vectors of two signed 64-bit lanes and
+returns the bitwise complement of the first input masked by the second.
+Preserve all 128 bits and evaluate each operand once. The public
+`_mm_andnot_si128` wrapper has the same behavior.
+
+### SSE2 unsigned byte maximum
+
+`__builtin_ia32_pmaxub128` chooses the unsigned maximum in each of sixteen
+byte lanes. It shares the byte-minimum signature and typed lane lowering;
+evaluate both operands once and compare byte bits as unsigned regardless
+of the vector element type's signedness.
+
 ### Design Notes (Non-Normative)
 
 Hosted compatibility is easiest to approach as a sequence of small compatibility
@@ -422,3 +596,20 @@ to create fragile library-version-specific behavior.
 Later hosted tests keep the same hosted source/header environment while adding
 larger template-heavy standard-library headers and then link/run behavior for
 code emitted from hosted headers.
+
+Clang's `__builtin_ia32_pslldqi128_byteshift` and
+`__builtin_ia32_psrldqi128_byteshift` take a byte count in `[0,255]`.
+Normalize their constant count into the existing typed whole-register shift
+facts. Counts of 16 or more produce zero; these Clang forms require a constant
+immediate even in an `always_inline` function, while template arguments defer
+until instantiation. The GNU forms retain their bit-count interface.
+
+### Clang elementwise minimum and maximum
+
+`__builtin_elementwise_min` and `__builtin_elementwise_max` operate on two
+matching arithmetic scalars or vectors. Preserve the operand type without
+integer promotions, order signed and unsigned lanes correctly, and evaluate
+each operand once. Floating operations follow LLVM maxNum/minNum: one NaN
+yields the numeric operand, two NaNs yield NaN, and equal zeros may retain
+either sign. Consume typed operands and lower through existing scalar
+comparisons and selection; integer scalar constant evaluation uses the same operation.

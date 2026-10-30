@@ -1,0 +1,1 @@
+ERROR: tests/general/100-body-sizeof-fixed-invalid-bad.t:3:17: indirection through an operand that is not a pointer in a template definition

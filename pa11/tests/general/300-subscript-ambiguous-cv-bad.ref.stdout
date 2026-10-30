@@ -1,0 +1,1 @@
+ERROR: tests/general/300-subscript-ambiguous-cv-bad.t:3:28: ambiguous overloaded operator

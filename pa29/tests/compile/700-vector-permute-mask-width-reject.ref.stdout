@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-vector-permute-mask-width-reject.t:3:21: a vector permutation mask has another width than its input

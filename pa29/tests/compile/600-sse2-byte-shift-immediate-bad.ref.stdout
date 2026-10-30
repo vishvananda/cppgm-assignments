@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-byte-shift-immediate-bad.t:2:82: a byte-shift count that is no integral constant expression

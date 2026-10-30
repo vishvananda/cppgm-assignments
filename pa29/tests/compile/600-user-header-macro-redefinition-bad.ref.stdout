@@ -1,0 +1,2 @@
+ERROR: tests/compile/system-macro-redefinitions/redefine.h:1:2: macro redefined differently
+note: included from tests/compile/600-user-header-macro-redefinition-bad.t:5

@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse2-pack-scalar-reject.t:1:47: invalid implicit conversion

@@ -1,0 +1,1 @@
+ERROR: tests/general/400-constexpr-parameter-reference.t:4:25: a parameter is not usable in a constant expression

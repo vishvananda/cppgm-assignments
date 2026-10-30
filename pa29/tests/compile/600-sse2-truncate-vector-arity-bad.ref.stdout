@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-truncate-vector-arity-bad.t:2:14: wrong number of arguments to a packed truncating conversion

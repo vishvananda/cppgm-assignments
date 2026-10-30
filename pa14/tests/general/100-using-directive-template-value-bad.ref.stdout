@@ -1,0 +1,1 @@
+ERROR: tests/general/100-using-directive-template-value-bad.t:4:21: template-id does not name a function template

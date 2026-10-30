@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-complex-mode-real-reject.t:1:34: a complex machine mode applied to an inappropriate type

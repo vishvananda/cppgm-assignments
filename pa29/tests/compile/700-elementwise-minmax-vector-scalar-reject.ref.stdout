@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-elementwise-minmax-vector-scalar-reject.t:1:64: an elementwise minimum or maximum requires matching arithmetic types

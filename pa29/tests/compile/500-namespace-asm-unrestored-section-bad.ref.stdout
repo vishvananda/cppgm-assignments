@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-namespace-asm-unrestored-section-bad.t:2:1: namespace asm outside custom nonloaded PROGBITS section/data directives

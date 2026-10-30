@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nonvalue-member-expression-body-bad.t:4:5: member name does not denote a data member or member function

@@ -194,6 +194,8 @@ To complete PA22, implement these goals:
 2. Base-method lookup and `this` adjustment.
    Calling a method inherited from a later base must lower the implicit object argument to the
    correct base-subobject address.
+   This also applies to inherited operators introduced by using-declarations: ranking
+   in the lookup class must not remove the selected call's base adjustment.
 
 3. Generated special members across multiple bases.
    Synthesized construction, copy, assignment, and destruction should sequence the supported
@@ -202,6 +204,10 @@ To complete PA22, implement these goals:
 4. Member pointer lowering over non-virtual layouts.
    Member pointer values should preserve the selected member target and supported base
    adjustment so `.*` and `->*` lower through the correct object address.
+   Implicit class conversions to member pointers participate in built-in `==` and
+   `!=` overload resolution, including null literals and compatible base/derived
+   and cv-qualified composite types. Explicit conversions do not participate, and
+   member pointers have no built-in ordering operators.
    Their contextual conversion to `bool` must distinguish a non-null target from a null
    member pointer without treating the adjustment word as an independent truth value.
    A data member pointer uses the Itanium C++ ABI representation (2.3), so its values

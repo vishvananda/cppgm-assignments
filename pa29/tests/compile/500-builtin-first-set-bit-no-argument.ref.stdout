@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-builtin-first-set-bit-no-argument.t:1:13: wrong number of arguments to a bit builtin

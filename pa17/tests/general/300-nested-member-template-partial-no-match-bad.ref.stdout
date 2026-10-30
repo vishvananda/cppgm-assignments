@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nested-member-template-partial-no-match-bad.t:8:18: base class is incomplete

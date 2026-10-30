@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-constinit-reject-mutable-class-read.t:3:24: a __constinit variable is not constant-initialized

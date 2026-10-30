@@ -1,0 +1,1 @@
+ERROR: tests/spec/300-using-assignment-object-ambiguous-bad.t:7:27: ambiguous overloaded operator

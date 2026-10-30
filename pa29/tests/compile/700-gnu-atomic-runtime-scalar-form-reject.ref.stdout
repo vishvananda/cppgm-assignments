@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-gnu-atomic-runtime-scalar-form-reject.t:2:26: an atomic builtin on an object of no integral or pointer type of 1, 2, 4 or 8 bytes

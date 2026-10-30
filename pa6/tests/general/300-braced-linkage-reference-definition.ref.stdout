@@ -1,0 +1,1 @@
+ERROR: tests/general/300-braced-linkage-reference-definition.t:3:4: reference declared without an initializer

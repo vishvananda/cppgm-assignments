@@ -1,0 +1,1 @@
+ERROR: tests/general/100-covariant-template-unrelated-bad.t:5:17: a covariant return type whose class is not derived from the overridden function's

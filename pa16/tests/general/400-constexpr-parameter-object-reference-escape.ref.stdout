@@ -1,0 +1,1 @@
+ERROR: tests/general/400-constexpr-parameter-object-reference-escape.t:4:30: a constant designates an object without static storage duration

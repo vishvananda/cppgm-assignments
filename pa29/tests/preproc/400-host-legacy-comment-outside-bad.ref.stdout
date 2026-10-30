@@ -1,0 +1,1 @@
+ERROR: tests/preproc/400-host-legacy-comment-outside-bad.t:2:5: invalid UTF-8 continuation byte

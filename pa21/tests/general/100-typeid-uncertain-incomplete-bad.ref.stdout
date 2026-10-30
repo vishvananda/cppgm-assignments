@@ -1,0 +1,1 @@
+ERROR: tests/general/100-typeid-uncertain-incomplete-bad.t:6:27: typeid of an incomplete class type

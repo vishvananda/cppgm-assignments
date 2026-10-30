@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-vector-permute-index-range-reject.t:2:47: an indexed vector shuffle selector is no constant index or -1

@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-cpuid-output-reject.t:1:59: an asm output whose constraint is no `=` or `+` one

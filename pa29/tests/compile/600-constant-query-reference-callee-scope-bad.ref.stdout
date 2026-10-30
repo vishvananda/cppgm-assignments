@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-constant-query-reference-callee-scope-bad.t:2:12: a reinterpret_cast or dynamic_cast in a constant expression

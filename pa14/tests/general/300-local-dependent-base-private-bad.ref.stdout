@@ -1,0 +1,1 @@
+ERROR: tests/general/300-local-dependent-base-private-bad.t:4:22: inaccessible member

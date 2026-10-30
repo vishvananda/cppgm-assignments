@@ -82,10 +82,11 @@ enum SymbolRole : std::uint8_t
 	SR_RTTI_VMI,
 	SR_RTTI_DATA,
 	SR_BAD_ARRAY_NEW_LENGTH,
-	SR_RTTI_POINTER
+	SR_RTTI_POINTER,
+	SR_CPU_QUERY
 };
 
-const unsigned kSymbolRoleCount = SR_RTTI_POINTER + 1;
+const unsigned kSymbolRoleCount = SR_CPU_QUERY + 1;
 
 enum LanguageLinkageMode : std::uint8_t
 {
@@ -109,10 +110,12 @@ enum GlobalStorageMode : std::uint8_t
 {
 	GSM_DEFAULT,
 	GSM_READONLY,
-	GSM_THREAD_LOCAL
+	GSM_THREAD_LOCAL,
+	GSM_METADATA,
+	GSM_METADATA_STRINGS
 };
 
-const unsigned kGlobalStorageModeCount = GSM_THREAD_LOCAL + 1;
+const unsigned kGlobalStorageModeCount = GSM_METADATA_STRINGS + 1;
 
 // The yes-valued symbol flags (`keep_alias=yes`, ...), as bits.
 // SF_REPLACEABLE (`replaceable=yes`) marks a GNU weak definition and
@@ -323,7 +326,7 @@ inline const char* spelling(SymbolRole value)
 	static const char* const kRoles[kSymbolRoleCount] = { "", "entry", "init", "fini", "eh_allocate_exception",
 		"eh_begin_catch", "eh_end_catch", "eh_rethrow", "eh_throw", "eh_personality", "eh_resume", "allocate_memory",
 		"free_memory", "terminate", "pure_virtual", "dynamic_cast", "bad_cast", "bad_typeid", "rtti_class", "rtti_si",
-		"rtti_vmi", "rtti_data", "bad_array_new_length", "rtti_pointer" };
+		"rtti_vmi", "rtti_data", "bad_array_new_length", "rtti_pointer", "cpu_query" };
 	return kRoles[value];
 }
 
@@ -341,7 +344,8 @@ inline const char* spelling(SymbolBindingMode value)
 
 inline const char* spelling(GlobalStorageMode value)
 {
-	static const char* const kStorages[kGlobalStorageModeCount] = { "", "readonly", "thread_local" };
+	static const char* const kStorages[kGlobalStorageModeCount] = { "", "readonly", "thread_local", "metadata",
+		"metadata_strings" };
 	return kStorages[value];
 }
 

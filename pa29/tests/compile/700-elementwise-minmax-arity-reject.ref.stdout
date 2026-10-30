@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-elementwise-minmax-arity-reject.t:1:18: wrong number of arguments to an elementwise minimum or maximum

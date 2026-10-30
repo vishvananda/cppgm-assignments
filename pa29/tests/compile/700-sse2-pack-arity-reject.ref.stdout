@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse2-pack-arity-reject.t:2:23: wrong number of arguments to a packed saturating conversion

@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-byte-max-width-bad.t:4:67: invalid implicit conversion

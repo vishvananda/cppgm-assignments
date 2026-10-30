@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse2-shuffle-public-runtime-reject.t: a packed lane shuffle selector is not constant after mandatory inlining

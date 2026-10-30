@@ -1,0 +1,1 @@
+ERROR: tests/general/100-covariant-template-forward-bad.t:5:15: a covariant return type of an incomplete class

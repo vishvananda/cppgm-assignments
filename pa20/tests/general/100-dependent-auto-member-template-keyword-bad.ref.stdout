@@ -1,0 +1,1 @@
+ERROR: tests/general/100-dependent-auto-member-template-keyword-bad.t:4:15: a member template-id of a dependent object needs template

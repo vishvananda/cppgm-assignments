@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-scalar-mode-array-bad.t:2:29: a scalar machine mode applied to an inappropriate type

@@ -125,6 +125,9 @@ The emitted object should be demand-driven:
 - keep ordinary declarations, overload candidates, template patterns, and
   unused inline/header helpers available for semantic analysis without turning
   them into defined object symbols
+- check function bodies required by non-type template arguments without emitting
+  their code solely for a type-level use; actual runtime references, explicit
+  instantiation definitions, and GNU `used` attributes still require emission
 - allow unresolved references for externally owned hosted library symbols, using
   the host ABI spelling expected by the configured toolchain
 
@@ -152,6 +155,29 @@ At `-O0` the closure follows the code as lowered. At `-O1` and above, from
 PA32 on, it is computed after inlining and pruning: an inline function whose
 every call has been inlined is no longer referenced and is not emitted, so an
 optimized object defines far fewer symbols than the `-O0` one.
+
+### SSE2 unpack wrappers
+
+The `<emmintrin.h>` low/high unpack wrappers for all four integer lane widths
+must emit, link and run with the host vector ABI. The builtin and wrapper paths
+preserve lane bits, including sign bits, and evaluate both operands once.
+
+### SSE2 packed lane shift wrappers
+
+The `<emmintrin.h>` left, logical-right and arithmetic-right lane shift
+wrappers accept runtime int counts and preserve the host vector ABI, including
+negative and oversized counts and all upper-lane bits.
+
+### SSE2 immediate shuffle wrappers
+
+The `<emmintrin.h>` integer and double lane shuffle wrappers preserve immediate
+selection, all lane bits, and the host vector calling convention at each
+optimization level.
+
+### SSE2 unsigned byte minimum and maximum wrappers
+
+The `<emmintrin.h>` byte minimum and maximum wrappers preserve the host vector
+ABI and compare all sixteen lanes as unsigned bytes, including values above127.
 
 ### Hosted ABI Names
 

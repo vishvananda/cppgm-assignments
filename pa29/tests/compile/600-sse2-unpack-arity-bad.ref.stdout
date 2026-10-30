@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-unpack-arity-bad.t:2:13: wrong number of arguments to a packed unpack operation

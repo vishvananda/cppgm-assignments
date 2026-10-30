@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-builtin-bit-cast-class-padding-bad.t:3:36: a bit cast reads indeterminate padding bits

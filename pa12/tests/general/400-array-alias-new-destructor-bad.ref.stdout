@@ -1,0 +1,1 @@
+ERROR: tests/general/400-array-alias-new-destructor-bad.t:3:24: inaccessible member

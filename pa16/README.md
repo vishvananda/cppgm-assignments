@@ -58,6 +58,22 @@ the same source-file ordering and `-o` relaxations as the earlier source-to-LowI
 milestones. Preserve the earlier dump modes. Native driver behavior and optimized
 LowIR output are not required in PA16.
 
+### Fixed template arguments in function bodies
+
+A nondependent constant expression used as a template argument in a retained
+function-template body has its fixed value at definition time. A local alias
+for that specialization is nondependent, so its member types do not require
+`typename`. Body-local expressions need no shared expression key to establish
+this fact; arguments that name template parameters remain dependent.
+
+### Constant initialization of nonliteral objects
+
+A static object's constexpr constructor can initialize nonliteral base and
+member subobjects, including array elements, before dynamic initialization.
+The subobjects share the initialized variable's storage identity. This does
+not permit nonliteral initializer temporaries in constant expressions or
+constexpr variables of nonliteral type.
+
 ### Output Format
 
 On success, `cppgm++` shall write LowIR text to `<outfile>` and exit
@@ -256,6 +272,13 @@ or does more work than your evaluator's own limit, is not a constant
 expression: a context that requires one is rejected, and a namespace object
 falls back to dynamic initialization as above. Runaway recursion must end in
 a clean rejection, not a crash or a hang.
+
+### Constant reference-conversion decay
+
+Constant evaluation preserves the designated array or function address when
+a user-defined reference conversion is followed by decay. Apply the recorded
+standard suffix to that pointer, and retain ordinary pointer lifetime and
+one-past-array checks; a pointer to a destroyed temporary is not publishable.
 
 ### Out Of Scope
 

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-covariant-template-ambiguous-bad.t:7:17: a covariant return type whose class has the overridden function's as an ambiguous base

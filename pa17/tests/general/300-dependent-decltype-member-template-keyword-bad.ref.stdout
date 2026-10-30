@@ -1,0 +1,1 @@
+ERROR: tests/general/300-dependent-decltype-member-template-keyword-bad.t:5:16: a member template-id of a dependent object needs template

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-constexpr-dangling-array-reference-decay-bad.t:2:25: a constant designates an object without static storage duration

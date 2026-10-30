@@ -1,0 +1,1 @@
+ERROR: tests/general/100-using-subscript-ambiguous-bases-bad.t:5:29: ambiguous overloaded operator

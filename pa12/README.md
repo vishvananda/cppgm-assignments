@@ -9,6 +9,8 @@ paths:
 - copy construction/assignment and the common move-construction/move-assignment cases
   needed by those same value paths
 - pass-by-value and return-by-value of class objects
+- implicit move of eligible named locals and value parameters through converting
+  constructors of a different result class (CWG 1579)
 - temporary materialization in the common call/return/initialization paths
 - delegating constructors
 - out-of-class constructor and destructor definitions
@@ -134,6 +136,11 @@ LowIR marks both `alias=noalias`, in every entry of the constructor and in a
 copy or move constructor with further defaulted parameters too (12.8p2). A
 constructor template, a converting constructor and an assignment operator,
 whose operands may be one object, state none.
+
+An array type supplied by a typedef or alias in `new` uses its outer bound as
+the allocation count and yields a pointer to its first element. It follows the
+same array allocation, initialization, cookie and destruction paths as an
+explicitly written bound, including multidimensional array types.
 
 Focused course controls (the controls in `tests/controls/` that state no
 outcome, checked by `../scripts/check_value_survivor_properties.pl`) validate
@@ -436,6 +443,14 @@ Within this milestone, PA12 should produce valid LowIR for ordinary non-polymorp
 types over the supported PA11 procedural/class subset. That LowIR is intended
 to be accepted by the later PA24 `lowir2native` backend for the supported
 cases.
+### Conversion functions returning array and function references
+
+A conversion function returning an array or function reference designates
+storage or a function. Its following standard conversion decays that address;
+it must not read array bytes or function instructions as a pointer. Preserve
+that distinction for initialization, return, arguments, assignment and builtin
+operands, while ordinary scalar reference conversions still load their values.
+
 ### Out Of Scope
 
 The following are explicitly out of scope for PA12:

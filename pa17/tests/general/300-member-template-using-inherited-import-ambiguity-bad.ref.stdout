@@ -1,0 +1,1 @@
+ERROR: tests/general/300-member-template-using-inherited-import-ambiguity-bad.t:6:37: ambiguous call to overloaded function

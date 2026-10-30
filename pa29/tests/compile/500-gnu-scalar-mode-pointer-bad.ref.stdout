@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-scalar-mode-pointer-bad.t:2:27: a scalar machine mode applied to an inappropriate type

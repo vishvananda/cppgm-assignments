@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-builtin-bit-cast-class-union-bad.t:3:26: a bit cast of a union or invalid class representation

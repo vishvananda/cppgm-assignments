@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse-sign-mask-width-reject.t:2:43: invalid implicit conversion

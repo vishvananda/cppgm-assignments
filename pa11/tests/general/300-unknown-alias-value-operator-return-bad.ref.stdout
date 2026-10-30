@@ -1,0 +1,1 @@
+ERROR: tests/general/300-unknown-alias-value-operator-return-bad.t:4:13: name does not denote a type

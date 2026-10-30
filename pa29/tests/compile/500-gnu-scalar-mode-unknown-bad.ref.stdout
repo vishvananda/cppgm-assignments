@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-scalar-mode-unknown-bad.t:2:39: an unknown or unsupported scalar machine mode

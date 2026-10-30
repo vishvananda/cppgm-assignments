@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-pand-gp-reject.t:2:42: an asm register operand of no scalar type

@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-constinit-reject-self-initializer.t:1:18: a __constinit variable is not constant-initialized

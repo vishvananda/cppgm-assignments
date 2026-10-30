@@ -48,6 +48,42 @@ the same source-file ordering and `-o` relaxations as the earlier source-to-LowI
 milestones. Preserve PA7's dump mode. Native driver behavior and optimized
 LowIR output are not required in PA18.
 
+### Substituted member types
+
+A substituted `typename T::member` must denote a type. A member class or alias
+template without template arguments rejects an overload in the immediate
+substitution context. An actual nested class remains a type even when incomplete;
+a template-template argument still denotes its template. Rejection uses the
+substitution result and does not instantiate an unused member-template body.
+
+Equivalent dependent expressions in function-template declarations retain the
+identity of the class template they name, including when a later declaration
+adds namespace qualification or uses a namespace alias. Different templates or
+template arguments remain distinct. The first declaration retains its ABI spelling.
+
+Non-deduced constraints compare their substituted typed operands during partial
+ordering. A pending expression can retain unused template parameters, including
+an empty pack; those bookkeeping arguments do not distinguish otherwise
+equivalent operands. Preserve different member names and argument positions,
+even when a concrete specialization gives them equal values.
+
+A transformed ordering operand can become independent even while unrelated
+synthesized arguments remain dependent. Evaluate that proven independent
+operand in its ordinary substitution context, preserving access checks and
+immediate substitution failures. Source declarations retain the dependent
+spellings required by the ABI; operands that still depend on arguments remain
+deferred.
+
+A qualified member function template-id that names no function template is a
+substitution failure in an immediate context, including an address used as a
+non-type template argument. Outside substitution, the same invalid name remains
+a hard error; errors in instantiated function bodies remain hard errors too.
+
+Invalid value-initialization of a function type, excess aggregate initializer
+elements, and nonempty parenthesized array-new initializers fail substitution
+when they occur in an immediate context. The same invalid initializers remain
+hard errors in ordinary expressions and instantiated function bodies.
+
 ### Output Format
 
 On success, `cppgm++` shall write LowIR text to `<outfile>` and exit
@@ -152,7 +188,11 @@ the implemented surface, including:
   explicit specializations and cv/reference target arguments
 - constructor template deduction and overload participation
 - non-deduced contexts and explicit template-id deduction edge cases
+- CWG 1391: after deduction and defaults, conversions to originally
+  nondependent call parameters are checked before signature substitution
 - braced-init deduction in the supported template-call subset
+  includes CWG 1591: a nonempty braced list deduces array element types and
+  named bounds, as GCC and Clang apply the resolution in C++11 mode
 - pointer, reference, enum, and static-member non-type template argument values
   over the supported constant-expression subset
 - template deduction from arguments whose types come from already-resolved
@@ -167,6 +207,11 @@ the implemented surface, including:
 - equivalent redeclarations of a function template with a dependent result
   type name the same template, however many such templates a translation unit
   declares (14.5.6.1)
+
+A fixed pointer, reference, or function-address argument in a function-template
+body also forms a nondependent specialization. Its local alias can name member
+types without `typename`; an argument using a dependent qualifier retains the
+usual disambiguation and substitution rules.
 
 ### Out Of Scope
 

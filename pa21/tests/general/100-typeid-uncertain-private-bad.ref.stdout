@@ -1,0 +1,1 @@
+ERROR: tests/general/100-typeid-uncertain-private-bad.t:5:27: inaccessible member

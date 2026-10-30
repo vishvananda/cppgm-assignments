@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-builtin-launder-function-pointer-bad.t:2:21: __builtin_launder requires a pointer to an object type

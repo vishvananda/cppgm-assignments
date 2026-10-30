@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-complex-mode-integer-reject.t:1:32: a complex machine mode applied to an inappropriate type

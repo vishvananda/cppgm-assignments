@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-clang-byte-shift-arity-reject.t:2:19: wrong number of arguments to a whole-register byte shift

@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-builtin-bit-cast-constant-enum-bool-bad.t:2:26: a bit cast outside supported scalar representations

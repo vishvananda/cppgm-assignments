@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse2-word-shuffle-runtime-reject.t:2:73: a packed lane shuffle selector that is no integral constant expression

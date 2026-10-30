@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-shuffle-arity-bad.t:5:42: wrong number of arguments to a packed lane shuffle

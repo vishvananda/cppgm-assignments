@@ -237,6 +237,9 @@ PA14 supports the following in addition to the PA13 subset:
   share its name, and replay of a dependent-base using-declaration that names an
   enumerator used by another enumerator; ordinary lookup must retain ambiguity
   when distinct declarations are introduced by using-directives
+  and recognize explicit template calls when ordinary function overloads in the
+  same namespace lookup set share their name with a template introduced by a
+  using-directive, including transitive directives
 - basic template argument deduction for direct supported function-template calls
   from ordinary argument types, without function-template partial ordering or
   SFINAE
@@ -251,8 +254,14 @@ PA14 supports the following in addition to the PA13 subset:
 - instantiated specializations reuse supported PA12 rvalue-reference return
   paths and PA13 virtual-destructor lifetime without changing their value
   category or object-lifetime behavior
+- checking a covariant virtual return instantiates the required class-template
+  definition before checking its base relationship, while identical incomplete
+  returns, the current class, and unused member bodies remain undemanded
 - distinct local-class identities for separate function-template
   specializations
+- qualified member lookup through a local class in a function template
+  retains dependent bases, including inherited local base hierarchies and
+  decltype base specifiers, until the enclosing template is instantiated
 - declaration-owned template-parameter scopes across nested instantiations and
   out-of-class member-definition bodies, including definition-time rejection
   of a declaration that redeclares an active template parameter even when the
@@ -288,13 +297,30 @@ PA14 supports the following in addition to the PA13 subset:
 - instantiated specialization names that then participate in the ordinary PA11-PA13
   class/method/codegen machinery
 - template-backed overload participation where the non-template PA7-PA13 machinery already
-  exists, including function-template operator overloads
+  exists, including function-template operator overloads; operator candidates with
+  a fixed wrong parameter count are rejected before substituting return types,
+  keeping prefix and postfix increment/decrement distinct
 - ordinary member typedef hiding and injected-name lookup during re-entrant
   class-template instantiation
 
 Within this milestone, PA14 should produce valid LowIR for ordinary generic code over the
 supported PA13 subset. That LowIR is intended to be accepted by the later PA24
 `lowir2native` backend for the supported cases.
+
+A fixed base specialization retains that context through its inherited template
+bases when classifying local declarations and expressions, including reference
+declarations and inherited values hiding outer typedef names. Unresolved dependent
+bases remain excluded from unqualified lookup while defining a template.
+
+### Dependent aliases in expression/type disambiguation
+
+A typedef or alias of a template parameter retains its dependence even when
+parsing cannot associate it with a known class scope. Qualified value calls
+through that alias remain expressions in constructor arguments; they must not
+be mistaken for function-parameter types in a tentative cast. Unknown concrete
+aliases, including nondependent decltype aliases inside templates, retain their
+ordinary type-context behavior. The parser carries this role from the alias
+declaration using its existing name facts, without reparsing its definition.
 
 ### Out Of Scope
 

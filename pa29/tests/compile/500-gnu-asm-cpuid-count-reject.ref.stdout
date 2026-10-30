@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-cpuid-count-reject.t:1:35: unsupported GNU asm template: a prefixed CPUID or one with explicit operands

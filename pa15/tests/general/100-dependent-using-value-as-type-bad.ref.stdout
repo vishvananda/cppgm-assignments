@@ -1,0 +1,1 @@
+ERROR: tests/general/100-dependent-using-value-as-type-bad.t:7:16: a value given for a type template parameter

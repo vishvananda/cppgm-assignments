@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-clang-byte-shift-range-reject.t:2:57: a byte-shift count must be an 8-bit immediate

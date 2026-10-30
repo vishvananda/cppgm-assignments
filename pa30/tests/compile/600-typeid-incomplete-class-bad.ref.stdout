@@ -1,1 +1,1 @@
-ERROR: tests/compile/600-typeid-incomplete-class-bad.t:9:40: typeid of an expression of incomplete class type
+ERROR: tests/compile/600-typeid-incomplete-class-bad.t:9:40: typeid of an incomplete class type

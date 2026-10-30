@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-sse2-andnot-arity-reject.t:2:17: wrong number of arguments to a packed bitwise and-not

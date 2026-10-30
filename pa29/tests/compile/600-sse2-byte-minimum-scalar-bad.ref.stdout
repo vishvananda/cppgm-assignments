@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-sse2-byte-minimum-scalar-bad.t:2:40: invalid implicit conversion

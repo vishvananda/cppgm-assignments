@@ -206,6 +206,15 @@ The currently defined global `storage` values are:
 
 - `readonly`
 - `thread_local`
+- `metadata` (PA29's nonloaded PROGBITS data, with a required `section=`)
+- `metadata_strings` (the same, with ELF `SHF_MERGE | SHF_STRINGS` and entry size 1)
+
+The metadata storage forms carry section bytes, rather than addressable C++
+objects. Namespace basic asm in PA29 produces them with internal names and
+`object_root=yes`, so optimization retains their data. The native static
+linker's loadable image excludes them; host object emission preserves them.
+An untyped empty structured initializer is permitted for these forms and
+contributes zero bytes with byte alignment, rather than a minimum-sized object.
 
 `storage=readonly` means that no code writes the object once it is statically
 initialized; a program that writes it has undefined behavior. A back end may
@@ -249,6 +258,7 @@ The currently defined role values are:
   - `bad_cast`
   - `bad_typeid`
   - `bad_array_new_length`
+  - `cpu_query`
 - global roles:
   - `rtti_class`
   - `rtti_si`
@@ -261,6 +271,13 @@ listed above are singleton roles except `rtti_data`, which may describe each
 distinct runtime type-information object or category helper used by the
 program. A role must also appear on the correct top-level kind: function roles
 on functions and global roles on globals.
+
+The `cpu_query` function role identifies a compiler-owned native CPU query
+helper, declared as `void (i32, i32, ptr)` with fixed arity. Its arguments
+are the CPUID leaf, subleaf and writable storage for four consecutive
+32-bit results in EAX, EBX, ECX, EDX order. It executes the actual instruction
+and preserves callee-saved registers. PA29 uses this role for GNU CPUID
+statements; its body is supplied directly by the native backend.
 
 The `rtti_pointer` role identifies the vtable of the runtime's pointer
 type-information class. A pointer exception is caught by value: a standalone
@@ -716,7 +733,9 @@ construct begins:
   where `x + 1` begins, and the store to `y` at `int`, where the declaration
   begins. A condition's comparison and branch, and the jumps that close the
   arms, belong to the statement that tests it (`if`, `while`, `for`); the
-  destructor calls at the end of a block belong to the block's `{`.
+  destructor calls at the end of a source block belong to its closing `}`,
+  whose location the parser retains and template instantiation copies.
+  Synthetic blocks retain the enclosing construct's location.
 - Instructions outside every statement and expression take the function's
   location: the stores of incoming parameters, and the terminator that ends
   a function falling off its end (`return void`, or `unreachable` in a
@@ -731,6 +750,48 @@ A source file whose name is not a single LowIR token gets no locations.
 This metadata is semantically optional. Backends that do not yet emit
 object-file debug information may ignore it, but PA8 parsing, dumping, and
 `lowiropt` transport are expected to preserve it when present.
+
+### Source type and local metadata in hosted objects
+
+The compiler's hosted debug view additionally carries optional source-type
+facts requested by `-g` (not `-gline-tables-only` or `-g1`). They do not affect
+LowIR execution. Each record is a separate top-level item:
+
+```text
+debug_type <id> <kind> <encoding> <parent> <type> <flags> <bytes> <bit-offset> <count> <constant-bits> "<name>"
+debug_scope <id> @function <parent-scope-id>
+debug_local @function <slot-id> <type-id> [<scope-id>] "<name>" !dbg(file, line, column)
+```
+
+Type ids are consecutive from one, with zero meaning absent. References can
+point forward; parents form a tree rooted at zero. Slot ids are positions in
+the function's slot declarations, independent of display names. The local's
+location may be absent. Names are presentation strings, quoted with `\\`,
+`\"`, `\n`, `\r`, and `\t` escapes; type and variable identity never use them.
+The constant field is a signed decimal preserving its 64-bit representation.
+
+Kind numbers are: 0 unspecified, 1 fundamental, 2 pointer, 3 lvalue reference,
+4 rvalue reference, 5 array, 6 const, 7 volatile, 8 structure, 9 union,
+10 enumeration, 11 enumerator, 12 member, 13 inheritance, 14 namespace,
+15 typedef, 16 subroutine type, 17 formal parameter type, 18 static constant,
+and 19 method declaration. The referenced type is the underlying, element,
+member, base, or return type as appropriate. `bytes` describes a fundamental
+or object type, `bit-offset` a member or base, `count` an array's element count
+or bit-field width, and `constant-bits` an enumerator/static constant.
+
+Encoding numbers are 0 absent, 1 boolean, 2 signed integer, 3 signed character,
+4 unsigned integer, 5 unsigned character, 6 floating point, 7 complex, and
+8 address. Flag bits are 1 declaration, 2 bit-field, 4 polymorphic class,
+8 virtual base, 16 artificial member, 32 virtual method, and 64 scoped enum.
+The native writer consumes the supported layout facts directly, including
+bit offsets and ordinary base offsets. The current producer omits virtual-base
+entries whose location needs an additional dynamic layout expression.
+
+The reader, writer, and optimizer preserve these facts. The native backend
+maps remaining source slots to actual frame locations; optimized-away slots
+have no location. At `-O0`, and the conservative `-Og -g` debugging level,
+named source objects retain their slots and statement boundaries. `-Og`
+still publishes `__OPTIMIZE__` before command-line macro overrides.
 
 ## Structural Well-Formedness
 
@@ -1889,3 +1950,14 @@ the backend boundary to be in place before they start:
 
 Those later operations should be added as new instruction/data forms in the same IR family,
 not by replacing LowIR with a new backend boundary.
+
+Hosted source scopes use optional positive `debug_scope` ids, consecutive from
+one, with parent zero for function scope. A parent must precede its child and
+have the same function identity. An optional fourth `!dbg` operand names the
+lexical scope containing an instruction; the three-operand form has scope zero.
+A `debug_local` scope defaults to zero for older inputs. Scope identities are
+global within the program and rebased when combining LowIR files; source
+coordinates and display names do not identify scopes. Optimizers may retain
+scope origins after removing their function, and inlined instructions use the
+caller's scope. Native DWARF uses the recorded transitions to emit possibly
+discontiguous lexical block ranges and nests source locals under their block.
