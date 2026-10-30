@@ -161,6 +161,18 @@ every instruction of a body must otherwise match the reference's, in its
 order. `../pa8/lowir.md` ("What The Comparison Absorbs And What It Enforces")
 is the one list of what it absorbs and of the conventions it enforces.
 
+An odr-use of a thread-local variable defined by another translation unit goes
+through its ABI wrapper in serialized LowIR as well as in direct object
+compilation. The wrapper checks the optional weak initialization entry before
+calling it, then returns the current thread's address. A foreign definition
+with only static initialization may provide no initialization entry.
+
+A TLS definition exports its initialization entry when it has external linkage.
+Serialized LowIR preserves the same entry, per-unit ordered initialization and
+thread-exit destruction as direct objects. Template members use their shared
+ABI guard and weak initialization entry. Thread storage is destroyed before
+static storage; namespace definition order does not reverse that boundary.
+
 ### Error Handling
 
 If an error occurs during preprocessing, tokenization, parsing, semantic analysis, or LowIR

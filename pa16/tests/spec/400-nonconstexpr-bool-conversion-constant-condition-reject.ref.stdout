@@ -1,0 +1,1 @@
+ERROR: tests/spec/400-nonconstexpr-bool-conversion-constant-condition-reject.t:5:15: a call of a function that is not constexpr
