@@ -1,5 +1,7 @@
 # cppgm starter makefile
 
+include scripts/test_run_id.mk
+
 DEFAULT_BUILD_JOBS = $(shell getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
 HOST_UNAME_S = $(shell uname -s)
 ifeq ($(findstring -j,$(MAKEFLAGS)),)
@@ -289,7 +291,9 @@ test-report-nobuild:
 	export CPPGM_BUILD_TEST_TIMEOUT_SEC=$(TEST_REPORT_BUILD_TIMEOUT_SEC); \
 	ordered="$(ORDERED)"; \
 	tmpdir=$$(mktemp -d); \
-	cleanup() { rm -f pa*/.test_failed .test_counts; rm -rf "$$tmpdir"; }; \
+	parent_counts_file="$${CPPGM_TEST_COUNTS_FILE-}"; \
+	export CPPGM_TEST_COUNTS_FILE="$$tmpdir/counts"; \
+	cleanup() { rm -f pa*/"$$CPPGM_TEST_FAILURE_MARKER"; rm -rf "$$tmpdir"; }; \
 	interrupt() { \
 		if [ -n "$$output_pid" ]; then \
 			kill -TERM "$$output_pid" 2>/dev/null || true; \
@@ -305,7 +309,7 @@ test-report-nobuild:
 	}; \
 	trap 'cleanup' EXIT; \
 	trap 'interrupt' INT TERM; \
-	rm -f pa*/.test_failed .test_counts; \
+	rm -f pa*/"$$CPPGM_TEST_FAILURE_MARKER"; \
 	printf '%s\n' $(ACTIVE_TEST_REPORT_PAS) > "$$tmpdir/pas.list"; \
 	xargs -P$(TEST_REPORT_ASSIGNMENT_JOBS) -I{} /bin/bash -lc '\
 		dir="$$1"; \
@@ -333,7 +337,7 @@ test-report-nobuild:
 		if [ -f "$$tmpdir/$$dir.out" ] && [ ! -f "$$tmpdir/$$dir.printed" ]; then \
 			if [ ! -f "$$tmpdir/$$dir.status" ] || \
 				[ "$$(cat "$$tmpdir/$$dir.status")" -ne 0 ] || \
-				[ -f "$$dir/.test_failed" ]; then \
+				[ -f "$$dir/$$CPPGM_TEST_FAILURE_MARKER" ]; then \
 				cat "$$tmpdir/$$dir.out"; \
 			fi; \
 			: > "$$tmpdir/$$dir.printed"; \
@@ -365,9 +369,12 @@ test-report-nobuild:
 	for dir in $(ACTIVE_TEST_REPORT_PAS); do \
 		emit_completed_output "$$dir"; \
 	done; \
-	passed=$$(awk '{s+=$$1} END {print s}' .test_counts 2>/dev/null || echo 0); \
-	total=$$(awk '{s+=$$2} END {print s}' .test_counts 2>/dev/null || echo 0); \
-	if ls pa*/.test_failed 1>/dev/null 2>&1; then \
+	passed=$$(awk '{s+=$$1} END {print s}' "$$CPPGM_TEST_COUNTS_FILE" 2>/dev/null || echo 0); \
+	total=$$(awk '{s+=$$2} END {print s}' "$$CPPGM_TEST_COUNTS_FILE" 2>/dev/null || echo 0); \
+	if [ -n "$$parent_counts_file" ]; then \
+		printf '%s %s\n' "$$passed" "$$total" >> "$$parent_counts_file"; \
+	fi; \
+	if [ "$$passed" -ne "$$total" ] || ls pa*/"$$CPPGM_TEST_FAILURE_MARKER" 1>/dev/null 2>&1; then \
 		echo "===== TEST SUMMARY: $$passed / $$total TESTS PASSED ====="; \
 		exit 1; \
 	elif [ "$$xargs_status" -ne 0 ]; then \
@@ -397,7 +404,7 @@ clean:
 	@for dir in $(sort $(ALL_PAS)); do \
 		$(MAKE) -C $$dir clean || exit 1; \
 	done
-	-rm -f pa*/.test_failed .test_counts
+	-rm -f pa*/.test_failed* .test_counts*
 	-rmdir $(DEV_BUILD_LOCK) 2>/dev/null || true
 
 $(ALL_PAS):
