@@ -311,7 +311,7 @@ test-report-nobuild:
 	trap 'interrupt' INT TERM; \
 	rm -f pa*/"$$CPPGM_TEST_FAILURE_MARKER"; \
 	printf '%s\n' $(ACTIVE_TEST_REPORT_PAS) > "$$tmpdir/pas.list"; \
-	xargs -P$(TEST_REPORT_ASSIGNMENT_JOBS) -I{} /bin/bash -lc '\
+	xargs -P$(TEST_REPORT_ASSIGNMENT_JOBS) -I{} /bin/bash -c '\
 		dir="$$1"; \
 		echo "===== $$dir =====" > "$$2/$$dir.out"; \
 		status=0; \
