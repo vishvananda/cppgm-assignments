@@ -12,9 +12,16 @@ edges. Incorrect use information makes even a redundant-copy removal unsafe.
 
 For O1, small local rewrites are useful: remove identity copies, forward a
 value into its next use, fold a cheap address or immediate, and eliminate a
-jump to the next block. Stop propagation at a conflicting definition or
-clobber. Preserve volatile effects, exception boundaries and debug locations
-when replacing instructions.
+jump to the next block. A constant added to an index belongs in the
+displacement when only addresses read the sum: `p[i-1]` and `p[i+1]` then
+share `i`, and neither needs a register or an addition of its own. Stop
+propagation at a conflicting definition or clobber. Preserve volatile effects,
+exception boundaries and debug locations when replacing instructions.
+
+Recognize what the lowering leaves behind. PA29's `__builtin_fabs` reaches the
+backend as a copy to an integer, a mask and a copy back; the course solution
+selects `fabs` instead when nothing else reads the mask, clearing the sign in
+the XMM register.
 
 For O2, compute liveness across blocks and calls, and give registers to the
 values that live across blocks. The bounds can be met by a small allocator,
@@ -30,6 +37,13 @@ that paid there in the course solution:
   fails, split it: keep the register outside a loop it crosses without a use,
   or outside just the blocks that clobber or crowd it, rather than giving the
   value a frame home everywhere.
+- Allocate floating values as carefully as integers. Every XMM register except
+  your scratch can hold one, though none survives a call. SSE arithmetic
+  overwrites its first operand, so a result that takes the register of a first
+  operand dying there needs no copy. A subtraction or division cannot do that
+  with its second operand, which copying the first would destroy. In the
+  floating-point loops profiled for this, reloads and copies were the largest
+  difference from GCC's code.
 - Let a phi's sources and result share a register when their ranges do not
   overlap, so its edge transfers move nothing. A transfer on a conditional
   edge is executed in that edge's block, not at the end of the predecessor.
