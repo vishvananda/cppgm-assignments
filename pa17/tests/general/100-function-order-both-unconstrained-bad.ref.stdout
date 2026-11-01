@@ -1,0 +1,1 @@
+ERROR: tests/general/100-function-order-both-unconstrained-bad.t:8:9: ambiguous call to overloaded function

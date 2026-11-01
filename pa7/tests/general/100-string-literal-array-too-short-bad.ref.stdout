@@ -1,0 +1,1 @@
+ERROR: tests/general/100-string-literal-array-too-short-bad.t:3:6: string literal too long for the array

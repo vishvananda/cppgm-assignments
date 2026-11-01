@@ -1,0 +1,1 @@
+ERROR: tests/general/100-member-function-deduced-through-object-mixed-bad.t:14:2: no viable function for the call
