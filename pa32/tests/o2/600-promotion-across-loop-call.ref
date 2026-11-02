@@ -5,9 +5,10 @@ function @call_in_loop(%values : ptr, %count : i32, %scale : i32) -> i32 [bindin
     jump ^for_cond_1
 
   block ^for_cond_1:
-    %t1 = phi i32 [^entry: 0, ^for_body_2: %t17]
+    %t1 = phi i64 [^entry: 0, ^for_body_2: %t18]
     %t2 = phi i32 [^entry: 0, ^for_body_2: %t15]
-    %t3 = cmp lt i32 %t1, %count
+    %t4 = convert trunc exact i32 i64 %t1
+    %t3 = cmp lt i32 %t4, %count
     branch %t3, ^for_body_2, ^for_end_4
 
   block ^for_body_2:
@@ -17,7 +18,7 @@ function @call_in_loop(%values : ptr, %count : i32, %scale : i32) -> i32 [bindin
     %t12 = call i32 @observe(%t9)
     %t14 = binary add nowrap i32 %t9, %t12
     %t15 = binary add nowrap i32 %t14, %t2
-    %t17 = binary add nowrap i32 %t1, 1
+    %t18 = binary add nowrap i64 %t1, 1
     jump ^for_cond_1
 
   block ^for_end_4:

@@ -1,0 +1,1 @@
+ERROR: exact requires a trunc to an integer type in function @f at tests/spec/300-bad-exact-on-floating-conversion.t:3

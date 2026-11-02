@@ -1,0 +1,645 @@
+global @seen : obj<8x8> = {
+  zero 8
+}
+
+function @keep(%p : ptr) -> void [no_inline=yes] {
+  block ^entry:
+    store ptr %p, @seen
+    return void
+}
+function @opaque(%v : i64) -> i64 [no_inline=yes] {
+  block ^entry:
+    %r = binary add i64 %v, 3
+    return i64 %r
+}
+function @eight_passes(%k : i64) -> i64 [no_inline=yes] {
+  slot $s : obj<8x8>
+
+  block ^entry:
+    %p = addr $s
+    call void @keep(%p)
+    %t2 = binary mul i64 %k, %k
+    %t3 = binary sub i64 %t2, %k
+    %t4 = binary mul i64 %k, %t3
+    %t5 = binary add i64 %t4, 1
+    %t6 = binary mul i64 %k, %t5
+    %t7 = binary sub i64 %t6, %k
+    %t8 = binary mul i64 %k, %t7
+    %t9 = binary add i64 %t8, 1
+    %t10 = binary mul i64 %k, %t9
+    %t11 = binary sub i64 %t10, %k
+    %t12 = binary mul i64 %k, %t11
+    %t13 = binary add i64 %t12, 1
+    %t14 = binary mul i64 %k, %t13
+    %t15 = binary sub i64 %t14, %k
+    %t16 = binary mul i64 %k, %t15
+    %t17 = binary add i64 %t16, 1
+    %t18 = binary mul i64 %k, %t17
+    %t19 = binary sub i64 %t18, %k
+    %t20 = binary mul i64 %k, %t19
+    %t21 = binary add i64 %t20, 1
+    %t22 = binary mul i64 %k, %t21
+    %t23 = binary sub i64 %t22, %k
+    %t24 = binary mul i64 %k, %t23
+    %t25 = binary add i64 %t24, 1
+    %t26 = binary mul i64 %k, %t25
+    %t27 = binary sub i64 %t26, %k
+    %t28 = binary mul i64 %k, %t27
+    %t29 = binary add i64 %t28, 1
+    store i64 %t29, %p
+    %t30 = binary mul i64 %k, %t29
+    %t31 = binary sub i64 %t30, %k
+    %t32 = binary mul i64 %k, %t31
+    %t33 = binary add i64 %t32, 1
+    %r = binary add i64 %t29, %t33
+    return i64 %r
+}
+function @nine_passes(%k : i64) -> i64 [no_inline=yes] {
+  slot $s : obj<8x8>
+
+  block ^entry:
+    %p = addr $s
+    call void @keep(%p)
+    jump ^body
+
+  block ^body:
+    %t2 = phi i64 [^body: %out, ^entry: %k]
+    %t3 = phi i64 [^body: %next, ^entry: 0]
+    %v0 = binary mul i64 %k, %t2
+    %v1 = binary sub i64 %v0, %k
+    %v2 = binary mul i64 %k, %v1
+    %out = binary add i64 %v2, 1
+    %next = binary add i64 %t3, 1
+    %t9 = cmp lt i64 %next, 9
+    branch %t9, ^body, ^loop_exit_2
+
+  block ^loop_exit_2:
+    %t10 = addr $s
+    store i64 %t2, %t10
+    %r = binary add i64 %t2, %out
+    return i64 %r
+}
+function @five_passes_within_size(%k : i64) -> i64 [no_inline=yes] {
+  slot $s : obj<8x8>
+
+  block ^entry:
+    %p = addr $s
+    call void @keep(%p)
+    %t2 = binary mul i64 %k, %k
+    %t3 = binary sub i64 %t2, %k
+    %t4 = binary mul i64 %k, %t3
+    %t5 = binary sub i64 %t4, %k
+    %t6 = binary mul i64 %k, %t5
+    %t7 = binary sub i64 %t6, %k
+    %t8 = binary mul i64 %k, %t7
+    %t9 = binary sub i64 %t8, %k
+    %t10 = binary mul i64 %k, %t9
+    %t11 = binary sub i64 %t10, %k
+    %t12 = binary mul i64 %k, %t11
+    %t13 = binary sub i64 %t12, %k
+    %t14 = binary mul i64 %k, %t13
+    %t15 = binary sub i64 %t14, %k
+    %t16 = binary mul i64 %k, %t15
+    %t17 = binary sub i64 %t16, %k
+    %t18 = binary mul i64 %k, %t17
+    %t19 = binary sub i64 %t18, %k
+    %t20 = binary mul i64 %k, %t19
+    %t21 = binary sub i64 %t20, %k
+    %t22 = binary mul i64 %k, %t21
+    %t23 = binary sub i64 %t22, %k
+    %t24 = binary mul i64 %k, %t23
+    %t25 = binary sub i64 %t24, %k
+    %t26 = binary mul i64 %k, %t25
+    %t27 = binary sub i64 %t26, %k
+    %t28 = binary mul i64 %k, %t27
+    %t29 = binary sub i64 %t28, %k
+    %t30 = binary mul i64 %k, %t29
+    %t31 = binary sub i64 %t30, %k
+    %t32 = binary mul i64 %k, %t31
+    %t33 = binary sub i64 %t32, %k
+    %t34 = binary mul i64 %k, %t33
+    %t35 = binary sub i64 %t34, %k
+    %t36 = binary mul i64 %k, %t35
+    %t37 = binary sub i64 %t36, %k
+    %t38 = binary mul i64 %k, %t37
+    %t39 = binary sub i64 %t38, %k
+    %t40 = binary mul i64 %k, %t39
+    %t41 = binary sub i64 %t40, %k
+    %t42 = binary mul i64 %k, %t41
+    %t43 = binary sub i64 %t42, %k
+    %t44 = binary mul i64 %k, %t43
+    %t45 = binary sub i64 %t44, %k
+    %t46 = binary mul i64 %k, %t45
+    %t47 = binary sub i64 %t46, %k
+    %t48 = binary mul i64 %k, %t47
+    %t49 = binary sub i64 %t48, %k
+    %t50 = binary mul i64 %k, %t49
+    %t51 = binary sub i64 %t50, %k
+    %t52 = binary mul i64 %k, %t51
+    %t53 = binary sub i64 %t52, %k
+    %t54 = binary mul i64 %k, %t53
+    %t55 = binary sub i64 %t54, %k
+    %t56 = binary mul i64 %k, %t55
+    %t57 = binary sub i64 %t56, %k
+    %t58 = binary mul i64 %k, %t57
+    %t59 = binary sub i64 %t58, %k
+    %t60 = binary mul i64 %k, %t59
+    %t61 = binary sub i64 %t60, %k
+    %t62 = binary mul i64 %k, %t61
+    %t63 = binary sub i64 %t62, %k
+    %t64 = binary mul i64 %k, %t63
+    %t65 = binary sub i64 %t64, %k
+    %t66 = binary mul i64 %k, %t65
+    %t67 = binary sub i64 %t66, %k
+    %t68 = binary mul i64 %k, %t67
+    %t69 = binary sub i64 %t68, %k
+    %t70 = binary mul i64 %k, %t69
+    %t71 = binary sub i64 %t70, %k
+    %t72 = binary mul i64 %k, %t71
+    %t73 = binary sub i64 %t72, %k
+    %t74 = binary mul i64 %k, %t73
+    %t75 = binary sub i64 %t74, %k
+    %t76 = binary mul i64 %k, %t75
+    %t77 = binary sub i64 %t76, %k
+    %t78 = binary mul i64 %k, %t77
+    %t79 = binary sub i64 %t78, %k
+    %t80 = binary mul i64 %k, %t79
+    %t81 = binary sub i64 %t80, %k
+    %t82 = binary mul i64 %k, %t81
+    %t83 = binary add i64 %t82, 1
+    %t84 = binary mul i64 %k, %t83
+    %t85 = binary sub i64 %t84, %k
+    %t86 = binary mul i64 %k, %t85
+    %t87 = binary sub i64 %t86, %k
+    %t88 = binary mul i64 %k, %t87
+    %t89 = binary sub i64 %t88, %k
+    %t90 = binary mul i64 %k, %t89
+    %t91 = binary sub i64 %t90, %k
+    %t92 = binary mul i64 %k, %t91
+    %t93 = binary sub i64 %t92, %k
+    %t94 = binary mul i64 %k, %t93
+    %t95 = binary sub i64 %t94, %k
+    %t96 = binary mul i64 %k, %t95
+    %t97 = binary sub i64 %t96, %k
+    %t98 = binary mul i64 %k, %t97
+    %t99 = binary sub i64 %t98, %k
+    %t100 = binary mul i64 %k, %t99
+    %t101 = binary sub i64 %t100, %k
+    %t102 = binary mul i64 %k, %t101
+    %t103 = binary sub i64 %t102, %k
+    %t104 = binary mul i64 %k, %t103
+    %t105 = binary sub i64 %t104, %k
+    %t106 = binary mul i64 %k, %t105
+    %t107 = binary sub i64 %t106, %k
+    %t108 = binary mul i64 %k, %t107
+    %t109 = binary sub i64 %t108, %k
+    %t110 = binary mul i64 %k, %t109
+    %t111 = binary sub i64 %t110, %k
+    %t112 = binary mul i64 %k, %t111
+    %t113 = binary sub i64 %t112, %k
+    %t114 = binary mul i64 %k, %t113
+    %t115 = binary sub i64 %t114, %k
+    %t116 = binary mul i64 %k, %t115
+    %t117 = binary sub i64 %t116, %k
+    %t118 = binary mul i64 %k, %t117
+    %t119 = binary sub i64 %t118, %k
+    %t120 = binary mul i64 %k, %t119
+    %t121 = binary sub i64 %t120, %k
+    %t122 = binary mul i64 %k, %t121
+    %t123 = binary sub i64 %t122, %k
+    %t124 = binary mul i64 %k, %t123
+    %t125 = binary sub i64 %t124, %k
+    %t126 = binary mul i64 %k, %t125
+    %t127 = binary sub i64 %t126, %k
+    %t128 = binary mul i64 %k, %t127
+    %t129 = binary sub i64 %t128, %k
+    %t130 = binary mul i64 %k, %t129
+    %t131 = binary sub i64 %t130, %k
+    %t132 = binary mul i64 %k, %t131
+    %t133 = binary sub i64 %t132, %k
+    %t134 = binary mul i64 %k, %t133
+    %t135 = binary sub i64 %t134, %k
+    %t136 = binary mul i64 %k, %t135
+    %t137 = binary sub i64 %t136, %k
+    %t138 = binary mul i64 %k, %t137
+    %t139 = binary sub i64 %t138, %k
+    %t140 = binary mul i64 %k, %t139
+    %t141 = binary sub i64 %t140, %k
+    %t142 = binary mul i64 %k, %t141
+    %t143 = binary sub i64 %t142, %k
+    %t144 = binary mul i64 %k, %t143
+    %t145 = binary sub i64 %t144, %k
+    %t146 = binary mul i64 %k, %t145
+    %t147 = binary sub i64 %t146, %k
+    %t148 = binary mul i64 %k, %t147
+    %t149 = binary sub i64 %t148, %k
+    %t150 = binary mul i64 %k, %t149
+    %t151 = binary sub i64 %t150, %k
+    %t152 = binary mul i64 %k, %t151
+    %t153 = binary sub i64 %t152, %k
+    %t154 = binary mul i64 %k, %t153
+    %t155 = binary sub i64 %t154, %k
+    %t156 = binary mul i64 %k, %t155
+    %t157 = binary sub i64 %t156, %k
+    %t158 = binary mul i64 %k, %t157
+    %t159 = binary sub i64 %t158, %k
+    %t160 = binary mul i64 %k, %t159
+    %t161 = binary sub i64 %t160, %k
+    %t162 = binary mul i64 %k, %t161
+    %t163 = binary sub i64 %t162, %k
+    %t164 = binary mul i64 %k, %t163
+    %t165 = binary add i64 %t164, 1
+    %t166 = binary mul i64 %k, %t165
+    %t167 = binary sub i64 %t166, %k
+    %t168 = binary mul i64 %k, %t167
+    %t169 = binary sub i64 %t168, %k
+    %t170 = binary mul i64 %k, %t169
+    %t171 = binary sub i64 %t170, %k
+    %t172 = binary mul i64 %k, %t171
+    %t173 = binary sub i64 %t172, %k
+    %t174 = binary mul i64 %k, %t173
+    %t175 = binary sub i64 %t174, %k
+    %t176 = binary mul i64 %k, %t175
+    %t177 = binary sub i64 %t176, %k
+    %t178 = binary mul i64 %k, %t177
+    %t179 = binary sub i64 %t178, %k
+    %t180 = binary mul i64 %k, %t179
+    %t181 = binary sub i64 %t180, %k
+    %t182 = binary mul i64 %k, %t181
+    %t183 = binary sub i64 %t182, %k
+    %t184 = binary mul i64 %k, %t183
+    %t185 = binary sub i64 %t184, %k
+    %t186 = binary mul i64 %k, %t185
+    %t187 = binary sub i64 %t186, %k
+    %t188 = binary mul i64 %k, %t187
+    %t189 = binary sub i64 %t188, %k
+    %t190 = binary mul i64 %k, %t189
+    %t191 = binary sub i64 %t190, %k
+    %t192 = binary mul i64 %k, %t191
+    %t193 = binary sub i64 %t192, %k
+    %t194 = binary mul i64 %k, %t193
+    %t195 = binary sub i64 %t194, %k
+    %t196 = binary mul i64 %k, %t195
+    %t197 = binary sub i64 %t196, %k
+    %t198 = binary mul i64 %k, %t197
+    %t199 = binary sub i64 %t198, %k
+    %t200 = binary mul i64 %k, %t199
+    %t201 = binary sub i64 %t200, %k
+    %t202 = binary mul i64 %k, %t201
+    %t203 = binary sub i64 %t202, %k
+    %t204 = binary mul i64 %k, %t203
+    %t205 = binary sub i64 %t204, %k
+    %t206 = binary mul i64 %k, %t205
+    %t207 = binary sub i64 %t206, %k
+    %t208 = binary mul i64 %k, %t207
+    %t209 = binary sub i64 %t208, %k
+    %t210 = binary mul i64 %k, %t209
+    %t211 = binary sub i64 %t210, %k
+    %t212 = binary mul i64 %k, %t211
+    %t213 = binary sub i64 %t212, %k
+    %t214 = binary mul i64 %k, %t213
+    %t215 = binary sub i64 %t214, %k
+    %t216 = binary mul i64 %k, %t215
+    %t217 = binary sub i64 %t216, %k
+    %t218 = binary mul i64 %k, %t217
+    %t219 = binary sub i64 %t218, %k
+    %t220 = binary mul i64 %k, %t219
+    %t221 = binary sub i64 %t220, %k
+    %t222 = binary mul i64 %k, %t221
+    %t223 = binary sub i64 %t222, %k
+    %t224 = binary mul i64 %k, %t223
+    %t225 = binary sub i64 %t224, %k
+    %t226 = binary mul i64 %k, %t225
+    %t227 = binary sub i64 %t226, %k
+    %t228 = binary mul i64 %k, %t227
+    %t229 = binary sub i64 %t228, %k
+    %t230 = binary mul i64 %k, %t229
+    %t231 = binary sub i64 %t230, %k
+    %t232 = binary mul i64 %k, %t231
+    %t233 = binary sub i64 %t232, %k
+    %t234 = binary mul i64 %k, %t233
+    %t235 = binary sub i64 %t234, %k
+    %t236 = binary mul i64 %k, %t235
+    %t237 = binary sub i64 %t236, %k
+    %t238 = binary mul i64 %k, %t237
+    %t239 = binary sub i64 %t238, %k
+    %t240 = binary mul i64 %k, %t239
+    %t241 = binary sub i64 %t240, %k
+    %t242 = binary mul i64 %k, %t241
+    %t243 = binary sub i64 %t242, %k
+    %t244 = binary mul i64 %k, %t243
+    %t245 = binary sub i64 %t244, %k
+    %t246 = binary mul i64 %k, %t245
+    %t247 = binary add i64 %t246, 1
+    %t248 = binary mul i64 %k, %t247
+    %t249 = binary sub i64 %t248, %k
+    %t250 = binary mul i64 %k, %t249
+    %t251 = binary sub i64 %t250, %k
+    %t252 = binary mul i64 %k, %t251
+    %t253 = binary sub i64 %t252, %k
+    %t254 = binary mul i64 %k, %t253
+    %t255 = binary sub i64 %t254, %k
+    %t256 = binary mul i64 %k, %t255
+    %t257 = binary sub i64 %t256, %k
+    %t258 = binary mul i64 %k, %t257
+    %t259 = binary sub i64 %t258, %k
+    %t260 = binary mul i64 %k, %t259
+    %t261 = binary sub i64 %t260, %k
+    %t262 = binary mul i64 %k, %t261
+    %t263 = binary sub i64 %t262, %k
+    %t264 = binary mul i64 %k, %t263
+    %t265 = binary sub i64 %t264, %k
+    %t266 = binary mul i64 %k, %t265
+    %t267 = binary sub i64 %t266, %k
+    %t268 = binary mul i64 %k, %t267
+    %t269 = binary sub i64 %t268, %k
+    %t270 = binary mul i64 %k, %t269
+    %t271 = binary sub i64 %t270, %k
+    %t272 = binary mul i64 %k, %t271
+    %t273 = binary sub i64 %t272, %k
+    %t274 = binary mul i64 %k, %t273
+    %t275 = binary sub i64 %t274, %k
+    %t276 = binary mul i64 %k, %t275
+    %t277 = binary sub i64 %t276, %k
+    %t278 = binary mul i64 %k, %t277
+    %t279 = binary sub i64 %t278, %k
+    %t280 = binary mul i64 %k, %t279
+    %t281 = binary sub i64 %t280, %k
+    %t282 = binary mul i64 %k, %t281
+    %t283 = binary sub i64 %t282, %k
+    %t284 = binary mul i64 %k, %t283
+    %t285 = binary sub i64 %t284, %k
+    %t286 = binary mul i64 %k, %t285
+    %t287 = binary sub i64 %t286, %k
+    %t288 = binary mul i64 %k, %t287
+    %t289 = binary sub i64 %t288, %k
+    %t290 = binary mul i64 %k, %t289
+    %t291 = binary sub i64 %t290, %k
+    %t292 = binary mul i64 %k, %t291
+    %t293 = binary sub i64 %t292, %k
+    %t294 = binary mul i64 %k, %t293
+    %t295 = binary sub i64 %t294, %k
+    %t296 = binary mul i64 %k, %t295
+    %t297 = binary sub i64 %t296, %k
+    %t298 = binary mul i64 %k, %t297
+    %t299 = binary sub i64 %t298, %k
+    %t300 = binary mul i64 %k, %t299
+    %t301 = binary sub i64 %t300, %k
+    %t302 = binary mul i64 %k, %t301
+    %t303 = binary sub i64 %t302, %k
+    %t304 = binary mul i64 %k, %t303
+    %t305 = binary sub i64 %t304, %k
+    %t306 = binary mul i64 %k, %t305
+    %t307 = binary sub i64 %t306, %k
+    %t308 = binary mul i64 %k, %t307
+    %t309 = binary sub i64 %t308, %k
+    %t310 = binary mul i64 %k, %t309
+    %t311 = binary sub i64 %t310, %k
+    %t312 = binary mul i64 %k, %t311
+    %t313 = binary sub i64 %t312, %k
+    %t314 = binary mul i64 %k, %t313
+    %t315 = binary sub i64 %t314, %k
+    %t316 = binary mul i64 %k, %t315
+    %t317 = binary sub i64 %t316, %k
+    %t318 = binary mul i64 %k, %t317
+    %t319 = binary sub i64 %t318, %k
+    %t320 = binary mul i64 %k, %t319
+    %t321 = binary sub i64 %t320, %k
+    %t322 = binary mul i64 %k, %t321
+    %t323 = binary sub i64 %t322, %k
+    %t324 = binary mul i64 %k, %t323
+    %t325 = binary sub i64 %t324, %k
+    %t326 = binary mul i64 %k, %t325
+    %t327 = binary sub i64 %t326, %k
+    %t328 = binary mul i64 %k, %t327
+    %t329 = binary add i64 %t328, 1
+    store i64 %t329, %p
+    %t330 = binary mul i64 %k, %t329
+    %t331 = binary sub i64 %t330, %k
+    %t332 = binary mul i64 %k, %t331
+    %t333 = binary sub i64 %t332, %k
+    %t334 = binary mul i64 %k, %t333
+    %t335 = binary sub i64 %t334, %k
+    %t336 = binary mul i64 %k, %t335
+    %t337 = binary sub i64 %t336, %k
+    %t338 = binary mul i64 %k, %t337
+    %t339 = binary sub i64 %t338, %k
+    %t340 = binary mul i64 %k, %t339
+    %t341 = binary sub i64 %t340, %k
+    %t342 = binary mul i64 %k, %t341
+    %t343 = binary sub i64 %t342, %k
+    %t344 = binary mul i64 %k, %t343
+    %t345 = binary sub i64 %t344, %k
+    %t346 = binary mul i64 %k, %t345
+    %t347 = binary sub i64 %t346, %k
+    %t348 = binary mul i64 %k, %t347
+    %t349 = binary sub i64 %t348, %k
+    %t350 = binary mul i64 %k, %t349
+    %t351 = binary sub i64 %t350, %k
+    %t352 = binary mul i64 %k, %t351
+    %t353 = binary sub i64 %t352, %k
+    %t354 = binary mul i64 %k, %t353
+    %t355 = binary sub i64 %t354, %k
+    %t356 = binary mul i64 %k, %t355
+    %t357 = binary sub i64 %t356, %k
+    %t358 = binary mul i64 %k, %t357
+    %t359 = binary sub i64 %t358, %k
+    %t360 = binary mul i64 %k, %t359
+    %t361 = binary sub i64 %t360, %k
+    %t362 = binary mul i64 %k, %t361
+    %t363 = binary sub i64 %t362, %k
+    %t364 = binary mul i64 %k, %t363
+    %t365 = binary sub i64 %t364, %k
+    %t366 = binary mul i64 %k, %t365
+    %t367 = binary sub i64 %t366, %k
+    %t368 = binary mul i64 %k, %t367
+    %t369 = binary sub i64 %t368, %k
+    %t370 = binary mul i64 %k, %t369
+    %t371 = binary sub i64 %t370, %k
+    %t372 = binary mul i64 %k, %t371
+    %t373 = binary sub i64 %t372, %k
+    %t374 = binary mul i64 %k, %t373
+    %t375 = binary sub i64 %t374, %k
+    %t376 = binary mul i64 %k, %t375
+    %t377 = binary sub i64 %t376, %k
+    %t378 = binary mul i64 %k, %t377
+    %t379 = binary sub i64 %t378, %k
+    %t380 = binary mul i64 %k, %t379
+    %t381 = binary sub i64 %t380, %k
+    %t382 = binary mul i64 %k, %t381
+    %t383 = binary sub i64 %t382, %k
+    %t384 = binary mul i64 %k, %t383
+    %t385 = binary sub i64 %t384, %k
+    %t386 = binary mul i64 %k, %t385
+    %t387 = binary sub i64 %t386, %k
+    %t388 = binary mul i64 %k, %t387
+    %t389 = binary sub i64 %t388, %k
+    %t390 = binary mul i64 %k, %t389
+    %t391 = binary sub i64 %t390, %k
+    %t392 = binary mul i64 %k, %t391
+    %t393 = binary sub i64 %t392, %k
+    %t394 = binary mul i64 %k, %t393
+    %t395 = binary sub i64 %t394, %k
+    %t396 = binary mul i64 %k, %t395
+    %t397 = binary sub i64 %t396, %k
+    %t398 = binary mul i64 %k, %t397
+    %t399 = binary sub i64 %t398, %k
+    %t400 = binary mul i64 %k, %t399
+    %t401 = binary sub i64 %t400, %k
+    %t402 = binary mul i64 %k, %t401
+    %t403 = binary sub i64 %t402, %k
+    %t404 = binary mul i64 %k, %t403
+    %t405 = binary sub i64 %t404, %k
+    %t406 = binary mul i64 %k, %t405
+    %t407 = binary sub i64 %t406, %k
+    %t408 = binary mul i64 %k, %t407
+    %t409 = binary sub i64 %t408, %k
+    %t410 = binary mul i64 %k, %t409
+    %t411 = binary add i64 %t410, 1
+    %r = binary add i64 %t329, %t411
+    return i64 %r
+}
+function @five_passes_over_size(%k : i64) -> i64 [no_inline=yes] {
+  slot $s : obj<8x8>
+
+  block ^entry:
+    %p = addr $s
+    call void @keep(%p)
+    jump ^body
+
+  block ^body:
+    %t2 = phi i64 [^body: %out, ^entry: %k]
+    %t3 = phi i64 [^body: %next, ^entry: 0]
+    %v0 = binary mul i64 %k, %t2
+    %v1 = binary sub i64 %v0, %k
+    %v2 = binary mul i64 %k, %v1
+    %v3 = binary sub i64 %v2, %k
+    %v4 = binary mul i64 %k, %v3
+    %v5 = binary sub i64 %v4, %k
+    %v6 = binary mul i64 %k, %v5
+    %v7 = binary sub i64 %v6, %k
+    %v8 = binary mul i64 %k, %v7
+    %v9 = binary sub i64 %v8, %k
+    %v10 = binary mul i64 %k, %v9
+    %v11 = binary sub i64 %v10, %k
+    %v12 = binary mul i64 %k, %v11
+    %v13 = binary sub i64 %v12, %k
+    %v14 = binary mul i64 %k, %v13
+    %v15 = binary sub i64 %v14, %k
+    %v16 = binary mul i64 %k, %v15
+    %v17 = binary sub i64 %v16, %k
+    %v18 = binary mul i64 %k, %v17
+    %v19 = binary sub i64 %v18, %k
+    %v20 = binary mul i64 %k, %v19
+    %v21 = binary sub i64 %v20, %k
+    %v22 = binary mul i64 %k, %v21
+    %v23 = binary sub i64 %v22, %k
+    %v24 = binary mul i64 %k, %v23
+    %v25 = binary sub i64 %v24, %k
+    %v26 = binary mul i64 %k, %v25
+    %v27 = binary sub i64 %v26, %k
+    %v28 = binary mul i64 %k, %v27
+    %v29 = binary sub i64 %v28, %k
+    %v30 = binary mul i64 %k, %v29
+    %v31 = binary sub i64 %v30, %k
+    %v32 = binary mul i64 %k, %v31
+    %v33 = binary sub i64 %v32, %k
+    %v34 = binary mul i64 %k, %v33
+    %v35 = binary sub i64 %v34, %k
+    %v36 = binary mul i64 %k, %v35
+    %v37 = binary sub i64 %v36, %k
+    %v38 = binary mul i64 %k, %v37
+    %v39 = binary sub i64 %v38, %k
+    %v40 = binary mul i64 %k, %v39
+    %v41 = binary sub i64 %v40, %k
+    %v42 = binary mul i64 %k, %v41
+    %v43 = binary sub i64 %v42, %k
+    %v44 = binary mul i64 %k, %v43
+    %v45 = binary sub i64 %v44, %k
+    %v46 = binary mul i64 %k, %v45
+    %v47 = binary sub i64 %v46, %k
+    %v48 = binary mul i64 %k, %v47
+    %v49 = binary sub i64 %v48, %k
+    %v50 = binary mul i64 %k, %v49
+    %v51 = binary sub i64 %v50, %k
+    %v52 = binary mul i64 %k, %v51
+    %v53 = binary sub i64 %v52, %k
+    %v54 = binary mul i64 %k, %v53
+    %v55 = binary sub i64 %v54, %k
+    %v56 = binary mul i64 %k, %v55
+    %v57 = binary sub i64 %v56, %k
+    %v58 = binary mul i64 %k, %v57
+    %v59 = binary sub i64 %v58, %k
+    %v60 = binary mul i64 %k, %v59
+    %v61 = binary sub i64 %v60, %k
+    %v62 = binary mul i64 %k, %v61
+    %v63 = binary sub i64 %v62, %k
+    %v64 = binary mul i64 %k, %v63
+    %v65 = binary sub i64 %v64, %k
+    %v66 = binary mul i64 %k, %v65
+    %v67 = binary sub i64 %v66, %k
+    %v68 = binary mul i64 %k, %v67
+    %v69 = binary sub i64 %v68, %k
+    %v70 = binary mul i64 %k, %v69
+    %v71 = binary sub i64 %v70, %k
+    %v72 = binary mul i64 %k, %v71
+    %v73 = binary sub i64 %v72, %k
+    %v74 = binary mul i64 %k, %v73
+    %v75 = binary sub i64 %v74, %k
+    %v76 = binary mul i64 %k, %v75
+    %v77 = binary sub i64 %v76, %k
+    %v78 = binary mul i64 %k, %v77
+    %v79 = binary sub i64 %v78, %k
+    %v80 = binary mul i64 %k, %v79
+    %v81 = binary sub i64 %v80, %k
+    %out = binary add i64 %v81, 1
+    %next = binary add i64 %t3, 1
+    %t88 = cmp lt i64 %next, 5
+    branch %t88, ^body, ^loop_exit_2
+
+  block ^loop_exit_2:
+    %t89 = addr $s
+    store i64 %t2, %t89
+    %r = binary add i64 %t2, %out
+    return i64 %r
+}
+function @four_passes_with_call(%k : i64) -> i64 [no_inline=yes] {
+  block ^entry:
+    %t1 = call i64 @opaque(%k)
+    %t2 = call i64 @opaque(%t1)
+    %t3 = call i64 @opaque(%t2)
+    %t4 = call i64 @opaque(%t3)
+    return i64 %t4
+}
+function @five_passes_with_call(%k : i64) -> i64 [no_inline=yes] {
+  block ^entry:
+    jump ^body
+
+  block ^body:
+    %t1 = phi i64 [^body: %out, ^entry: %k]
+    %t2 = phi i64 [^body: %next, ^entry: 0]
+    %out = call i64 @opaque(%t1)
+    %next = binary add i64 %t2, 1
+    %t5 = cmp lt i64 %next, 5
+    branch %t5, ^body, ^exit
+
+  block ^exit:
+    %t6 = phi i64 [^body: %out]
+    return i64 %t6
+}
+function @main() -> i32 [role=entry] {
+  block ^entry:
+    %a = call i64 @eight_passes(1)
+    %b = call i64 @nine_passes(1)
+    %c = call i64 @five_passes_within_size(1)
+    %d = call i64 @five_passes_over_size(1)
+    %e = call i64 @four_passes_with_call(1)
+    %f = call i64 @five_passes_with_call(1)
+    %s1 = binary add i64 %a, %b
+    %s2 = binary add i64 %c, %s1
+    %s3 = binary add i64 %d, %s2
+    %s4 = binary add i64 %e, %s3
+    %s5 = binary add i64 %f, %s4
+    %out = convert trunc i32 i64 %s5
+    return i32 %out
+}

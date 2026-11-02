@@ -980,6 +980,15 @@ null pointer constant and is valid with `ptr`. `inf` and `nan` are the floating 
 and quiet NaN, and `snan` is the signalling NaN; each may also be written
 in uppercase as `INFINITY`, `NAN`, or `SNAN`, and `inf` may carry a leading `-`.
 
+A NaN may state its payload in hexadecimal: `nan(0x12)`, `-snanf(0x3)`
+or `nanL(0x55)`. The payload supplies the fraction bits below the quiet bit;
+it must fit those bits, and a signalling NaN needs a nonzero payload. The
+sign and quiet/signalling state come from the spelling. A writer preserves
+nondefault payloads, including a value produced by an optimizer's bit copy.
+Numeric operations need not preserve a particular NaN payload, but a copy of
+the representation does. Omitting the payload selects the format's default
+NaN of that sign and kind.
+
 `f80` storage is 16 bytes at 16-byte alignment wherever LowIR lays it out: a
 slot, a structured global's item, the stride of `index f80`. The first 10 bytes
 carry the x87 extended value and the trailing 6 bytes are zero padding. The
@@ -1048,8 +1057,8 @@ currently supported projection kinds are:
 `array_element` labels the address of an array element (`p[i]`), and `field` the
 address of a member (`s.x`, `p->x`, `obj.*pm`). When omitted, `index` is plain
 pointer arithmetic; already-lowered source origins such as base-subobject selection
-have no spelling. No pass of the course solution draws a conclusion from the label, so a
-consumer may not depend on it, a producer may omit it, and the comparison ignores it.
+have no spelling. The label supplies no semantic proof: a consumer may not
+depend on it, a producer may omit it, and the comparison ignores it.
 
 `typed` is an instruction fact (see Instruction Facts below).
 
@@ -1126,7 +1135,7 @@ is required.
 %t = binary <op> [nowrap] [exact] <type> <lhs>, <rhs>
 %t = cmp <pred> <type> <lhs>, <rhs>
 %t = select <type> <cond>, <a>, <b>
-%t = convert <op> <dst-type> <src-type> <value>
+%t = convert <op> [exact] <dst-type> <src-type> <value>
 %t = atomic_add_fetch <type> <ptr-value>, <delta>, <order>
 atomic_thread_fence <order>
 atomic_signal_fence <order>
@@ -1139,6 +1148,7 @@ Required PA8 unary operators:
 - `bitnot`
 - `bswap` for `i16`, `i32`, and `i64`
 - `ctz` and `clz` for `i32`, `u32`, and `i64`
+- `sqrt` for `f32` and `f64`
 
 Required PA8 binary operators:
 
@@ -1242,6 +1252,14 @@ them, an operand narrower than 32 bits widened to `u32` first and, for
 `__builtin_ctzg` then `select` their second operand for a zero operand.
 x86-64 lowers them to `bsf`, and to `bsr` followed by an `xor` with the
 width less one.
+
+`unary sqrt` is the IEEE square root of an `f32` or `f64`, correctly rounded.
+It has no other effect: unlike the C library's `sqrt`, it does not set `errno`.
+The C++ lowering does not emit it. An optimizer may replace a library call
+when the operand cannot be negative, or use it on a guarded path while
+retaining the library call for negative operands and its `errno` effect.
+The operation itself also accepts negative values and NaNs with IEEE results.
+x86-64 lowers it to `sqrtss` or `sqrtsd`.
 
 Array-to-pointer and function-to-pointer decay use the ordinary pointer value
 produced by `addr`, `index`, a parameter, or `copy ptr`. There is no decay-specific
@@ -1426,7 +1444,7 @@ to erase the call: an `-O0` consumer executes the call and all ordinary source
 cleanup exactly as written.  The permission is invalid on value-returning or
 indirect calls and does not classify an unmarked call by its symbol spelling.
 The C++ lowering states it by the rule in Facts The C++ Lowering States below;
-consuming it is optional, and the course solution's optimizer does not.
+consuming it is optional.
 
 ### Terminators
 
@@ -1563,6 +1581,7 @@ Three keywords state facts about an instruction:
 store typed i32 %n, %count
 %t = binary add nowrap i32 %i, 1
 %q = binary div exact i64 %bytes, 12
+%n = convert trunc exact i32 i64 %wide
 ```
 
 - `typed`, on a `load` or `store` of a pointer, a floating type or an integer
@@ -1579,13 +1598,19 @@ store typed i32 %n, %count
   operation's type at the type's signedness. `i8`, `i16`, `i32`, `i64` and
   `i128` are signed; `u8`, `u16` and `u32` are unsigned.
 - `exact`, on an integer `div` or `udiv`: the dividend is a multiple of the
-  divisor; on `shr` or `ushr`: no set bit is shifted out.
+  divisor; on `shr` or `ushr`: no set bit is shifted out; on `convert trunc`
+  to an integer type: the value is representable in that type at its
+  signedness.
 
 A fact holds every time its instruction runs. A program in which one does
 not hold has undefined behavior, which is what lets a consumer rely on it.
 The validator rejects a fact on any other instruction or type. The keywords
-follow `volatile` on loads and stores and the operation on `binary`, in the
-order shown.
+follow `volatile` on loads and stores and the operation on `binary` and
+`convert`, in the order shown. An exact truncation states that extending the
+result with the destination's signedness recovers the original value; it does
+not change truncation's value semantics. The C++ lowering does not state this
+fact for an ordinary cast. An optimizer may prove it when widening a loop
+counter whose narrow value cannot overflow.
 
 The C++ lowering (PA10 onward) states facts by these rules, and the
 comparison checks them as part of the instruction:
@@ -1597,7 +1622,10 @@ comparison checks them as part of the instruction:
   every `index` or `copy` of such an address. A pointer to a union member
   that is stored and loaded again is an ordinary pointer, and accesses
   through it are typed: GCC and clang allow punning through a union, not
-  through pointers into one.
+  through pointers into one. A member of a class with GNU `may_alias` is
+  treated as a union member. A `may_alias` typedef of a scalar names no new
+  type, so no access of that scalar's LowIR type in the unit is typed. With
+  `-fno-strict-aliasing` no access is typed.
 - `nowrap` on the `add`, `sub` and `mul` that compute the source's `+`, `-`
   and `*`, the compound assignments `+=`, `-=` and `*=`, and the steps of
   `++` and `--`, when the operation's type after the usual arithmetic
@@ -1939,7 +1967,8 @@ follows them, and so must yours.
   enumeration to its underlying type, a bit-field read completing to its
   declared type, a `nullptr` materialized as a `ptr` temporary) is written
   `copy <type> <value>`; it is not omitted and it is not written as
-  `convert`.
+  `convert`. An optimizer may also write a `copy` between `f32` and a 32-bit
+  integer, or `f64` and `i64`: it moves the bits and converts nothing.
 - Instruction facts are part of the instruction. `typed`, `nowrap` and
   `exact` follow the production rules of Instruction Facts above; an output
   that misses one, or states one the rules do not, differs from the

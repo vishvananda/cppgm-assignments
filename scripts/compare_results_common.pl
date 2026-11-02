@@ -189,7 +189,8 @@ sub canonicalize_machine_ir
 	$data =~ s/\[([A-Za-z_][A-Za-z0-9_]*)\+([A-Za-z_][A-Za-z0-9_]*)(?:\*([1248]))?([+-])(\d+)\]/canonical_machine_ir_indexed_memory_operand($1, $2, $3, $4, $5, \%state)/ge;
 	$data =~ s/\[([A-Za-z_][A-Za-z0-9_]*)([+-])(\d+)\]/canonical_machine_ir_memory_operand($1, $2, $3, \%state)/ge;
 	$data =~ s/\b(rbx|r10|r11|r12|r13|r14|r15)\b/canonical_machine_ir_free_gpr($1, \%state)/ge;
-	$data =~ s/\b(xmm2|xmm3|xmm4|xmm5|xmm6|xmm7)\b/canonical_machine_ir_free_xmm($1, \%state)/ge;
+	# (A canonical name is read again as an oracle: it stays as it is.)
+	$data =~ s/(?<!<)\b(xmm2|xmm3|xmm4|xmm5|xmm6|xmm7)\b/canonical_machine_ir_free_xmm($1, \%state)/ge;
 	return $data;
 }
 
@@ -1824,7 +1825,7 @@ sub validate_lowir_instruction
 	{
 		return 0;
 	}
-	if ($line =~ /^%([A-Za-z0-9_]+)\s*=\s*call\s+($type_pattern)\s+@([A-Za-z0-9_]+)\((.*?)\)(.*)$/)
+	if ($line =~ /^%([A-Za-z0-9_]+)\s*=\s*call\s+($type_pattern)\s+@([A-Za-z0-9_]+)\(((?:[^()]|\([^()]*\))*)\)(.*)$/)
 	{
 		my ($dst, $ret_type, $callee, $arg_text, $suffix) = ($1, $2, $3, $4, $5);
 		my @args = split_lowir_args($arg_text);
@@ -1891,7 +1892,7 @@ sub validate_lowir_instruction
 		$state->{temps}{$dst} = $ret_type;
 		return 0;
 	}
-	if ($line =~ /^call\s+void\s+@([A-Za-z0-9_]+)\((.*?)\)(.*)$/)
+	if ($line =~ /^call\s+void\s+@([A-Za-z0-9_]+)\(((?:[^()]|\([^()]*\))*)\)(.*)$/)
 	{
 		my ($callee, $arg_text, $suffix) = ($1, $2, $3);
 		my @args = split_lowir_args($arg_text);
@@ -1962,7 +1963,7 @@ sub validate_lowir_instruction
 		}
 		return 0;
 	}
-	if ($line =~ /^%([A-Za-z0-9_]+)\s*=\s*call\s+($type_pattern)\s+(.+?)\((.*?)\)(.*)$/)
+	if ($line =~ /^%([A-Za-z0-9_]+)\s*=\s*call\s+($type_pattern)\s+(.+?)\(((?:[^()]|\([^()]*\))*)\)(.*)$/)
 	{
 		my ($dst, $ret_type, $callee, $arg_text, $suffix) = ($1, $2, $3, $4, $5);
 		validate_lowir_pointer_operand($callee, $state, $errors, "$context indirect call");
@@ -1995,7 +1996,7 @@ sub validate_lowir_instruction
 		$state->{temps}{$dst} = $ret_type;
 		return 0;
 	}
-	if ($line =~ /^call\s+void\s+(.+?)\((.*?)\)(.*)$/)
+	if ($line =~ /^call\s+void\s+(.+?)\(((?:[^()]|\([^()]*\))*)\)(.*)$/)
 	{
 		validate_lowir_pointer_operand($1, $state, $errors, "$context indirect call");
 		my @args = split_lowir_args($2);

@@ -28,58 +28,47 @@ function @unroll_zero_trip() -> i64 [no_inline=yes] {
 }
 function @keep_five_trips() -> i64 [no_inline=yes] {
   block ^entry:
-    jump ^header
-
-  block ^header:
-    %i = phi i64 [^entry: 0, ^body: %next]
-    %more = cmp lt i64 %i, 5
-    branch %more, ^body, ^exit
+    jump ^body
 
   block ^body:
-    call void @touch(%i)
-    %next = binary add i64 %i, 1
-    jump ^header
+    %t1 = phi i64 [^body: %next, ^entry: 0]
+    call void @touch(%t1)
+    %next = binary add i64 %t1, 1
+    %t3 = cmp lt i64 %next, 5
+    branch %t3, ^body, ^exit
 
   block ^exit:
-    return i64 %i
+    %t4 = phi i64 [^body: %next]
+    return i64 %t4
 }
 function @keep_branching_body(%choose : i64) -> i64 [no_inline=yes] {
   block ^entry:
-    jump ^header
-
-  block ^header:
-    %i = phi i64 [^entry: 0, ^latch: %next]
-    %more = cmp lt i64 %i, 2
-    branch %more, ^body, ^exit
+    branch %choose, ^body, ^loop_preheader_2
 
   block ^body:
-    branch %choose, ^left, ^right
-
-  block ^left:
+    %t1 = phi i64 [^body: %next, ^entry: 0]
     call void @touch(1)
-    jump ^latch
+    %next = binary add i64 %t1, 1
+    %t3 = cmp lt i64 %next, 2
+    branch %t3, ^body, ^exit
 
-  block ^right:
+  block ^loop_preheader_2:
+    %t4 = phi i64 [^loop_preheader_2: %t5, ^entry: 0]
     call void @touch(2)
-    jump ^latch
-
-  block ^latch:
-    %next = binary add i64 %i, 1
-    jump ^header
+    %t5 = binary add i64 %t4, 1
+    %t6 = cmp lt i64 %t5, 2
+    branch %t6, ^loop_preheader_2, ^exit
 
   block ^exit:
-    return i64 %i
+    %t7 = phi i64 [^body: %next, ^loop_preheader_2: %t5]
+    return i64 %t7
 }
 function @keep_clone_budget() -> i64 [no_inline=yes] {
   block ^entry:
-    jump ^header
-
-  block ^header:
-    %i = phi i64 [^entry: 0, ^body: %next]
-    %more = cmp lt i64 %i, 4
-    branch %more, ^body, ^exit
+    jump ^body
 
   block ^body:
+    %t1 = phi i64 [^body: %next, ^entry: 0]
     call void @touch(0)
     call void @touch(1)
     call void @touch(2)
@@ -96,9 +85,11 @@ function @keep_clone_budget() -> i64 [no_inline=yes] {
     call void @touch(13)
     call void @touch(14)
     call void @touch(15)
-    %next = binary add i64 %i, 1
-    jump ^header
+    %next = binary add i64 %t1, 1
+    %t3 = cmp lt i64 %next, 4
+    branch %t3, ^body, ^exit
 
   block ^exit:
-    return i64 %i
+    %t4 = phi i64 [^body: %next]
+    return i64 %t4
 }

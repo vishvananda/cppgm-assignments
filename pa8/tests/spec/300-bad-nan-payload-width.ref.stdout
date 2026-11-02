@@ -1,0 +1,1 @@
+ERROR: invalid NaN payload at tests/spec/300-bad-nan-payload-width.t:3

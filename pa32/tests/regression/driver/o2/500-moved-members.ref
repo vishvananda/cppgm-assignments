@@ -1,0 +1,78 @@
+function @fill(%t : ptr, %from : ptr) -> void [binding=strong, object=_Z4fillP5TablePK3Vec] {
+  block ^entry:
+    %t1 = index i8 [projection=field] %t, 8
+    %t2 = load typed i64 %t1
+    jump ^for_cond_1
+
+  block ^for_cond_1:
+    %t3 = phi i64 [^entry: 0, ^for_body_2: %t15]
+    %t4 = phi i64 [^entry: 0, ^for_body_2: %t14]
+    %t5 = cmp lt i64 %t4, %t2
+    branch %t5, ^for_body_2, ^for_end_3
+
+  block ^for_body_2:
+    %t6 = load typed ptr %t
+    %t7 = copy i64 %t3
+    %t8 = index i8 [projection=array_element] %t6, %t7
+    %t9 = index i8 [projection=array_element] %from, %t7
+    %t10 = load typed f64 %t9
+    store typed f64 %t10, %t8
+    %t11 = index i8 [projection=field] %t9, 8
+    %t12 = index i8 [projection=field] %t8, 8
+    %t13 = load typed f64 %t11
+    store typed f64 %t13, %t12
+    %t14 = binary add nowrap i64 %t4, 1
+    %t15 = binary add i64 %t3, 16
+    jump ^for_cond_1
+
+  block ^for_end_3:
+    return void
+}
+function @boxed(%to : ptr, %from : ptr) -> void [binding=strong, object=_Z5boxedP5BoxedPKS_] {
+  block ^entry:
+    copyobj 8x8 %from, %to
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $a : obj<32x8>
+  slot $b : obj<32x8>
+
+  block ^entry:
+    %t1 = addr $a
+    store typed f64 1, %t1
+    %t2 = index i8 [projection=field] %t1, 8
+    store typed f64 2, %t2
+    %t3 = index i8 %t1, 16
+    store typed f64 3, %t3
+    %t4 = index i8 [projection=field] %t1, 24
+    store typed f64 4, %t4
+    %t5 = addr $b
+    jump ^for_cond_1
+
+  block ^for_cond_1:
+    %t6 = phi i64 [^entry: 0, ^for_body_2: %t17]
+    %t7 = phi i64 [^entry: 0, ^for_body_2: %t16]
+    %t8 = cmp lt i64 %t7, 2
+    branch %t8, ^for_body_2, ^inline_cont_3
+
+  block ^for_body_2:
+    %t9 = copy i64 %t6
+    %t10 = index i8 [projection=array_element] %t5, %t9
+    %t11 = index i8 [projection=array_element] %t1, %t9
+    %t12 = load typed f64 %t11
+    store typed f64 %t12, %t10
+    %t13 = index i8 [projection=field] %t11, 8
+    %t14 = index i8 [projection=field] %t10, 8
+    %t15 = load typed f64 %t13
+    store typed f64 %t15, %t14
+    %t16 = binary add nowrap i64 %t7, 1
+    %t17 = binary add i64 %t6, 16
+    jump ^for_cond_1
+
+  block ^inline_cont_3:
+    %t18 = index i8 [projection=field] %t5, 24
+    %t19 = load typed f64 %t18
+    %t20 = convert fptosi i32 f64 %t19
+    %t21 = binary add nowrap i32 %t20, 3
+    return i32 %t21
+}

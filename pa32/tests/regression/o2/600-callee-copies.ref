@@ -1,0 +1,70 @@
+global @data : obj<32x8> = {
+  i64 5
+  i64 3
+  i64 8
+  i64 1
+}
+
+function @less(%a : i64, %b : i64) -> i64 [binding=internal] {
+  block ^entry:
+    %c = cmp lt i64 %a, %b
+    return i64 %c
+}
+function @more(%a : i64, %b : i64) -> i64 [binding=internal] {
+  block ^entry:
+    %c = cmp gt i64 %a, %b
+    return i64 %c
+}
+function @count(%p : ptr, %n : i64, %f : ptr) -> i64 [binding=strong] {
+  block ^0:
+    jump ^entry
+
+  block ^entry:
+    %t1 = phi i64 [^0: 0, ^step: %t10]
+    %t2 = phi i64 [^0: %n, ^step: %m]
+    %t3 = phi ptr [^0: %p, ^step: %q]
+    %more = cmp gt i64 %t2, 1
+    branch %more, ^step, ^none
+
+  block ^step:
+    %a = load typed i64 %t3
+    %q = index i8 %t3, 8
+    %b = load typed i64 %q
+    %x = call i64 %f(%a, %b) as (%l : i64, %r : i64) -> i64
+    %m = binary sub i64 %t2, 1
+    %t10 = binary add i64 %x, %t1
+    jump ^entry
+
+  block ^none:
+    return i64 %t1
+}
+function @main() -> i32 [role=entry] {
+  block ^entry:
+    jump ^entry_1
+
+  block ^entry_1:
+    %t1 = phi i64 [^step_2: %t10, ^entry: 0]
+    %t2 = phi i64 [^step_2: %m_9, ^entry: 4]
+    %t3 = phi ptr [^step_2: %q_6, ^entry: @data]
+    %more_4 = cmp gt i64 %t2, 1
+    branch %more_4, ^step_2, ^none_3
+
+  block ^step_2:
+    %a_5 = load typed i64 %t3
+    %q_6 = index i8 %t3, 8
+    %b_7 = load typed i64 %q_6
+    %c_8 = cmp lt i64 %a_5, %b_7
+    %m_9 = binary sub i64 %t2, 1
+    %t10 = binary add i64 %t1, %c_8
+    jump ^entry_1
+
+  block ^none_3:
+    %pick = load volatile i64 @data
+    %up = cmp gt i64 %pick, 4
+    %which = select ptr %up, @more, @less
+    %descending = call i64 @count(@data, 4, %which)
+    %scaled = binary mul i64 %t1, 10
+    %all = binary add i64 %descending, %scaled
+    %r = convert trunc i32 i64 %all
+    return i32 %r
+}
