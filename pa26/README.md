@@ -252,6 +252,12 @@ host ABI symbols and platform EH metadata:
 Do not construct host EH facts from source text. The object backend should work
 from typed semantic/runtime-role information and final machine layout.
 
+References to the same external personality or type information can share
+relocation cells across objects. Preserve symbol binding and position
+independence: sharing must not merge translation-unit-local exception types or
+require text relocations. The tests bound repeated external references and
+check catch behavior without requiring particular cell names or instructions.
+
 Generate each function's call-frame instructions from the frame facts the
 encoder records as it emits the prologue and epilogues: each push, the stack
 reservation, where the prologue sits, and each epilogue, with its own rows
@@ -267,6 +273,12 @@ the call-site table in step: when layout removes a jump so that one block
 falls into the next, the calls of the next block still need the entries of
 their own region, and a landing pad is entered only by unwinding, never by
 falling into it.
+
+Restore the body's unwind state after an epilogue only when later code needs
+it, including cleanup landings. There is no later instruction to cover after
+the final return at the end of the function.
+Use the encoded instruction range for the FDE; trailing jump-table data is
+not code that needs unwind rules.
 
 A compact terminate boundary can pass the typed exception value to a single
 internal helper. This keeps the handler-entry ABI sequence in one place while

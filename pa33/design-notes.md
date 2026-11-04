@@ -18,6 +18,10 @@ arithmetic and jumps to the next block. Stop propagation at conflicting writes,
 unknown clobbers and exceptional boundaries. Keep meaningful debug locations
 on surviving instructions.
 
+Preserve loop recognition through exact integer conversions. Check layout
+changes with native timing: instruction counts can stay unchanged while speed
+changes.
+
 ## Allocate across the control-flow graph
 
 Compute liveness across ordinary and exception edges. Model a phi transfer on
@@ -50,6 +54,17 @@ Do not assume incoming upper bits are initialized when the ABI leaves them
 unspecified. A proof such as `convert trunc exact` may help; an arbitrary cast
 supplies no such proof.
 
+For scalar/vector transfers, track which bits each consumer reads. A shuffle
+that uses only supplied lanes may not need cleared upper lanes; a wider unpack
+or a second consumer can observe them. Test with nonzero prior register bits,
+signed zero and NaN payloads, not only freshly loaded scalar values.
+
+Switch tests can reuse ranges excluded by earlier comparisons on that path.
+Check gaps, signed boundaries and the selector's full width before omitting a
+bound or extension; an out-of-range value must still reach the default case.
+Equivalent indexed addresses can have different encoding costs. Preserve
+scale, width and flags when choosing the order of their operands.
+
 Test signed extrema and wrapping unsigned arithmetic. Select a division at the
 intended width and preserve its trapping preconditions. A high-half product
 must retain the correct signedness and any other users of the full product.
@@ -80,17 +95,38 @@ count alone does not establish a latency improvement.
 
 ## Frame layout, blocks and encoding
 
+Adjacent ordinary field stores can offer another size improvement: combine
+their written bytes when fewer memory operations suffice. Preserve holes,
+nonzero fields and the separate effects of volatile or atomic accesses.
+Check both code size and runtime work; a shorter encoding alone is not a
+performance result. The adjacent-zero-fields fixture bounds memory work
+without prescribing a particular clearing instruction.
+
 Lay out the final frame after allocation. Preserve object alignment, reuse
 storage only when lifetimes do not overlap, and derive unwind information from
 the actual saved registers and stack changes. Test leaf functions, calls,
 alternate exits and exceptional returns. Omitting a frame pointer changes
 addressing and unwind requirements; it is not just deleting two instructions.
 
+A shared return sequence is useful only when a path reaches it. After giving
+exits their own teardown, check whether a shared copy remains reachable through
+a branch or fallthrough. Retain unwind rows for every emitted exit and calls
+in cleanup code, including calls with stack arguments.
+
+When eliminating stack stores, include each throwing call's handler reads.
+A later overwrite on the normal path cannot replace a value the handler
+needs before that overwrite. Check nested handlers and partial-width accesses.
+
 Place frequently followed edges together and keep cold paths out of hot loops
 where profitable. Alignment can improve fetch behavior or add work at every
 entry to a short loop. Branch shortening and padding interact, so validate
 final displacements and relocations after layout. No particular padding size,
 block order or prologue sequence is a quality requirement.
+Removing code can shift hot loops into less favorable fetch windows even when
+their instruction counts stay the same. Measure runtime as well as size;
+use selective alignment rather than assuming more padding always helps.
+Entry placement can affect direct calls and table-driven indirect calls
+differently. Include both when measuring changes to compact leaf functions.
 
 ## Validation and further experiments
 

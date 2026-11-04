@@ -218,8 +218,9 @@ To evaluate one sidecar by hand:
 $ perl ../scripts/expect_ir.pl tests/o1/x.my tests/o1/x.ref.expect
 ```
 
-`make test-kernels` adds four dynamic work checks: bounded search, aliased and
-disjoint field updates, narrow arithmetic and state crossing a cold call.
+`make test-kernels` adds five dynamic work checks: bounded search, aliased and
+disjoint field updates, narrow arithmetic, state crossing a cold call and
+conditionally updated floating state.
 They use one host-built scalar oracle and driver, and compare startup-subtracted
 Cachegrind instruction counts against GCC. Each `.quality` file publishes its
 limit; the supplied frontend and unoptimized backend isolate your LowIR work.
@@ -318,6 +319,7 @@ Before moving on, run `make test-report-through-pa32` from the repository root.
 - `tests/driver/o2`
 - `tests/driver/o3`
 - `tests/host/o1`
+- `tests/host/o2`
 - `tests/object-roundtrip`
 
 
@@ -335,14 +337,21 @@ source-language clauses.
 - `tests/driver/o1` runs `cppgm++ --emit-lowir -g0 -O1` on source programs.
 - `tests/driver/o2` runs `cppgm++ --emit-lowir -g0 -O2` on source programs.
 - `tests/driver/o3` runs `cppgm++ --emit-lowir -g0 -O3` on source programs.
-- `tests/host/o1` builds host-compatible objects with `cppgm++ -c -O1`,
-  links them with the host compiler and checks program output and exit status.
-  It covers nested catch forwarding after optimization; PA26 retains the
+- `tests/host/o1` and `tests/host/o2` build host-compatible objects at their level,
+  link them with the host compiler and check program output and exit status.
+  They cover nested catches and shared normal/handler continuations after
+  optimization; PA26 retains the
   corresponding unoptimized EH coverage. These `.t` anchors use `.t.N`
-  companion sources and the ordinary host-link result sidecars.
+  companion sources (`.t.N.lowir` for handwritten LowIR) and the ordinary
+  host-link result sidecars.
+  Equivalent ABI entries can share retained code after inlining without losing
+  their names or cross-unit availability. The footprint check permits either
+  entry to hold the body, aliases or forwarding entries; it does not prescribe
+  instructions. Keep the equivalence proof independent of inline profitability
+  and preserve it through LowIR serialization.
   An adjacent `.flags` file may select additional driver options, including
   the disabled-strict-aliasing case's `-O2 -fno-strict-aliasing`.
-- `tests/kernels` supplies the four required dynamic quality checks described
+- `tests/kernels` supplies the five required dynamic quality checks described
   above. `make test-kernels` runs these independently.
 - `tests/improvements` supplies optional vector, memory traversal and scheduling
   experiments. `make test-improvements` checks their behavior and reports work

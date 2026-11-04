@@ -31,6 +31,11 @@ that can trap or fold a shift with an invalid count. Floating identities need
 extra care: replacing `x + 0` with `x` can change negative zero, and reassociating
 a sum changes rounding.
 
+Adjacent integer multiply/add operations can sometimes be combined at their
+common width. Preserve wrapping, shared intermediate values and observations
+between the operations. Check the native cost too: a smaller expression may
+replace cheap shifts or address calculations with a slower multiply.
+
 Executable-edge constant propagation can discover constants through branches
 and phis. Dominance permits reusing a pure value where its definition always
 runs first. A branch can supply facts to the blocks its taken edge dominates;
@@ -41,6 +46,11 @@ Promoting scalar storage to SSA removes loads and stores, but requires proving
 that all its accesses are understood. Splitting an aggregate may expose more
 promotable fields. Preserve padding, bit-fields, volatile members, alignment
 and ABI carriers; splitting every object is not always profitable.
+
+Conditionally updated fields can need many merge values inside a loop.
+Promoting all of them may turn a few memory updates into repeated register
+spills and transfers. Compare both native work and size, including inactive
+fields and early exits; a smaller SSA graph alone does not establish a win.
 
 ## Memory facts and safe motion
 
@@ -88,7 +98,9 @@ A short loop with a known bound can be expanded while retaining early exits.
 First, last and missing matches in a search must probe the same elements; an
 empty range must probe nothing. Pointer bounds require reasoning about offsets
 within the same object. Unknown bounds keep a general path. Bound code growth
-as well as runtime work, and do not require every small loop to expand.
+as well as runtime work, and do not require every small loop to expand. Estimate
+the instructions the transformation actually copies, including a final test
+when needed, rather than charging an extra iteration of the whole body.
 
 Unswitching moves an invariant choice outside a loop by making specialized
 paths. Interchange changes the traversal of a nest. For either, prove memory
@@ -110,6 +122,18 @@ cold paths separately, and bound total growth rather than copying a large body
 at every site. Partial specialization may remove repeated work without copying
 the whole function. Recursion and address-taken functions need separate care.
 
+A short returning path around a larger calling path can be useful to inline
+even when the whole body is not. Keep growth in that slower path from
+duplicating work at every caller or hiding the useful wrapper. Measure both
+retained code size and native execution; fewer copies alone are not a win.
+An early return around a loop does not make the loop's work cold. Include
+zero-work and nonzero iteration cases when checking those decisions.
+Compare a callee's size before expansion with its current size. Earlier copies
+can make a small query look expensive to inline at its remaining call sites.
+A result known on every normal return can remove a caller's guard even when
+the callee has effects. Preserve those effects and exceptional exits; do not
+confuse a constant result with a removable call.
+
 A direct-call optimization must respect replacement and `no_inline` metadata.
 A guessed virtual target needs a runtime identity check and an indirect
 fallback; construction of one object does not prove all later calls use its
@@ -121,6 +145,10 @@ what a handler has executed. Values reused by a handler must be valid at every
 throw point that can reach it. Inlining a protected region requires balanced
 region state on all normal and exceptional paths. A landing that removes its
 own record must retain that record on entry, as the format specifies.
+
+A copied handler must preserve an exception its caller can still read or
+resume. A continuation reached from both ordinary and handler paths needs
+that check too; a normal incoming path does not settle the other path's state.
 
 ## Library math and representation
 
