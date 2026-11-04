@@ -54,7 +54,7 @@ sub collect_tests
 			}
 		}
 	}
-	return @tests;
+	return CppgmTestPlatform::select_tests(@tests);
 }
 
 sub getdata
@@ -760,7 +760,11 @@ sub build_lowir_program
 {
 	my ($app, $lowir, $program, $log) = @_;
 	my $build_timeout = CppgmBatchWorker::get_timeout_from_env('CPPGM_BUILD_TEST_TIMEOUT_SEC', 30);
-	return system("timeout $build_timeout \"$app\" -O0 -o \"$program\" \"$lowir\" > /dev/null 2> \"$log\"") == 0;
+	putrawdata($log, '');
+	return CppgmBatchWorker::run_command_capture(
+		cmd => [$app, '-O0', '-o', $program, $lowir],
+		stdin => '/dev/null', stdout => '/dev/null', stderr => $log,
+		timeout => $build_timeout) == 0;
 }
 
 sub lowir_undefined_symbols
@@ -939,9 +943,10 @@ sub source_is_lowir
 sub run_program_capture
 {
 	my ($program, $stdout_path) = @_;
-	my $timeout = CppgmBatchWorker::get_timeout_from_env('CPPGM_PROGRAM_TEST_TIMEOUT_SEC', 10);
-	my $status = system("timeout $timeout \"$program\" < /dev/null > \"$stdout_path\" 2>/dev/null");
-	return $status == -1 ? undef : ($status >> 8);
+	my $result = run_lowir_program($program, $stdout_path);
+	return undef if $result->{timed_out} || $result->{status} == -1;
+	return 128 + ($result->{status} & 127) if $result->{status} & 127;
+	return $result->{status} >> 8;
 }
 
 sub check_source_behavior
@@ -5020,6 +5025,17 @@ sub compare_program_outputs
 	my $my_program_status = getdata("$my_prefix.program.exit_status");
 	my $ref_program_stdout = getdata("$ref_prefix.program.stdout");
 	my $my_program_stdout = getdata("$my_prefix.program.stdout");
+	(my $base = $ref_prefix) =~ s/\.ref$//;
+	if (CppgmTestPlatform::host_output_oracle($base))
+	{
+		my $oracle_status = getdata("$my_prefix.oracle.program.exit_status");
+		my $expected_status = canonical_exit_status($ref_program_status);
+		return (0, 'ERROR: host output oracle failed or is missing')
+			if !defined($expected_status) || !defined($oracle_status) ||
+				canonical_exit_status($oracle_status) ne $expected_status;
+		$ref_program_stdout = getdata("$my_prefix.oracle.program.stdout");
+		return (0, 'ERROR: missing host output oracle stdout') if !defined($ref_program_stdout);
+	}
 	if ($allow_missing_stdout)
 	{
 		$ref_program_stdout = '' if !defined($ref_program_stdout);
@@ -5056,6 +5072,8 @@ sub host_platform_tag
 sub compare_optional_inspect
 {
 	my ($ref_prefix, $my_prefix, $host_tag) = @_;
+	(my $base = $ref_prefix) =~ s/\.ref$//;
+	return (1, undef, undef) if !CppgmTestPlatform::inspection_supported($base);
 	my @ref_candidates = ();
 	push @ref_candidates, "$ref_prefix.inspect.$host_tag" if defined($host_tag) && $host_tag ne '';
 	push @ref_candidates, "$ref_prefix.inspect";

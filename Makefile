@@ -293,6 +293,7 @@ test-report-nobuild:
 	tmpdir=$$(mktemp -d); \
 	parent_counts_file="$${CPPGM_TEST_COUNTS_FILE-}"; \
 	export CPPGM_TEST_COUNTS_FILE="$$tmpdir/counts"; \
+	export CPPGM_TEST_SKIPS_FILE="$$tmpdir/skips"; \
 	cleanup() { rm -f pa*/"$$CPPGM_TEST_FAILURE_MARKER"; rm -rf "$$tmpdir"; }; \
 	interrupt() { \
 		if [ -n "$$output_pid" ]; then \
@@ -373,6 +374,9 @@ test-report-nobuild:
 	total=$$(awk '{s+=$$2} END {print s}' "$$CPPGM_TEST_COUNTS_FILE" 2>/dev/null || echo 0); \
 	if [ -n "$$parent_counts_file" ]; then \
 		printf '%s %s\n' "$$passed" "$$total" >> "$$parent_counts_file"; \
+	fi; \
+	if [ -s "$$CPPGM_TEST_SKIPS_FILE" ]; then \
+		perl scripts/test_platform.pl --summary "$$CPPGM_TEST_SKIPS_FILE"; \
 	fi; \
 	if [ "$$passed" -ne "$$total" ] || ls pa*/"$$CPPGM_TEST_FAILURE_MARKER" 1>/dev/null 2>&1; then \
 		echo "===== TEST SUMMARY: $$passed / $$total TESTS PASSED ====="; \

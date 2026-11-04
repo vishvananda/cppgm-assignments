@@ -38,6 +38,9 @@ You will want to reuse:
 The GNU/Clang concessions this assignment owns include several the selected
 hosted headers depend on:
 
+- GNU anonymous structs expose their fields as members of the enclosing class;
+  these field names remain values when distinguishing casts from calls
+
 - hosted source-file comments may contain opaque legacy 8-bit bytes; line
   splicing, trigraphs and comment delimiters retain their usual behavior.
   This does not relax UTF-8 diagnostics for tokens or literals, or the strict
@@ -257,6 +260,12 @@ GNU `q`/`Q` floating suffixes denote `__float128`, as specified in
 in both normal compilation and the typed `cppgm++ -E` stream. Emit binary128
 bytes for these literals; `l`/`L` still denote `long double`. This PA29
 extension does not change the strict C++11 literal grammar of PA2–PA4.
+
+Runtime checks that require libgcc's binary128 or bfloat16 helpers run on
+Linux; the Darwin runtime does not supply those interfaces. Binary16 checks
+run on both hosts. Calls to conversion helpers must follow the target runtime's
+ABI, which can differ from the calling convention of an ordinary `_Float16`
+function.
 
 Hosted `-Wno-narrowing` suppresses list-initialization narrowing diagnostics,
 as described in [GCC's C++ dialect options](https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Dialect-Options.html).
