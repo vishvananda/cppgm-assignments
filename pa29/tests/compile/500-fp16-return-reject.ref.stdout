@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-fp16-return-reject.t:1:8: function return type cannot be __fp16; use a pointer or reference

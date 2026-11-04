@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-elementwise-sqrt-integer-reject.t:1:23: invalid operands to a packed operation

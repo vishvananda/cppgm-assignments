@@ -739,6 +739,15 @@ sub run_lowir_program
 		exec { $program } $program;
 		exit(127);
 	}
+	my $interrupt = sub {
+		my ($status) = @_;
+		kill 'KILL', -$pid;
+		kill 'KILL', $pid;
+		waitpid($pid, 0);
+		exit $status;
+	};
+	local $SIG{INT} = sub { $interrupt->(130); };
+	local $SIG{TERM} = sub { $interrupt->(143); };
 	my $deadline = Time::HiRes::time() + $timeout;
 	while (1)
 	{
@@ -5226,8 +5235,9 @@ sub program_output_hint
 		rooted_path("$my_prefix.program.stdout") . "\n\n";
 }
 
-for my $test (@tests)
+sub compare_one_test
 {
+	my ($test) = @_;
 	print "\n$test: " if $verbose;
 	my $display_test = $keep_going ? "$assignment/$test" : $test;
 	my $testbase = $test;
@@ -5534,17 +5544,15 @@ for my $test (@tests)
 
 	if ($ok)
 	{
-		++$npass;
 		print "PASS\n\n" if $verbose;
-		next;
+		return 1;
 	}
 
 	if ($keep_going)
 	{
 		print "$display_test: $message\n";
 		print $hint if $check_mode && $auto_check_keep_going && defined($hint);
-		$failed = 1;
-		next;
+		return 0;
 	}
 
 	print fail_prefix();
@@ -5553,6 +5561,39 @@ for my $test (@tests)
 	print $hint if defined($hint);
 	print "TEST FAIL\n";
 	exit(1);
+}
+
+my $compare_jobs = CppgmBatchWorker::detect_jobs();
+if ($keep_going && !$verbose && @tests > 1 && $compare_jobs > 1 &&
+	($mode eq 'lowir_t' || $mode eq 'lowir_optimized_t'))
+{
+	my @results = CppgmBatchWorker::run_parallel_tests(\@tests, $compare_jobs, sub {
+		my ($test) = @_;
+		return { passed => compare_one_test($test), behavior => \%lowir_behavior_tally };
+	});
+	for my $result (@results)
+	{
+		$npass += $result->{passed};
+		$failed = 1 if !$result->{passed};
+		my $tally = $result->{behavior};
+		for my $key (keys %$tally)
+		{
+			if (ref($tally->{$key}) eq 'HASH')
+			{
+				$lowir_behavior_tally{$key}{$_} += $tally->{$key}{$_}
+					for keys %{ $tally->{$key} };
+			}
+			else { $lowir_behavior_tally{$key} += $tally->{$key}; }
+		}
+	}
+}
+else
+{
+	for my $test (@tests)
+	{
+		if (compare_one_test($test)) { ++$npass; }
+		else { $failed = 1; }
+	}
 }
 
 if ($keep_going && $check_mode)

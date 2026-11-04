@@ -640,3 +640,17 @@ each operand once. Floating operations follow LLVM maxNum/minNum: one NaN
 yields the numeric operand, two NaNs yield NaN, and equal zeros may retain
 either sign. Consume typed operands and lower through existing scalar
 comparisons and selection; integer scalar constant evaluation uses the same operation.
+
+### Clang elementwise square root
+
+Clang's `__builtin_elementwise_sqrt` preserves `float` and `double` scalar
+types as well as their vector forms. Evaluate the operand once, preserve IEEE
+square-root results (including signed zero and NaNs), and leave `errno` alone.
+
+### Clang binary16 storage
+
+`__fp16` is a distinct two-byte floating storage type. Scalar arithmetic and
+unary `+`/`-` promote it to `float`; variadic arguments promote it to `double`.
+Preserve binary16 conversions, vector lanes and its distinct Itanium `Dh`
+encoding. A declared scalar `__fp16` parameter or return type is rejected;
+pointers and references remain valid.

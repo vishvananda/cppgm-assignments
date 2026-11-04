@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-fp16-template-return-reject.t:2:25: no viable function for the call
