@@ -54,6 +54,11 @@ Do not assume incoming upper bits are initialized when the ABI leaves them
 unspecified. A proof such as `convert trunc exact` may help; an arbitrary cast
 supplies no such proof.
 
+A calculation that reads only the low bits and then writes the full result
+may establish its own representation. Check the encoded width and all operand
+uses: addresses consume full-width values, and a shift with a possible zero
+count may leave the destination unchanged.
+
 For scalar/vector transfers, track which bits each consumer reads. A shuffle
 that uses only supplied lanes may not need cleared upper lanes; a wider unpack
 or a second consumer can observe them. Test with nonzero prior register bits,
@@ -61,7 +66,11 @@ signed zero and NaN payloads, not only freshly loaded scalar values.
 
 Switch tests can reuse ranges excluded by earlier comparisons on that path.
 Check gaps, signed boundaries and the selector's full width before omitting a
-bound or extension; an out-of-range value must still reach the default case.
+bound or extension; out-of-range values must still reach a defined default.
+An explicitly unreachable successor supplies another proof: defined executions
+cannot take that edge. Consider its effect on dispatch size and range checks,
+while preserving reachable actions before an impossible continuation. Include
+defined defaults, narrow incoming values and empty sets of live arms in tests.
 Equivalent indexed addresses can have different encoding costs. Preserve
 scale, width and flags when choosing the order of their operands.
 
@@ -127,6 +136,13 @@ their instruction counts stay the same. Measure runtime as well as size;
 use selective alignment rather than assuming more padding always helps.
 Entry placement can affect direct calls and table-driven indirect calls
 differently. Include both when measuring changes to compact leaf functions.
+
+A short shared dispatch tail can sometimes be copied into its incoming
+jumps. Preserve its guards, flag dependencies, memory accesses and exception
+boundaries. Count table data as well as instructions when bounding growth.
+Measure branch prediction across several layouts; unchanged instruction counts
+can still hide a substantial runtime difference. No particular duplication
+or block order is required.
 
 ## Validation and further experiments
 

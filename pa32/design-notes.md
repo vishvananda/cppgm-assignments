@@ -47,16 +47,38 @@ that all its accesses are understood. Splitting an aggregate may expose more
 promotable fields. Preserve padding, bit-fields, volatile members, alignment
 and ABI carriers; splitting every object is not always profitable.
 
+A slot in a value operand reads memory at that instruction. Reusing an
+expression containing such an operand requires the same memory proof as an
+explicit load. Keep those reads distinct from operands naming storage.
+
 Conditionally updated fields can need many merge values inside a loop.
 Promoting all of them may turn a few memory updates into repeated register
 spills and transfers. Compare both native work and size, including inactive
 fields and early exits; a smaller SSA graph alone does not establish a win.
+
+## Case membership and predication
+
+Several switch cases with one destination can describe a numeric interval.
+Preserve the selector's width, signed boundaries, holes and default edge when
+expressing that membership as a predicate. This can expose conditional work
+to existing simplification and predication. A fact justified only on a taken
+arm does not automatically apply to speculative work, including an increment's
+overflow promises. Loads, calls and trapping arithmetic need their own proofs.
+No particular representation is required.
 
 ## Memory facts and safe motion
 
 Distinguish the proof that accesses cannot overlap from the proof that a load
 may run earlier. A disjoint store does not justify reading an invalid pointer
 on a zero-iteration path. A call can modify memory or free an allocation.
+
+An overwrite proof need not establish disjointness: the same SSA address and
+access type identify the same bytes even when their object offset is unknown.
+A later complete write can make an earlier write unobservable if nothing
+between them may read those bytes. Calls, exceptions, lifetime changes,
+volatile or atomic operations and partial overlaps require separate care.
+Reuse the memory walk's information to skip blocks that cannot contain an
+overwrite pair.
 
 Useful sources of disjointness include separate local objects, non-overlapping
 ranges of one object and the `typed` rules in
@@ -76,6 +98,13 @@ an array can expose known-zero fields; overlapping copies need the semantics
 of the original operation. Static initialization is possible only when its
 observable values and ordering agree with dynamic initialization.
 
+The same reasoning applies to a complete fill with any constant byte. Later
+integer reads can have known values even when their indices vary. Prove which
+bytes were initialized before each read and account for partial writes,
+pointer merges, escapes, volatile or atomic observations and exception paths.
+A repeated byte is a representation fact, not a general floating or pointer
+value. Different propagation strategies may meet the same quality bounds.
+
 ## Loops, counters and exits
 
 Describe a loop's entries, latches and exits before changing it. A preheader
@@ -87,6 +116,11 @@ position. Sinking a store requires that every original exit observes the right
 value and that the store does not run on a path that previously wrote nothing.
 A location updated conditionally may need a phi or a retained memory path.
 Calls and exception paths are part of these proofs.
+
+Combining independent operations can introduce invariant values after an
+earlier motion step. Revisit changed loops when that exposes useful work;
+reuse existing loop facts and avoid repeating analysis for unaffected code.
+The same zero-trip, memory and exception proofs still apply.
 
 A product of an induction variable and an invariant can sometimes become an
 induction of its own. Account for every latch, the initial value, overflow and
@@ -121,6 +155,20 @@ callers harder to optimize and increase compiler cost. Consider hot work and
 cold paths separately, and bound total growth rather than copying a large body
 at every site. Partial specialization may remove repeated work without copying
 the whole function. Recursion and address-taken functions need separate care.
+
+Membership in a call cycle does not make every member a recursive worker.
+Forwarding and dispatch layers can sometimes be combined around a loop while
+retaining the calls that perform recursive work. Establish where expansion
+stops, preserve argument evaluation and exceptional exits, and recheck the
+call structure after edits. A smaller call graph alone does not justify
+unbounded code growth or repeated analysis of unchanged functions.
+
+For a body that only forwards a call and returns its result, composing argument
+permutations and constants may avoid copying any instructions. Preserve
+argument evaluation and boundary conversions, retain observable object copies,
+and detect forwarding cycles. Resolve shared chains once rather than walking
+the same chain again from every caller. A retained function's address and
+external boundary must keep their meaning.
 
 A short returning path around a larger calling path can be useful to inline
 even when the whole body is not. Keep growth in that slower path from
@@ -166,6 +214,37 @@ must account for wrapping arithmetic and signedness.
 A floating/integer `copy` of matching width moves bits; `convert` computes a
 numeric conversion. This distinction matters when promoting ABI carriers,
 forwarding stores and preserving signed zero or NaN representations.
+
+Repeated logical shifts and conditional XORs can sometimes be combined
+algebraically. For a constant word-sized polynomial `P`, the step
+`F(x) = (x >> 1) ^ ((x & 1) ? P : 0)` is linear over bits. Reversing a predicate
+can add a constant XOR term; include it in the proof. When `k` is smaller than
+the word width, split the input into its low `k` bits and the remaining bits.
+After `k` steps, the latter contribute `x >> k`, and the former can be
+evaluated independently. Arithmetic or readonly lookup data can express the
+result. Prove the rule for the actual width and branch polarity. At or beyond
+the word width there is no remaining high-bit contribution; do not form an
+invalid shift. Retain work whose intermediate values have other observable
+users. Compare table space, memory latency and compile cost against the
+arithmetic removed. Variable polynomials and arithmetic shifts need their own
+proofs.
+
+## Conditional field access
+
+When a tested bit chooses two constant offsets from one base, their distance
+may allow that bit to form an array index. Account for element size, signed
+and narrow inputs, shifts, reversed arms and comparison polarity. Use the
+original base and drop field-specific facts that no longer describe the
+computed address. Only the selected address may be read; computing addresses
+does not authorize reading both fields.
+
+Factoring a read through a merge requires compatible load types, no intervening
+effects, valid operands on the new path and preserved exceptional behavior.
+Volatile accesses need their own proof. A branch can hide load latency on a
+predicted path: converting a load-dependent traversal to arithmetic can make
+it slower. Measure dependency chains and native execution alongside the
+reduction in branches; the fixtures allow equivalent arithmetic and control
+flow within their quality bounds.
 
 ## Register pressure and independent work
 

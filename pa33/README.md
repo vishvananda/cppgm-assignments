@@ -42,6 +42,10 @@ Higher optimization levels must preserve the correctness established by
 previous assignments. In `cppgm++`, apply PA32's LowIR optimization before
 native lowering at the requested level.
 
+An `unreachable` continuation can justify removing switch arms or range checks
+that serve only impossible inputs. Preserve defined defaults and their effects,
+including a non-returning call before an unreachable terminator.
+
 The MIR dump uses PA24's text format and describes the same instructions and
 ABI/frame facts that produce the executable. When both outputs are requested,
 they must come from the same optimized program. Keep call argument uses,
@@ -87,11 +91,11 @@ inside exception regions included, are measured here rather than deferred.
 PA34 builds the compiler with itself, so this code becomes the compiler's
 own speed; PA35 tightens the same kernels to 1.30.
 
-The same target also runs PA32's five original kernel families from
+The same target also runs PA32's six original kernel families from
 `../pa32/tests/kernels/`: bounded search, aliased/disjoint field updates,
-narrow arithmetic, state crossing a cold call and conditionally updated
-floating state. They pass through the
-complete optimized compiler and use the same host-built driver and scalar
+narrow arithmetic, state crossing a cold call, conditionally updated
+floating state and adjacent updates with an invariant factor. They pass through
+the complete optimized compiler and use the same host-built driver and scalar
 oracle. Their `.quality` files publish the native instruction-ratio limits.
 The driver checks unspecified upper bits on a narrow incoming argument too.
 These checks require Python 3, GCC and Cachegrind on Linux x86-64.
@@ -168,6 +172,10 @@ alignment all matter. Measure instruction counts for redundant work and
 time for latency and layout changes. Preserve a behavior test for each
 counterexample. Neither the course reference dump nor a speed comparison
 requires a particular instruction, register allocation or block order.
+
+An extension can be redundant when the next calculation reads only the narrow
+bits and writes the full result. Preserve extensions needed by wider readers,
+address operands or operations that can leave the destination unchanged.
 
 ### Scope
 

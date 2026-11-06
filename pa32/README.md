@@ -220,9 +220,10 @@ To evaluate one sidecar by hand:
 $ perl ../scripts/expect_ir.pl tests/o1/x.my tests/o1/x.ref.expect
 ```
 
-`make test-kernels` adds five dynamic work checks: bounded search, aliased and
+`make test-kernels` adds six dynamic work checks: bounded search, aliased and
 disjoint field updates, narrow arithmetic, state crossing a cold call and
-conditionally updated floating state.
+conditionally updated floating state, plus adjacent updates with an invariant
+factor.
 
 Library-call rewrites must preserve side effects and use an ABI provided by
 the target runtime. Keeping independent calls is valid; tests judge behavior
@@ -263,6 +264,30 @@ pass:
   An `eh_try` landing that pops its own record with `eh_end` needs a
   targetless `eh_cleanup` to retain that record on entry, as specified in
   [LowIR's exception-handling contract](../pa8/lowir.md#exception-instructions).
+- An ellipsis alone does not require a separate call frame. A small function
+  that never inspects its unnamed arguments can be substituted like a fixed
+  argument function, preserving every argument's evaluation and cleanup.
+  `va_start` and `va_arg` require a separate proof about the argument area.
+- A function that only forwards a call and returns its result may not need a
+  separate call at each use. Preserve argument order, conversions, object
+  materialization and cleanup when composing such boundaries.
+- A write fully replaced through the same address before any possible read
+  need not reach memory. Address identity can prove this even when an array
+  index is dynamic. Preserve alias reads, volatile and atomic accesses,
+  callbacks, exceptional paths and bytes a partial write does not replace.
+- A complete constant-byte fill can determine later integer reads through
+  varying indices. Preserve other writes and observations; the object-content
+  fixtures include pointer merges, partial fills and escapes. No particular
+  propagation pass is required.
+- A conditional choice between fields can sometimes use one indexed address
+  and one read. Prove the bit test and byte offsets, preserve which address
+  is accessed, and keep volatile reads and memory dependencies observable.
+- Cases sharing one destination may describe an interval. Preserve widths,
+  signed boundaries, holes, default behavior and guarded effects when exposing
+  that choice to simplification or predication.
+- Combining independent operations can expose new loop-invariant work.
+  Recheck affected loops without moving reads or trapping work onto paths
+  where they did not execute, or changing floating-point evaluation order.
 - Keep the optimizer's own work bounded. PA34 compiles the whole compiler
   at `-O3` with this optimizer; [the design notes](design-notes.md) describe
   how to avoid repeating work.
@@ -271,6 +296,15 @@ No course fixture requires a particular admission cap or pass order. The
 sidecars state observable outcomes and output-size limits; an upper bound on a
 function removed by optimization still holds. Consult the
 [design notes](design-notes.md) for the reasoning behind possible approaches.
+
+The O3 bit-recurrence fixtures bound repeated shift/XOR work across several
+word widths and constants. Their behavior drivers exercise every byte input,
+wider seeds and cases that invalidate a shortcut. Any equivalent arithmetic
+or data-based solution meeting the size bounds is acceptable.
+
+Recursive-dispatch fixtures bound redundant call layers around loop work.
+Preserve recursive exits, argument effects, unwinding and the stated code-size
+bounds; the tests do not prescribe a particular call-graph algorithm.
 
 ### Further improvements
 
@@ -376,6 +410,8 @@ source-language clauses.
   explicit `-O0`. A parameter-object-extent case additionally makes O3 object
   shape depend on a source-produced member-object boundary, so byte equality
   checks compiler-object and textual LowIR transport of that fact.
+  Equivalent function entries mixed with global definitions must also remain
+  stable across the two paths.
 
 Run the debug metadata preservation lanes with:
 
