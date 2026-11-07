@@ -315,6 +315,11 @@ searches, and computing independent values in vector lanes. These are useful
 directions for experiments; they add no named-pass requirement to this
 assignment. Vectorization and interchange remain optional.
 
+Packed integers may contain fields a later reader never uses. Track the
+possible bits through masks, conversions and shifts before simplifying a
+slice. Preserve clipping at the original width, shared readers and effects
+whose result bits are discarded; avoid duplicating shared computations.
+
 For each experiment, first write a small behavior test with runtime inputs.
 Include the cases that invalidate the proposed shortcut: aliasing and overlap,
 zero iterations and short tails, an early exit, calls and exception paths,
@@ -337,6 +342,13 @@ an entry function, the execution check through the reference backend.
 Source-driver cases also compare execution before and after LowIR
 serialization. Failed cases are checked by exit status. See Quality Bar
 for the sidecar syntax.
+
+Whole-vector values stored in private aggregates can remain whole through
+copies and zero initialization. Use typed access and escape facts to avoid
+scalar memory round trips; preserve observable writes and volatile accesses.
+Packed shifts whose count becomes constant may use immediate operations,
+with oversized logical counts producing zero and arithmetic counts retaining
+sign fill. Equivalent implementations satisfy the same behavior and bounds.
 
 ### Testing
 

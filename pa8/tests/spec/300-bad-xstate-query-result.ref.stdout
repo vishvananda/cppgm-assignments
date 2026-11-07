@@ -1,0 +1,1 @@
+ERROR: xstate_query role requires an effectful i64 (i32) declaration: query

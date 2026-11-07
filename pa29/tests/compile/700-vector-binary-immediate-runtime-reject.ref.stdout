@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-vector-binary-immediate-runtime-reject.t:3:44: a vector selector that is no integral constant expression

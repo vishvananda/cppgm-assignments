@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-vector-binary-immediate-range-reject.t:3:41: a vector selector outside the unsigned-byte range

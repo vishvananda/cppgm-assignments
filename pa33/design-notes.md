@@ -13,6 +13,10 @@ Selection may fold operations or introduce temporaries, so LowIR liveness alone
 need not describe the selected instructions. Rewrites must keep those facts
 consistent with emission.
 
+Base frame requirements on the selected operations too. A wide integer
+conversion need not adjust the stack, while a runtime conversion may require
+it. Reserving a register unnecessarily can turn loop state into repeated spills.
+
 Begin with local improvements: identity copies, immediate operands, address
 arithmetic and jumps to the next block. Stop propagation at conflicting writes,
 unknown clobbers and exceptional boundaries. Keep meaningful debug locations
@@ -40,10 +44,17 @@ operand before reading it. A conditional move leaves its destination unchanged
 on one path; model both paths. Fixed-register division and shifts can overlap
 other operands, implicit uses and ABI arguments.
 
+Count pressure at the actual reads and writes. An operand that dies before
+a result reuses its register need not overlap that result. Folded or deferred
+uses must remain live until the selected instruction reads them.
+
 Weight uses by expected execution frequency, and measure spills and reloads
 inside loops rather than counting only frame slots. Saving a callee-saved
 register costs work on each function entry and exit. Rematerializing a cheap
 constant or address may be better than carrying it across a long live range.
+Branch predictions can guide these costs and block layout. Retain enough
+precision to distinguish common and rare paths; a prediction is never proof
+that the other path is unreachable.
 
 ## Width and representation
 
@@ -51,7 +62,9 @@ Know which readers need a narrow value's upper bits. Removing an extension
 is safe for a low-bit store and may be unsafe for an address index. Follow
 requirements through phis, selects and copies, not just the next instruction.
 Do not assume incoming upper bits are initialized when the ABI leaves them
-unspecified. A proof such as `convert trunc exact` may help; an arbitrary cast
+unspecified. A guard can narrow the possible full-width values enough to
+make a later normalization redundant. Check the original range through any
+truncation, merge every incoming edge and forget facts at unknown clobbers. A proof such as `convert trunc exact` may help; an arbitrary cast
 supplies no such proof.
 
 A calculation that reads only the low bits and then writes the full result
@@ -73,6 +86,8 @@ while preserving reachable actions before an impossible continuation. Include
 defined defaults, narrow incoming values and empty sets of live arms in tests.
 Equivalent indexed addresses can have different encoding costs. Preserve
 scale, width and flags when choosing the order of their operands.
+Combining a scale with an add may work with either operand order. Preserve
+any later reader of the intermediate scaled value, including partial writes.
 
 Test signed extrema and wrapping unsigned arithmetic. Select a division at the
 intended width and preserve its trapping preconditions. A high-half product

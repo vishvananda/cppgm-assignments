@@ -1,0 +1,1 @@
+ERROR: vector immediate must be a byte in function @product at tests/spec/300-bad-pclmulqdq-immediate.t:3

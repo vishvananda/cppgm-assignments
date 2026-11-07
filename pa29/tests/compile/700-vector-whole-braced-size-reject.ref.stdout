@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-vector-whole-braced-size-reject.t:3:12: invalid implicit conversion

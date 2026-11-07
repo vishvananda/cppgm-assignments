@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-gnu-asm-xgetbv-constraint-reject.t:3:3: unsupported GNU asm template: XGETBV requires fixed EAX/EDX outputs and an ECX input
