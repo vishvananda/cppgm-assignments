@@ -1,10 +1,10 @@
 # cppgm reference binary manifest
 version	1
-source_sha	17b024f692a5b537a4db6c4d3b6dc33bc930c680
+source_sha	6a6a15f446cf4249b207924c70da749b98b10d1a
 platform	linux-x86_64
-bundle_name	cppgm-reference-binaries-linux-x86_64-17b024f692a5.tar.gz
-bundle_url	https://github.com/vishvananda/cppgm-extended/releases/download/reference-binaries/cppgm-reference-binaries-linux-x86_64-17b024f692a5.tar.gz
-bundle_sha256	e479d8759dbfddc8fddd5dab55c9789dec4fb541c1ea23b467213eaff038243b
+bundle_name	cppgm-reference-binaries-linux-x86_64-6a6a15f446cf.tar.gz
+bundle_url	https://github.com/vishvananda/cppgm-extended/releases/download/reference-binaries/cppgm-reference-binaries-linux-x86_64-6a6a15f446cf.tar.gz
+bundle_sha256	657213c2c7a81aa0f331df82701500750abc2a38ba7d96a109e8529c8b0a5c68
 binary	abimangle	6fb2494931b76bf6a4dfdab81ce25fdaaccf8d38660fc0c0f7ac01fab2ca4d50
 binary	pptoken	b4027b15ab8f7069d957dbcd7a6ea69830c07f3edfd7a7cc613f2c5e90f9d70a
 binary	posttoken	fc2f7e8b6e8780e9d45d3a689a13d85794eb6f5ccd3a9d3ccd214cf06cf1d8dc
