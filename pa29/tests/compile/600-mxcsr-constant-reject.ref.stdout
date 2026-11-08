@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-mxcsr-constant-reject.t:1:28: an intrinsic without constant-evaluation semantics

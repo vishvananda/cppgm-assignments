@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-no-exceptions-throw-reject.t:1:12: throw is disabled by -fno-exceptions

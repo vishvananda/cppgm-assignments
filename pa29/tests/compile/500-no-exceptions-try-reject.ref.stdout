@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-no-exceptions-try-reject.t:1:12: try is disabled by -fno-exceptions

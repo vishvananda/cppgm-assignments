@@ -13,8 +13,9 @@ make inception                # PA34 completion
 The through report includes PA N; no separate PA N check is needed.
 PA35 ends with `make -C pa35 test`, which is not part of the report: its gates compare your compiler with the host and
 its own seed.
-`make test` builds once and runs all assignment suites; `make test-report`
-keeps going and summarizes failures. Use `ACTIVE_TEST_REPORT_PAS='pa8 pa10'`
+Optional [PA36](pa36/README.md) ends with `make -C pa36 test` and is outside
+the cumulative reports. `make test` builds once and runs PA1–PA33;
+`make test-report` keeps going and summarizes failures. Use `ACTIVE_TEST_REPORT_PAS='pa8 pa10'`
 to narrow a report.
 
 Suites select platform-specific checks automatically and list skips separately
@@ -96,6 +97,10 @@ killed by a signal never has the stated status, and a frontend that crashes
 or exits with status 70 does not reject. Any LowIR with the right behavior
 passes. Run one assignment's controls alone with `make -C paN test-controls`.
 Your own native backend is introduced in PA24.
+
+A positive control's `.limits` sidecar can bound frontend CPU time, output-file
+size and, on Linux, virtual address space. macOS reports the small address-space
+gate as a platform skip; correctness and CPU/file limits still run.
 
 Reference wrappers download and verify a pinned bundle built from the current
 cppgm-extended solution. They provide examples of the required behavior and

@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-no-exceptions-function-try-reject.t:1:35: catch is disabled by -fno-exceptions
