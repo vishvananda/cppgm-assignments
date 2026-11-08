@@ -1,1 +1,1 @@
-ERROR: tests/general/100-friend-specialization-default-argument-bad.t:4:22: a default argument or inline in a friend declaration of a specialization
+ERROR: tests/general/100-friend-specialization-default-argument-bad.t:4:22: a friend supplying defaults must be a definition

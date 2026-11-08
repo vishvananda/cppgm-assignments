@@ -1,0 +1,1 @@
+ERROR: tests/general/200-reference-formation-parenthesized.t:2:15: reference to a reference in a declarator

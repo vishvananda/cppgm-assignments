@@ -1,0 +1,1 @@
+ERROR: tests/general/200-enumerator-using-pre20-class-block.t:2:37: a class-member using-declaration outside a class

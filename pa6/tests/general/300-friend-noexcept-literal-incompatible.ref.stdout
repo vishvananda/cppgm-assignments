@@ -1,0 +1,1 @@
+ERROR: tests/general/300-friend-noexcept-literal-incompatible.t:2:43: redeclaration with an incompatible exception-specification

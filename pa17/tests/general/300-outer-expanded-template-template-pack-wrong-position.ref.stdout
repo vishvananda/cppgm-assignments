@@ -1,0 +1,1 @@
+ERROR: tests/general/300-outer-expanded-template-template-pack-wrong-position.t:9:19: a template template-argument whose template parameters do not match

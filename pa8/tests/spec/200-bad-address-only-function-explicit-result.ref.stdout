@@ -1,0 +1,1 @@
+ERROR: call signature return mismatch in function @invoke at tests/spec/200-bad-address-only-function-explicit-result.t:4

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-default-parameter-type-hiding-reject.t:4:25: a parameter used as an evaluated expression in a default argument

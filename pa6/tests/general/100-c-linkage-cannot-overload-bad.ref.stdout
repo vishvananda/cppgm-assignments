@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c-linkage-cannot-overload-bad.t:2:16: conflicting declaration of a C-linkage function

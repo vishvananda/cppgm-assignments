@@ -179,7 +179,7 @@ Stating them now costs one flag each; deriving them again after lowering is
 not possible.
 
 For reference initialization, the course includes the later
-[CWG2352 resolution](https://cplusplus.github.io/CWG/issues/2352.html):
+[CWG2352 resolution](../doc/cwg/cwg-2352.txt):
 reference-related types include similar types, and a permitted qualification
 conversion can make them reference-compatible. Such a compatible lvalue binds
 directly; it does not require a converted pointer temporary. In case 2 of
@@ -328,6 +328,20 @@ This PA10 milestone supports the following:
   from its initializer, missing elements are zero-initialized, and excess elements are
   rejected; an `extern` array of unknown bound may be referenced without requiring its
   layout in the current translation unit
+- omitted array tails with all-zero value-initialization use LowIR's
+  `zero <bytes>` data item. Analyze the omitted element type once and retain
+  the implicit range, so sparse initialization does not expand with the array
+  bound; preserve any required constructors and ABI null values
+- constant list-initialized array temporaries bound to static references use
+  internal structured globals and constant reference addresses, before any
+  dynamic initialization (3.6.2p2, 8.5.4p3, 12.2p5). Preserve their distinct
+  identities and compact omitted tails; dynamic initialization and required
+  destruction retain their ordinary lifetime actions
+- runtime array initialization lowers an omitted suffix compactly once it has
+  more than eight elements: nonvolatile zero-only initialization uses a bulk
+  zero with any ABI null-member-pointer patches; observable scalar accesses
+  and constructors use a loop. Explicit clauses retain their evaluation order
+  and each omitted object retains value-initialization semantics
 - automatic nonvolatile scalar arrays with completely known literal initializers
   use one copy from readonly constant data, including omitted zero elements;
   mutable arrays still have distinct automatic storage. PA16 extends eligibility

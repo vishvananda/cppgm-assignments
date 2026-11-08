@@ -1,0 +1,424 @@
+Offline CWG decisions and related papers
+=======================================
+
+These plain-text copies let you read the Core Working Group issues cited by
+the compiler, required tests and assignment handouts without a network connection.
+The catalog also includes related rules used to interpret those examples.
+
+The issue snapshot is cplusplus/CWG gh-pages commit
+38a43db15e384602a0c5debc3f7f22be32e186a1 (issue-list revision 121a, 2026-10-10).
+Each file gives its original URL, status, contributor and adoption history.
+manifest.json records source and text checksums.
+
+Read the adoption note and resolution, rather than treating the original problem
+statement or an earlier proposal as current wording. Earlier decisions may have
+been revised again; use these texts together with ../n3485.txt and the handout.
+Catalog inclusion does not assert implementation of every example or later feature.
+
+Change markup is explicit: [DELETE: ...] is removed wording; [INSERT: ...] is
+replacement wording. HTML del/ins, struck/underlined s/u, and marked blocks are
+retained as annotations; the edits are not silently applied. Source code indentation
+and issue/paper discussions are retained.
+When an issue refers to an adopted paper instead of including its wording, read the
+local paper listed below that issue. Paper contents can extend beyond C++11.
+
+Decision references
+-------------------
+
+CWG 33 | TC1 | cwg-0033.txt
+  Argument dependent lookup and overloaded functions
+CWG 136 | CD1 | cwg-0136.txt
+  Default arguments and friend declarations
+  Local paper: paper-p1787r6.txt
+CWG 138 | CD6 | cwg-0138.txt
+  Friend declaration name lookup
+  Local paper: paper-p1787r6.txt
+CWG 253 | C++17 | cwg-0253.txt
+  Why must empty or fully-initialized const objects be initialized?
+  Local paper: paper-p0490r0.txt
+CWG 295 | CD1 | cwg-0295.txt
+  cv-qualifiers on function types
+CWG 388 | CD3 | cwg-0388.txt
+  Catching base*&amp; from a throw of derived*
+CWG 616 | CD3 | cwg-0616.txt
+  Definition of “indeterminate value”
+CWG 619 | C++11 | cwg-0619.txt
+  Completeness of array types
+CWG 727 | C++17 | cwg-0727.txt
+  In-class explicit specializations
+CWG 852 | CD6 | cwg-0852.txt
+  using-declarations and dependent base classes
+  Local paper: paper-p1787r6.txt
+CWG 899 | CD2 | cwg-0899.txt
+  Explicit conversion functions in direct class initialization
+CWG 903 | CD3 | cwg-0903.txt
+  Value-dependent integral null pointer constants
+CWG 974 | CD3 | cwg-0974.txt
+  Default arguments for lambdas
+CWG 975 | CD3 | cwg-0975.txt
+  Restrictions on return type deduction for lambdas
+  Local paper: paper-n3638.txt
+CWG 1048 | CD3 | cwg-1048.txt
+  auto deduction and lambda return type deduction.
+  Local paper: paper-n3638.txt
+CWG 1059 | CD3 | cwg-1059.txt
+  Cv-qualified array types (with rvalues)
+CWG 1094 | C++11 | cwg-1094.txt
+  Converting floating-point values to scoped enumeration types
+CWG 1213 | CD3 | cwg-1213.txt
+  Array subscripting and xvalues
+CWG 1299 | CD5 | cwg-1299.txt
+  “Temporary objects” vs “temporary expressions”
+  Local paper: paper-p0727r0.txt
+CWG 1307 | C++14 | cwg-1307.txt
+  Overload resolution based on size of array initializer-list
+CWG 1315 | CD4 | cwg-1315.txt
+  Restrictions on non-type template arguments in partial specializations
+CWG 1328 | CD3 | cwg-1328.txt
+  Conflict in reference binding vs overload resolution
+CWG 1330 | CD3 | cwg-1330.txt
+  Delayed instantiation of noexcept specifiers
+CWG 1351 | CD4 | cwg-1351.txt
+  Problems with implicitly-declared exception-specifications
+CWG 1360 | CD6 | cwg-1360.txt
+  constexpr defaulted default constructors
+  Local paper: paper-p2448r2.txt
+CWG 1391 | CD4 | cwg-1391.txt
+  Conversions to parameter types with non-deduced template arguments
+CWG 1395 | C++17 | cwg-1395.txt
+  Partial ordering of variadic templates reconsidered
+CWG 1396 | C++23 | cwg-1396.txt
+  Deferred instantiation and checking of non-static data member initializers
+  Adopted resolution: cwg-2631.txt
+CWG 1397 | CD4 | cwg-1397.txt
+  Class completeness in non-static data member initializers
+CWG 1402 | CD3 | cwg-1402.txt
+  Move functions too often deleted
+CWG 1405 | CD3 | cwg-1405.txt
+  constexpr and mutable members of literal types
+CWG 1411 | CD3 | cwg-1411.txt
+  More on global scope :: in nested-name-specifier
+CWG 1424 | C++14 | cwg-1424.txt
+  When must sub-object destructors be accessible?
+CWG 1437 | CD3 | cwg-1437.txt
+  alignas in alias-declaration
+CWG 1457 | CD3 | cwg-1457.txt
+  Undefined behavior in left-shift
+CWG 1460 | C++14 | cwg-1460.txt
+  What is an empty union?
+CWG 1464 | CD3 | cwg-1464.txt
+  Negative array bound in a new-expression
+CWG 1467 | CD4 | cwg-1467.txt
+  List-initialization of aggregate from same-type object
+CWG 1472 | CD3 | cwg-1472.txt
+  odr-use of reference variables
+CWG 1473 | CD3 | cwg-1473.txt
+  Syntax of literal-operator-id
+CWG 1490 | CD4 | cwg-1490.txt
+  List-initialization from a string literal
+CWG 1495 | CD3 | cwg-1495.txt
+  Partial specialization of variadic class template
+CWG 1512 | CD3 | cwg-1512.txt
+  Pointer comparison vs qualification conversions
+CWG 1518 | CD4 | cwg-1518.txt
+  Explicit default constructors and copy-list-initialization
+  Local paper: paper-p0398r0.txt
+CWG 1550 | CD3 | cwg-1550.txt
+  Parenthesized throw-expression operand of conditional-expression
+CWG 1558 | CD4 | cwg-1558.txt
+  Unused arguments in alias template specializations
+CWG 1560 | CD3 | cwg-1560.txt
+  Gratuitous lvalue-to-rvalue conversion in conditional-expression with throw-expression operand
+CWG 1579 | C++14 | cwg-1579.txt
+  Return by converting move constructor
+CWG 1590 | CD4 | cwg-1590.txt
+  Bypassing non-copy/move constructor copying
+  Local paper: paper-p0135r1.txt
+CWG 1591 | CD4 | cwg-1591.txt
+  Deducing array bound and element type from initializer list
+CWG 1601 | C++14 | cwg-1601.txt
+  Promotion of enumeration with fixed underlying type
+CWG 1632 | CD5 | cwg-1632.txt
+  Lambda capture in member initializers
+  Local paper: paper-p0588r1.txt
+CWG 1638 | CD4 | cwg-1638.txt
+  Declaring an explicit specialization of a scoped enumeration
+CWG 1658 | C++14 | cwg-1658.txt
+  Deleted default constructor for abstract class via destructor
+CWG 1722 | CD4 | cwg-1722.txt
+  Should lambda to function pointer conversion function be noexcept?
+CWG 1734 | CD4 | cwg-1734.txt
+  Nontrivial deleted copy functions
+CWG 1741 | C++14 | cwg-1741.txt
+  odr-use of class object in lvalue-to-rvalue conversion
+CWG 1742 | CD5 | cwg-1742.txt
+  using-declarations and scoped enumerators
+  Local paper: paper-p1099r5.txt
+CWG 1793 | CD4 | cwg-1793.txt
+  thread_local in explicit specializations
+CWG 1839 | CD6 | cwg-1839.txt
+  Lookup of block-scope extern declarations
+  Local paper: paper-p1787r6.txt
+CWG 1850 | CD4 | cwg-1850.txt
+  Differences between definition context and point of instantiation
+CWG 1866 | CD4 | cwg-1866.txt
+  Initializing variant members with non-trivial destructors
+CWG 1913 | CD5 | cwg-1913.txt
+  decltype((x)) in lambda-expressions
+  Local paper: paper-p0588r1.txt
+CWG 1926 | CD4 | cwg-1926.txt
+  Potential results of subscript operator
+CWG 1992 | CD4 | cwg-1992.txt
+  new (std::nothrow) int[N] can throw
+CWG 2004 | CD4 | cwg-2004.txt
+  Unions with mutable members in constant expressions
+CWG 2076 | CD4 | cwg-2076.txt
+  List-initialization of arguments for constructor parameters
+CWG 2079 | CD4 | cwg-2079.txt
+  [[ appearing in a balanced-token-seq
+CWG 2082 | CD4 | cwg-2082.txt
+  Referring to parameters in unevaluated operands of default arguments
+CWG 2083 | CD5 | cwg-2083.txt
+  Incorrect cases of odr-use
+CWG 2084 | CD4 | cwg-2084.txt
+  NSDMIs and deleted union default constructors
+CWG 2101 | CD4 | cwg-2101.txt
+  Incorrect description of type- and value-dependence
+CWG 2137 | CD4 | cwg-2137.txt
+  List-initialization from object of same type
+CWG 2140 | CD4 | cwg-2140.txt
+  Lvalue-to-rvalue conversion of std::nullptr_t
+CWG 2170 | CD5 | cwg-2170.txt
+  Unclear definition of odr-use for arrays
+CWG 2176 | CD4 | cwg-2176.txt
+  Destroying the returned object when a destructor throws
+CWG 2267 | CD5 | cwg-2267.txt
+  Copy-initialization of temporary in reference direct-initialization
+CWG 2273 | CD5 | cwg-2273.txt
+  Inheriting constructors vs implicit default constructor
+CWG 2312 | CD6 | cwg-2312.txt
+  Structured bindings and mutable
+CWG 2346 | CD5 | cwg-2346.txt
+  Local variables in default arguments
+  Local paper: paper-p0588r1.txt
+CWG 2351 | CD5 | cwg-2351.txt
+  void{}
+CWG 2352 | CD5 | cwg-2352.txt
+  Similar types and reference binding
+CWG 2354 | CD5 | cwg-2354.txt
+  Extended alignment and object representation
+CWG 2356 | CD5 | cwg-2356.txt
+  Base class copy and move constructors should not be inherited
+  Local paper: paper-p0136r1.txt
+CWG 2386 | CD5 | cwg-2386.txt
+  tuple_size requirements for structured binding
+CWG 2476 | CD7 | cwg-2476.txt
+  placeholder-type-specifiers and function declarators
+CWG 2549 | CD7 | cwg-2549.txt
+  Implicitly moving the operand of a throw-expression in unevaluated contexts
+  Local paper: paper-p0527r1.txt, paper-p1155r3.txt, paper-p1825r0.txt, paper-p2266r2.txt
+CWG 2631 | C++23 | cwg-2631.txt
+  Immediate function evaluations in default arguments
+CWG 2746 | CD7 | cwg-2746.txt
+  Checking of unused default template arguments (March 2024 DR)
+CWG 2894 | CD7 | cwg-2894.txt
+  Functional casts create prvalues of reference type
+CWG 2907 | CD7 | cwg-2907.txt
+  Constant lvalue-to-rvalue conversion on uninitialized std::nullptr_t
+
+CWG 2941 | C++26 | cwg-2941.txt
+  Lifetime extension for function-style cast to reference type
+  Accepted as a DR, November 2025.
+
+Unresolved references (not adopted decisions)
+--------------------------------------------
+
+These are included so a cited open question can also be read offline. They are
+not evidence of an adopted resolution or a compiler conformance requirement.
+
+CWG 1286 | drafting | cwg-1286.txt
+  Equivalence of alias templates (BACKGROUND, no adopted identity rule)
+CWG 1430 | open | cwg-1430.txt
+  Pack expansion into fixed alias template parameter list (BACKGROUND, no adopted ban)
+CWG 1584 | drafting | cwg-1584.txt
+  Deducing function types from cv-qualified types
+CWG 1634 | open | cwg-1634.txt
+  Temporary storage duration
+CWG 1647 | drafting | cwg-1647.txt
+  Type agreement of non-type template arguments in partial specializations
+
+Related full papers
+-------------------
+
+P0135R1 | paper-p0135r1.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0135r1.html
+P0490R0 | paper-p0490r0.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0490r0.html
+P0527R1 | paper-p0527r1.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0527r1.html
+P0588R1 | paper-p0588r1.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0588r1.html
+  Adoption: Defect Report, November 2017, N4709 CWG motion 4.
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/n4709.pdf
+  Issue snapshots retain their original October 2017 date label.
+P1099R5 | paper-p1099r5.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1099r5.html
+P1155R3 | paper-p1155r3.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1155r3.html
+P1787R6 | paper-p1787r6.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1787r6.html
+P1825R0 | paper-p1825r0.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1825r0.html
+P2266R2 | paper-p2266r2.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2266r2.html
+P0136R1 | paper-p0136r1.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0136r1.html
+
+N3638 | paper-n3638.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3638.html
+
+N3922 | paper-n3922.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3922.html
+  Adopted in November 2014: N4251 CWG Motion 16; SD1 records 2014-11.
+  The course applies the corrected deduction in its C++11 modes.
+P0398R0 | paper-p0398r0.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0398r0.html
+P0727R0 | paper-p0727r0.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0727r0.html
+
+P2448R2 | paper-p2448r2.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2448r2.html
+  CWG 1360 identifies this adopted July 2022 resolution.
+  Implemented here: defaulted scalar constructor suitability; actual constant
+  initialization and indeterminate reads still use the ordinary evaluator.
+
+Access-dependent signatures and primary interpretation
+-------------------------------------------------------
+
+CWG 1170 | C++11 | cwg-1170.txt
+  Access checking participates in substitution (March 2011 WP adoption).
+CWG 1273 | NAD | cwg-1273.txt
+  Existing specialization-dependent accessibility in fixed decltype signatures
+  is intended. NAD is an affirmation, not a newly adopted defect resolution.
+CWG 1172 | drafting | cwg-1172.txt
+  Background on terminology only; no drafting proposal is implemented.
+
+Explicit pack prefixes
+----------------------
+
+CWG 1386 | NAD | cwg-1386.txt
+  Explicit prefixes can extend while multiple parameter packs are deduced.
+  NAD affirms existing behavior, not a new defect resolution.
+
+Constant values, casts and unknown references
+--------------------------------------------
+
+CWG 1595 | C++14 | cwg-1595.txt
+  Constructors “involved in” subobject initialization
+CWG 1965 | CD7 | cwg-1965.txt
+  Explicit casts to reference types
+CWG 2126 | C++20 | cwg-2126.txt
+  Lifetime-extended temporaries in constant expressions
+CWG 2820 | CD7 | cwg-2820.txt
+  Value-initialization and default constructors
+CWG 2879 | CD7 | cwg-2879.txt
+  Undesired outcomes with const_cast
+
+P2280R4 | paper-p2280r4.txt
+  Using unknown pointers and references in constant expressions.
+N4918 | paper-n4918.txt
+  CWG poll 13 adopts P2280R4 as a Defect Report; the paper's revision
+  history explicitly records application to C++11 through C++20. Unknown
+  references/this can be used to establish constant properties without
+  reading a value. Unknown pointer values cannot escape as constants.
+
+These cast and constant-evaluation repairs implement the tested C++11
+obligations and adopted corrections. Catalog inclusion does not assert
+implementation of every later-language example in an issue or paper.
+
+Adding a decision
+-----------------
+
+When a new CWG decision is cited in implementation, required tests or a handout,
+add its text and provenance record, list it in this index, and add every new file
+to scripts/student_export_documents.txt. Run make audit-cwg-references. The CI
+source-audit job checks reference coverage, checksums and export inclusion offline.
+
+Attribution
+-----------
+
+Issue descriptions, discussions and resolution wording remain attributed to the
+WG21 contributors named in the individual source texts. Papers retain their author
+and revision information. These copies are reference material, not newly authored
+course wording. The canonical issue pages identify themselves as an unofficial
+snapshot; their original status and source links are preserved.
+
+CWG 2397: auto specifier for pointers and references to arrays
+  File: cwg-2397.txt
+  Adopted as a DR, June 2021; full issue includes complete approved wording.
+  Pointer/reference array patterns may contain auto; the deduction type itself
+  must not be an array. Catalog inclusion is not an exhaustive interaction claim.
+
+CWG 1696 | cwg-1696.txt
+  Reference members initialized from temporaries; adopted DR, November 2014.
+  The issue contains the complete resolution, including the related CWG 1815
+  aggregate member/base initialization case.
+CWG 1815 | cwg-1815.txt
+  Historical aggregate temporary/reference member question, resolved by CWG 1696.
+  Use cwg-1696.txt for the adopted wording. Inclusion does not claim exhaustive
+  implementation of either issue; the compiler repair is tracked separately.
+
+CWG 39 | CD1 | cwg-0039.txt
+  Conflicting ambiguity rules; voted into the working paper, April 2005.
+  Local paper: paper-n1626.txt, the complete collected final resolution.
+  Lookup merges designated declarations; ambiguity of an actual object
+  conversion is a separate check. Read N3485 10.2 and the final paper rather
+  than the superseded proposals in the issue history.
+
+CWG 2059 | CD5 | cwg-2059.txt
+  Adopted as a defect resolution in March 2018. Removes the same-TU
+  definition diagnostic obligation from linkage rules; the ODR still applies.
+  Old GCC missing-definition diagnostics are not mandatory C++ correctness tests.
+
+Additional suite interpretation references
+
+CWG 585 | NAD | cwg-0585.txt
+  Friend template template parameters (interpretation-reference).
+CWG 1206 | C++11 | cwg-1206.txt
+  Defining opaque enumeration members of class templates (interpretation-reference).
+CWG 1435 | CD3 | cwg-1435.txt
+  template-id as the declarator for a class template constructor (interpretation-reference).
+CWG 1554 | drafting | cwg-1554.txt
+  Access and alias templates (background-only).
+CWG 1792 | NAD | cwg-1792.txt
+  Incorrect example of explicit specialization of member enumeration (interpretation-reference).
+CWG 1996 | drafting | cwg-1996.txt
+  Reference list-initialization ignores conversion functions (background-only).
+CWG 2102 | CD7 | cwg-2102.txt
+  Constructor checking in new-expression (interpretation-reference).
+CWG 2189 | open | cwg-2189.txt
+  Surrogate call template (background-only).
+CWG 2237 | CD5 | cwg-2237.txt
+  Can a template-id name a constructor? (interpretation-reference).
+CWG 2395 | drafting | cwg-2395.txt
+  Parameters following a pack expansion (background-only).
+CWG 2518 | C++23 | cwg-2518.txt
+  Conformance requirements and #error/#warning (interpretation-reference).
+CWG 2735 | open | cwg-2735.txt
+  List-initialization and conversions in overload resolution (background-only).
+CWG 2994 | open | cwg-2994.txt
+  Allowing template parameters following template parameter packs that are pack expansions (background-only).
+CWG 581 | CD5 | cwg-0581.txt
+  Can a templated constructor be explicitly instantiated or specialized? (interpretation-reference).
+CWG 941 | C++11 | cwg-0941.txt
+  Explicit specialization of deleted function template (interpretation-reference).
+CWG 613 | CD1 | cwg-0613.txt
+  Unevaluated uses of non-static class members (interpretation-reference).
+CWG 1684 | C++14 | cwg-1684.txt
+  Static constexpr member functions for non-literal classes (interpretation-reference).
+
+Open/drafting entries above document coverage boundaries, not adopted fixes.
+CWG 1755 | drafting | cwg-1755.txt
+  Out-of-class partial specializations of member templates (background-only; no adoption claim).
+CWG 2173 | open | cwg-2173.txt
+  Partial specialization with non-deduced contexts (background-only; no adoption claim).

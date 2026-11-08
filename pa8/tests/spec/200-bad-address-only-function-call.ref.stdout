@@ -1,0 +1,1 @@
+ERROR: direct call requires signature in function @invoke at tests/spec/200-bad-address-only-function-call.t:4

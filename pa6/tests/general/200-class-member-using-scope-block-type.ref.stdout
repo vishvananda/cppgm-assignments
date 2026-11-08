@@ -1,0 +1,1 @@
+ERROR: tests/general/200-class-member-using-scope-block-type.t:2:35: a class-member using-declaration outside a class

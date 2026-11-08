@@ -1,0 +1,1 @@
+ERROR: tests/spec/300-nested-function-default-trailing-return-type-id-bad.t:3:31: default argument in a nested function type

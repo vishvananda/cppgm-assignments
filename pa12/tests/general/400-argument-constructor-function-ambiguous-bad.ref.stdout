@@ -1,1 +1,1 @@
-ERROR: tests/general/400-argument-constructor-function-ambiguous-bad.t:2:186: no viable function for the call
+ERROR: tests/general/400-argument-constructor-function-ambiguous-bad.t:2:191: the selected argument conversion is ambiguous

@@ -1,0 +1,1 @@
+ERROR: expected '(', got '{' at tests/spec/200-bad-address-only-function-definition.t:1

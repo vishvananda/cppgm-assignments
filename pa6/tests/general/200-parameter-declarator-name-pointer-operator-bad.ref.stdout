@@ -1,0 +1,1 @@
+ERROR: tests/general/200-parameter-declarator-name-pointer-operator-bad.t:2:8: a parameter declarator-id must be an unqualified identifier

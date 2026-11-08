@@ -1,0 +1,1 @@
+ERROR: tests/general/200-unresolved-auto-parameter-bad.t:1:13: parameter without a type

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-template-template-inner-consumed-pack-wrong-type.t:8:19: a template template-argument whose template parameters do not match

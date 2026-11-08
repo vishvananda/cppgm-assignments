@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nested-function-parameter-noexcept-function-name-bad.t:1:55: a member function must be called

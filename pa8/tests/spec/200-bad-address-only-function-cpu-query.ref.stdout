@@ -1,0 +1,1 @@
+ERROR: cpu_query role requires an effectful void (i32, i32, ptr) declaration: opaque

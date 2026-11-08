@@ -66,6 +66,17 @@ for that specialization is nondependent, so its member types do not require
 `typename`. Body-local expressions need no shared expression key to establish
 this fact; arguments that name template parameters remain dependent.
 
+### Defaulted constructors and constant values
+
+For defaulted scalar constructors, this course follows CWG 1360 and its adopted
+resolution in `doc/cwg/paper-p2448r2.txt` (under the repository root).
+Scalar members without initializers do not disqualify the defaulted constructor
+from constant evaluation. Value-initialization zero-initializes those members
+before invoking the constructor. Default-initialization can leave them
+indeterminate; a required constant object or an indeterminate read still fails
+constant evaluation. Keep constructor eligibility separate from the initialized
+values of each actual object.
+
 ### Constant initialization of nonliteral objects
 
 A static object's constexpr constructor can initialize nonliteral base and
@@ -73,6 +84,21 @@ member subobjects, including array elements, before dynamic initialization.
 The subobjects share the initialized variable's storage identity. This does
 not permit nonliteral initializer temporaries in constant expressions or
 constexpr variables of nonliteral type.
+
+### Unknown references and persistent constant objects
+
+Apply adopted P2280R4 when a constant evaluation passes an unknown reference
+or uses `this` for implicit or explicit member access. The referred object's
+type and subobject layout are known even when its stored values are not.
+A constexpr member returning a fixed property can be called through that
+reference; reading an unknown member value, an ordinary pointer value or a
+non-constexpr reference-producing call still fails. An unspecified object's
+address cannot escape as the result of a constant expression.
+
+Under CWG 2126, a const literal temporary whose lifetime a usable reference
+extends can supply its nonmutable values. Keep the temporary's identity,
+including pointers to itself or its subobjects, when publishing constant
+storage. Other local objects do not gain static lifetime from that publication.
 
 ### Output Format
 
@@ -214,6 +240,17 @@ C++11 `constexpr` forms that later template and library code expect:
   data with one object copy; each automatic array still has distinct storage
 - reference-valued constant evaluation and `const T &` / reference parameter passing where
   the implemented object model already defines the underlying semantics
+- reference initialization consumes the typed list's temporary or directly
+  bound element, including direct braces and aggregate reference members.
+  Array temporaries retain an explicit prefix and omitted zero tails during
+  evaluation; reads preserve their full bounds and identities. Omitted
+  multidimensional arrays retain nonzero constexpr class defaults. Construct
+  only initialized prefix elements, reuse proven zero-default type facts,
+  and project zero-tail subobjects through their typed layout rather than
+  constructing unrelated fields. Preserve union activity and bit-field values.
+  Bound dense expansion of implicit tails as well as ordinary evaluation.
+  An optional probe that exceeds its storage budget fails softly so an
+  ordinary runtime initializer can still compile
 - lookup and reuse of previously computed constant values, including qualified lookup and
   static data members
 - function-local static objects over the supported LowIR subset:
@@ -236,6 +273,10 @@ C++11 `constexpr` forms that later template and library code expect:
 - ordinary namespace objects whose constant-initialization probe encounters a
   core constant-expression failure use dynamic initialization; only contexts
   that require a constant expression are rejected for that failure
+- constant initialization of ordinary arrays evaluates their explicit scalar
+  elements, including pointer and floating results of constexpr calls and
+  conversions, while retaining omitted zero tails as compact ranges. It must
+  not require a dense constant value for every omitted element
 - a `constexpr` object is const, so one that is statically initialized states
   `storage=readonly` when its class has no `mutable` member and no
   non-trivial destructor, as PA11's const objects do; the temporary that a

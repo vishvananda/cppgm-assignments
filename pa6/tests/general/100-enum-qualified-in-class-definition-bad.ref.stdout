@@ -1,0 +1,1 @@
+ERROR: tests/general/100-enum-qualified-in-class-definition-bad.t:3:31: a qualified enumeration definition outside a namespace

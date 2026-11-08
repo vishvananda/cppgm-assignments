@@ -1,0 +1,1 @@
+ERROR: tests/spec/300-nested-function-default-alias-function-bad.t:3:12: default argument in a nested function type

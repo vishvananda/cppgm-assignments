@@ -1,0 +1,1 @@
+ERROR: tests/general/200-empty-storage-static-class-bad.t:2:1: storage-class-specifier in a declaration without a declarator

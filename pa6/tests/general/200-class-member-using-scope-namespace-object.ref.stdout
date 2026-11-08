@@ -1,0 +1,1 @@
+ERROR: tests/general/200-class-member-using-scope-namespace-object.t:2:25: a class-member using-declaration outside a class

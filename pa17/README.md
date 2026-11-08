@@ -111,6 +111,13 @@ Private or protected access, including an inherited declaration's access path,
 can depend on specialization-specific friendship. Preserve these checks for the
 actual specialization; a value computed in another context grants no access.
 
+A static constexpr member of a fixed literal class can supply a nondependent
+value even inside a class template. A fixed value-initialization through a
+public constexpr default constructor and a public unique constexpr conversion
+does not become dependent merely because of that enclosing template. Retain
+private constructor and conversion checks for the specialization when friendship
+can affect their accessibility; genuinely dependent initializers still wait.
+
 ### Qualified template-name hiding
 
 Function and variable templates declared directly in a class participate in
@@ -249,6 +256,9 @@ implemented language surface, including:
   member definition available
 - integration with PA15 explicit specialization declarations/definitions when
   they interact with the PA17 specialization graph
+- the adopted CWG727 correction: a member-template explicit specialization may
+  be declared in its class, where its primary may be defined; copied definitions
+  retain separate facts for each enclosing class-template instance
 - collection/ownership behavior for constructor/member-template specializations
   and namespace-scope friend-template declarations
 - an explicit definition of a member template for a concrete class-template
@@ -301,6 +311,17 @@ types, values, dependent expressions and entity identities, retaining checks
 whose validity depends on supplied arguments. An already known result type
 does not prove that substitution is valid, including when an alias discards
 an argument from its result.
+
+A dependent pack expansion can supply an alias template's fixed parameters.
+Retain that template-id until expansion determines the argument positions, then
+apply the alias's defaults and substitute its type-id (N3485 14.5.3/14.5.7,
+with adopted CWG1558). Equal written argument and parameter counts do not
+establish the positions while an expansion remains. A concrete empty, excessive
+or wrong-kind argument list still fails the ordinary rules; PA18 applies those
+failures in immediate substitution contexts. Direct class-forwarding aliases
+preserve the associated class type in equivalent function declarations and their
+external ABI, including its namespace. This does not equate alias template names
+with class template names.
 
 Use canonical argument keys, PA16 constant values and template-entity bindings.
 Keep specialization selection separate from the demanded declaration,

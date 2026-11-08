@@ -1,0 +1,1 @@
+ERROR: tests/general/200-reference-formation-alias-direct.t:2:17: reference to a reference in a declarator

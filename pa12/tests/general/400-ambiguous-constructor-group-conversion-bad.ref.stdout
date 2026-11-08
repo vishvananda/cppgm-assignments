@@ -1,1 +1,1 @@
-ERROR: tests/general/400-ambiguous-constructor-group-conversion-bad.t:2:219: no viable function for the call
+ERROR: tests/general/400-ambiguous-constructor-group-conversion-bad.t:2:224: the selected argument conversion is ambiguous

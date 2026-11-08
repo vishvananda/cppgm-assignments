@@ -1,0 +1,1 @@
+ERROR: tests/general/200-empty-storage-mutable-class-bad.t:2:16: storage-class-specifier in a declaration without a declarator

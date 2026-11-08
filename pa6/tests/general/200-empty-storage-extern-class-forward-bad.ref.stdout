@@ -1,0 +1,1 @@
+ERROR: tests/general/200-empty-storage-extern-class-forward-bad.t:2:1: storage-class-specifier in a declaration without a declarator

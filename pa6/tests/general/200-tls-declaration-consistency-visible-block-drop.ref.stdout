@@ -1,0 +1,1 @@
+ERROR: tests/general/200-tls-declaration-consistency-visible-block-drop.t:2:42: declarations of a variable with different thread storage duration

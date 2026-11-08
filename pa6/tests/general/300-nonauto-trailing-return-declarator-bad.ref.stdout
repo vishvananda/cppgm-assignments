@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nonauto-trailing-return-declarator-bad.t:1:5: a trailing return type needs auto

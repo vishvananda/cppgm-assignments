@@ -1,0 +1,1 @@
+ERROR: tests/general/200-enumerator-using-pre20-scoped-block.t:2:32: a using-declaration cannot name a scoped enumerator

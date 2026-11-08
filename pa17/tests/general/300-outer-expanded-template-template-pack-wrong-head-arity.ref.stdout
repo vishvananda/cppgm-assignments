@@ -1,0 +1,1 @@
+ERROR: tests/general/300-outer-expanded-template-template-pack-wrong-head-arity.t:10:13: a template template-argument whose template parameters do not match

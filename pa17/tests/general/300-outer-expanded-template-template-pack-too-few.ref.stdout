@@ -1,0 +1,1 @@
+ERROR: tests/general/300-outer-expanded-template-template-pack-too-few.t:9:19: a template template-parameter expansion with a different number of arguments

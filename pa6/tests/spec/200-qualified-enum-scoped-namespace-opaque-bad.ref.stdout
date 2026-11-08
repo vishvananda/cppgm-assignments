@@ -1,0 +1,1 @@
+ERROR: tests/spec/200-qualified-enum-scoped-namespace-opaque-bad.t:3:43: qualified opaque enumeration declaration

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-parameter-declarator-name-qualified-global-bad.t:2:15: a parameter declarator-id must be an unqualified identifier

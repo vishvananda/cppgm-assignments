@@ -1,0 +1,1 @@
+ERROR: tests/general/300-default-parameter-earlier-shadow-reject.t:4:24: a parameter used as an evaluated expression in a default argument

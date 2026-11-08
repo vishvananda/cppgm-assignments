@@ -1,0 +1,1 @@
+ERROR: tests/general/300-default-parameter-address-reject.t:4:26: a parameter used as an evaluated expression in a default argument

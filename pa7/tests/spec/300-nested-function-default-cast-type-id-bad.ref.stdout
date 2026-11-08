@@ -1,0 +1,1 @@
+ERROR: tests/spec/300-nested-function-default-cast-type-id-bad.t:3:23: default argument in a nested function type

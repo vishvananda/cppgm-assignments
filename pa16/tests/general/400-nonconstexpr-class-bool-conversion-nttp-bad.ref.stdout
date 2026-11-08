@@ -1,1 +1,1 @@
-ERROR: tests/general/400-nonconstexpr-class-bool-conversion-nttp-bad.t:13:6: a call of a function that is not constexpr
+ERROR: tests/general/400-nonconstexpr-class-bool-conversion-nttp-bad.t:13:6: a template argument that is not a constant expression

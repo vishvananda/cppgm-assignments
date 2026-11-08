@@ -1,0 +1,1 @@
+ERROR: tests/general/300-enumeration-template-declaration-bad.t:3:19: an enumeration cannot be declared as a template

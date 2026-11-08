@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nested-function-parameter-noexcept-no-implicit-this-bad.t:1:86: `this` outside a non-static member function

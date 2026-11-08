@@ -1,0 +1,1 @@
+ERROR: tests/general/200-reference-formation-lvalue-rvalue.t:2:12: reference to a reference in a declarator

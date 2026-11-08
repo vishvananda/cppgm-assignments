@@ -1,0 +1,1 @@
+ERROR: tests/spec/300-default-local-parameter-value-reject.t:3:35: a parameter used as an evaluated expression in a default argument

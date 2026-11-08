@@ -1,0 +1,1 @@
+ERROR: tests/general/300-nested-function-parameter-noexcept-no-object-bad.t:1:86: non-static member function called without an object

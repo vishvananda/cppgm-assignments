@@ -1,0 +1,1 @@
+ERROR: tests/spec/200-enum-alignas-scoped-opaque-bad.t:2:12: alignment-specifier on an enumeration

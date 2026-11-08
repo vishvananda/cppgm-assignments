@@ -1,0 +1,1 @@
+ERROR: tests/spec/300-nested-function-default-return-reference-clause-bad.t:3:14: default arguments in more than one function clause

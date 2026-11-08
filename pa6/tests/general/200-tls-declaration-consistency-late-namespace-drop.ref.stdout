@@ -1,0 +1,1 @@
+ERROR: tests/general/200-tls-declaration-consistency-late-namespace-drop.t:2:41: declarations of a variable with different thread storage duration

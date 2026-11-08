@@ -1,0 +1,1 @@
+ERROR: tests/general/300-member-noexcept-const-deleted-bad.t:7:42: use of a deleted function

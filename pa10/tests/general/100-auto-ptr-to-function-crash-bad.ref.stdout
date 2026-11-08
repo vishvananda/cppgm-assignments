@@ -1,1 +1,1 @@
-ERROR: tests/general/100-auto-ptr-to-function-crash-bad.t:3:19: auto return type without a trailing return type
+ERROR: tests/general/100-auto-ptr-to-function-crash-bad.t:3:19: auto deduction fails for the initializer (7.1.6.4p6)

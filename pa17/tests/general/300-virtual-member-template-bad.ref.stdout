@@ -1,1 +1,1 @@
-ERROR: tests/general/300-virtual-member-template-bad.t:3:30: a virtual member function template
+ERROR: tests/general/300-virtual-member-template-bad.t:3:30: virtual specifiers require a non-template member declaration
