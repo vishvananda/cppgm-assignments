@@ -1,0 +1,1 @@
+ERROR: tests/general/100-fixed-class-does-not-deduce-member-type-bad.t:5:21: no viable function for the call

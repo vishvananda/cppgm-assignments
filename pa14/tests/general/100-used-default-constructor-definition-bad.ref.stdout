@@ -1,0 +1,1 @@
+ERROR: tests/general/100-used-default-constructor-definition-bad.t:3:34: member access on an incomplete class

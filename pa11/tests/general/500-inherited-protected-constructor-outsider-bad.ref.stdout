@@ -1,0 +1,1 @@
+ERROR: tests/general/500-inherited-protected-constructor-outsider-bad.t:3:22: inaccessible member

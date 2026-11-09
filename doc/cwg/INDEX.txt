@@ -425,3 +425,24 @@ CWG 2173 | open | cwg-2173.txt
 CWG 2327 | drafting | cwg-2327.txt
   Copy elision for direct-initialization with a conversion function
   (optional hosted compatibility; no adoption claim).
+
+P0170R1 | Wording for Constexpr Lambda | paper-p0170r1.txt
+  C++17 closure literal types, constexpr call operators and conversion functions.
+
+N4051 | Allow typename in a template template parameter | paper-n4051.txt
+  C++17 permits class and typename as equivalent template-template parameter keys.
+
+N3648 | Wording Changes for Generalized Lambda-capture | paper-n3648.txt
+  Historical C++14 initialized-capture wording, including parenthesized initializers.
+
+N4268 | paper-n4268.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4268.html
+  Constant-expression non-type arguments; direct member-pointer values in the modern controls.
+P0018R3 | paper-p0018r3.txt
+  https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0018r3.html
+  C++17 capture of *this by value.
+
+P0138R2, CWG2251 and CWG2374: direct-list initialization of fixed-underlying enumerations; narrowing and implicit-conversion controls.
+Sources: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0138r2.pdf
+https://cplusplus.github.io/CWG/issues/2251.html
+https://cplusplus.github.io/CWG/issues/2374.html

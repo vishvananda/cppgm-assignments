@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-builtin-frame-address-dynamic-bad.t:1:62: a frame level must be a nonnegative constant unsigned integer

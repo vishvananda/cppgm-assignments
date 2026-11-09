@@ -1,1 +1,1 @@
-ERROR: tests/general/300-defaulted-nontrivial-destructor-owner-bad.t:5:29: a constexpr member function of a class that is not a literal type
+ERROR: tests/general/300-defaulted-nontrivial-destructor-owner-bad.t:7:17: a constexpr variable of a type that is not a literal type

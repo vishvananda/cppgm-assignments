@@ -1,1 +1,1 @@
-ERROR: tests/general/200-private-member-not-aggregate-bad.t:5:23: no viable function for the call
+ERROR: tests/general/200-private-member-not-aggregate-bad.t:5:23: no constructor for the initialization

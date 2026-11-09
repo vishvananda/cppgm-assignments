@@ -1,1 +1,0 @@
-ERROR: tests/general/500-constexpr-member-owner-nonliteral-bad.t:6:3: a constexpr member function of a class that is not a literal type

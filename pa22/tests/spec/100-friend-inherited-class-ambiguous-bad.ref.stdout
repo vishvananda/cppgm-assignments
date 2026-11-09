@@ -1,0 +1,1 @@
+ERROR: tests/spec/100-friend-inherited-class-ambiguous-bad.t:5:45: ambiguous elaborated class name

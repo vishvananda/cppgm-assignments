@@ -383,6 +383,11 @@ PA12 supports the following in addition to the PA11 subset:
   site instead of forcing a separate synthesized trivial constructor call
 - empty class objects and subobjects use the same address-based class copy paths as
   other class objects; lowering must not invent a scalar payload for an empty class
+- placement construction of an empty class must preserve storage shared with
+  an empty base, including through a `void*` placement argument; it still calls
+  any selected non-trivial constructor, but does not write a synthetic padding
+  byte. This follows the GNU/Clang empty-object construction behavior used by
+  hosted libraries; the padding byte of a placed empty object is not a test oracle
 - an xvalue class glvalue bound to a reference through a derived-to-base
   conversion designates the existing base subobject; it is not materialized as
   a new complete object
@@ -411,6 +416,8 @@ PA12 supports the following in addition to the PA11 subset:
   including class-specific allocation/deallocation selection, explicit global
   qualification, and suppression of scalar initialization after a supported
   non-throwing allocation returns null
+- default arguments complete scalar and array allocation calls after the size
+  and explicit placement arguments, and are evaluated once per allocation
 - array `new` / `delete[]` expressions over the supported object subset; the
   request is a `std::size_t`, and the count is kept in an Itanium C++ ABI
   (2.7) cookie of max(sizeof(size_t), alignof(T)) bytes before the array
@@ -454,6 +461,8 @@ PA12 supports the following in addition to the PA11 subset:
   statement, including braceless nested statements
 - non-template conversion operators that participate in the existing overload
   and conversion machinery
+- class results copy-initialized through conversion operators from conditional
+  glvalues, preserving the selected operand and the result calling convention
 
 Within this milestone, PA12 should produce valid LowIR for ordinary non-polymorphic value
 types over the supported PA11 procedural/class subset. That LowIR is intended

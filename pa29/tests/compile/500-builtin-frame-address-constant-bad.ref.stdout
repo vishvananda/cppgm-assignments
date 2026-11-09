@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-builtin-frame-address-constant-bad.t:1:25: an intrinsic without constant-evaluation semantics

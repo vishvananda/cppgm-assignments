@@ -1,1 +1,1 @@
-ERROR: tests/general/200-default-member-initializer-not-aggregate-bad.t:2:16: no viable function for the call
+ERROR: tests/general/200-default-member-initializer-not-aggregate-bad.t:2:16: no constructor for the initialization

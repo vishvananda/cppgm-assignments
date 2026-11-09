@@ -78,6 +78,13 @@ hosted headers depend on:
   dependent definitions are checked when instantiated
 - `_Atomic` is not `volatile`: a class with an `_Atomic` member is still a
   literal type and may have a `constexpr` constructor
+- `__builtin_frame_address(level)` takes a nonnegative constant frame level
+  and returns a `void*` to the physical activation frame. On x86-64, level zero
+  reads a retained RBP frame even in optimized leaf functions. A nonzero level
+  follows saved caller frame pointers and requires a valid caller chain;
+  callers that omit frame pointers cannot be traversed reliably. Inlining
+  uses the containing activation's frame. The query is not a C++ constant
+  expression, and `__has_builtin` advertises it through the builtin registry
 
 The tests assume a Linux shell environment with `make`, `bash`, `perl`, and a
 working host C++ compiler with hosted C++ headers installed.
@@ -295,14 +302,47 @@ definitions, `decltype(auto)` variable and return deduction, generic lambda
 parameters (including packs and forwarding), initialized lambda captures, and
 pack-expanded using-declarations. An initialized capture deduces its type from
 its initializer in the enclosing scope; its new name is visible in the lambda
-body. Preserve reference binding, moves, and cleanup if a later capture throws.
+body. Both assignment and parenthesized initializers are supported; see the
+offline [generalized-capture wording](../doc/cwg/paper-n3648.txt).
+Preserve reference binding, moves, and cleanup if a later capture throws.
+C++17 `[*this]` captures copy the enclosing object, with its ordinary copy
+constructor, destruction and const/mutable behavior; see the offline
+[P0018R3 wording](../doc/cwg/paper-p0018r3.txt). Modern controls also cover
+constant expressions yielding direct member-pointer template arguments,
+including constexpr variables and calls ([N4268](../doc/cwg/paper-n4268.txt)).
+Generic-lambda capture discovery includes callable objects named as callees;
+unevaluated calls do not acquire captures. Keep recursive generic calls bound
+to their parameters and captured objects through the closure's stored members.
+Nested generic closures propagate captures through enclosing lambdas while
+their capture frames are still being built. Fixed local initializers use the
+enclosing object's type, including reference members and copied `*this`.
+An explicit lambda trailing return type can itself be `auto` in C++14 and
+later; deduce it from the body while preserving `decltype(auto)`'s reference
+semantics and the restrictions on nested function types.
+The optional C++17 lane also evaluates lambda closure objects in constant
+expressions, following [P0170R1's offline text](../doc/cwg/paper-p0170r1.txt).
+The original PDF is retained beside that text for its change formatting.
+Call operators can be explicitly or implicitly constexpr; captured values,
+references, initialized captures and captured `this` retain their normal
+object identity and lifetime. Non-generic captureless conversions yield
+function pointers that preserve the call operator's constexpr eligibility. A static local or
+other forbidden constexpr body construct prevents an inferred constant call.
+Direct brace initialization of a fixed-underlying enumeration accepts a single
+element that converts to the underlying type without narrowing. Copy-list
+initialization keeps its ordinary restrictions; see [P0138R2](../doc/cwg/paper-p0138r2.txt),
+[CWG2251](../doc/cwg/issue-2251.txt) and [CWG2374](../doc/cwg/issue-2374.txt).
+Class template deduction preserves brace initialization's initializer-list
+constructor phase and copy-deduction exceptions, including in condition declarations.
+
 In C++14 and later, contextual conversions such as array bounds and switch
 conditions can select among cv-qualified conversion overloads when all viable
 conversions lead to one permitted type. Distinct result types remain ambiguous.
 
 In C++14 and later, default member initializers do not disqualify an aggregate.
 Explicitly initialized members use the supplied values; omitted members use
-their default initializers in member order. Retain the C++11 restriction in
+their default initializers in member order, including partial static tables
+and implicit array tails. Defaults can refer to earlier members; nonconstant
+defaults retain their evaluation order and effects. Retain the C++11 restriction in
 C++11 mode, along with the other aggregate restrictions in every mode.
 Preserve reference/value categories and reject invalid initializers and overload
 candidates. Digit separators keep their value in native floating literals and cooked
@@ -316,6 +356,9 @@ non-throwing types, allow discarding the guarantee, and preserve it through
 deduction. Static `constexpr` data members are implicitly inline; definitions
 across translation units denote one object, including arrays and class-valued
 members. PA31's optional suite checks the corresponding host ABI behavior.
+Template template parameters may use either `class` or `typename` in C++17,
+including packs, defaults and alias-template arguments; see
+[N4051](../doc/cwg/paper-n4051.txt). Earlier language modes retain the `class` requirement.
 
 Constructor-based class template argument deduction applies to temporary
 construction and initialized object declarations, including array references,
@@ -328,6 +371,16 @@ and delegating subobjects.
 For hosted compatibility in this mode, a conversion function returning that
 class by value can also construct the direct-initialization result. Compare
 its object binding with competing constructors; a constructor wins a tie.
+
+Declared deduction guides also contribute candidates in C++17. They are
+associated with their class template and never enter ordinary name lookup or
+emit functions. Preserve guide defaults and forwarding, consider declarations
+added after an earlier deduction, and prefer a declared guide when otherwise
+tied with an implicit guide. Reject invalid result types, equivalent guide
+declarations and explicit-guide selection in copy-list initialization; ordinary
+copy initialization considers only non-explicit candidates.
+Implicit constructor guides retain the class template's context while
+evaluating constructor-template defaults, including class parameter packs.
 
 Placeholder non-type template parameters (`auto`, `auto*`, `auto&` and
 `decltype(auto)`) deduce the argument's type as well as its value. Preserve

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-enum-qualified-wrong-enumerator-bad.t:2:43: qualified member name does not name a base class

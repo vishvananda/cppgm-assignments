@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-builtin-frame-address-arity-bad.t:1:24: __builtin_frame_address takes one argument

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-specialized-member-definition-twice-bad.t:5:12: redefinition of a function

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-inherited-constructor-different-parameter-tie-bad.t:3:22: ambiguous call to overloaded function
