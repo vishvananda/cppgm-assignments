@@ -207,7 +207,8 @@ the supported subset:
 - GNU `pure` and `const` attributes on ordinary functions and function
   templates, preserved on the canonical callable as read-only-memory and
   no-memory-access effects, respectively: `effects=readonly` and
-  `effects=readnone` on its declarations and definition and on the call
+  `effects=readnone`, plus `repeatable=yes` for their value-reuse promise,
+  on its declarations and definition and on the call
   signature of a virtual call (`../pa8/lowir.md`, "Facts The C++ Lowering
   States"). A later declaration
   adds the attribute, one on a lambda-declarator is the call operator's, and
@@ -215,6 +216,17 @@ the supported subset:
   specialization takes only its own declarations' attributes, as GCC reads
   them; `noinline` follows the same rules for `no_inline=yes`, and PA32's
   `-O0` driver lane compares these facts
+- GNU `returns_nonnull`, including its reserved and `gnu::` spellings, is a
+  function result promise retained as `return=nonnull` on pointer-returning
+  declarations, definitions and virtual call boundaries. A template's implicit
+  instances inherit it; an explicit specialization uses its own declarations,
+  following GCC's attribute ownership rules.
+  Function pointers do not acquire the attribute as part of their type
+- GNU argumentless `malloc`, including its reserved and `gnu::` spellings,
+  promises a disjoint returned allocation, preserved as `noalias_result=yes`.
+  It follows the same declaration/template ownership rules and does not
+  promise non-null, read-only memory, or no unwinding. The argument-bearing
+  deallocator-association form alone makes no return-alias promise
 
 If host link succeeds but the host C++ ABI/runtime behavior is wrong, fix the
 host ABI/runtime lowering, metadata, or object-emission path.
@@ -248,6 +260,10 @@ Function effects can be represented as a small ordered enum on the canonical
 semantic binding and copied to the existing LowIR call-boundary metadata. This
 lets redeclarations and template instantiations merge the strongest declared
 effect without a string-keyed side table.
+An indirect class result is an explicit output-buffer write in LowIR;
+source `pure` or `const` does not justify claiming that this physical
+boundary writes no memory. Keep its effects conservative. Scalar and direct
+object-value result boundaries retain their GNU effect promises.
 
 ### After PA28
 

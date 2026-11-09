@@ -1239,7 +1239,7 @@ sub parse_lowir_parameter_metadata_suffix
 		elsif ($key eq 'alias')
 		{
 			return (0, "unknown parameter alias mode '$value'")
-				if $value !~ /^(?:noalias)$/;
+				if $value !~ /^(?:noalias|exclusive_result)$/;
 			$metadata{alias} = $value;
 		}
 		elsif ($key eq 'object_bytes')
@@ -1353,12 +1353,14 @@ sub parse_lowir_symbol_metadata_suffix
 
 sub parse_lowir_function_metadata_suffix
 {
-	my ($suffix) = @_;
+	my ($suffix, $result_type) = @_;
 	my %metadata = (
 		arity => 'fixed',
 		effects => '',
 		unwind => '',
 		return => '',
+		repeatable => '',
+		noalias_result => '',
 		role => '',
 		linkage => '',
 		binding => '',
@@ -1396,6 +1398,11 @@ sub parse_lowir_function_metadata_suffix
 					if $value !~ /^(?:readnone|readonly|readwrite)$/;
 				$metadata{effects} = $value;
 			}
+			elsif ($key eq 'repeatable' || $key eq 'noalias_result')
+			{
+				return (0, "$key metadata requires yes") if $value ne 'yes';
+				$metadata{$key} = $value;
+			}
 			elsif ($key eq 'unwind')
 			{
 				return (0, "unknown function unwind mode '$value'")
@@ -1405,7 +1412,7 @@ sub parse_lowir_function_metadata_suffix
 			elsif ($key eq 'return')
 			{
 				return (0, "unknown function return mode '$value'")
-					if $value !~ /^(?:noreturn|returns)$/;
+					if $value !~ /^(?:noreturn|nonnull|returns)$/;
 				$metadata{return} = $value;
 			}
 			elsif ($key eq 'role')
@@ -1497,6 +1504,12 @@ sub parse_lowir_function_metadata_suffix
 	my $rest = substr($suffix, pos($suffix) || 0);
 	return (0, "invalid trailing function metadata '$rest'")
 		if lowir_trim($rest) ne '';
+	return (0, "repeatable metadata requires readnone or readonly effects")
+		if $metadata{repeatable} ne '' && $metadata{effects} !~ /^(?:readnone|readonly)$/;
+	return (0, "nonnull return metadata requires a pointer result")
+		if $metadata{return} eq 'nonnull' && defined($result_type) && $result_type ne 'ptr';
+	return (0, "noalias_result metadata requires a pointer result")
+		if $metadata{noalias_result} ne '' && defined($result_type) && $result_type ne 'ptr';
 	return (1, \%metadata);
 }
 
@@ -1517,7 +1530,7 @@ sub parse_lowir_call_signature_suffix
 	my ($params_ok, $params_or_error) = parse_lowir_param_list($params_text);
 	return (0, $params_or_error) if !$params_ok;
 	my ($metadata_ok, $metadata_or_error) =
-		parse_lowir_function_metadata_suffix($metadata_suffix);
+		parse_lowir_function_metadata_suffix($metadata_suffix, $ret_type);
 	return (0, $metadata_or_error) if !$metadata_ok;
 	return (0, "call signature metadata does not allow symbol metadata")
 		if $metadata_or_error->{role} ne '' ||
@@ -1714,7 +1727,7 @@ sub validate_lowir_instruction
 		$state->{temps}{$destination} = $type;
 		return 0;
 	}
-	if ($line =~ /^%([A-Za-z0-9_]+)\s*=\s*copy\s+([A-Za-z0-9_]+)\s+(.+)$/)
+	if ($line =~ /^%([A-Za-z0-9_]+)\s*=\s*copy(?:\s+nonnull)?\s+([A-Za-z0-9_]+)\s+(.+)$/)
 	{
 		validate_lowir_value_operand_type($3, $2, $state, $errors, "$context copy");
 		$state->{temps}{$1} = $2;
@@ -2803,7 +2816,7 @@ sub validate_lowir_text
 		my ($ok, $metadata_or_error) = parse_lowir_function_metadata_suffix($suffix);
 		push @errors, "declare function \@$name has invalid metadata: $metadata_or_error" if !$ok;
 		push @errors, "address-only function \@$name cannot carry boundary metadata"
-			if $suffix =~ /\b(?:arity|effects|unwind|return|result_classes)\s*=/;
+			if $suffix =~ /\b(?:arity|effects|unwind|return|repeatable|noalias_result|result_classes)\s*=/;
 	}
 	my %signatures;
 	while ($data =~ /^function @([A-Za-z0-9_]+)\((.*?)\) -> ($type_pattern)((?:\s+\[[^\]]+\])*) \{$/gm)
@@ -2817,7 +2830,7 @@ sub validate_lowir_text
 			next;
 		}
 		my ($metadata_ok, $metadata_or_error) =
-			parse_lowir_function_metadata_suffix($4);
+			parse_lowir_function_metadata_suffix($4, $3);
 		# Invalid metadata is reported, but the signature is still recorded
 		# from the parameter list and return type so that a call to the
 		# function is checked against something instead of nothing.
@@ -2841,7 +2854,7 @@ sub validate_lowir_text
 			next;
 		}
 		my ($metadata_ok, $metadata_or_error) =
-			parse_lowir_function_metadata_suffix($4);
+			parse_lowir_function_metadata_suffix($4, $3);
 		push @errors, "declare function \@$1 has invalid metadata: $metadata_or_error"
 			if !$metadata_ok;
 		$signatures{$1} = {
@@ -2907,7 +2920,7 @@ my $LOWIR_COMPARE_SOURCE_FACTS = 1;
 sub lowir_metadata_item_is_source_fact
 {
 	my ($key, $value) = @_;
-	return 1 if $key =~ /^(?:effects|unwind|return|inline_hint|no_inline|alias|object_bytes|classes|result_classes|elision)$/;
+	return 1 if $key =~ /^(?:effects|unwind|return|repeatable|noalias_result|inline_hint|no_inline|alias|object_bytes|classes|result_classes|elision)$/;
 	return 1 if $key eq 'storage' && $value eq 'readonly';
 	return 0;
 }
@@ -3308,7 +3321,7 @@ sub canonical_lowir_literal
 # line names one; undef for positions typed elsewhere (call arguments,
 # `index` offsets, atomic orderings, spans and addends).
 my $LOWIR_TYPE = qr/(?:[A-Za-z0-9_]+|obj<\d+x\d+>)/;
-my $LOWIR_TYPED_INSTRUCTION = qr/^\s*(?:%[A-Za-z0-9_<>]+\s*=\s*)?(?:const|copy|phi|store(?:\s+volatile)?(?:\s+typed)?|return|unary\s+\w+|binary\s+\w+(?:\s+nowrap)?(?:\s+exact)?|cmp\s+\w+|select|atomic_\w+|va_arg)\s+($LOWIR_TYPE)(?:\s|$)/;
+my $LOWIR_TYPED_INSTRUCTION = qr/^\s*(?:%[A-Za-z0-9_<>]+\s*=\s*)?(?:const|copy(?:\s+nonnull)?|phi|store(?:\s+volatile)?(?:\s+typed)?|return|unary\s+\w+|binary\s+\w+(?:\s+nowrap)?(?:\s+exact)?|cmp\s+\w+|select|atomic_\w+|va_arg)\s+($LOWIR_TYPE)(?:\s|$)/;
 my $LOWIR_TYPED_CONVERT = qr/^\s*%[A-Za-z0-9_<>]+\s*=\s*convert\s+\w+\s+$LOWIR_TYPE\s+($LOWIR_TYPE)\s/;
 my $LOWIR_TYPED_GLOBAL = qr/^global @[A-Za-z0-9_<>]+(?:\s+readonly)?\s*:\s*($LOWIR_TYPE)/;
 my $LOWIR_TYPED_DATA_ITEM = qr/^\s+($LOWIR_TYPE)\s+-?\S+\s*$/;

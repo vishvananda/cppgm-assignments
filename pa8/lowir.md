@@ -461,17 +461,38 @@ Omission is the ordinary conservative read/write default and has no explicit spe
 `readnone` means the boundary does not read or write memory. `readonly` means the boundary
 may read memory but does not write it.
 
+The optional boundary fact `repeatable=yes` additionally promises that a call
+that has completed normally may be reused for equal argument values while its
+memory dependencies remain unchanged. It has no other observable effect.
+It requires `effects=readnone` or `effects=readonly`; memory effects alone do
+not establish repeatability. A read-only call depends on memory, whereas a
+read-none call does not. The first call, its evaluation order and its possible
+unwinding must be preserved; the fact does not make it safe to speculate a call
+onto another path. Omission promises no repeatability; there is no explicit
+false spelling. Changes to non-memory control state and opaque operations are
+barriers unless a consumer separately proves them irrelevant.
+
 The currently defined unwind value is `no`. Omission means the call may unwind and has no
 explicit spelling.
 
-The currently defined return value is `noreturn`. Omission means the call returns normally
-and has no explicit spelling.
+The return values are `noreturn` and `nonnull`. The latter requires a `ptr`
+result and promises that every normal return produces a non-null pointer; it
+does not suppress effects or unwinding. Omission states no return promise.
+
+The independent optional boundary fact `noalias_result=yes` requires a `ptr`
+result. A non-null returned pointer denotes storage disjoint from other
+pointers valid when the call returns; that storage contains no pointers to
+existing live objects. It does not imply a non-null result or restrict the
+call's reads, writes, or unwinding. Omission makes no return-alias promise.
+GNU argumentless `malloc` produces this fact; the argument-bearing
+deallocator-association attribute alone does not. It is a declaration fact,
+not part of a C++ function pointer's type.
 
 The C++ lowering states `effects`, `unwind` and `return` by the rules in Facts The C++
 Lowering States below.
 
 Call signatures only accept call-boundary metadata such as `arity=...`, `effects=...`,
-`unwind=...`, and `return=...`. Top-level symbol metadata such as `role=...`, `linkage=...`,
+`unwind=...`, `return=...`, `repeatable=yes`, and `noalias_result=yes`. Top-level symbol metadata such as `role=...`, `linkage=...`,
 `binding=...`, `replaceable=...`, `object=...`, `keep_alias=...`, `prefer_local=...`, `object_root=...`, and
 `force_inline=...`, `inline_hint=...`, and
 `no_inline=...` are not valid on `as (...) -> ...`
@@ -702,6 +723,7 @@ Omission means ordinary direct-value passing and has no explicit spelling.
 The currently defined alias values are:
 
 - `noalias`
+- `exclusive_result`
 
 The intended meaning is semantic, not host-ABI-specific:
 
@@ -710,6 +732,15 @@ The intended meaning is semantic, not host-ABI-specific:
   boundary whose argument denotes addressable storage
 - `noalias`: this incoming pointer is disjoint from every other pointer
   parameter on the same boundary that also carries `alias=noalias`
+- `exclusive_result`: valid only on bounded `indirect_result` storage. The
+  first `object_bytes` bytes do not overlap data visible through names
+  other than pointers derived from this result argument. This includes
+  unrelated incoming arguments, globals and local slots. Result-derived
+  pointers can still alias one another. This does not promise that its
+  address never escapes, that calls cannot access it, or that accesses stay
+  within its extent. Dropping the fact is always valid; `indirect_result`
+  alone does not carry it. C++ source lowering states this separate fact
+  for its caller-provided result buffer (the x86-64 psABI return convention).
 - `object_bytes=N`: `N` bytes starting at the pointer are readable when the
   function is entered, so a consumer may load from them where the code would
   not (out of a loop that may not run) as long as nothing that may free them
@@ -1694,7 +1725,7 @@ selector only if no clause has.
 
 ## Instruction Facts
 
-Three keywords state facts about an instruction:
+Four keywords state facts about an instruction:
 
 ```text
 %v = load typed ptr %field
@@ -1702,8 +1733,16 @@ store typed i32 %n, %count
 %t = binary add nowrap i32 %i, 1
 %q = binary div exact i64 %bytes, 12
 %n = convert trunc exact i32 i64 %wide
+%p = copy nonnull ptr %source
 ```
 
+- `nonnull`, on a pointer `copy`: its copied pointer is not null whenever
+  the instruction executes. The result has the same pointer bits as the source.
+  A consumer may use the result as non-null, but must drop this fact when
+  speculating the copy onto a path that did not execute it. A readable incoming
+  object (`object_bytes` greater than zero) likewise cannot be a null pointer.
+  Inlining may use this copy to preserve that formal parameter promise only
+  at the original call site; it does not refine the caller's other paths.
 - `typed`, on a `load` or `store` of a pointer, a floating type or an integer
   wider than one byte: the access reads or writes an object of the access's
   type through a glvalue of that type, in the sense of C++ [basic.lval]/10,
@@ -1847,10 +1886,30 @@ A call through a pointer or reference states none: the attribute appertains
 to a function, not to its type (7.6.3p1). A call of a `noreturn` function
 does not end its block; what follows it is lowered as written.
 
+`return=nonnull`: a pointer-returning function whose declaration carries GNU
+`returns_nonnull` states this result promise. Later declarations may add it;
+implicit template instances inherit it, while explicit function-template
+specializations use their own declarations. Virtual call boundaries retain
+the called declaration's promise. It is not a function-type property, so an
+ordinary function-pointer call does not inherit it. `noreturn` takes precedence
+when both attributes apply.
+
+`noalias_result=yes`: a pointer-returning function with GNU argumentless
+`malloc` states the independent fresh-storage promise described above.
+Its declaration, implicit/explicit specialization and virtual-call ownership
+follow `returns_nonnull`; ordinary function-pointer calls acquire neither
+promise from the function type. Existing-memory writes remain conservative.
+
 `effects`: a function declaration, definition or call signature states
 `effects=readnone` when any declaration of the function carries GNU `const`,
 and `effects=readonly` when one carries GNU `pure` and none carries `const`;
-`__builtin_strlen` states `effects=readonly`.
+`__builtin_strlen` states `effects=readonly`. These GNU attributes and
+`__builtin_strlen` also state `repeatable=yes`, preserving their value-reuse
+promise independently of their memory effects.
+A source class returned through an explicit `indirect_result` parameter is
+an exception: filling that buffer writes memory in LowIR, so lowering keeps
+the conservative default effects and does not state `repeatable=yes`. A
+direct object value result does not introduce that memory write.
 
 - `__attribute__((pure))`, `__attribute__((const))`, `[[gnu::pure]]` and
   `[[gnu::const]]` on any declaration: a later declaration adds to an earlier

@@ -163,10 +163,11 @@ const unsigned kCallUnwindModeCount = CUM_NO + 1;
 enum CallReturnMode : std::uint8_t
 {
 	CRM_DEFAULT,
-	CRM_NORETURN
+	CRM_NORETURN,
+	CRM_NONNULL
 };
 
-const unsigned kCallReturnModeCount = CRM_NORETURN + 1;
+const unsigned kCallReturnModeCount = CRM_NONNULL + 1;
 
 // ---------------------------------------------------------------------------
 // Parameter and instruction metadata
@@ -183,10 +184,11 @@ const unsigned kParamPassingModeCount = PPM_BY_ADDRESS + 1;
 enum ParamAliasMode : std::uint8_t
 {
 	PALM_DEFAULT,
-	PALM_NOALIAS
+	PALM_NOALIAS,
+	PALM_EXCLUSIVE_RESULT
 };
 
-const unsigned kParamAliasModeCount = PALM_NOALIAS + 1;
+const unsigned kParamAliasModeCount = PALM_EXCLUSIVE_RESULT + 1;
 
 // `index ... [projection=...]`.
 enum IndexProjectionKind : std::uint8_t
@@ -244,6 +246,8 @@ enum class MetadataKey : std::uint8_t
 	Effects,
 	Unwind,
 	Return,
+	Repeatable,
+	NoAliasResult,
 	ResultClasses,
 	// Symbol metadata.
 	Storage,
@@ -370,7 +374,7 @@ inline const char* spelling(CallUnwindMode value)
 
 inline const char* spelling(CallReturnMode value)
 {
-	static const char* const kReturns[kCallReturnModeCount] = { "", "noreturn" };
+	static const char* const kReturns[kCallReturnModeCount] = { "", "noreturn", "nonnull" };
 	return kReturns[value];
 }
 
@@ -382,7 +386,7 @@ inline const char* spelling(ParamPassingMode value)
 
 inline const char* spelling(ParamAliasMode value)
 {
-	static const char* const kAliases[kParamAliasModeCount] = { "", "noalias" };
+	static const char* const kAliases[kParamAliasModeCount] = { "", "noalias", "exclusive_result" };
 	return kAliases[value];
 }
 
@@ -402,10 +406,10 @@ inline const char* spelling(EightbyteClass value)
 
 inline const char* spelling(MetadataKey key)
 {
-	static const char* const kKeys[kMetadataKeyCount] = { "arity", "effects", "unwind", "return", "result_classes",
-		"storage", "section", "role", "linkage", "binding", "object", "tls_for", "keep_alias", "prefer_local",
-		"object_root", "force_inline", "inline_hint", "no_inline", "replaceable", "pass", "alias", "object_bytes",
-		"classes", "elision", "projection" };
+	static const char* const kKeys[kMetadataKeyCount] = { "arity", "effects", "unwind", "return", "repeatable",
+		"noalias_result", "result_classes", "storage", "section", "role", "linkage", "binding", "object", "tls_for",
+		"keep_alias", "prefer_local", "object_root", "force_inline", "inline_hint", "no_inline", "replaceable", "pass",
+		"alias", "object_bytes", "classes", "elision", "projection" };
 	return kKeys[static_cast<unsigned>(key)];
 }
 
@@ -591,6 +595,12 @@ struct FunctionBoundaryMetadata
 	CallEffectsMode effects = CFXM_DEFAULT;
 	CallUnwindMode unwind = CUM_DEFAULT;
 	CallReturnMode returns = CRM_DEFAULT;
+	// A normally completed call can be reused with equal arguments and
+	// unchanged memory dependencies; memory effects alone do not say this.
+	bool repeatable = false;
+	// A non-null result denotes storage disjoint from other live pointers.
+	// This states no memory effects or unwinding promise about the call.
+	bool noalias_result = false;
 	std::uint8_t result_classes = 0; // ObjectClassBits of a direct object result
 };
 

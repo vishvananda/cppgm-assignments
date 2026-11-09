@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-builtin-bit-reverse-arity-bad.t:1:29: wrong number of arguments to a bit builtin

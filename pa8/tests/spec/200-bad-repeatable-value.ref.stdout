@@ -1,0 +1,1 @@
+ERROR: repeatable metadata requires yes at tests/spec/200-bad-repeatable-value.t:1

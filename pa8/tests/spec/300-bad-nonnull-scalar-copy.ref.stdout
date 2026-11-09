@@ -1,0 +1,1 @@
+ERROR: nonnull requires a pointer copy in function @bad at tests/spec/300-bad-nonnull-scalar-copy.t:3
