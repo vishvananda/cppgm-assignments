@@ -56,8 +56,8 @@ function @main
   abi
     return i32 -> rax
   frame
-    stack_size 80
-    scratch_bytes 48
+    stack_size 32
+    scratch_bytes 0
     frame_pointer keep
     epilogues shared
     preserve rbx
@@ -79,12 +79,10 @@ function @main
     store.u8 [rsp+8], r11
     call @wide [args=(rcx,rdx,rsi,rdi,r8,r9), stack=16]
     add rsp, 16
-    mov rdx, 77
-    cmp.u32 @observed, rdx
+    cmp.u32 @observed, 77
     setne r8
     movzx r8, r8
-    mov rdx, 1
-    cmp.i64 [rbx+8], rdx
+    cmp.i64 [rbx+8], 1
     setne r9
     movzx r9, r9
     or r8, r9

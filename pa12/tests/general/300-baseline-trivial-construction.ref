@@ -1,0 +1,428 @@
+global @effects : u32 [binding=strong] = zero
+global @destroyed : u32 [binding=strong] = zero
+global @source [binding=strong] = {
+  i64 73
+}
+
+function @operatornew__ov2(%__param0 : i64, %p : ptr) -> ptr [unwind=no, binding=strong, object=_ZnwmPv] {
+  slot $__param0 : i64
+  slot $p : ptr
+
+  block ^entry:
+    store typed i64 %__param0, $__param0
+    store typed ptr %p, $p
+    %t1 = load typed ptr $p
+    return ptr %t1
+}
+function @operatornew____ov2(%__param0 : i64, %p : ptr) -> ptr [unwind=no, binding=strong, object=_ZnamPv] {
+  slot $__param0 : i64
+  slot $p : ptr
+
+  block ^entry:
+    store typed i64 %__param0, $__param0
+    store typed ptr %p, $p
+    %t1 = load typed ptr $p
+    return ptr %t1
+}
+function @source_effect() -> ptr [binding=strong, object=_Z13source_effectv] {
+  block ^entry:
+    %t1 = load typed u32 @effects
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, @effects
+    %t3 = addr @source
+    return ptr %t3
+}
+function @storage_effect(%p : ptr) -> ptr [binding=strong, object=_Z14storage_effectPv] {
+  slot $p : ptr
+
+  block ^entry:
+    store typed ptr %p, $p
+    %t1 = load typed u32 @effects
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, @effects
+    %t3 = load typed ptr $p
+    return ptr %t3
+}
+function @operatornew__ov3(%__param0 : i64, %p : ptr, %__param2 : i32) -> ptr [arity=variadic, unwind=no, binding=strong, object=_ZnwmPviz] {
+  slot $__param0 : i64
+  slot $p : ptr
+  slot $__param2 : i32
+
+  block ^entry:
+    store typed i64 %__param0, $__param0
+    store typed ptr %p, $p
+    store typed i32 %__param2, $__param2
+    %t1 = load typed u32 @effects
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, @effects
+    %t3 = load typed ptr $p
+    return ptr %t3
+}
+function @run() -> i32 [binding=strong, object=_Z3runv] {
+  slot $bad : u32
+  slot $first : obj<8x8>
+  slot $second : obj<8x8>
+  slot $storage : obj<8x8>
+  slot $copied : ptr
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $empty_storage : obj<1x1>
+  slot $original : obj<1x1>
+  slot $copy : ptr
+  slot $custom_storage : obj<4x4>
+  slot $custom : ptr
+  slot $lor__3 : i64
+  slot $variadic_storage : obj<8x8>
+  slot $variadic : ptr
+  slot $lor__4 : i64
+  slot $array_storage : obj<24x8>
+  slot $array : ptr
+  slot $lor__5 : i64
+  slot $lor__6 : i64
+  slot $d : obj<8x4>
+  slot $b : obj<8x4>
+  slot $base : ptr
+  slot $lor__7 : i64
+  slot $lor__8 : i64
+
+  block ^entry:
+    store typed u32 0, $bad
+    %t1 = addr $first
+    %t2 = convert sext i64 i32 29
+    %t3 = addr $first
+    %t4 = index i8 [projection=field] %t3, 0
+    store typed i64 %t2, %t4
+    %t5 = addr $second
+    %t6 = addr $first
+    copyobj 8x8 %t6, %t5
+    %t7 = addr $second
+    %t8 = index i8 [projection=field] %t7, 0
+    %t9 = load typed i64 %t8
+    %t10 = cmp ne i64 %t9, 29
+    %t11 = convert trunc u32 i64 %t10
+    %t12 = load typed u32 $bad
+    %t13 = binary add u32 %t12, %t11
+    store typed u32 %t13, $bad
+    %t14 = convert sext i64 i32 8
+    %t15 = addr $storage
+    %t16 = call ptr @storage_effect(%t15)
+    %t17 = call ptr @source_effect()
+    copyobj 8x8 %t17, %t16
+    store typed ptr %t16, $copied
+    %t18 = load typed ptr $copied
+    %t19 = addr $storage
+    %t20 = cmp ne ptr %t18, %t19
+    branch %t20, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t21 = load typed ptr $copied
+    %t22 = index i8 [projection=field] %t21, 0
+    %t23 = load typed i64 %t22
+    %t24 = cmp ne i64 %t23, 73
+    store typed i64 %t24, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t25 = load typed i64 $lor__1
+    branch %t25, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t26 = load typed u32 @effects
+    %t27 = cmp ne u32 %t26, 2
+    store typed i64 %t27, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t28 = load typed i64 $lor__2
+    %t29 = convert trunc u32 i64 %t28
+    %t30 = load typed u32 $bad
+    %t31 = binary add u32 %t30, %t29
+    store typed u32 %t31, $bad
+    %t32 = addr $original
+    %t33 = convert sext i64 i32 1
+    %t34 = addr $empty_storage
+    store typed ptr %t34, $copy
+    %t35 = load typed ptr $copy
+    call void @Empty___Empty(%t35)
+    %t36 = addr $original
+    call void @Empty___Empty(%t36)
+    %t37 = load typed u32 @destroyed
+    %t38 = cmp ne u32 %t37, 2
+    %t39 = convert trunc u32 i64 %t38
+    %t40 = load typed u32 $bad
+    %t41 = binary add u32 %t40, %t39
+    store typed u32 %t41, $bad
+    %t42 = convert sext i64 i32 4
+    %t43 = addr $custom_storage
+    %t44 = call ptr @Custom__operatornew(%t42, %t43)
+    %t45 = cmp ne ptr %t44, 0
+    branch %t45, ^new_init_7, ^new_end_8
+
+  block ^new_init_7:
+    call void @Custom__Custom__aggregate(%t44, 51)
+    jump ^new_end_8
+
+  block ^new_end_8:
+    store typed ptr %t44, $custom
+    %t46 = load typed ptr $custom
+    %t47 = index i8 [projection=field] %t46, 0
+    %t48 = load typed i32 %t47
+    %t49 = cmp ne i32 %t48, 51
+    branch %t49, ^lor_short_10, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t50 = load typed u32 @effects
+    %t51 = cmp ne u32 %t50, 3
+    store typed i64 %t51, $lor__3
+    jump ^lor_end_11
+
+  block ^lor_short_10:
+    store typed i64 1, $lor__3
+    jump ^lor_end_11
+
+  block ^lor_end_11:
+    %t52 = load typed i64 $lor__3
+    %t53 = convert trunc u32 i64 %t52
+    %t54 = load typed u32 $bad
+    %t55 = binary add u32 %t54, %t53
+    store typed u32 %t55, $bad
+    %t56 = convert sext i64 i32 8
+    %t57 = addr $variadic_storage
+    %t58 = call ptr @operatornew__ov3(%t56, %t57, 7)
+    %t59 = cmp ne ptr %t58, 0
+    branch %t59, ^new_init_12, ^new_end_13
+
+  block ^new_init_12:
+    call void @Variadic__Variadic__aggregate(%t58, 91)
+    jump ^new_end_13
+
+  block ^new_end_13:
+    store typed ptr %t58, $variadic
+    %t60 = load typed ptr $variadic
+    %t61 = index i8 [projection=field] %t60, 0
+    %t62 = load typed i64 %t61
+    %t63 = cmp ne i64 %t62, 91
+    branch %t63, ^lor_short_15, ^lor_rhs_14
+
+  block ^lor_rhs_14:
+    %t64 = load typed u32 @effects
+    %t65 = cmp ne u32 %t64, 4
+    store typed i64 %t65, $lor__4
+    jump ^lor_end_16
+
+  block ^lor_short_15:
+    store typed i64 1, $lor__4
+    jump ^lor_end_16
+
+  block ^lor_end_16:
+    %t66 = load typed i64 $lor__4
+    %t67 = convert trunc u32 i64 %t66
+    %t68 = load typed u32 $bad
+    %t69 = binary add u32 %t68, %t67
+    store typed u32 %t69, $bad
+    %t70 = addr $array_storage
+    %t71 = call ptr @storage_effect(%t70)
+    %t72 = index i64 [projection=array_element] %t71, 0
+    store typed i64 2, %t72
+    %t73 = index i64 [projection=array_element] %t71, 1
+    store typed i64 3, %t73
+    %t74 = index i64 [projection=array_element] %t71, 2
+    store typed i64 5, %t74
+    %t75 = index i8 %t71, 24
+    store typed ptr %t71, $array
+    %t76 = load typed ptr $array
+    %t77 = addr $array_storage
+    %t78 = cmp ne ptr %t76, %t77
+    branch %t78, ^lor_short_18, ^lor_rhs_17
+
+  block ^lor_rhs_17:
+    %t79 = load typed ptr $array
+    %t80 = index i64 [projection=array_element] %t79, 0
+    %t81 = load typed i64 %t80
+    %t82 = load typed ptr $array
+    %t83 = index i64 [projection=array_element] %t82, 1
+    %t84 = load typed i64 %t83
+    %t85 = binary add nowrap i64 %t81, %t84
+    %t86 = load typed ptr $array
+    %t87 = index i64 [projection=array_element] %t86, 2
+    %t88 = load typed i64 %t87
+    %t89 = binary add nowrap i64 %t85, %t88
+    %t90 = cmp ne i64 %t89, 10
+    store typed i64 %t90, $lor__5
+    jump ^lor_end_19
+
+  block ^lor_short_18:
+    store typed i64 1, $lor__5
+    jump ^lor_end_19
+
+  block ^lor_end_19:
+    %t91 = load typed i64 $lor__5
+    branch %t91, ^lor_short_21, ^lor_rhs_20
+
+  block ^lor_rhs_20:
+    %t92 = load typed u32 @effects
+    %t93 = cmp ne u32 %t92, 5
+    store typed i64 %t93, $lor__6
+    jump ^lor_end_22
+
+  block ^lor_short_21:
+    store typed i64 1, $lor__6
+    jump ^lor_end_22
+
+  block ^lor_end_22:
+    %t94 = load typed i64 $lor__6
+    %t95 = convert trunc u32 i64 %t94
+    %t96 = load typed u32 $bad
+    %t97 = binary add u32 %t96, %t95
+    store typed u32 %t97, $bad
+    %t98 = addr $d
+    %t99 = addr $d
+    %t100 = index i8 %t99, 0
+    %t101 = index i8 [projection=field] %t100, 0
+    store typed i32 1, %t101
+    %t102 = addr $d
+    %t103 = index i8 %t102, 0
+    %t104 = index i8 [projection=field] %t103, 4
+    store i8 2, %t104
+    %t105 = addr $d
+    %t106 = index i8 [projection=field] %t105, 5
+    store i8 99, %t106
+    %t107 = addr $b
+    %t108 = addr $b
+    %t109 = index i8 [projection=field] %t108, 0
+    store typed i32 47, %t109
+    %t110 = addr $b
+    %t111 = index i8 [projection=field] %t110, 4
+    store i8 8, %t111
+    %t112 = convert sext i64 i32 8
+    %t113 = addr $d
+    %t114 = index i8 %t113, 0
+    %t115 = addr $b
+    copyobj 5x4 %t115, %t114
+    store typed ptr %t114, $base
+    %t116 = load typed ptr $base
+    %t117 = index i8 [projection=field] %t116, 0
+    %t118 = load typed i32 %t117
+    %t119 = cmp ne i32 %t118, 47
+    branch %t119, ^lor_short_24, ^lor_rhs_23
+
+  block ^lor_rhs_23:
+    %t120 = load typed ptr $base
+    %t121 = index i8 [projection=field] %t120, 4
+    %t122 = load i8 %t121
+    %t123 = convert sext i32 i8 %t122
+    %t124 = cmp ne i32 %t123, 8
+    store typed i64 %t124, $lor__7
+    jump ^lor_end_25
+
+  block ^lor_short_24:
+    store typed i64 1, $lor__7
+    jump ^lor_end_25
+
+  block ^lor_end_25:
+    %t125 = load typed i64 $lor__7
+    branch %t125, ^lor_short_27, ^lor_rhs_26
+
+  block ^lor_rhs_26:
+    %t126 = addr $d
+    %t127 = index i8 [projection=field] %t126, 5
+    %t128 = load i8 %t127
+    %t129 = convert sext i32 i8 %t128
+    %t130 = cmp ne i32 %t129, 99
+    store typed i64 %t130, $lor__8
+    jump ^lor_end_28
+
+  block ^lor_short_27:
+    store typed i64 1, $lor__8
+    jump ^lor_end_28
+
+  block ^lor_end_28:
+    %t131 = load typed i64 $lor__8
+    %t132 = convert trunc u32 i64 %t131
+    %t133 = load typed u32 $bad
+    %t134 = binary add u32 %t133, %t132
+    store typed u32 %t134, $bad
+    %t135 = load typed u32 $bad
+    %t136 = cmp ne u32 %t135, 0
+    %t137 = convert trunc i32 i64 %t136
+    return i32 %t137
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @run()
+    return i32 %t1
+}
+function @Custom__Custom__aggregate(%this : ptr [object_bytes=4], %value : i32) -> void [unwind=no, binding=internal] {
+  slot $this : ptr
+  slot $value : i32
+
+  block ^entry:
+    store typed ptr %this, $this
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = load typed ptr $this
+    %t3 = index i8 [projection=field] %t2, 0
+    store typed i32 %t1, %t3
+    return void
+}
+function @Variadic__Variadic__aggregate(%this : ptr [object_bytes=8], %value : i64) -> void [unwind=no, binding=internal] {
+  slot $this : ptr
+  slot $value : i64
+
+  block ^entry:
+    store typed ptr %this, $this
+    store typed i64 %value, $value
+    %t1 = load typed i64 $value
+    %t2 = load typed ptr $this
+    %t3 = index i8 [projection=field] %t2, 0
+    store typed i64 %t1, %t3
+    return void
+}
+function @Empty___Empty(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN5EmptyD1Ev, inline_hint=yes] {
+  slot $this : ptr
+
+  block ^entry:
+    store typed ptr %this, $this
+    %t1 = load typed u32 @destroyed
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, @destroyed
+    return void
+}
+function @Custom__operatornew(%__param0 : i64, %p : ptr) -> ptr [unwind=no, binding=weak, object=_ZN6CustomnwEmPv, inline_hint=yes] {
+  slot $__param0 : i64
+  slot $p : ptr
+
+  block ^entry:
+    store typed i64 %__param0, $__param0
+    store typed ptr %p, $p
+    %t1 = load typed u32 @effects
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, @effects
+    %t3 = load typed ptr $p
+    return ptr %t3
+}
+function @Derived___Derived(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD1Ev, object_root=yes, inline_hint=yes] {
+  slot $this : ptr
+
+  block ^entry:
+    store typed ptr %this, $this
+    return void
+}
+function @Base___Base(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD1Ev, object_root=yes, inline_hint=yes] {
+  slot $this : ptr
+
+  block ^entry:
+    store typed ptr %this, $this
+    return void
+}
+alias object _ZN5EmptyD2Ev = @Empty___Empty
+alias object _ZN7DerivedD2Ev = @Derived___Derived
+alias object _ZN4BaseD2Ev = @Base___Base

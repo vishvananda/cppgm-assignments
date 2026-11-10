@@ -1,0 +1,1 @@
+ERROR: indirect jump requires a pointer in function @f at tests/spec/300-assembly-indirect-jump-nonpointer.t:1

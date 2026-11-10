@@ -473,6 +473,7 @@ sub build_wrapped_text_request
 	{
 		my $test_out = $test;
 		$test_out =~ s/\.t$/\.$suffix/;
+		my @language_args = CppgmBatchWorker::standard_args_for($test);
 
 		# The assignment wrapper declares its CLI contract. Directory numbers
 		# must not decide whether a tool reads stdin or grouped source files.
@@ -482,7 +483,7 @@ sub build_wrapped_text_request
 		if ($input_profile eq 'stdin' || $input_profile eq 'stdin-combined')
 		{
 			my $stderr_file = ($input_profile eq 'stdin-combined') ? $test_out : "$test_out.stderr";
-			return ($test_out, $stderr_file, $test, {});
+			return ($test_out, $stderr_file, $test, {}, @language_args);
 		}
 
 		if ($input_profile eq 'sources')
@@ -494,12 +495,13 @@ sub build_wrapped_text_request
 			        "$test_out.stdout",
 			        "-",
 			        read_env_file("$test_base.env"),
+			        @language_args,
 			        "-o",
 			        $test_out,
 			        @inputs);
 		}
 
-		# Hosted-compat preprocessor tests (suffix "pp", e.g. pa29) must run with
+		# Hosted-compat preprocessor tests (suffix "pp", e.g. pa30) must run with
 		# -E so the tool preprocesses instead of compiling+linking the directive-
 		# only source (which has no main). Mirrors the batch worker
 		# (run_cpphostcompat_preproc_worker.pl) so the bucket behaves identically
@@ -520,6 +522,7 @@ sub build_wrapped_text_request
 		        "-",
 		        $env,
 		        @mode_args,
+		        @language_args,
 		        @include_args,
 		        "-o",
 		        $test_out,
@@ -533,10 +536,12 @@ sub build_wrapped_text_request
 		my $test_base = $test;
 		$test_base =~ s/\.t\.1$/\.t/;
 		my @inputs = CppgmBatchWorker::input_files_with_prefix("$test_base.");
+		my @language_args = CppgmBatchWorker::standard_args_for($test);
 		return ("$test_out.stdout",
 		        "$test_out.stdout",
 		        "-",
 		        {},
+		        @language_args,
 		        "-o",
 		        $test_out,
 		        @inputs);

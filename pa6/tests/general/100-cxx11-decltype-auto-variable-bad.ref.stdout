@@ -1,1 +1,0 @@
-ERROR: tests/general/100-cxx11-decltype-auto-variable-bad.t:2:1: decltype(auto) requires C++14

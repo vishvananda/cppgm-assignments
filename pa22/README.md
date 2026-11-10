@@ -151,7 +151,7 @@ format for `cppgm++` is specified by this README, PA8 `lowir.md`, and the
 checked-in `.ref` files.
 
 PA22 does not add a new source-language grammar format. It instead enables more
-of the already-accepted C++11 syntax to participate in semantic analysis and
+of the accepted source-language syntax to participate in semantic analysis and
 lowering.
 
 A checked-in HTML grammar explorer for that grammar lives in `grammar/`. Treat
@@ -247,6 +247,15 @@ To complete PA22, implement these goals:
 
 6. Ambiguity handling.
    Ambiguous inherited member names must not silently resolve.
+
+### Later-language interactions with the complete object model
+
+Apply C++17 aggregate-base initialization and pack-expanded using declarations
+to the completed non-virtual multiple-inheritance model. Retain base order,
+lookup ambiguity and cleanup across distinct subobjects. Modern cases whose
+observations require member pointers or multiple bases remain here even when
+their isolated deduction syntax was introduced earlier. This is not a new
+STL requirement. See N4659 `[dcl.init.aggr]`, `[namespace.udecl]` and `[temp.arg.nontype]`.
 
 ### Out Of Scope
 

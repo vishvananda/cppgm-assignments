@@ -217,6 +217,24 @@ PA7 passes consume, including:
 Unsupported statement or expression forms inside the PA5 boundary should fail
 during parsing rather than being preserved as opaque placeholder nodes.
 
+### Required C++14/17 syntax
+
+The source driver accepts `-std=c++11`, `-std=c++14` and `-std=c++17`;
+the default stays C++11. Parse the forms in the
+[required language profile](../LANGUAGE_PROFILE.md) into structured nodes.
+These include nested namespace definitions and attribute using-prefixes,
+placeholder declarations, folds, deduction guides, initializer statements,
+`if constexpr`, structured bindings, generic/initialized lambda captures and
+pack-expanded using declarations. Syntax acceptance here does not require
+later template instantiation or object lowering.
+
+C++17 `namespace a::b { ... }` represents nested namespace definitions.
+An attribute using-prefix applies one namespace to its attribute list; do
+not combine it with individually scoped attributes in that same list.
+Retain language-mode distinctions, including an empty using-prefix list.
+GNU attribute effects remain hosted compatibility work. N4659
+`[namespace.def]` and `[dcl.attr.grammar]` govern these syntax checks.
+
 ### Out Of Scope
 
 PA5 does not require:
@@ -255,7 +273,7 @@ Comparison rules:
 
 The local suite is split by role:
 
-- `tests/spec/` contains small tests tied to specific C++11 syntax clauses.
+- `tests/spec/` contains small tests tied to the cited syntax clauses and selected language modes.
   These files begin with an `N3485 focus` comment.
 - `tests/general/` contains broader parser tests, cross-feature syntax
   combinations, and useful intake cases that are not a single-clause oracle.
@@ -466,3 +484,8 @@ lambda-introducer <text>
 lambda-declarator
 lambda-specifier <token>
 ```
+
+The mode-tagged [modern syntax example](tests/spec/100-required-modern-syntax.t)
+and its [AST reference](tests/spec/100-required-modern-syntax.ref) show the
+required later forms together. The dump preserves their syntax before the
+owning semantic lessons perform deduction, capture analysis or instantiation.

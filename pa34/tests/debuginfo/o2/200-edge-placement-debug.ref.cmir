@@ -1,0 +1,49 @@
+machine_ir x86_64 <host-target>
+
+startup
+    call @main [args=()]
+    mov rdi, rax
+    exit
+
+global @seed
+  storage data
+  item i64 40
+
+function @identity
+  abi
+    param %value -> rdi : i64
+    return i64 -> rax
+  frame
+    stack_size N
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues duplicated
+
+  block ^entry
+    ret rdi !dbg(test.cpp, 2, 3)
+
+function @main
+  abi
+    return i64 -> rax
+  frame
+    stack_size N
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues duplicated
+    preserve <gpr0>
+
+  block ^entry
+    load.i64 <gpr0>, @seed
+    add <gpr0>, 2 !dbg(test.cpp, 7, 5)
+
+  block ^loop
+    mov rdi, <gpr0> !dbg(test.cpp, 11, 5)
+    call @identity [args=(rdi), unwind=no] !dbg(test.cpp, 11, 5)
+    cmp.i64 rax, 0 !dbg(test.cpp, 12, 5)
+    je ^loop !dbg(test.cpp, 12, 5)
+
+  block ^done
+    cmp.i64 rax, 42 !dbg(test.cpp, 15, 5)
+    setne rax !dbg(test.cpp, 15, 5)
+    movzx rax, rax !dbg(test.cpp, 15, 5)
+    ret rax !dbg(test.cpp, 16, 5)

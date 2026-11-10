@@ -170,7 +170,7 @@ A fixture that fails on one of these is telling you which convention
 your output departs from; the canonical diff the harness writes beside the
 output shows where.
 
-The facts are what later stages may rely on: PA32's optimizer can assume a
+The facts are what later stages may rely on: PA33's optimizer can assume a
 typed store does not change a typed load of another type, remove the
 exception region around a call that cannot unwind, fold a load from readonly
 data to its value, and load through a reference before a loop that may not
@@ -343,9 +343,11 @@ This PA10 milestone supports the following:
   and constructors use a loop. Explicit clauses retain their evaluation order
   and each omitted object retains value-initialization semantics
 - automatic nonvolatile scalar arrays with completely known literal initializers
-  use one copy from readonly constant data, including omitted zero elements;
-  mutable arrays still have distinct automatic storage. PA16 extends eligibility
-  to initializers evaluated through general constexpr expressions
+  use one copy from readonly constant data, including omitted zero elements,
+  at any number of dimensions. An entirely zero-byte representation uses a
+  direct bulk zero instead. Mutable arrays still have distinct automatic
+  storage. PA16 extends eligibility to initializers evaluated through general
+  constexpr expressions
 - expression statements
 - `return`
 - `if` / `else`
@@ -408,6 +410,16 @@ observes it.)
 
 The generated LowIR for this supported subset is intended to be accepted by the
 later PA24 `lowir2native` backend.
+### Selection initializer scope
+
+In C++17, support an initializer statement before an `if` or `switch`
+condition. Its declarations remain visible in the condition and selected
+substatement, including `else`, and their scope ends after the complete
+selection statement. Evaluate the initializer once; preserve normal cleanup
+and shadowing. This procedural feature does not require `if constexpr`, which
+is assigned after template substitution in PA19. See N4659 `[stmt.if]` and
+`[stmt.switch]`.
+
 ### Out Of Scope
 
 The following are explicitly out of scope for this PA10 milestone:
@@ -464,15 +476,15 @@ operation as it creates a temporary. In particular, keeping the canonical
 `i64` comparison result there avoids duplicating result-type decisions at
 each later use.
 
-The LowIR this assignment emits is the optimizer's input at PA32, which is
+The LowIR this assignment emits is the optimizer's input at PA33, which is
 why its shape is simple rather than efficient. Every local lives in a slot
-and every use loads it: PA32 promotes slots to values, so there is no need to
+and every use loads it: PA33 promotes slots to values, so there is no need to
 avoid the loads here. `unreachable` states a fact the optimizer uses to
 delete code after a call that does not return; it is not a trap to execute.
 The instruction facts (Instruction Facts in `../pa8/lowir.md`) are the
 semantic facts the optimizer cannot recover from LowIR alone: C++'s type-based
 aliasing and its undefined signed overflow. State them where the rules say,
-even though nothing before PA32 reads them.
+even though nothing before PA33 reads them.
 
 Lower each function straight into the PA8 model, and decide by demand from
 the start which definitions to lower. A definition the translation unit need

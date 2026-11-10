@@ -95,7 +95,7 @@ New in PA25:
 - target selection: `--target <target>` or `--target=<target>`
 - flags the fixtures pass, accepted and applied as the host compiler applies
   them: `-D<name>` and `-D<name>=<value>`, `-pedantic` and `-pedantic-errors`,
-  `-fvisibility=hidden` and `-fvisibility-inlines-hidden`, `-O<n>` (PA32
+  `-fvisibility=hidden` and `-fvisibility-inlines-hidden`, `-O<n>` (PA33
   gives the levels their meaning; until then they are accepted) and `-g0`
 
 Not yet required here:
@@ -306,6 +306,15 @@ To complete PA25, implement these goals:
    `thread_local` objects are destroyed at exit, before process-exit
    destructors, as the host C library does.
 
+### C++17 inline identity across translation units
+
+Inline variables, implicitly inline static constexpr members and template
+instances denote one object across the linked translation units. Preserve
+one-time initialization, array/class-valued storage and address equality.
+Declaration order and a later inline definition must not invent a second
+object. These checks use the existing separate-compilation/driver paths;
+host-library consumers remain in PA33. See N4659 `[dcl.fct.spec]` and `[basic.def.odr]`.
+
 ### Out Of Scope
 
 The following are out of scope for PA25:
@@ -322,7 +331,7 @@ The following are out of scope for PA25:
 - precompiled headers
 - build-system conveniences such as depfiles or compilation databases
 - hosted preprocessor and hosted-header compatibility, which belong in
-  PA29-PA31
+  PA30-PA32
 - standalone ABI name construction, which belongs in PA9
 - host-linker-compatible object output, which belongs in PA26/PA27
 

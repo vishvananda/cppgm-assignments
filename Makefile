@@ -16,7 +16,7 @@ CPPGM_MAKE_LOW_JOB_LIMIT = $(shell \
 	if [ "$$limit" -gt 0 ] 2>/dev/null && [ "$$cpus" -gt "$$limit" ] 2>/dev/null; then echo 1; else echo 0; fi)
 ifeq ($(CPPGM_MAKE_LOW_JOB_LIMIT),1)
 ifeq ($(filter test-report%,$(MAKECMDGOALS)),)
-$(warning make is limited to -j$(CPPGM_MAKE_JOB_LIMIT) on a $(DEFAULT_BUILD_JOBS)-core machine; large compiler builds, especially self-host and PA34/inception builds, will be very slow. Omit -j or use -j$(DEFAULT_BUILD_JOBS).)
+$(warning make is limited to -j$(CPPGM_MAKE_JOB_LIMIT) on a $(DEFAULT_BUILD_JOBS)-core machine; large compiler builds, especially self-host and PA35/inception builds, will be very slow. Omit -j or use -j$(DEFAULT_BUILD_JOBS).)
 endif
 endif
 endif
@@ -37,11 +37,10 @@ export CPPGM_TEST_RUNNER ?= 1
 export CPPGM_TEXT_TEST_TIMEOUT_SEC ?= 10
 export CPPGM_BUILD_TEST_TIMEOUT_SEC ?= 30
 export CPPGM_PROGRAM_TEST_TIMEOUT_SEC ?= 10
-DEBUGINFO_TEST_PAS ?= pa8 pa32 pa33
-MODERN_CXX_TEST_PAS ?= pa29 pa31
+DEBUGINFO_TEST_PAS ?= pa8 pa33 pa34
 
 ALL_PAS = $(patsubst %/Makefile,%,$(wildcard pa*/Makefile))
-EXPERIMENTAL_PAS ?= pa34 pa35 pa36
+EXPERIMENTAL_PAS ?= pa35 pa36
 PAS = $(filter-out $(EXPERIMENTAL_PAS),$(ALL_PAS))
 SORTED_PAS = $(shell printf '%s\n' $(PAS) | sort -t a -k 2,2n)
 TEST_REPORT_PAS ?= $(SORTED_PAS)
@@ -68,7 +67,7 @@ SUBMAKE_GENERATED_ARG = $(if $(strip $(GENERATED)),GENERATED=$(GENERATED))
 SUBMAKE_CC_FLAGS_ARG = $(if $(strip $(CC_FLAGS)),CC_FLAGS="$(CC_FLAGS)")
 
 .PHONY: all build test ref-test ref-test-debuginfo \
-	test-debuginfo test-debuginfo-nobuild test-modern-cxx test-modern-cxx-nobuild ref-test-modern-cxx \
+	test-debuginfo test-debuginfo-nobuild    \
 	test-target-features test-target-features-nobuild \
 	require-clang require-clang-libcxx asan-build \
 	test-report inception clean run-cppgm run-cppgm-nobuild \
@@ -76,7 +75,7 @@ SUBMAKE_CC_FLAGS_ARG = $(if $(strip $(CC_FLAGS)),CC_FLAGS="$(CC_FLAGS)")
 	ref-test-% \
 	test-% \
 	$(ALL_PAS)
-.NOTPARALLEL: ref-test ref-test-debuginfo ref-test-modern-cxx
+.NOTPARALLEL: ref-test ref-test-debuginfo 
 
 all: build
 
@@ -176,50 +175,13 @@ test-target-features: build
 	@$(MAKE) test-target-features-nobuild
 
 test-target-features-nobuild:
-	@$(MAKE) -C pa29 CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
+	@$(MAKE) -C pa30 CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
 		CPPGM_STDLIB_FLAGS=$(CPPGM_STDLIB_FLAGS) CPPGM_TEST_RUNNER=$(CPPGM_TEST_RUNNER) \
 		$(SUBMAKE_OBJ_ARG) $(SUBMAKE_GENERATED_ARG) $(SUBMAKE_CC_FLAGS_ARG) \
 		CPPGM_SKIP_DEV_REBUILD=1 test-target-features
 
-test-modern-cxx: build
-	@$(MAKE) test-modern-cxx-nobuild
-
-test-modern-cxx-nobuild:
-	@status=0; failed=""; \
-	for dir in $(MODERN_CXX_TEST_PAS); do \
-		echo "===== $$dir (optional C++14/17) ====="; \
-		$(MAKE) -C $$dir \
-			CXX=$(CXX) \
-			CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
-			CPPGM_STDLIB_FLAGS=$(CPPGM_STDLIB_FLAGS) \
-			CPPGM_TEST_RUNNER=$(CPPGM_TEST_RUNNER) \
-			$(SUBMAKE_OBJ_ARG) \
-			$(SUBMAKE_GENERATED_ARG) \
-			$(SUBMAKE_CC_FLAGS_ARG) \
-			CPPGM_SKIP_DEV_REBUILD=1 test-modern-cxx || { status=1; failed="$$failed $$dir"; }; \
-	done; \
-	if [ $$status -ne 0 ]; then \
-		echo "===== OPTIONAL C++14/17 TESTS FAILED IN:$${failed} ====="; \
-		exit $$status; \
-	fi; \
-	echo "===== OPTIONAL C++14/17 TESTS PASSED SUCCESSFULLY! ====="
-
-ref-test-modern-cxx:
-	@set -e; for dir in $(MODERN_CXX_TEST_PAS); do \
-		echo "===== $$dir (ref-test-modern-cxx) ====="; \
-		$(MAKE) -C $$dir \
-			CXX=$(CXX) \
-			CPPGM_HOST_CXX=$(CPPGM_HOST_CXX) \
-			CPPGM_STDLIB_FLAGS=$(CPPGM_STDLIB_FLAGS) \
-			CPPGM_TEST_RUNNER=$(CPPGM_TEST_RUNNER) \
-			$(SUBMAKE_OBJ_ARG) \
-			$(SUBMAKE_GENERATED_ARG) \
-			$(SUBMAKE_CC_FLAGS_ARG) \
-			ref-test-modern-cxx; \
-	done
-
 inception: build
-	@$(MAKE) -C pa34 \
+	@$(MAKE) -C pa35 \
 		CXX=../dev/cppgm++ \
 		CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" \
 		CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)" \
@@ -228,7 +190,7 @@ inception: build
 # Toolchain cells.  Each supported (host compiler, standard library) pair keeps
 # its own object roots, so switching cells relinks the tools in dev/ but does
 # not throw away the objects the other cell compiled.  Prefix any target to run
-# it in a cell, for example `make with-clang-test-report-through-pa33` or
+# it in a cell, for example `make with-clang-test-report-through-pa34` or
 # `make with-clang-libcxx-inception`.  The supported cells are the default
 # g++/libstdc++, clang/libstdc++, and clang/libc++; g++ with libc++ is not
 # supported and has no cell.
@@ -244,7 +206,7 @@ with-clang-%: require-clang
 		CXX=$(CLANG_CXX) \
 		CPPGM_HOST_CXX=$(CLANG_CXX) \
 		OBJ=$(CLANG_CELL_OBJ) \
-		INCEPTION_OBJ_ROOT_BASE=../$(CLANG_CELL_OBJ)/pa34
+		INCEPTION_OBJ_ROOT_BASE=../$(CLANG_CELL_OBJ)/pa35
 
 with-clang-libcxx-%: require-clang-libcxx
 	@$(MAKE) $* \
@@ -252,7 +214,7 @@ with-clang-libcxx-%: require-clang-libcxx
 		CPPGM_HOST_CXX=$(CLANG_CXX) \
 		CPPGM_STDLIB_FLAGS=-stdlib=libc++ \
 		OBJ=$(CLANG_LIBCXX_CELL_OBJ) \
-		INCEPTION_OBJ_ROOT_BASE=../$(CLANG_LIBCXX_CELL_OBJ)/pa34
+		INCEPTION_OBJ_ROOT_BASE=../$(CLANG_LIBCXX_CELL_OBJ)/pa35
 
 # A sanitizer build of the compiler itself.  The bug class this catches -- a
 # reference into a container that a nested analysis then grows -- is invisible

@@ -92,7 +92,7 @@ States") for every function it emits, and the comparison checks each one:
   function; a member defined outside its class without `inline` states none.
 - `no_inline=yes` on a function any declaration of which carries GNU
   `noinline` (required from this assignment on: the `lifecycle-inline-policy`
-  control checks it, and PA32's `-O0` driver lane compares the fact), and on
+  control checks it, and PA33's `-O0` driver lane compares the fact), and on
   the lowering's own `cppgm_call_terminate` helper.
 - `object_bytes=N` on `this`, `N` its class's size, in every member function
   and every constructor and destructor entry, and on the `this` and
@@ -398,6 +398,23 @@ Within this milestone, PA11 should produce valid LowIR for ordinary
 non-polymorphic class code over the supported procedural subset. That LowIR is
 intended to be accepted by the later PA24 `lowir2native` backend for the
 supported cases.
+### Function annotation continuity
+
+Accept the supported GNU inline annotations on ordinary functions and retain
+that intent with the typed function facts. Later host-object lessons observe
+symbol/ABI behavior, and PA30 requires the documented forced-inline hosted
+substitution cases. An annotation does not replace lookup, type checking or
+ordinary function-body validation.
+
+### Mode-dependent aggregate eligibility
+
+C++14 allows default member initializers in aggregates; C++11 keeps its
+restriction. C++17 permits the supported public non-virtual aggregate bases.
+Retain access, constructor and virtual-function restrictions from the selected
+edition rather than treating every class as an aggregate. PA12 owns result-object
+initialization and cleanup; multiple-base interactions remain PA22.
+See N4140/N4659 `[dcl.init.aggr]`.
+
 ### Out Of Scope
 
 The following are explicitly out of scope for PA11:
@@ -478,7 +495,7 @@ Useful intermediate representations include:
   spelling, so unused constructors/destructors do not perturb earlier outputs
 
 An object lives in an `obj<NxA>` slot, and its address passes to its
-constructor and destructor as `this`. PA32 splits a slot into scalar values
+constructor and destructor as `this`. PA33 splits a slot into scalar values
 only when every use of its address is a direct load or store, a copy, a
 zeroing or a call's indirect result, so an object can live in registers only
 after its constructor and destructor calls are inlined. Keep them ordinary calls to ordinary

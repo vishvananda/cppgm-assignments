@@ -1,0 +1,1 @@
+ERROR: nonreturning assembly must be followed by unreachable in function @invalid at tests/spec/300-assembly-noreturn-continuation.t:4

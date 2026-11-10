@@ -66,8 +66,8 @@ function @main
   abi
     return i32 -> rax
   frame
-    stack_size 48
-    scratch_bytes 48
+    stack_size 0
+    scratch_bytes 0
     frame_pointer keep
     epilogues shared
 
@@ -78,8 +78,7 @@ function @main
     mov rdx, 13
     mov r8, 77
     call @forward [args=(rcx,rdx,rsi,rdi,r8)]
-    mov rdx, 77
-    cmp.i64 @observed, rdx
+    cmp.i64 @observed, 77
     setne rax
     movzx rax, rax
     ret rax

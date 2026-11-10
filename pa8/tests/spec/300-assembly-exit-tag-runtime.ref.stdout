@@ -1,0 +1,1 @@
+ERROR: assembly label requires a positive constant i32 exit tag in function @rejected at tests/spec/300-assembly-exit-tag-runtime.t:7

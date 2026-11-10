@@ -1,0 +1,1 @@
+ERROR: assembly function requires a prior, undefined function declaration at tests/spec/300-assembly-assembly-function-duplicate.t:8

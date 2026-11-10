@@ -176,15 +176,14 @@ the compile/link driver remain PA24 and PA25 work.
 
 When a same-type conditional class prvalue is materialized in a private
 temporary and then selected for copy or move construction into its final
-complete-object destination, PA12 records the standard source-language
-permission on that outer direct call as `[elision=copy]`, by the rule of
-`../pa8/lowir.md`: a copy-initialization from a prvalue conditional of the
-object's own class, never a direct-initialization, a `return` operand or a
-derived prvalue sliced into a base; the comparison checks it.  This is serialized
-optimization information, not an O0 elision: the emitted O0 LowIR retains the
-distinct temporary, transfer call, and normal/exceptional destruction.  The
-focused control checks those relationships and executes the O0 behavior
-without prescribing complete generated LowIR text.
+complete-object destination, C++11 permits the selected operand to construct
+the destination directly (12.8p31), even when the omitted copy or move has
+observable effects. This permission applies at `-O0` too. Preserve evaluation
+of the selected branch and the destination's required lifetime and destruction.
+Do not apply this rule to a derived prvalue sliced into a base or to a named
+glvalue whose copy is required. If retaining the transfer, its LowIR call may
+state `[elision=copy]` as described in `../pa8/lowir.md`; an elided transfer needs
+neither that call nor destruction of a separate source temporary.
 
 For supported indirect return-by-value cases, PA12 lowers an eligible top-level named
 local directly in `%ret` instead of building a separate local object and then copying or
@@ -214,11 +213,15 @@ any other region. A temporary's destructor is called even when its body is
 empty: PA11's exception for a destructor with no effect covers only a single
 automatic object and a base or member destroyed by another destructor.
 
-For supported synthesized copy/move special members, PA12 lowers a leading trivially
-copyable storage prefix directly as `copyobj <span> <src>, <dst>` instead of spelling that
-prefix as separate field operations or a `__builtin_memcpy` helper call in the emitted
-LowIR. The references use that direct storage-copy form, and the comparison does not
-absorb the alternative.
+For supported synthesized copy/move special members, lower a leading trivially
+copyable storage prefix directly as `copyobj <span> <src>, <dst>`. Trivial
+empty members do not interrupt that prefix. Preserve calls to user-defined
+copy operations, even when their classes have no data members.
+
+Implicit copies must preserve volatile accesses to scalar members, array
+elements and nested subobjects. Such members can belong to a trivially
+copyable class: triviality does not permit dropping volatile accesses.
+Volatile subobjects cannot be included in an ordinary `copyobj` span.
 
 When a synthesized copy/move constructor or assignment body handles adjacent
 nonvolatile bit-fields in one supported 8-, 16-, 32-, or 64-bit allocation
@@ -244,10 +247,18 @@ constructed from that object: the constructor taking the base binds to the
 object's base subobject with the object's value category, so an lvalue is
 copied and a prvalue moved.
 
-For supported trivially copy-constructible class value transfers, PA12 lowers the
-copy/move construction step itself directly as `copyobj <span> <src>, <dst>` instead of
-spelling a call to a synthesized trivial copy/move constructor helper. The references use
-that direct value-transfer form, and the comparison does not absorb the alternative.
+For supported trivially copy-constructible class value transfers without
+volatile subobjects, lower the copy/move construction directly as
+`copyobj <span> <src>, <dst>`, preserving the destination's usable span.
+
+This includes explicitly defaulted trivial move constructors in direct local
+initialization and trivial copies in new-expressions. An empty class's trivial
+copy needs no helper call even when its destructor is nontrivial. Preserve the
+source expression's effects, the destination object's lifetime, and required
+destruction. Transfers into base subobjects must preserve reused tail padding.
+The reserved global placement allocation functions `(size_t, void*)` return
+their pointer argument directly after its evaluation; class-specific, variadic
+and other custom allocation overloads retain their calls.
 
 A synthesized constructor, destructor or copy/move assignment operator, and
 one defaulted on its first declaration, states `unwind=no` when every function
@@ -451,9 +462,8 @@ PA12 supports the following in addition to the PA11 subset:
   cv-combined glvalue operands, lvalue/prvalue conversion, and destruction of a
   containing branch temporary only after its selected member result has been
   materialized
-- serialized `[elision=copy]` permission on the outer copy/move construction
-  from a private same-type conditional prvalue, while retaining its ordinary
-  O0 transfer and cleanup
+- permitted copy elision from a private same-type conditional prvalue, or
+  `[elision=copy]` on a retained outer transfer with its corresponding cleanup
 - equal temporary-destruction suffixes in the same full-expression and unwind
   context use shared LowIR cleanup continuations, including conditional
   lifetime guards where the guarded object identity is the same
@@ -482,6 +492,31 @@ storage or a function. Its following standard conversion decays that address;
 it must not read array bytes or function instructions as a pointer. Preserve
 that distinction for initialization, return, arguments, assignment and builtin
 operands, while ordinary scalar reference conversions still load their values.
+
+### Required C++14/17 initialization and allocation
+
+In C++14 and later, contextual conversion sites may select cv-qualified
+conversion overloads when their viable conversions produce one permitted type;
+different result types remain ambiguous. Preserve overload ranking and the
+actual conversion call (N4140 `[conv]`).
+
+For C++14 aggregates, omitted elements use their default member initializers
+in member order, including array tails. C++17 aggregate bases initialize before
+direct members. Preserve reference binding and observable effects. In C++17,
+a same-class prvalue directly initializes its result object for variables,
+returns, parameters and members, without requiring an accessible copy/move
+constructor. Potentially overlapping base/delegating subobjects retain their
+copy requirements. Earlier-mode negative checks remain required. See N4659
+`[dcl.init.aggr]`, `[dcl.init]`, `[class.copy.elision]`.
+
+C++17 inline variables and implicitly inline static constexpr members use
+ordinary initialization and lifetime rules; PA25 adds cross-TU identity.
+For over-aligned `new`, select the available alignment-aware allocation and
+deallocation declarations, preserving placement arguments and failure cleanup.
+The alignment argument describes the allocated type, including arrays.
+The core contract can use minimal declarations of `std::align_val_t` and the
+allocation functions; PA33 adds the real host `<new>` integration.
+See N4659 `[basic.align]`, `[expr.new]`, `[expr.delete]` and `[dcl.fct.spec]`.
 
 ### Out Of Scope
 
@@ -566,7 +601,7 @@ Useful intermediate representations include:
 One small value returned from one function and passed to another is three
 or four whole-object copies in this LowIR: field stores into the result, a
 `copyobj` or a `return` of the object, and a `copyobj` into the argument's
-storage. That is the intended shape. PA32 splits such slots into scalar
+storage. That is the intended shape. PA33 splits such slots into scalar
 values when every use of their addresses is a direct load or store, a
 `copyobj` or `zeroinit` at a constant offset, or an indirect result. A copy
 lowered as a loop, a byte sequence or a call to a helper keeps the object in

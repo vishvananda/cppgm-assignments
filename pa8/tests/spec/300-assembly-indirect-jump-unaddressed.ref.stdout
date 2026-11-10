@@ -1,0 +1,1 @@
+ERROR: indirect destination has no code label in function @f at tests/spec/300-assembly-indirect-jump-unaddressed.t:1

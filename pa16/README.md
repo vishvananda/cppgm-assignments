@@ -212,7 +212,7 @@ Static initialization and runtime arithmetic use the same precision, as defined
 for their LowIR types in [the LowIR contract](../pa8/lowir.md).
 
 The intent is no longer a pragmatic subset. By the end of PA16, `constexpr` should be a
-complete compiler-owned semantic layer for the supported C++11 language surface, not a
+complete compiler-owned semantic layer for the supported language profile, not a
 collection of special cases.
 
 More concretely, over the already-implemented language subset, PA16 should cover the full
@@ -242,7 +242,9 @@ C++11 `constexpr` forms that later template and library code expect:
 - `constexpr` variables whose initializers must be fully evaluated at compile time
 - an automatic nonvolatile array of trivial scalar elements whose complete
   initializer is known at compile time is initialized from readonly constant
-  data with one object copy; each automatic array still has distinct storage
+  data with one object copy at any number of dimensions; an entirely zero-byte
+  representation uses a direct bulk zero. Each automatic array still has
+  distinct storage
 - reference-valued constant evaluation and `const T &` / reference parameter passing where
   the implemented object model already defines the underlying semantics
 - reference initialization consumes the typed list's temporary or directly
@@ -333,12 +335,27 @@ a user-defined reference conversion is followed by decay. Apply the recorded
 standard suffix to that pointer, and retain ordinary pointer lifetime and
 one-past-array checks; a pointer to a destroyed temporary is not publishable.
 
+### Constant evaluation across the required modes
+
+The existing relaxed constexpr body subset remains required: local variables,
+assignments, branches and bounded loops can participate when every evaluated
+operation satisfies the constant-expression rules. Retain lifetime, forbidden
+body-operation and nonconstant-evaluation diagnostics. This course extension
+is also available in its existing C++11 tests; selecting C++14/17 must not
+change those earlier expectations.
+
+Apply the selected edition's aggregate initialization and C++17 result-object
+rules during constant evaluation, including default member initializers and
+inline static constexpr members. Lambda constant evaluation is introduced with
+closures in PA20. Read N4140 `[dcl.constexpr]` and `[expr.const]`, then N4659's
+corresponding clauses for the required later rules.
+
 ### Out Of Scope
 
 The following are explicitly out of scope for PA16:
 
 - template language features that still remain deferred to PA17
-- post-C++11 constant-evaluation features
+- constant-evaluation operations beyond the required profile; lambda objects arrive with PA20
 - hosted/vendor-only compatibility forms that are not part of the standard C++ language
 
 Inputs that rely on those features have undefined behaviour for this milestone.
@@ -362,10 +379,17 @@ So PA16 should leave behind:
 Automatic scalar-array image eligibility depends on the evaluated initializer,
 not on whether the declaration spells `constexpr` or `const`. PA10 establishes
 the literal-initializer case; PA16 adds general constant evaluation. Readonly
-images may be shared, while each automatic array retains its own writable
-storage. Nonconstant initializers retain runtime evaluation, and volatile
+images may be shared, while each automatic array retains its own storage and
+mutable arrays remain writable. Nonconstant initializers retain runtime evaluation, and volatile
 arrays retain their required stores. Class construction and destruction stay
 on their typed lifetime paths.
+
+For automatic scalar initializers, use the constant value already recorded by
+semantic analysis whenever the scalar can represent it, including at `-O0`.
+This includes member calls and functional casts as well as free-function calls.
+Keep the local's storage addressable and preserve required volatile stores.
+Evaluate initializers without a proven constant value at runtime, preserving
+their side effects.
 
 ### Design Notes (Non-Normative)
 

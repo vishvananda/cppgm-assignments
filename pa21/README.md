@@ -5,7 +5,7 @@
 PA21 finishes the deferred first-tier language features that sit on top of the existing
 single-inheritance object model:
 
-- capturing lambdas
+- exception-aware closure construction and cleanup
 - `std::initializer_list` semantic interoperation
 - RTTI and `typeid`
 - pointer- and reference-form `dynamic_cast`
@@ -148,7 +148,7 @@ format for `cppgm++` is specified by this README, PA8 `lowir.md`, and the
 checked-in `.ref` files.
 
 PA21 does not add a new source-language grammar format. It instead enables more
-of the already-accepted C++11 syntax to participate in semantic analysis and
+of the accepted source-language syntax to participate in semantic analysis and
 lowering.
 
 A checked-in HTML grammar explorer for that grammar lives in `grammar/`. Treat
@@ -166,10 +166,8 @@ treat `lowir.md` as authoritative. If they disagree about the PA21 lowering slic
 
 PA21 supports the following in addition to the PA20 subset:
 
-- capturing lambdas with supported explicit by-copy and by-reference captures of local
-  values, including class objects whose existing copy-construction path is supported
-- default `[=]` and `[&]` captures over the same supported local-value and `this` subset
-- explicit `this` capture for supported member-function cases
+- exception-aware construction/destruction of PA20 closures, including copied
+  objects, capture arrays and initialized captures
 - `std::initializer_list<T>` interoperation for supported scalar elements and
   class elements whose construction, copy, and destruction stay within the
   PA11/PA12/PA19 object and template subset
@@ -185,15 +183,12 @@ that subset. That LowIR should be accepted by PA24 `lowir2native` for the suppor
 
 To complete PA21, implement these goals:
 
-1. Capturing lambda lowering.
-   Explicit by-copy captures should materialize deterministic closure-object LowIR and the
-   resulting closure object should be callable through the existing class/method lowering
-   path. A catch parameter declared inside a lambda body is local to that body and is not an
-   implicit capture.
-   Follow adopted [P0588R1](../doc/cwg/paper-p0588r1.txt) for implicit captures:
-   a potentially evaluated reference can require a capture even when it is not
-   an odr-use. Preserve observable copy initialization; a non-odr-use in the body
-   still reads the original constant object under [CWG2083](../doc/cwg/cwg-2083.txt).
+1. Exception-aware closure construction.
+   Extend PA20's capture semantics with cleanup for a successfully constructed
+   capture prefix when a later initializer throws. Preserve the original
+   exception and destroy only the captures whose lifetime began. A catch
+   parameter declared inside a lambda body is local to that body and is not
+   an implicit capture.
 
 2. `std::initializer_list` interoperation.
    Supported braced-list calls should materialize deterministic lowered storage and expose
@@ -332,6 +327,15 @@ To complete PA21, implement these goals:
    where the sequences coincide (the references share them so, and the
    comparison does not absorb the alternative).
 
+### Closure and aggregate failure cleanup
+
+PA20 now supplies ordinary and modern closure semantics. This lesson adds
+exception-aware destruction when a later capture or aggregate element throws,
+including copied `*this`, initialized captures and arrays. Destroy exactly the
+successfully constructed prefix, in reverse order, and preserve the original
+exception. Existing try/catch, initializer-list and RTTI interactions stay here.
+Use N4659 `[except.ctor]` with the owning initialization/lambda clauses.
+
 ### Out Of Scope
 
 The following are explicitly out of scope for PA21:
@@ -385,13 +389,13 @@ The same monotonic-extension rule applies here:
 A function with a destructible local and a call that may throw has a cleanup
 region, so in real C++ code, this compiler's own source included, most
 functions have one. The shape this assignment emits is therefore the common
-case for PA32's optimizer and for the PA24 and PA33 backend, not a rare path
+case for PA33's optimizer and for the PA24 and PA34 backend, not a rare path
 they can treat conservatively. A few properties decide how much of that code
 they can improve:
 
 - Close full-expression regions before control-flow joins, and give the
   paths that merge the same protected-call state (PA26 states this as a
-  requirement for host objects). PA32 removes a region that nothing inside
+  requirement for host objects). PA33 removes a region that nothing inside
   can unwind out of, and promotes slots across the function; both rely on
   every block having one stack of active regions.
 - Handler edges are implicit in LowIR: an exception leaves from the region

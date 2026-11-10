@@ -208,7 +208,7 @@ It also checks the machine-IR dump:
   canonicalization. These cases check ABI and other required relationships.
 - `tests/behavior/` checks program results. Its reference MIR is informational.
   These course inputs use unoptimized native compilation; optimized division,
-  register allocation and carrier regressions live in PA33's behavior lanes.
+  register allocation and carrier regressions live in PA34's behavior lanes.
 - `tests/controls/` checks focused MIR, ABI and native execution properties,
   each named by its file: a shift, or an indexed address and a shift, for a
   multiply by a constant; a small copy's frame operands; a direct access of a
@@ -457,6 +457,9 @@ To complete PA24, implement these goals:
    machine compare plus conditional branch rather than materializing a boolean temporary
    and branching on that temporary afterward.
 
+   An ordinary adjacent Boolean load may be folded into its consuming comparison
+   or branch. Preserve required volatile accesses when selecting memory operands.
+
 8. Keep simple scalar and floating work on the appropriate machine path.
    Small leaf scalar expressions should normally stay in registers, and ordinary `f32` /
    `f64` operations should stay on the floating-register path. A conservative stack spill
@@ -465,6 +468,10 @@ To complete PA24, implement these goals:
    Lowering operations with fixed scratch registers, including integer comparisons,
    division, and shifts, must preserve still-live frame addresses and incoming parameters
    before reusing those registers.
+
+   Choose available registers from the ABI and instruction clobber facts, including
+   in functions with both integer and floating parameters. Reserve conversion
+   scratch only when the generated operations need it.
 
    Each `f32` or `f64` arithmetic operation rounds directly to its IEEE binary32
    or binary64 format, matching the LowIR contract and constant evaluation.
@@ -573,7 +580,7 @@ To complete PA24, implement these goals:
 
    A direct object parameter may be copied to local storage and read through
    field addresses. Preserve all field bytes, signedness and local mutations,
-   including fields crossing ABI carriers. PA33 can improve this placement
+   including fields crossing ABI carriers. PA34 can improve this placement
    without adding a new LowIR field-extraction operation.
 
    Copying a stack-passed object may use the target's copy registers while
@@ -637,9 +644,11 @@ To complete PA24, implement these goals:
    in registers without an unnecessary stack round-trip.
 
 11. Preserve narrow integer width behavior in MIR.
-   Ordinary `i8`/`u16` compare-fed branches should stay visibly narrow, and small signed
-   or unsigned integer arithmetic should show the expected post-operation normalization
-   instead of silently widening into an untyped 64-bit path.
+   Ordinary `i8`/`u16` compare-fed branches should stay visibly narrow. Small signed
+   or unsigned integer arithmetic must normalize its result when a reader observes
+   bits above its logical width. An immediate same-width store or ABI return only
+   consumes that width and needs no extension. A one-bit arithmetic result still
+   needs its one-bit mask, since its byte carrier contains additional bits.
 
    A typed integer load defines the complete logical register value: narrow
    signed loads sign-extend and narrow unsigned loads zero-extend as part of
@@ -756,7 +765,7 @@ So PA24 should leave behind:
 - a stable `LowIR -> machine IR` boundary that later optimization passes can target:
   keep value identity separate from physical location, with instruction uses,
   definitions, clobbers and fixed-register constraints explicit. Prefer selecting
-  into virtual registers and allocating over the selected instructions, so PA33
+  into virtual registers and allocating over the selected instructions, so PA34
   can replace a simple placement policy without rewriting the selector or
   recovering values from physical-register traffic. This is design guidance,
   not a required allocation algorithm or a change to the final MIR dump

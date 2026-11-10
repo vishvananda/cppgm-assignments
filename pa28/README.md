@@ -214,7 +214,7 @@ the supported subset:
   adds the attribute, one on a lambda-declarator is the call operator's, and
   a function template's reaches its specializations, while an explicit
   specialization takes only its own declarations' attributes, as GCC reads
-  them; `noinline` follows the same rules for `no_inline=yes`, and PA32's
+  them; `noinline` follows the same rules for `no_inline=yes`, and PA33's
   `-O0` driver lane compares these facts
 - GNU `returns_nonnull`, including its reserved and `gnu::` spellings, is a
   function result promise retained as `return=nonnull` on pointer-returning
@@ -269,3 +269,12 @@ object-value result boundaries retain their GNU effect promises.
 
 Later hosted tests keep the same host object and ABI/runtime path while adding
 hosted source/header compatibility.
+
+### Effect advertisement
+
+Advertise the supported `pure`, `const`, `malloc` and `returns_nonnull`
+attribute spellings through `__has_attribute`, including their reserved
+underscore aliases. This is the probe surface needed by these function-effect
+contracts; full vendor feature probing and predefined macro import remain
+PA30. Apply the same promises to ordinary calls, redeclarations and indirect
+calls where their typed contracts establish them.

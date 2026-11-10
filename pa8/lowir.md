@@ -73,7 +73,7 @@ The base LowIR type family begins with the scalar and pointer types:
 - `f64`
 - `f80`
 - `ptr`
-- `v128` (PA29; see [Vector Operations](#vector-operations))
+- `v128` (PA30; see [Vector Operations](#vector-operations))
 
 PA8 also accepts a restricted object-aware direct call-boundary type:
 
@@ -208,11 +208,11 @@ The currently defined global `storage` values are:
 
 - `readonly`
 - `thread_local`
-- `metadata` (PA29's nonloaded PROGBITS data, with a required `section=`)
+- `metadata` (PA30's nonloaded PROGBITS data, with a required `section=`)
 - `metadata_strings` (the same, with ELF `SHF_MERGE | SHF_STRINGS` and entry size 1)
 
 The metadata storage forms carry section bytes, rather than addressable C++
-objects. Namespace basic asm in PA29 produces them with internal names and
+objects. Typed producers can supply them with internal names and
 `object_root=yes`, so optimization retains their data. The native static
 linker's loadable image excludes them; host object emission preserves them.
 An untyped empty structured initializer is permitted for these forms and
@@ -279,8 +279,9 @@ The `cpu_query` function role identifies a compiler-owned native CPU query
 helper, declared as `void (i32, i32, ptr)` with fixed arity. Its arguments
 are the CPUID leaf, subleaf and writable storage for four consecutive
 32-bit results in EAX, EBX, ECX, EDX order. It executes the actual instruction
-and preserves callee-saved registers. PA29 uses this role for GNU CPUID
-statements; its body is supplied directly by the native backend.
+and preserves callee-saved registers. Its body is supplied directly by the native backend for typed LowIR producers.
+GNU assembly instead uses the shared assembly boundary and preserves its
+explicit instruction and operand contract.
 
 The `xstate_query` function role is a fixed-arity, effectful `i64 (i32)`
 declaration. It executes XGETBV with the input's low 32 bits in ECX and
@@ -1103,7 +1104,7 @@ lowering (enforced): every conditional value the source writes (`?:`, and
 `&&` or `||` used as a value) takes this form and carries the value through
 memory, each arm storing its value into one slot and the merge block loading
 it; the lowering emits no `phi`. `phi` is the optimizer's form, which slot
-promotion (PA32) makes from such a slot. An optimizer may also turn a choice
+promotion (PA33) makes from such a slot. An optimizer may also turn a choice
 whose arms only compute values into a `select` (Unary and Binary Operations
 below).
 
@@ -1414,7 +1415,7 @@ for integer/float conversions lives in the operator spelling rather than the typ
 
 ### Vector Operations
 
-PA29 adds these forms for GNU vector types and SSE builtins. A `v128` value is
+PA30 adds these forms for GNU vector types and SSE builtins. A `v128` value is
 sixteen bytes in one XMM register. It has no lanes of its own: each operation
 states how it reads the bits. Every optimization level uses these forms. `-O0`
 keeps each value in a sixteen-byte stack home, aligned to 16.
@@ -1531,7 +1532,7 @@ must respect nesting. Released pointers must not be dereferenced. Neither
 operation may be moved across a stack allocation or another stack boundary.
 Inlining preserves each callee's normal-return boundary; exception unwinding
 restores the enclosing handler's saved stack independently. PA8 carries these
-forms; PA29's stack builtins and required inlining exercise their native behavior.
+forms; PA30's stack builtins and required inlining exercise their native behavior.
 
 ```text
 %frame = frame_address
@@ -1542,7 +1543,7 @@ On x86-64 this is the value of RBP after the normal frame prologue. A live
 instruction requires a frame pointer, even at optimized levels; it does not
 allocate an object or report the current dynamic stack position. Inlining
 uses the containing activation's frame. The first pointer-sized word is the
-saved caller frame pointer. PA29 lowers `__builtin_frame_address` through this
+saved caller frame pointer. PA30 lowers `__builtin_frame_address` through this
 operation and ordinary pointer loads for a constant nonzero ancestor level;
 such walks require the caller chain to retain valid frame pointers.
 
@@ -1799,7 +1800,7 @@ comparison checks them as part of the instruction:
 
 Every reader accepts the facts and every writer prints those the program
 holds, so a program keeps them through serialization: an object compiled
-from emitted LowIR text is the object compiled directly (PA32's round trip).
+from emitted LowIR text is the object compiled directly (PA33's round trip).
 A consumer may ignore any fact, and an optimizer may drop one, since removing
 a fact never changes a program's meaning; an optimizer may also add a fact it
 proves. An optimizer that moves an instruction to where it may run when it
@@ -2047,7 +2048,7 @@ optional, has no consumer and is not compared.
 - Serialization must be deterministic for the same model.
 - Every block has one stack of active exception regions: a full-expression's
   region closes before any control-flow join, and every path into a block
-  enters it with the same regions open. PA21's lowering keeps this, PA32's
+  enters it with the same regions open. PA21's lowering keeps this, PA33's
   region removal and slot promotion rely on it, and PA26 requires it of host
   objects.
 
@@ -2059,7 +2060,7 @@ declarations and required model data. Its construction exercises compare
 only generated-program outcomes using `lowir2native-ref`. Neither mode
 uses the C++-lowering presentation rules below.
 
-The source-to-LowIR assignments (PA10 through PA23), PA32's `-O0` driver
+The source-to-LowIR assignments (PA10 through PA23), PA33's `-O0` driver
 lane and its regression lane judge an output by comparing it with the course
 solution's LowIR after a presentation canonicalization: the relaxed LowIR
 comparison of `scripts/compare_results_common.pl`. PA8's debug-information
@@ -2159,7 +2160,7 @@ follows them, and so must yours.
   `object_bytes`, `alias`, `classes`, `result_classes` and `elision=copy`
   follow the rules of Facts The C++ Lowering States above, on declarations,
   definitions, parameters and call signatures alike; an output that misses
-  one, or states one the rules do not, differs from the reference. PA32's
+  one, or states one the rules do not, differs from the reference. PA33's
   optimized lanes leave these facts uncompared, since an optimizer may add a
   fact it proves or drop one; its `-O0` driver lane compares them.
 - Instructions follow the source's evaluation order. Where the source fixes
@@ -2173,7 +2174,7 @@ follows them, and so must yours.
   entry (an indirect result's destination and `this` included), every
   automatic object has a slot, and every use loads it; a conditional value
   goes through a slot (Control-Flow Value Merges above). The lowering emits
-  no `phi`, and `select` only for the bit-scan fallback. PA32 promotes
+  no `phi`, and `select` only for the bit-scan fallback. PA33 promotes
   slots to values; the lowering does not, so that its output is the
   optimizer's input in one form.
 - A cleanup handler of a non-throwing function ends in `resume`:
@@ -2254,9 +2255,9 @@ scope origins after removing their function, and inlined instructions use the
 caller's scope. Native DWARF uses the recorded transitions to emit possibly
 discontiguous lexical block ranges and nests source locals under their block.
 
-## Optional assembly extension
+## Shared assembly transport
 
-Optional PA36 adds `assembly` template definitions and `asm` invocations with
+The required assembly boundary includes `assembly` template definitions and `asm` invocations with
 typed arguments, constraints, outputs and effects. Outgoing label tags feed
 ordinary LowIR control flow. Opaque `assembly_function` definitions retain
 typed call signatures while assembly owns the complete ABI entry and exit;
@@ -2266,7 +2267,8 @@ and source macro expansion while retaining typed symbol references. Template
 `environment` prefixes select module macro snapshots for inline and raw bodies.
 `code_label @name = ^block` inside an ordinary function names a real local code
 address; `indirect_jump <ptr>, ^target...` terminates with an explicit destination
-set. These optional forms preserve code identity and entry state; they do not
+set. These forms preserve code identity and entry state; they do not
 implicitly run source cleanups. Their full validation and lifetime rules are in
-[the assembly boundary](../pa36/assembly.md). These forms add no required PA8
-work and do not change PA29's bounded GNU compatibility contract.
+[the assembly boundary](../pa29/assembly.md). PA8 validates and round-trips these typed records and their invariants.
+PA29 later binds constraints, encodes instructions and observes native behavior.
+No C++ parser, register allocator or assembly encoder is required in PA8.

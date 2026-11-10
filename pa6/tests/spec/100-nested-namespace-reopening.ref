@@ -1,0 +1,9 @@
+1 translation units
+start translation unit 1
+translation-unit
+  scope namespace <global>
+    scope namespace outer
+      scope namespace inner
+        variable value int
+        variable second int
+end translation unit

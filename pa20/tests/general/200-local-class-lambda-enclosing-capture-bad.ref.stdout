@@ -1,0 +1,1 @@
+ERROR: tests/general/200-local-class-lambda-enclosing-capture-bad.t:1:64: a local class odr-uses an automatic variable of an enclosing function (9.8p1)
