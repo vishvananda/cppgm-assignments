@@ -5,7 +5,32 @@ the behavior, quality envelopes and kernel limits. These notes explain design
 questions and failure cases, without prescribing an allocator, instruction
 sequence or tuning policy.
 
+An unsigned division with wide operands can sometimes use a narrower hardware
+operation after a range check, retaining a full-width fallback. Keep both
+original operands available, respect fixed registers and address-register
+dependencies, and test values on both sides of the width boundary. Extra
+checks can save time despite increasing instruction count; measure the target
+CPU and code-size tradeoff before adopting such a policy.
+
+A comparison of an arithmetic result with zero need not always set flags
+again. Distinguish the result's sign from the arithmetic overflow flag: a
+wrapped result still has the sign its comparison observes. Preserve every
+reader of the flags. Also check that a local simplification leaves loop
+rotation and placement effective; fewer instructions alone do not guarantee
+less executed work.
+
 ## Describe what instructions do
+
+Related phi values can need more than one register: an invariant input may
+overlap the changing values even when successive changing values do not
+overlap each other. Consider those lifetimes independently rather than
+letting one assigned value decide the register choices for every related value.
+
+Unrolling removes loop headers but can leave repeated checks that finish the
+current iteration early. Independent even-split guesses at those checks can
+make later work appear much colder than it is. Use the remaining control-flow
+structure, preserve explicit predictions, and measure the resulting register
+use across different branch patterns. Keep frequency analysis bounded.
 
 Record each instruction's uses, definitions and clobbers, including call
 arguments, fixed registers, tied operands and both parts of indexed addresses.

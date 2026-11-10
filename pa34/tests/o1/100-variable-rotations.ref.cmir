@@ -1,0 +1,172 @@
+machine_ir x86_64 <host-target>
+
+startup
+    call @main [args=()]
+    mov rdi, rax
+    exit
+
+function @rotate_right
+  abi
+    param %x -> rdi : i64
+    param %count -> rsi : i64
+    return i64 -> rax
+  frame
+    stack_size N
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues duplicated
+
+  block ^entry
+    mov rax, rsi
+    and rax, 63
+    jne ^rotate
+    ret rdi
+
+  block ^rotate
+    mov rcx, rax
+    mov rax, rdi
+    ror rax, rcx
+    ret rax
+
+  block ^zero
+    ret rdi
+
+function @with_live_values
+  abi
+    param %x -> rdi : i64
+    param %a -> rsi : i64
+    param %b -> rdx : i64
+    param %count -> rcx : i64
+    param %c -> r8 : i64
+    param %d -> r9 : i64
+    param %e -> [rbp+<off0>] : i64
+    param %f -> [rbp+<off1>] : i64
+    return i64 -> rax
+  frame
+    stack_size N
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues duplicated
+    preserve <gpr0> <gpr1> <gpr2>
+
+  block ^entry
+    mov <gpr0>, r9
+    mov r9, r8
+    mov r8, rdx
+    mov rdx, rcx
+    load.i64 <gpr1>, [rbp+<off0>]
+    load.i64 <gpr2>, [rbp+<off1>]
+    mov rax, rdx
+    and rax, 63
+    je ^merge
+
+  block ^rotate
+    mov rcx, rax
+    ror rdi, rcx
+
+  block ^merge
+    lea rax, [rdi+rsi]
+    add r8, r9
+    add <gpr0>, <gpr1>
+    add <gpr0>, <gpr2>
+    xor rax, r8
+    xor rax, <gpr0>
+    add rax, rdx
+    ret rax
+
+function @oracle
+  abi
+    param %x -> rdi : i64
+    param %n -> rsi : i64
+    return i64 -> rax
+  frame
+    stack_size N
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues duplicated
+
+  block ^entry
+    mov rax, 0
+    mov rcx, rdi
+
+  block ^loop
+    cmp.i64 rax, rsi
+    jb ^body
+    ret rcx
+
+  block ^body
+    ror rcx, 1
+    add rax, 1
+    cmp.i64 rax, rsi
+    jb ^body
+    ret rcx
+
+  block ^done
+    ret rcx
+
+function @main
+  abi
+    return i64 -> rax
+  frame
+    stack_size N
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues duplicated
+    preserve <gpr0> <gpr1> <gpr2> <gpr3>
+
+  block ^entry
+    mov <gpr0>, 0
+    mov <gpr1>, 81985529216486895
+
+  block ^loop
+    mov rsi, <gpr0>
+    and rsi, 63
+    mov rdi, <gpr1>
+    call @oracle [args=(rsi,rdi)]
+    mov <gpr2>, rax
+    mov rdi, <gpr1>
+    mov rsi, <gpr0>
+    call @rotate_right [args=(rsi,rdi)]
+    mov <gpr3>, rax
+    sub rsp, 16
+    mov rdi, <gpr1>
+    mov rsi, 11
+    mov rdx, 22
+    mov rcx, <gpr0>
+    mov r8, 33
+    mov r9, 44
+    mov <gpr4>, 55
+    store.i64 [rsp], <gpr4>
+    mov <gpr4>, 66
+    store.i64 [rsp+<off0>], <gpr4>
+    call @with_live_values [args=(rcx,rdx,rsi,rdi,r8,r9), stack=16]
+    add rsp, 16
+    lea rcx, [<gpr2>+<off0>]
+    xor rcx, 55
+    xor rcx, 165
+    add rcx, <gpr0>
+    cmp.i64 <gpr3>, <gpr2>
+    setne <gpr3>
+    movzx <gpr3>, <gpr3>
+    cmp.i64 rax, rcx
+    setne rax
+    movzx rax, rax
+    or <gpr3>, rax
+    jne ^fail
+
+  block ^next
+    mov <gpr4>, 6364136223846793005
+    imul <gpr1>, <gpr4>
+    add <gpr1>, 1
+    add <gpr0>, 1
+    cmp.i64 <gpr0>, 128
+    jb ^loop
+    jmp ^done
+
+  block ^fail
+    mov rax, 1
+    ret rax
+
+  block ^done
+    mov rax, 0
+    ret rax

@@ -1,0 +1,5 @@
+# explicit-outcomes
+
+# Each single-register payload fits a memory read and return.
+instructions <= 2 in @byte_return
+instructions <= 2 in @half_return

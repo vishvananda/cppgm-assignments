@@ -1,0 +1,108 @@
+machine_ir x86_64 linux
+
+startup
+    call @main [args=()]
+    mov rdi, rax
+    exit
+
+function @probe
+  abi
+    param %array -> rdi : ptr
+    param %key -> rsi : ptr
+    param %mask -> rdx : u32
+    return ptr -> rax
+  frame
+    stack_size 0
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues duplicated
+
+  block ^entry
+    mov r8, rsi
+    mov r9, rdx
+    mov rax, 0
+    mov rdx, 1
+    mov rsi, 0
+    load.ptr rcx, [rdi+rax*8]
+    cmp.ptr rcx, -1
+    jne ^occupied
+    jmp ^found
+
+  block ^end
+    ret rsi
+
+  block ^loop
+    load.ptr rcx, [rdi+rax*8]
+    cmp.ptr rcx, -1
+    jne ^occupied
+
+  block ^empty_bucket
+    cmp.ptr rsi, 0
+    je ^found
+
+  block ^old_tomb
+    ret rsi
+
+  block ^found
+    lea rax, [rdi+rax*8]
+    ret rax
+
+  block ^step
+    lea.i32 rcx, [rdx+1]
+    add.u32 rax, rdx
+    and.u32 rax, r9
+    mov rdx, rcx
+    load.ptr rcx, [rdi+rax*8]
+    cmp.ptr rcx, -1
+    je ^empty_bucket
+
+  block ^occupied
+    cmp.ptr rcx, r8
+    je ^found
+
+  block ^check_tomb
+    cmp.ptr rcx, -2
+    jne ^step
+
+  block ^check_null
+    cmp.ptr rsi, 0
+    jne ^step
+
+  block ^remember
+    lea rsi, [rdi+rax*8]
+    jmp ^step
+
+function @main
+  abi
+    return i64 -> rax
+  frame
+    stack_size 96
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues duplicated
+    preserve rbx r12 r13
+    slot $data -> [rbp-64] : obj<64x8>
+
+  block ^entry
+    lea rbx, [rbp-64]
+    store.ptr [rbx], -2
+    lea r12, [rbx+8]
+    store.ptr [r12], 3
+    store.ptr [rbx+24], -1
+    mov rdi, rbx
+    mov rsi, 3
+    mov rdx, 7
+    call @probe [args=(rdx,rsi,rdi)]
+    mov r13, rax
+    mov rdi, rbx
+    mov rsi, 4
+    mov rdx, 7
+    call @probe [args=(rdx,rsi,rdi)]
+    cmp.ptr r13, r12
+    setne r13
+    movzx r13, r13
+    cmp.ptr rax, rbx
+    setne rax
+    movzx rax, rax
+    or rax, r13
+    ret rax
