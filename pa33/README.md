@@ -296,6 +296,8 @@ pass:
 - A conditional choice between fields can sometimes use one indexed address
   and one read. Prove the bit test and byte offsets, preserve which address
   is accessed, and keep volatile reads and memory dependencies observable.
+  Account for element scale, negative offsets and unaligned fields without
+  adding redundant address work.
 - Cases sharing one destination may describe an interval. Preserve widths,
   signed boundaries, holes, default behavior and guarded effects when exposing
   that choice to simplification or predication.
@@ -326,6 +328,10 @@ bounds. Boolean-storage fixtures also read through byte types: preserve
 arbitrary byte writes, escaped storage and volatile accesses. Counter fixtures
 include nonnegative loops, negative starts and wrapping counters; any arithmetic
 simplification must preserve all of them.
+
+Coupled loop values can also bound each other. Meet the bounded-search and
+averaging fixtures' arithmetic bounds while preserving signed rounding,
+overflow, every entry seed and computations observed before a guard.
 
 Boolean conditions may pass through selected zero/one values and integer
 retypes. Meet their quality bounds while preserving actual narrowing of
@@ -391,6 +397,10 @@ an entry function, the execution check through the reference backend.
 Source-driver cases also compare execution before and after LowIR
 serialization. Failed cases are checked by exit status. See Quality Bar
 for the sidecar syntax.
+
+Private fields accessed through signed and unsigned views of one width should
+remain eligible for scalar replacement. Preserve bit patterns, each reader's
+interpretation, Boolean conversions, true overlaps and observable accesses.
 
 Whole-vector values stored in private aggregates can remain whole through
 copies and zero initialization. Use typed access and escape facts to avoid

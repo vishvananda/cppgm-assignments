@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-builtin-placement-delete-rejected.t:2:31: allocation builtin requires a replaceable global allocation function

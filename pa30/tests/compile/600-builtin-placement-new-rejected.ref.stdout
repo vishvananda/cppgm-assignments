@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-builtin-placement-new-rejected.t:2:40: allocation builtin requires a replaceable global allocation function

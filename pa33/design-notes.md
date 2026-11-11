@@ -80,6 +80,11 @@ that all its accesses are understood. Splitting an aggregate may expose more
 promotable fields. Preserve padding, bit-fields, volatile members, alignment
 and ABI carriers; splitting every object is not always profitable.
 
+Signed and unsigned views of one integer width describe the same stored bits.
+They need not force an adjacent field into a shared carrier. Preserve each
+reader's extension, Boolean normalization, differently sized overlaps and
+whole-object copy semantics when using this fact.
+
 An indexed region can stay in memory while disjoint scalar fields are
 promoted. Bound every possible indexed access, including its full width.
 If a fixed access straddles that region, retain all overlapping accesses
@@ -161,6 +166,13 @@ value. Different propagation strategies may meet the same quality bounds.
 Describe a loop's entries, latches and exits before changing it. A preheader
 provides a place for invariant work. Rotation may make an existing test run at
 the bottom; preserve the initial guard and values read after the loop.
+
+An interval proposed from loop-entry values is only a hypothesis. Prove that
+every continuing update preserves all coupled intervals before using any of
+them. Guard facts apply after the corresponding edge, not to work evaluated
+before its test. Check arithmetic at its original width; nonnegative operands
+can still wrap to a negative sum. Unknown seeds and exhausted proof budgets
+retain the general arithmetic. Reuse loop facts and bound query work.
 
 Hoisting a load requires both disjointness and safe execution at the new
 position. Sinking a store requires that every original exit observes the right
@@ -288,6 +300,10 @@ and narrow inputs, shifts, reversed arms and comparison polarity. Use the
 original base and drop field-specific facts that no longer describe the
 computed address. Only the selected address may be read; computing addresses
 does not authorize reading both fields.
+
+Include the index's element scale in the cost comparison. Moving a bit to a
+larger offset and then multiplying it again can add work. Check negative and
+unaligned byte offsets before changing the element scale.
 
 Factoring a read through a merge requires compatible load types, no intervening
 effects, valid operands on the new path and preserved exceptional behavior.
