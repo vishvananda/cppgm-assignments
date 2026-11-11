@@ -248,10 +248,24 @@ pass:
 - Count what every admission rule excludes. A rule that skips a function
   for its size, its exception handling or a call in a loop costs nothing on
   the fixtures and may exclude most of a real program; know the fraction.
-- Keep facts that cost nothing to keep. `typed`, `nowrap` and `exact` come
+- Keep facts that cost nothing to keep. `typed`, `nowrap`, `exact` and `inbounds` come
   from the lowering (`../pa8/lowir.md`, "Instruction Facts"); an optimizer
   that preserves them through copies and drops them where it speculates can
   use `typed` to keep a value in a register across a store of another type.
+  An inbounds element address compares equal to null exactly when its base
+  does; plain wrapping addresses require their original comparison. Preserve
+  this distinction through address merging and conditional speculation.
+  Functions with persistent code addresses can still forward private storage
+  across ordinary internal joins. Addressed entries retain their memory state
+  and cannot acquire phi inputs from indirect edges.
+  Equal loop-carried values may depend on each other through several joins.
+  Prove equality by matching their incoming edges and external values.
+  Equal literal values may use different spellings. Preserve distinct seeds,
+  updates and predecessor choices. Bound the proof work.
+  When a packed integer load supplies only one byte-aligned floating field,
+  reading that field directly can avoid unpacking work. Preserve snapshot
+  boundaries, volatile and atomic access widths, and the exact bits of floating
+  fields. A reinterpreted field does not inherit the wider load's alias type.
 - When an optimization makes the output slower because the backend lowers
   the result badly, fix the backend. Withholding the optimization leaves both
   problems in place, and the rule that withholds it has to be found and
@@ -316,6 +330,11 @@ simplification must preserve all of them.
 Boolean conditions may pass through selected zero/one values and integer
 retypes. Meet their quality bounds while preserving actual narrowing of
 arbitrary integers; a nonzero value can become zero when narrowed.
+
+Meet the conditional-store fixtures' branch and store bounds while preserving
+the selected values, cursor updates and empty-input behavior. Keep alias reads,
+callbacks, volatile accesses and potentially trapping work correctly ordered
+and conditional.
 
 Large-object fixtures combine indexed payloads, recurrent scalar fields and
 whole-object snapshots. Meet their bounds while preserving every copied byte
