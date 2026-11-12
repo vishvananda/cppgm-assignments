@@ -17,13 +17,13 @@ function @rotate_right
     epilogues duplicated
 
   block ^entry
-    mov rax, rsi
+    zext.i32 rax, rsi
     and rax, 63
     jne ^rotate
     ret rdi
 
   block ^rotate
-    mov rcx, rax
+    zext.i32 rcx, rax
     mov rax, rdi
     ror rax, rcx
     ret rax
@@ -56,12 +56,12 @@ function @with_live_values
     mov rdx, rcx
     load.i64 r12, [rbp+16]
     load.i64 r13, [rbp+24]
-    mov rax, rdx
+    zext.i32 rax, rdx
     and rax, 63
     je ^merge
 
   block ^rotate
-    mov rcx, rax
+    zext.i32 rcx, rax
     ror rdi, rcx
 
   block ^merge
@@ -87,22 +87,21 @@ function @oracle
 
   block ^entry
     mov rax, 0
-    mov rcx, rdi
 
   block ^loop
     cmp.i64 rax, rsi
     jb ^body
-    ret rcx
+    ret rdi
 
   block ^body
-    ror rcx, 1
+    ror rdi, 1
     add rax, 1
     cmp.i64 rax, rsi
     jb ^body
-    ret rcx
+    ret rdi
 
   block ^done
-    ret rcx
+    ret rdi
 
 function @main
   abi
@@ -119,7 +118,7 @@ function @main
     mov r12, 81985529216486895
 
   block ^loop
-    mov rsi, rbx
+    zext.i32 rsi, rbx
     and rsi, 63
     mov rdi, r12
     call @oracle [args=(rsi,rdi)]
@@ -161,12 +160,11 @@ function @main
     add rbx, 1
     cmp.i64 rbx, 128
     jb ^loop
-    jmp ^done
-
-  block ^fail
-    mov rax, 1
-    ret rax
 
   block ^done
     mov rax, 0
+    ret rax
+
+  block ^fail
+    mov rax, 1
     ret rax

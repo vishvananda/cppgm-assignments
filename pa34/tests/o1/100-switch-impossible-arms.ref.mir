@@ -25,31 +25,30 @@ function @dense
     epilogues duplicated
 
   block ^entry
-    mov r10, rdi
-    jump_table r10, [^case0, ^case1, ^case2, ^case3, ^case4, ^case5]
+    jump_table rdi, [^case0, ^case1, ^case2, ^case3, ^case4, ^case5]
 
   block ^case0
     lea rax, [rsi+rsi*2]
     ret rax
 
-  block ^case1
-    lea rax, [rsi+rsi*4]
-    ret rax
-
-  block ^case2
-    imul rax, rsi, 7
-    ret rax
-
-  block ^case3
-    lea rax, [rsi+rsi*8]
+  block ^case5
+    imul rax, rsi, 13
     ret rax
 
   block ^case4
     imul rax, rsi, 11
     ret rax
 
-  block ^case5
-    imul rax, rsi, 13
+  block ^case3
+    lea rax, [rsi+rsi*8]
+    ret rax
+
+  block ^case2
+    imul rax, rsi, 7
+    ret rax
+
+  block ^case1
+    lea rax, [rsi+rsi*4]
     ret rax
 
   block ^dead
@@ -74,24 +73,24 @@ function @signed_byte
     lea rax, [rsi+rsi*2]
     ret rax
 
-  block ^case1
-    lea rax, [rsi+rsi*4]
-    ret rax
-
-  block ^case2
-    imul rax, rsi, 7
-    ret rax
-
-  block ^case3
-    lea rax, [rsi+rsi*8]
+  block ^case5
+    imul rax, rsi, 13
     ret rax
 
   block ^case4
     imul rax, rsi, 11
     ret rax
 
-  block ^case5
-    imul rax, rsi, 13
+  block ^case3
+    lea rax, [rsi+rsi*8]
+    ret rax
+
+  block ^case2
+    imul rax, rsi, 7
+    ret rax
+
+  block ^case1
+    lea rax, [rsi+rsi*4]
     ret rax
 
   block ^dead
@@ -116,24 +115,24 @@ function @unsigned_byte
     lea rax, [rsi+rsi*2]
     ret rax
 
-  block ^case1
-    lea rax, [rsi+rsi*4]
-    ret rax
-
-  block ^case2
-    imul rax, rsi, 7
-    ret rax
-
-  block ^case3
-    lea rax, [rsi+rsi*8]
+  block ^case5
+    imul rax, rsi, 13
     ret rax
 
   block ^case4
     imul rax, rsi, 11
     ret rax
 
-  block ^case5
-    imul rax, rsi, 13
+  block ^case3
+    lea rax, [rsi+rsi*8]
+    ret rax
+
+  block ^case2
+    imul rax, rsi, 7
+    ret rax
+
+  block ^case1
+    lea rax, [rsi+rsi*4]
     ret rax
 
   block ^dead
@@ -151,41 +150,40 @@ function @defined_default
     epilogues duplicated
 
   block ^entry
-    mov r10, rdi
-    cmp.i64 r10, 5
+    cmp.i64 rdi, 5
     ja ^record
-    jump_table r10, [^case0, ^case1, ^case2, ^case3, ^case4, ^case5]
+    jump_table rdi, [^case0, ^case1, ^case2, ^case3, ^case4, ^case5]
 
-  block ^case0
-    lea rax, [rsi+rsi*2]
-    ret rax
-
-  block ^case1
-    lea rax, [rsi+rsi*4]
-    ret rax
-
-  block ^case2
-    imul rax, rsi, 7
-    ret rax
-
-  block ^case3
-    lea rax, [rsi+rsi*8]
-    ret rax
-
-  block ^case4
-    imul rax, rsi, 11
+  block ^record
+    mov rdi, rsi
+    call @record_default [args=(rdi)]
     ret rax
 
   block ^case5
     imul rax, rsi, 13
     ret rax
 
+  block ^case4
+    imul rax, rsi, 11
+    ret rax
+
+  block ^case3
+    lea rax, [rsi+rsi*8]
+    ret rax
+
+  block ^case2
+    imul rax, rsi, 7
+    ret rax
+
+  block ^case1
+    lea rax, [rsi+rsi*4]
+    ret rax
+
   block ^dead
     trap
 
-  block ^record
-    mov rdi, rsi
-    call @record_default [args=(rdi)]
+  block ^case0
+    lea rax, [rsi+rsi*2]
     ret rax
 
 function @throwing_default
@@ -200,41 +198,40 @@ function @throwing_default
     epilogues duplicated
 
   block ^entry
-    mov r10, rdi
-    cmp.i64 r10, 5
+    cmp.i64 rdi, 5
     ja ^raise
-    jump_table r10, [^case0, ^case1, ^case2, ^case3, ^case4, ^case5]
+    jump_table rdi, [^case0, ^case1, ^case2, ^case3, ^case4, ^case5]
 
   block ^case0
     lea rax, [rsi+rsi*2]
-    ret rax
-
-  block ^case1
-    lea rax, [rsi+rsi*4]
-    ret rax
-
-  block ^case2
-    imul rax, rsi, 7
-    ret rax
-
-  block ^case3
-    lea rax, [rsi+rsi*8]
-    ret rax
-
-  block ^case4
-    imul rax, rsi, 11
     ret rax
 
   block ^case5
     imul rax, rsi, 13
     ret rax
 
-  block ^dead
-    trap
+  block ^case4
+    imul rax, rsi, 11
+    ret rax
+
+  block ^case3
+    lea rax, [rsi+rsi*8]
+    ret rax
+
+  block ^case2
+    imul rax, rsi, 7
+    ret rax
+
+  block ^case1
+    lea rax, [rsi+rsi*4]
+    ret rax
 
   block ^raise
     mov rdi, rsi
     call @raise_default [args=(rdi), returns=noreturn]
+    trap
+
+  block ^dead
     trap
 
 function @all_dead_cases
@@ -352,8 +349,7 @@ function @main
     mov rdi, rbx
     load.i64 rsi, [rbp-16]
     call @throwing_default [args=(rsi,rdi)]
-    mov r10, rax
-    store.i64 [rbp-40], r10
+    store.i64 [rbp-40], rax
     add rbx, 20
     load.i64 r10, [rbp-16]
     add r10, 19
