@@ -1,0 +1,1 @@
+ERROR: this_return requires a void boundary with a first pointer parameter on a supporting target at tests/spec/300-bad-this-return-no-parameter.t:2

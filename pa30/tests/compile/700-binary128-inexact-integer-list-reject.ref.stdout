@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-binary128-inexact-integer-list-reject.t:2:30: narrowing conversion in list-initialization

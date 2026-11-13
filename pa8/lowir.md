@@ -55,6 +55,45 @@ These are LowIR symbol names, not necessarily raw source-level identifiers. Late
 lowering assignments may encode qualified or overloaded source names into deterministic
 LowIR symbol spellings as long as they remain valid `@name` tokens.
 
+## Target profiles
+
+A source file may begin with a versioned target profile:
+
+```text
+target wasm32 1
+```
+
+Version 1 names `linux` (x86-64 Linux), `macos` (x86-64 Darwin), `wasm32`
+(freestanding wasm32), or `wasi` (wasm32 WASI Preview 1). Omission retains the
+existing x86-64 Linux layout. Each input file must agree on its profile;
+an untagged file cannot be merged into a wasm32 program. Reject unknown names,
+unsupported versions, repeated profiles and profiles after a definition.
+Preserve an explicit profile when serializing, even in a helper-only unit.
+
+A Wasm header may also state its exception payload protocol:
+`target wasi 1 [exception_abi=cxx]`. Omission means `opaque`: `throw` carries
+scalar/pointer bits, `exception` reads them, and catch-all clauses select the
+handler. C++ producers state `cxx` and use the reserved runtime hooks instead
+of `throw`; `exception ptr` then reads the runtime unwind pointer, and typed
+catch/filter clauses use the supplied C++ personality. Preserve this typed
+fact during serialization. Reject unknown protocols, non-Wasm `cxx` headers
+and input units with conflicting protocols. Link separately compiled objects
+when combining protocols; payloads of one protocol must not be reinterpreted
+as the other's.
+
+
+The selected profile determines pointer storage, alignment and index scaling:
+eight bytes on x86-64 and four on wasm32. Integer and floating LowIR types
+retain their stated widths. In particular, `f80` means x87 format; source
+`long double` on wasm32 is binary128 and requires appropriate lowering rather
+than reinterpreting `f80`. `v128` describes sixteen bytes of vector lanes.
+
+Keep target/layout facts in the typed program and carry pointer width with
+typed values or their explicit context. Do not derive target semantics from
+the compiler's host or an ambient mutable variable. Earlier native lowering
+assignments retain their x86-64 contract; PA37 adds Wasm code generation.
+Reading and preserving target facts here does not require a second backend.
+
 ## Types
 
 The base LowIR type family begins with the scalar and pointer types:
@@ -178,6 +217,31 @@ declare function @name
 declare function @name(%a : i64, %b : ptr) -> i64
 declare function @printf(%fmt : ptr) -> i32 [arity=variadic]
 ```
+
+Wasm profiles additionally carry explicit function imports and exports:
+
+```text
+declare function @receive(%value : i32) -> i32
+declare function @wrapper(%value : i32) -> i32
+import @receive "host" "read_value"
+export @receive "forwarded_read"
+export @wrapper "public_name"
+```
+
+The function symbol owns the complete typed signature. Its `object` spelling
+is its static linking identity; an import's module and field name are separate
+host identities. An import requires a declaration with a complete signature.
+An export may name a declaration supplied by another object, an imported
+function, or a definition, and roots that function even with internal binding.
+These records may precede their referenced declarations and serialize after
+the other top-level entries. Preserve them through optimization and object
+compilation. Reject duplicate imports of one symbol, duplicate export field
+names, non-function targets and bindings on native profiles.
+
+Module and field names use quoted strings and the escapes documented for
+`object` names below. Empty module/field names are valid; embedded null bytes
+are not. The reader/writer must retain these distinctions without deriving
+them from a symbol's spelling. PA37 implements their execution and linking.
 
 Top-level declarations and definitions may also carry explicit symbol metadata:
 
@@ -344,6 +408,11 @@ false; there is no `replaceable=no` spelling.
 The `object` metadata key carries an explicit backend/object symbol spelling for the top-level
 symbol. This is the textual carrier for cases where later object emission must use a concrete
 host/object name such as `puts`, `_ZTIi`, or a local mangled helper name.
+Use a quoted string when the name contains non-ASCII bytes, spaces or other
+characters outside an ordinary LowIR word. Quoted object names preserve their
+bytes and use the same `\\`, `\"`, `\n`, `\r` and `\t` escapes as debug names.
+Empty object names and embedded null bytes are invalid. The writer keeps
+ordinary names unquoted; a leading `$` needs quotes because it starts a slot.
 
 The `keep_alias=yes` metadata flag requests that later object emission keep the LowIR-internal
 symbol spelling available as an alias even when `object=...` spells a different
@@ -457,6 +526,11 @@ The currently defined function metadata keys are:
 - `effects`
 - `unwind`
 - `return`
+- `repeatable`
+- `noalias_result`
+- `result_classes`
+- `result_shape`
+- `this_return`
 
 The currently defined arity values are:
 
@@ -503,11 +577,23 @@ GNU argumentless `malloc` produces this fact; the argument-bearing
 deallocator-association attribute alone does not. It is a declaration fact,
 not part of a C++ function pointer's type.
 
+`this_return=yes` preserves a target ABI's physical `this` return while the
+LowIR result remains logically `void`. It requires a supporting target, a
+first parameter of that target's `ptr` type, and no indirect-result parameter.
+On wasm32, constructors and non-deleting destructors carry it; deleting
+destructors keep their ordinary void ABI. Each normal machine return yields
+the unchanged first parameter, and a call consumes that physical result.
+Keep the fact on function and explicit call signatures and when comparing
+entry ABIs. An explicit direct-call signature must agree with the declared
+function about this convention. It does not introduce a LowIR result value or a source return
+expression. Native x86 boundaries do not support this convention.
+
 The C++ lowering states `effects`, `unwind` and `return` by the rules in Facts The C++
 Lowering States below.
 
 Call signatures only accept call-boundary metadata such as `arity=...`, `effects=...`,
-`unwind=...`, `return=...`, `repeatable=yes`, and `noalias_result=yes`. Top-level symbol metadata such as `role=...`, `linkage=...`,
+`unwind=...`, `return=...`, `repeatable=yes`, `noalias_result=yes`, and
+`this_return=yes`. Top-level symbol metadata such as `role=...`, `linkage=...`,
 `binding=...`, `replaceable=...`, `object=...`, `keep_alias=...`, `prefer_local=...`, `object_root=...`, and
 `force_inline=...`, `inline_hint=...`, `no_inline=...`, and
 `cold=...` are not valid on `as (...) -> ...`
@@ -725,8 +811,8 @@ function @helper(%ret : ptr [pass=indirect_result, object_bytes=24],
 }
 ```
 
-The currently defined parameter metadata keys are `pass`, `alias`, and
-`object_bytes`.
+The currently defined parameter metadata keys are `pass`, `alias`,
+`object_bytes`, `classes` and `shape`.
 
 The currently defined pass values are:
 
@@ -910,6 +996,36 @@ of malformed programs include:
 - a `return` followed by another instruction in the same block
 - a `jump ^missing` where `^missing` is never defined
 - both `declare function @main(...)` and `function @main(...)` in the same LowIR unit
+
+## Aggregate layout facts
+
+`shape=` on an object parameter and `result_shape=` on an object result carry
+layout facts that `obj<NxA>` alone cannot express. Omission states no shape.
+These keys require an object type; a pointer passed by address already has an
+explicit boundary and does not carry an object shape.
+
+- `empty`: no nonempty scalar subobject.
+- `mixed`: a nonuniform or otherwise unrepresented scalar composition.
+- `<element>x<count>`: recursively contains the stated number of scalar
+  subobjects of one kind. Count is 1–65535. Elements are `i1`, `i8`, `u8`,
+  `i16`, `u16`, `i32`, `u32`, `i64`, `i128`, `f32`, `f64`, `f128`, `ptr`
+  and `v128`. Array elements and nonempty bases participate; union alternatives
+  are counted individually. Ignore empty subobjects and unnamed bit-fields.
+  A composition beyond this count range may conservatively state `mixed`.
+
+These are semantic shape facts, not physical ABI classifications or a list of
+field offsets. Size and alignment remain in the object type. A target combines
+them with shape to select its call ABI; it must carry additional typed layout
+facts if it needs field positions. Shape participates in ABI-entry equivalence
+and survives text round trips and rewrites that retain the object boundary.
+A rewrite to scalar parameters/results must preserve the target ABI and remove
+shape from the resulting scalar boundary. It does not replace native
+`classes=`/`result_classes=` facts.
+
+For example, on wasm32 `obj<8x8>` with `f64x1` can cross as one `f64`, whereas
+`obj<8x4>` with `i32x2` crosses indirectly. `obj<16x16>` with `i32x1` has extra
+alignment/padding and also crosses indirectly. PA37 requires explicit shape
+for object boundaries; do not guess from their size or generated symbol name.
 
 ## Object ABI Conventions
 
@@ -1443,19 +1559,22 @@ for integer/float conversions lives in the operator spelling rather than the typ
 ### Vector Operations
 
 PA30 adds these forms for GNU vector types and SSE builtins. A `v128` value is
-sixteen bytes in one XMM register. It has no lanes of its own: each operation
-states how it reads the bits. Every optimization level uses these forms. `-O0`
-keeps each value in a sixteen-byte stack home, aligned to 16.
+sixteen bytes with natural alignment 16. It has no lanes of its own: each
+operation states how it reads the bits. Every optimization level carries these
+forms. PA30's native backend uses XMM registers and aligned sixteen-byte stack
+homes at `-O0`; PA37 uses Wasm's `v128` values and typed locals.
 
 `v128` is valid wherever a scalar value type is: slots, `load`, `store`, `copy`,
 `phi`, parameters, results and call arguments. `select` does not take it. A
 `load` or `store` of `v128` needs no alignment.
 
-At a call boundary a `v128` value takes the next XMM register, SSE and SSEUP
+At a native call boundary a `v128` value takes the next XMM register, SSE and SSEUP
 together, and a result returns in `xmm0`. With no register left it goes on the
 stack at the next 16-byte boundary. This is the psABI's rule for `__m128` and
 any other 16-byte vector. A class containing a vector is still an `obj` with
-stated classes (see [Object ABI Conventions](#object-abi-conventions)).
+stated classes (see [Object ABI Conventions](#object-abi-conventions)). Wasm
+uses the [PA37 target ABI](../pa37/target-abi.md#values-and-calls), including
+singleton-vector records; native register classes do not choose its convention.
 
 The lowering makes a GNU vector of 16 bytes a `v128`. Exceptions are a vector of
 `bool` lanes and a one-lane vector of a floating type, which stay `obj`. A
@@ -1509,7 +1628,8 @@ These forms have no single SSE name:
 - `roundps` and `roundpd` round packed lanes using the immediate's SSE rounding
   controls; `roundss` and `roundsd` round the low lane of the second operand
   and retain the first operand's upper lanes. Callers ensure SSE4.1 support.
-- The blends take `xmm0` as the mask, so a backend moves `%mask` there.
+- The native blends use `xmm0` as their mask register. Other targets preserve
+  the lane selections using their own representation.
 - `movss` and `movsd` are the register forms: the low lane of `%b` above the
   upper lanes of `%a`.
 - `sqrtss`, `sqrtsd`, `rcpss` and `rsqrtss` compute on the low lane of `%b` and
@@ -1605,6 +1725,30 @@ semantic boundary. That call signature may also carry call-boundary metadata
 such as `arity=variadic`, `effects=readonly`, `unwind=no` or `return=noreturn`
 when needed.
 
+A call may state `argument_type=<index>:<scalar-type>` for an unnamed variadic
+argument. Indexes count from zero across the complete argument list. For example:
+
+```text
+call void @log(2, 7, 9) [argument_type=1:i32, argument_type=2:i64]
+```
+
+The fact specifies the type passed across that boundary, including after a
+constant or copy replaces a typed operand. It is mandatory when the target's
+ABI needs a width different from the operand's default: an unannotated integer
+literal is `i64`, an ordinary floating literal is `f64`, an `f80` literal keeps
+that type, and other operands retain their represented storage type. A pointer
+uses the selected target's pointer width. The frontend performs language
+promotions before recording the passed type; backends do not infer it from a
+literal's value or reparse source.
+
+Each argument has at most one such annotation. It is invalid on a named or
+fixed-arity argument, outside the argument list, for `void` or object storage,
+or when its representation is incompatible with its operand. Integer width
+views remain valid; floating and pointer representations must agree. Aggregate
+operands already retain their storage size and alignment. Readers, writers and
+optimizers preserve this semantic boundary fact independently of native
+`classes` metadata. Copy it when cloning a call, and remove it with the call.
+
 `[elision=copy]` is a source-language permission on a direct `void` call with
 at least destination and source arguments.  It says that an optimizing stage
 may omit this copy/move construction and redirect the complete construction
@@ -1615,6 +1759,14 @@ cleanup exactly as written.  The permission is invalid on value-returning or
 indirect calls and does not classify an unmarked call by its symbol spelling.
 The C++ lowering states it by the rule in Facts The C++ Lowering States below;
 consuming it is optional.
+
+An aggregate unnamed argument states `argument_shape=<index>:<shape>` using
+the same layout vocabulary as a named parameter. A `va_arg` reading an object
+states `[shape=<shape>]`. These facts identify the represented source aggregate
+before ABI classification; they do not force a register or memory form. They
+are invalid on scalars, named/fixed arguments or incompatible instruction kinds.
+Each argument or result states at most one shape. Preserve the shape with the
+call or `va_arg` through serialization, cloning and optimization.
 
 ### Terminators
 
@@ -1845,10 +1997,13 @@ comparison checks them as part of the instruction:
   `shr` for a power of two and the `div` otherwise: the difference of two
   pointers into one array is a multiple of the element size (5.7p6).
 - `inbounds` on source array subscripting and addition, subtraction, increment
-  or decrement of a pointer to an object type. These operations stay within
-  one array or its one-past address on a defined source execution. Mechanically
-  computed member addresses and GNU arithmetic on `void*` or function pointers
-  do not acquire the promise from this rule.
+  or decrement of a pointer to an object type, and on addresses of actual
+  non-static data members (including capture members and bit-field storage
+  units) in their containing object or initialization storage. These operations
+  stay within the same allocation on a defined source execution. This also
+  covers member selection through a valid data-member pointer. A field projection
+  label alone is not proof: synthetic byte/ABI offsets and GNU arithmetic on
+  `void*` or function pointers do not acquire the promise from this rule.
 
 Every reader accepts the facts and every writer prints those the program
 holds, so a program keeps them through serialization: an object compiled
@@ -2061,7 +2216,17 @@ entry of the constructor and every call signature that copies its boundary.
 A constructor template, a converting constructor, an assignment operator,
 `__builtin_memmove` and `__restrict` state none.
 
-`classes` and `result_classes`: a direct object parameter of at most 16
+`shape` and `result_shape` on wasm32 object boundaries: derive the scalar
+composition from completed semantic layout as specified in Aggregate Layout
+Facts. These facts do not choose the target's physical argument/result
+representation. Retain semantic by-address boundaries for classes non-trivial
+for calls; trivial object values may stay by value until backend ABI lowering.
+Record the same source composition in `argument_shape` for unnamed objects and
+in object-valued `va_arg`'s `shape`. Scalar unnamed arguments state
+`argument_type` after their language promotions when targeting wasm32, including
+literals: their passed width must survive constant propagation.
+
+`classes` and `result_classes` on native AMD64 profiles: a direct object parameter of at most 16
 bytes states `classes`, and a direct object result `result_classes`, exactly
 when some eightbyte is SSE or `none` or (a parameter only) the object is
 `memory`, by the rules of Object ABI Conventions above.
@@ -2215,7 +2380,8 @@ follows them, and so must yours.
   greater than that of its items (Structured Global Data Initializers above).
 - The facts the C++ lowering states are part of its output. `unwind`,
   `return`, `effects`, `storage=readonly`, `inline_hint`, `no_inline`, `cold`,
-  `object_bytes`, `alias`, `classes`, `result_classes` and `elision=copy`
+  `object_bytes`, `alias`, `classes`, `result_classes`, `shape`, `result_shape`
+  and `elision=copy`
   follow the rules of Facts The C++ Lowering States above, on declarations,
   definitions, parameters and call signatures alike; an output that misses
   one, or states one the rules do not, differs from the reference. PA33's

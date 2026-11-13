@@ -1,0 +1,1 @@
+ERROR: argument_type does not match its literal representation in function @caller at tests/spec/300-bad-variadic-argument-type-literal.t:4

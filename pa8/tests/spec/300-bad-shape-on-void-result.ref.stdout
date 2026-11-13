@@ -1,0 +1,1 @@
+ERROR: aggregate result shape requires an object type at tests/spec/300-bad-shape-on-void-result.t:2

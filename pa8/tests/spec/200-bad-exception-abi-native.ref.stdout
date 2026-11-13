@@ -1,0 +1,1 @@
+ERROR: exception ABI requires a Wasm target at tests/spec/200-bad-exception-abi-native.t:2

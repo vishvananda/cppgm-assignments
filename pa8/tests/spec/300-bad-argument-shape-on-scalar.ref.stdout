@@ -1,0 +1,1 @@
+ERROR: argument_shape requires an aggregate operand in function @bad at tests/spec/300-bad-argument-shape-on-scalar.t:4

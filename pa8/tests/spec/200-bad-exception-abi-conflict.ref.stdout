@@ -1,0 +1,1 @@
+ERROR: incompatible LowIR target profiles at tests/spec/200-bad-exception-abi-conflict.t2:2

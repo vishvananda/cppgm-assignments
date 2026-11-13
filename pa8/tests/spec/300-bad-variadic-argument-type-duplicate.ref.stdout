@@ -1,0 +1,1 @@
+ERROR: empty or duplicate argument fact in function @caller at tests/spec/300-bad-variadic-argument-type-duplicate.t:4

@@ -1,0 +1,1 @@
+ERROR: duplicate metadata key: this_return at tests/spec/300-bad-this-return-duplicate.t:2

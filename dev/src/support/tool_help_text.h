@@ -53,7 +53,10 @@ inline const char* cppgm_help_text()
 		   "  -mpopcnt / -mno-popcnt  enable/disable the population-count ISA\n"
 		   "  -g0 / -gline-tables-only\n"
 		   "  -stdlib <name> / -stdlib=<name>\n"
-		   "  --target <target>\n";
+		   "  --target <target>   linux, macos, wasm32-unknown-unknown, wasm32-wasip1\n"
+		   "  --sysroot <dir>    Wasm target headers and runtime libraries\n"
+		   "  -resource-dir <dir>  supplied target builtin headers and compiler runtime\n"
+		   "  --export <name>    export a Wasm function\n";
 }
 
 inline const char* lowir_help_text()
@@ -84,7 +87,11 @@ inline const char* lowir2native_help_text()
 		   "driver flags:\n"
 		   "  -O0 / -O1 / -O2 / -O3\n"
 		   "  -o <outfile>\n"
-		   "  --target <target>\n"
+		   "  Wasm inputs may also include relocatable objects and archives.\n"
+		   "  --target <target>   native target or wasm32 profile\n"
+		   "  --sysroot <dir>    Wasm runtime libraries and WASI command startup\n"
+		   "  -resource-dir <dir>  supplied compiler runtime\n"
+		   "  --export <name>    export a Wasm function\n"
 		   "  --stats\n"
 		   "  --dump-machine-ir <mirfile>\n";
 }

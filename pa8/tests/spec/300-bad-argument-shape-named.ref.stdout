@@ -1,0 +1,1 @@
+ERROR: argument_shape requires an unnamed variadic argument in function @bad at tests/spec/300-bad-argument-shape-named.t:5

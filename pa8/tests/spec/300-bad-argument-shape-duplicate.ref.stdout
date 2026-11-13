@@ -1,0 +1,1 @@
+ERROR: empty or duplicate argument fact in function @bad at tests/spec/300-bad-argument-shape-duplicate.t:5

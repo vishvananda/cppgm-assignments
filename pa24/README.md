@@ -16,6 +16,13 @@ The intent of this milestone is:
 - learn instruction encoding, address fixups, and executable layout here
 - leave room for later optimization and additional native backends
 
+Keep shared machine facts, such as block identities, operand ranges, call
+effects and frame-object sizes, independent of x86 register names and operand
+forms. Instruction selection, physical-register assignment, ABI locations and
+encoding remain target-specific. PA37 reuses this boundary for Wasm; this
+assignment's required code generation remains x86-64. Reject a target/layout
+your backend does not support rather than treating it as native input.
+
 ### How PA24 Is Specified
 
 This README separates three kinds of statement, and the course suite is
@@ -366,7 +373,9 @@ PA10-PA23, including:
 - `select`, as a conditional move or branches, the `ctz` and `clz` bit scans and
   `sqrt`
 - supported variadic calls and `va_start` register-save state for GPR and XMM
-  arguments, including the caller-provided vector-register count
+  arguments, including the caller-provided vector-register count. Respect an
+  unnamed argument's `argument_type` passing view when selecting its ABI
+  locations, even when its source value has wider integer storage
 - structured vtable/global table data emitted by source-to-LowIR lowering
 - structured global alignment derived from typed data items; raw `zero` byte
   padding inside mixed data does not independently raise alignment

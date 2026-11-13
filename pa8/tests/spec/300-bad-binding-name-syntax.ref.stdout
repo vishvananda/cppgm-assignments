@@ -1,0 +1,1 @@
+ERROR: expected quoted import module name at tests/spec/300-bad-binding-name-syntax.t:3

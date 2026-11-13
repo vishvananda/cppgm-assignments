@@ -1,0 +1,1 @@
+ERROR: object name must not be empty at tests/spec/300-bad-empty-object-name.t:1

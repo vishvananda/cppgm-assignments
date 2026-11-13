@@ -46,6 +46,7 @@ The starter kit provides:
   the format as an enum with its spellings and readers, and the 8-byte
   `Type`);
 - `dev/src/ir_symbol_model.h`, the metadata vocabulary;
+- `dev/src/target_model.h`, target identity and data-layout vocabulary;
 - [the format reference](lowir.md), [the grammar](pa8.gram), and its HTML
   explorer under `grammar/`;
 - the tests, reference outcomes and harnesses under `pa8/`;
@@ -81,6 +82,24 @@ The input files form one LowIR unit in command-line order. Names are shared
 across those files; they are not separate C++ translation units. A symbol may
 be defined in a later input file. Do not introduce a duplicate declaration for
 an already defined symbol merely because a file boundary occurs between uses.
+
+Read, validate and preserve the [target profile](lowir.md#target-profiles).
+Pointer sizes follow that profile; fixed-width integers retain their widths.
+An omitted profile keeps the existing native layout. Backend implementation
+for another target comes later and is not required to represent its facts.
+
+Aggregate boundaries can carry the target-neutral `shape=` and
+`result_shape=` layout facts described in [LowIR](lowir.md#aggregate-layout-facts).
+Preserve them independently of native eightbyte classes; PA37 consumes them
+when choosing the wasm32 calling convention. Unnamed variadic call arguments
+can state `argument_type=<index>:<scalar-type>` to retain their passed type even
+when their value is a literal. Read, validate and preserve this fact; selecting
+the target's argument-buffer layout belongs to its backend. Unnamed objects
+state `argument_shape=<index>:<shape>` and object-valued `va_arg` uses `shape=`.
+These retain the same layout facts as named parameters. A target ABI can
+also state `this_return=yes` on a logically void boundary: its physical return
+is the unchanged first pointer parameter. Validate the target and parameter
+constraints and preserve the fact through text round-trips.
 
 Accept helper-only units, including declarations and globals without an entry
 function. An entry is needed when the supplied backend builds an executable,

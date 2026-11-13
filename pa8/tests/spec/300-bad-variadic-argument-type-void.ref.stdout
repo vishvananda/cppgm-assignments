@@ -1,0 +1,1 @@
+ERROR: argument_type requires a scalar value type at tests/spec/300-bad-variadic-argument-type-void.t:4

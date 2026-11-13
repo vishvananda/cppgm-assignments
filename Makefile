@@ -68,6 +68,7 @@ SUBMAKE_CC_FLAGS_ARG = $(if $(strip $(CC_FLAGS)),CC_FLAGS="$(CC_FLAGS)")
 
 .PHONY: all build test ref-test ref-test-debuginfo \
 	test-debuginfo test-debuginfo-nobuild    \
+	\
 	test-target-features test-target-features-nobuild \
 	require-clang require-clang-libcxx asan-build \
 	test-report inception clean run-cppgm run-cppgm-nobuild \

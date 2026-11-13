@@ -1,0 +1,1 @@
+ERROR: argument_type requires an unnamed variadic call argument in function @caller at tests/spec/300-bad-variadic-argument-type-named.t:4

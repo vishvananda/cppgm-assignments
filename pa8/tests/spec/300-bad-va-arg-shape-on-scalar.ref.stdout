@@ -1,0 +1,1 @@
+ERROR: invalid aggregate argument or va_arg shape in function @bad at tests/spec/300-bad-va-arg-shape-on-scalar.t:3
