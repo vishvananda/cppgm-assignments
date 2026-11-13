@@ -1,5 +1,0 @@
-function @main(%value : i64, %choose : i64, %inner : i64) -> i64 [role=entry] {
-  block ^entry:
-    %left_value = binary add i64 %value, 7
-    return i64 %left_value
-}

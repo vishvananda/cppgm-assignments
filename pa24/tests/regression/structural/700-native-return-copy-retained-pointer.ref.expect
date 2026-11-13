@@ -1,2 +1,0 @@
-# Direct return stores reload destination pointers after argument registers change.
-none(copy_bytes) in @write_object

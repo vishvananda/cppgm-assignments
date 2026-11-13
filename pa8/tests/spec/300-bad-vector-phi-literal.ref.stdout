@@ -1,0 +1,1 @@
+ERROR: phi integer literal type mismatch in function @f at tests/spec/300-bad-vector-phi-literal.t:10

@@ -1,6 +1,0 @@
-function @choose(%buffer : ptr, %new_last : ptr, %take : i64) -> ptr {
-  block ^entry:
-    %end = load ptr %buffer
-    %t2 = select ptr %take, %new_last, %end
-    return ptr %t2
-}

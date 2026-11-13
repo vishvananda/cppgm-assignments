@@ -1,0 +1,1 @@
+ERROR: vector literal must be zero in function @f at tests/spec/300-bad-vector-store-literal.t:4
