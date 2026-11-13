@@ -116,3 +116,5 @@ $(DEPDIR)/%.d: ;
 -include $(DEPDIR)/test_runner_enabled.d
 
 .PHONY: all clean FORCE
+
+include lowir_library.mk

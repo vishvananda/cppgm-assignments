@@ -15,3 +15,8 @@ FRONTEND_OBJ_BASENAMES_cppgm++ :=
 FRONTEND_OBJ_BASENAMES_lowiropt :=
 FRONTEND_OBJ_BASENAMES_lowir :=
 FRONTEND_OBJ_BASENAMES_lowir2native :=
+
+# Optional PA27/PA33 library implementation modules, without the C boundary.
+# Put the boundary in dev/lowir_library.cpp; add shared modules here.
+FRONTEND_LIBRARY_SOURCE_SET_TARGETS := lowir_library
+FRONTEND_LIBRARY_SOURCE_IDS_lowir_library :=

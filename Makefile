@@ -460,3 +460,15 @@ reference-binaries:
 setup: reference-binaries
 
 .PHONY: reference-binaries setup
+
+# Optional typed producer/library lane; independent of the assignment report.
+.PHONY: lowir-library test-lowir-library test-lowir-library-nobuild
+lowir-library:
+	$(MAKE) -C dev lowir-library CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)" $(SUBMAKE_OBJ_ARG)
+
+test-lowir-library: build lowir-library
+	$(MAKE) test-lowir-library-nobuild
+
+test-lowir-library-nobuild:
+	$(MAKE) -C pa27 test-lowir-library CPPGM_SKIP_DEV_REBUILD=1 CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)"
+	$(MAKE) -C pa33 test-lowir-library CPPGM_SKIP_DEV_REBUILD=1 CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)"

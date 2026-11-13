@@ -26,9 +26,12 @@ LowIR is:
   for values selected by incoming control-flow edges
 
 LowIR text is the serialized form of the compiler-owned backend program model.
-Implementations may use a typed in-memory representation. The starter support's
+Use a typed in-memory representation built on the shared scaffold records. The starter support's
 `dev/src/lowir_model.h` and `dev/src/ir_symbol_model.h` give its vocabulary:
-the format's fixed words as enums, with their spellings and readers. The text
+the format's fixed words as enums, with their spellings and readers.
+`lowir_records.h` adds common records; `lowir_interface.h` adds the batched
+construction contract. Neither supplies owning containers or implementation
+algorithms. The text
 remains the durable boundary. A backend-visible fact that cannot be serialized
 to LowIR and parsed back is not part of the LowIR contract.
 
@@ -1579,6 +1582,8 @@ singleton-vector records; native register classes do not choose its convention.
 The lowering makes a GNU vector of 16 bytes a `v128`. Exceptions are a vector of
 `bool` lanes and a one-lane vector of a floating type, which stay `obj`. A
 vector of any other size stays `obj`, and its operations go lane by lane.
+PA30's 256- and 512-bit x86 builtins may instead load 128-bit pieces of such
+an `obj` as `v128` values and compute them with `vector`.
 
 ```text
 %r = vector <op> %a, %b           ; binary
@@ -2421,7 +2426,8 @@ follows them, and so must yours.
   unwind suffixes), PA23 (virtual bases found through one VTT load per
   block, or a static offset for a complete object), PA30 (a branch that
   tests `__builtin_expect` with a literal expectation is predicted, and no
-  other branch is).
+  other branch is; an atomic store or thread fence whose order is not a
+  constant branches on it).
 - Metadata of earlier forms is rejected by the validator rather than
   absorbed: the parameter keys `capture=` and `access=`, the `index`
   projections `base_subobject` and `reference_field`, the symbol key
