@@ -1,0 +1,1 @@
+ERROR: tests/general/300-discard-pointer-const.t:1:55: invalid implicit conversion

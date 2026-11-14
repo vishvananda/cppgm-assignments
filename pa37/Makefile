@@ -27,6 +27,7 @@ CHECK_RUN = perl ../scripts/run_all_tests_common.pl control_t $(CPPGM_TEST_APP) 
 CHECK_COMPARE = perl ../scripts/compare_results_common.pl control_t ref check "$(TEST)"
 include ../scripts/pa_run_check_targets.mk
 
+
 benchmark: $(TEST_DEPS)
 	perl ../scripts/wasm_benchmarks.pl --compiler ../dev/cppgm++ --tools "$(WASM_TOOLS)" \
 		--host-cxx "$(CPPGM_HOST_CXX)" $(WASM_BENCH_ARGS)

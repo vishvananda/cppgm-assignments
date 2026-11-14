@@ -36,8 +36,9 @@ sub collect_tests
 			elsif (-d $root)
 			{
 				find(sub {
-					# Controls are a separate test shape and an explicit lane.
-					if (-d $_ && $_ ne $root && $_ =~ m{(?:^|/)controls$})
+					# A `controls` or `regression` directory inside a suite
+					# is a lane of its own, compared by its own target.
+					if (-d $_ && $_ ne $root && $_ =~ m{(?:^|/)(?:controls|regression)$})
 					{
 						$File::Find::prune = 1;
 						return;
@@ -942,7 +943,7 @@ sub source_is_lowir
 	for my $line (split(/\n/, $data))
 	{
 		next if $line =~ /^\s*$/ || $line =~ /^\s*#/;
-		return $line =~ /^(?:declare|global|function|machine_ir)\b/ ? 1 : 0;
+		return $line =~ /^(?:target|declare|global|function|machine_ir)\b/ ? 1 : 0;
 	}
 	return 1;
 }
