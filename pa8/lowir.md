@@ -1437,13 +1437,16 @@ the result's type is `i64` whatever the operand type.
 
 `select` is `<a>` when the integer `<cond>` is nonzero and `<b>` otherwise.
 `<type>` is the type of `<a>`, `<b>` and the result: an integer type no wider
-than 64 bits, or `ptr`. Both values are computed before the `select`, so it
-has no effect beyond its result. Convention of the C++ lowering (enforced):
-it produces `select` only to pick the fallback of GCC's `__builtin_clzg` and
-`__builtin_ctzg` for a zero operand; every other choice the source writes is
-branched (Control-Flow Value Merges above). An optimizer may form it from a
-branch to arms that only compute values (if-conversion), and a backend may
-lower it to a conditional move (`cmov` on x86-64) or to branches.
+than 64 bits, `ptr`, `f32` or `f64`. A floating result has the bits of the
+chosen value (a NaN's payload and a zero's sign included). Both values are
+computed before the `select`, so it has no effect beyond its result.
+Convention of the C++ lowering (enforced): it produces `select` only to pick
+the fallback of GCC's `__builtin_clzg` and `__builtin_ctzg` for a zero
+operand; every other choice the source writes is branched (Control-Flow Value
+Merges above). An optimizer may form it from a branch to arms that only
+compute values (if-conversion), and a backend may lower it to a conditional
+move (`cmov` on x86-64), to a compare's mask over the two floating values, or
+to branches.
 
 For integer operations where signedness changes the result, the plain forms remain the signed
 operations:

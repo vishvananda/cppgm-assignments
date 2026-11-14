@@ -1,0 +1,17 @@
+function @pick(%c : i64, %a : f64, %b : f64) -> f64 {
+  block ^entry:
+    %v = select f64 %c, %a, %b
+    return f64 %v
+}
+
+function @main() -> i64 {
+  block ^entry:
+    %lt = cmp lt f32 1.5f, 2.5f
+    %x = select f32 %lt, 3.0f, 5.0f
+    %wide = convert fpext f64 f32 %x
+    %y = call f64 @pick(0, 1.0, 2.0)
+    %s = binary add f64 %wide, %y
+    %same = cmp eq f64 %s, 5.0
+    %u = select i64 %same, 0, 1
+    return i64 %u
+}

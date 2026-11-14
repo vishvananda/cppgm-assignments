@@ -370,8 +370,8 @@ PA10-PA23, including:
   eightbyte in a GPR or an XMM register (or nowhere) as the parameter's
   `classes` or the function's `result_classes` metadata states, and the whole
   object on the stack for `classes=memory` or when its registers run out
-- `select`, as a conditional move or branches, the `ctz` and `clz` bit scans and
-  `sqrt`
+- `select`, as a conditional move or branches (an `f32` or `f64` result keeps
+  the bits of the chosen value), the `ctz` and `clz` bit scans and `sqrt`
 - supported variadic calls and `va_start` register-save state for GPR and XMM
   arguments, including the caller-provided vector-register count. Respect an
   unnamed argument's `argument_type` passing view when selecting its ABI
