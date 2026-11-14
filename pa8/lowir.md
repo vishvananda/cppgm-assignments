@@ -1666,6 +1666,21 @@ must contain only bits supported by the target CPU. Preserve their order and
 explicit rounding instructions' dependence on current rounding control. This
 interface does not enable `FENV_ACCESS` for ordinary C++ floating expressions.
 
+### Wasm memory pages
+
+```text
+%pages = memory_size
+%previous = memory_grow <u32-pages>
+```
+
+These PA37 operations require a wasm32 target and refer to its single linear
+memory. Both return `u32` counts of 65,536-byte pages. `memory_size` observes
+the current size. `memory_grow` attempts to append the specified number of
+zero-filled pages and returns the previous size, or `4294967295` on failure.
+Growing by zero queries the size and may fail under the target's resource
+limits. Preserve execution order around growth, calls that may grow memory,
+and observations of memory size. Neither operation is a constant expression.
+
 ### Stack allocation
 
 ```text

@@ -202,6 +202,19 @@ For freestanding arithmetic that needs supplied helpers, pass the pinned
 compiler-rt and C runtime archives as link inputs. Both tools accept those
 archives alongside their source or LowIR inputs.
 
+## Memory page builtins
+
+Provide `__builtin_wasm_memory_size(0)` and
+`__builtin_wasm_memory_grow(0, pages)`. The memory index must be the integer
+constant zero. Both return `size_t`; growth converts its page count to
+`size_t`. Report these builtins through `__has_builtin` on Wasm targets only.
+Lower them to PA8's `memory_size` and `memory_grow` operations, preserving
+their dynamic size observations and growth effects through optimization.
+
+Source declarations of the linker boundary `__stack_low` and the backend's
+frame guard must refer to one object symbol. Do not emit duplicate undefined
+symbols when an SDK source file also takes that boundary's address.
+
 ## Initialization and execution
 
 For a freestanding module, initialize static storage before any exported call.

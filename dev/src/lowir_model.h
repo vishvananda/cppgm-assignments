@@ -204,8 +204,8 @@ inline std::uint64_t storage_bytes(Type type)
 // Instructions (pa8/lowir.md "Required PA8 Instructions", "Exception
 // Instructions")
 //
-// The order is part of the vocabulary: value-producing operations first,
-// then effects, then terminators.
+// Existing opcode values are part of the foreign C interface. Append new
+// operations and classify them through defines_value() / is_terminator().
 
 enum class Opcode : std::uint8_t
 {
@@ -259,10 +259,13 @@ enum class Opcode : std::uint8_t
 	Switch,
 	IndirectJump,
 	Return,
-	Unreachable
+	Unreachable,
+	// PA37's single wasm32 memory: size in pages, or grow by u32 pages.
+	MemorySize,
+	MemoryGrow
 };
 
-const unsigned kOpcodeCount = static_cast<unsigned>(Opcode::Unreachable) + 1;
+const unsigned kOpcodeCount = static_cast<unsigned>(Opcode::MemoryGrow) + 1;
 
 inline bool is_stack_instruction(Opcode op)
 {
@@ -271,14 +274,14 @@ inline bool is_stack_instruction(Opcode op)
 
 inline bool is_terminator(Opcode op)
 {
-	return op >= Opcode::Throw;
+	return op >= Opcode::Throw && op <= Opcode::Unreachable;
 }
 
 // Whether the instruction defines a temporary (a call only with a
 // non-void result type).
 inline bool defines_value(Opcode op)
 {
-	return op <= Opcode::ExceptionSelector;
+	return op <= Opcode::ExceptionSelector || op == Opcode::MemorySize || op == Opcode::MemoryGrow;
 }
 
 // The handler-stack markers eh_try ... eh_end.
@@ -296,7 +299,7 @@ inline const char* spelling(Opcode op)
 		"exception", "exception_selector", "asm", "store", "atomic_store", "atomic_thread_fence", "atomic_signal_fence",
 		"va_start", "stack_restore", "write_mxcsr", "copyobj", "zeroinit", "eh_try", "eh_cleanup", "eh_catch",
 		"eh_filter", "eh_catch_all", "eh_end", "throw", "resume", "jump", "branch", "switch", "indirect_jump", "return",
-		"unreachable" };
+		"unreachable", "memory_size", "memory_grow" };
 	return kOpcodes[static_cast<unsigned>(op)];
 }
 

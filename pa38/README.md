@@ -47,6 +47,12 @@ The first fixture set covers these parts of the C17 input profile:
   later prototypes retain their parameter checks.
 - Implicit conversions between object pointers and qualified `void*`, without
   discarding pointee qualifiers; integral initialization of enumeration objects.
+- GNU C pointer extensions used by hosted libraries: implicit conversions
+  between function pointers and `void*`, and between pointers to corresponding
+  signed/unsigned integer types (including the three character types).
+  Pointer-sign conversions preserve the address and accept qualification
+  differences as LLVM does. They do not make the pointed-to types compatible
+  for `_Generic` or `__builtin_types_compatible_p`.
 - `_Generic` selections preserve the selected expression's type and value
   category. The control and unselected associations are not evaluated.
 - C character and string literal types. Comparisons and logical operators
