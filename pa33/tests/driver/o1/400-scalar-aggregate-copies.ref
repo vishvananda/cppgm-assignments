@@ -76,7 +76,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^for_cond_1
 
   block ^for_cond_1:
-    %t1 = phi u32 [^entry: 0, ^if_end_44: %t186]
+    %t1 = phi u32 [^entry: 0, ^if_end_44: %t184]
     %t2 = cmp ne u32 %t1, 257
     branch %t2, ^for_body_2, ^for_end_45
 
@@ -367,11 +367,11 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     call void @children(%t172, %t170)
     %t173 = load ptr %t172
     %t174 = index i8 [projection=field] %t172, 8
-    %t175 = load i64 %t174
+    %t175 = load u32 %t174
     %t176 = index i8 [projection=field] %t172, 16
     %t177 = load ptr %t176
     %t178 = index i8 [projection=field] %t172, 24
-    %t179 = load i64 %t178
+    %t179 = load u32 %t178
     %t180 = cmp ne ptr %t170, %t173
     branch %t180, ^if_then_43, ^lor_rhs_40
 
@@ -386,47 +386,41 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     branch %t181, ^if_then_43, ^lor_rhs_41
 
   block ^lor_rhs_41:
-    %t182 = convert trunc u32 i64 %t175
-    branch %t182, ^if_then_43, ^lor_rhs_42
+    branch %t175, ^if_then_43, ^lor_rhs_42
 
   block ^lor_rhs_42:
-    %t183 = convert trunc u32 i64 %t179
-    %t184 = call u32 @count(%t170)
-    %t185 = cmp ne u32 %t183, %t184
-    branch %t185, ^if_then_43, ^if_end_44
+    %t182 = call u32 @count(%t170)
+    %t183 = cmp ne u32 %t182, %t179
+    branch %t183, ^if_then_43, ^if_end_44
 
   block ^if_then_43:
     return i32 3
 
   block ^if_end_44:
-    %t186 = binary add u32 %t1, 1
+    %t184 = binary add u32 %t1, 1
     jump ^for_cond_1
 
   block ^for_end_45:
-    %t187 = addr $aggregate__2
-    call void @children(%t187, 0)
-    %t188 = load ptr %t187
-    %t189 = index i8 [projection=field] %t187, 8
-    %t190 = load i64 %t189
-    %t191 = index i8 [projection=field] %t187, 16
-    %t192 = load ptr %t191
-    %t193 = index i8 [projection=field] %t187, 24
-    %t194 = load i64 %t193
-    branch %t188, ^lor_end_48, ^lor_rhs_46
+    %t185 = addr $aggregate__2
+    call void @children(%t185, 0)
+    %t186 = load ptr %t185
+    %t187 = index i8 [projection=field] %t185, 8
+    %t188 = load u32 %t187
+    %t189 = index i8 [projection=field] %t185, 16
+    %t190 = load ptr %t189
+    %t191 = index i8 [projection=field] %t185, 24
+    %t192 = load u32 %t191
+    branch %t186, ^lor_end_47, ^lor_rhs_46
 
   block ^lor_rhs_46:
-    %t195 = cmp ne ptr %t192, 0
-    branch %t195, ^lor_end_48, ^lor_rhs_47
+    %t193 = cmp ne ptr %t190, 0
+    %t194 = cmp ne u32 %t192, 0
+    %t195 = select i64 %t188, 1, %t194
+    %t196 = select i64 %t193, 1, %t195
+    jump ^lor_end_47
 
-  block ^lor_rhs_47:
-    %t196 = convert trunc u32 i64 %t190
-    %t197 = convert trunc u32 i64 %t194
-    %t198 = cmp ne u32 %t197, 0
-    %t199 = select i64 %t196, 1, %t198
-    jump ^lor_end_48
-
-  block ^lor_end_48:
-    %t200 = phi i64 [^for_end_45: 1, ^lor_rhs_46: 1, ^lor_rhs_47: %t199]
-    %t201 = convert trunc i32 i64 %t200
-    return i32 %t201
+  block ^lor_end_47:
+    %t197 = phi i64 [^for_end_45: 1, ^lor_rhs_46: %t196]
+    %t198 = convert trunc i32 i64 %t197
+    return i32 %t198
 }

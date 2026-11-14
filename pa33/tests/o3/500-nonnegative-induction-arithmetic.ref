@@ -4,12 +4,12 @@ function @nonnegative(%p : ptr, %bound : i64) -> i64 [no_inline=yes] {
     branch %enter, ^loop_preheader_1, ^empty
 
   block ^loop_preheader_1:
-    %t2 = cmp uge i64 %bound, 2
+    %t2 = cmp uge i64 %bound, 4
     %t3 = binary and i64 %enter, %t2
     branch %t3, ^loop_preheader_2, ^loop_preheader_5
 
   block ^loop_preheader_2:
-    %t4 = binary add i64 %bound, -2
+    %t4 = binary add i64 %bound, -4
     %t5 = vector pzero
     %t6 = vector fromi64 1
     %t7 = vector punpcklqdq %t5, %t6
@@ -18,39 +18,50 @@ function @nonnegative(%p : ptr, %bound : i64) -> i64 [no_inline=yes] {
     %t10 = vector pshufd %t9, 68
     %t11 = vector fromi64 2
     %t12 = vector pshufd %t11, 68
+    %t13 = vector fromi64 4
+    %t14 = vector pshufd %t13, 68
     jump ^wide_loop_3
 
   block ^wide_loop_3:
-    %t13 = phi v128 [^loop_preheader_2: %t5, ^wide_loop_3: %t22]
-    %t14 = phi v128 [^loop_preheader_2: %t8, ^wide_loop_3: %t24]
-    %t15 = phi i64 [^loop_preheader_2: 0, ^wide_loop_3: %t23]
-    %t16 = vector pand %t14, %t10
-    %t17 = vector psrlqi %t14, 2
-    %t18 = index i64 %p, %t15
-    %t19 = load v128 %t18
-    %t20 = vector paddq %t16, %t17
-    %t21 = vector paddq %t19, %t20
-    %t22 = vector paddq %t13, %t21
-    %t23 = binary add nowrap i64 %t15, 2
-    %t24 = vector paddq %t14, %t12
-    %t25 = cmp le i64 %t23, %t4
-    branch %t25, ^wide_loop_3, ^loop_exit_4
+    %t15 = phi v128 [^loop_preheader_2: %t5, ^wide_loop_3: %t33]
+    %t16 = phi v128 [^loop_preheader_2: %t8, ^wide_loop_3: %t35]
+    %t17 = phi i64 [^loop_preheader_2: 0, ^wide_loop_3: %t34]
+    %t18 = vector pand %t16, %t10
+    %t19 = vector psrlqi %t16, 2
+    %t20 = index i64 %p, %t17
+    %t21 = load v128 %t20
+    %t22 = vector paddq %t18, %t19
+    %t23 = vector paddq %t21, %t22
+    %t24 = vector paddq %t15, %t23
+    %t25 = binary add nowrap i64 %t17, 2
+    %t26 = vector paddq %t16, %t12
+    %t27 = vector pand %t26, %t10
+    %t28 = vector psrlqi %t26, 2
+    %t29 = index i64 %p, %t25
+    %t30 = load v128 %t29
+    %t31 = vector paddq %t27, %t28
+    %t32 = vector paddq %t30, %t31
+    %t33 = vector paddq %t24, %t32
+    %t34 = binary add nowrap i64 %t17, 4
+    %t35 = vector paddq %t16, %t14
+    %t36 = cmp le i64 %t34, %t4
+    branch %t36, ^wide_loop_3, ^loop_exit_4
 
   block ^loop_exit_4:
-    %t26 = vector pshufd %t22, 78
-    %t27 = vector paddq %t22, %t26
-    %t28 = vector toi64 %t27
-    %t29 = cmp lt i64 %t23, %bound
-    branch %t29, ^loop_preheader_5, ^done
+    %t37 = vector pshufd %t33, 78
+    %t38 = vector paddq %t33, %t37
+    %t39 = vector toi64 %t38
+    %t40 = cmp lt i64 %t34, %bound
+    branch %t40, ^loop_preheader_5, ^done
 
   block ^loop_preheader_5:
-    %t30 = phi i64 [^loop_preheader_1: 0, ^loop_exit_4: %t28]
-    %t31 = phi i64 [^loop_preheader_1: 0, ^loop_exit_4: %t23]
+    %t41 = phi i64 [^loop_preheader_1: 0, ^loop_exit_4: %t39]
+    %t42 = phi i64 [^loop_preheader_1: 0, ^loop_exit_4: %t34]
     jump ^body
 
   block ^body:
-    %i = phi i64 [^loop_preheader_5: %t31, ^body: %next]
-    %sum = phi i64 [^loop_preheader_5: %t30, ^body: %total]
+    %i = phi i64 [^loop_preheader_5: %t42, ^body: %next]
+    %sum = phi i64 [^loop_preheader_5: %t41, ^body: %total]
     %rem = binary and i64 %i, 7
     %quot = binary ushr i64 %i, 2
     %q = index i64 %p, %i
@@ -63,8 +74,8 @@ function @nonnegative(%p : ptr, %bound : i64) -> i64 [no_inline=yes] {
     branch %more, ^body, ^done
 
   block ^done:
-    %t43 = phi i64 [^body: %total, ^loop_exit_4: %t28]
-    return i64 %t43
+    %t54 = phi i64 [^body: %total, ^loop_exit_4: %t39]
+    return i64 %t54
 
   block ^empty:
     return i64 0

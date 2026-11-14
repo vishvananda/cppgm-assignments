@@ -9,9 +9,8 @@ function @alignment(%n : u32) -> u32 [binding=strong, no_inline=yes] {
     jump ^merge
 
   block ^merge:
-    %result = phi i64 [^four: 4, ^eight: 8, ^entry: 1]
-    %narrow = convert trunc u32 i64 %result
-    return u32 %narrow
+    %t1 = phi u32 [^four: 4, ^eight: 8, ^entry: 1]
+    return u32 %t1
 }
 function @round_call(%x : i64, %n : u32) -> i64 [no_inline=yes] {
   block ^entry:

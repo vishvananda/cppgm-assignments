@@ -37,10 +37,9 @@ function @count_samples(%bound : f32, %samples : ptr, %size : u32) -> u32 [linka
 }
 function @float_field(%sample : ptr) -> u32 [linkage=c, binding=strong, no_inline=yes] {
   block ^entry:
-    %t1 = load i64 %sample
-    %t2 = binary ushr i64 %t1, 32
-    %t3 = convert trunc u32 i64 %t2
-    return u32 %t3
+    %t1 = index i8 %sample, 4
+    %t2 = load u32 %t1
+    return u32 %t2
 }
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   slot $samples : obj<56x4>

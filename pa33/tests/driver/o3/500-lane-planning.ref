@@ -391,7 +391,7 @@ function @planned_matrix(%seed : u32) -> u32 [linkage=c, binding=strong, no_inli
     %t333 = vector punpckldq %t325, %t331
     %t334 = vector punpcklqdq %t332, %t333
     %t335 = vector por %t306, %t334
-    %t336 = vector pxor %t335, %t120
+    %t336 = vector pxor %t120, %t335
     %t337 = binary add nowrap i64 %t122, 4
     %t338 = convert trunc exact u32 i64 %t337
     %t339 = vector paddd %t121, %t17

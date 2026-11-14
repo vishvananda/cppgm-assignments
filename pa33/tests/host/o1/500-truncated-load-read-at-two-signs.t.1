@@ -1,0 +1,30 @@
+struct Operand {
+    unsigned char kind;
+    long long imm;
+};
+__attribute__((noinline)) long widened(const Operand* op) {
+    int value = static_cast<int>(op->imm);
+    unsigned bits = value;
+    long wide = value;
+    return wide + (bits >> 31);
+}
+__attribute__((noinline)) long narrow(const Operand* op) {
+    short value = static_cast<short>(op->imm >> 16);
+    unsigned short bits = value;
+    long wide = value;
+    return wide + (bits >> 15);
+}
+int main() {
+    volatile long long low_ones = 0xffffffffll;
+    Operand op = {1, low_ones};
+    if (widened(&op) != 0)
+        return 1;
+    op.imm = low_ones + 1;
+    if (widened(&op) != 0)
+        return 2;
+    op.imm = low_ones;
+    if (narrow(&op) != 0)
+        return 3;
+    op.imm = 0x7fff0000ll;
+    return narrow(&op) == 0x7fff ? 0 : 4;
+}

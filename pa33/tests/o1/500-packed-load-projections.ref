@@ -11,10 +11,9 @@ function @float_low(%p : ptr) -> f32 [no_inline=yes] {
 }
 function @signed_middle(%p : ptr) -> i16 [no_inline=yes] {
   block ^entry:
-    %word = load i64 %p
-    %middle = binary shr i64 %word, 8
-    %value = convert trunc i16 i64 %middle
-    return i16 %value
+    %t1 = index i8 %p, 1
+    %t2 = load i16 %t1
+    return i16 %t2
 }
 function @double_high(%p : ptr) -> f64 [no_inline=yes] {
   block ^entry:
@@ -24,11 +23,10 @@ function @double_high(%p : ptr) -> f64 [no_inline=yes] {
 }
 function @snapshot(%p : ptr) -> f32 [no_inline=yes] {
   block ^entry:
-    %word = load i64 %p
+    %t1 = index i8 %p, 4
+    %t2 = load u32 %t1
     store i64 0, %p
-    %high = binary ushr i64 %word, 32
-    %bits = convert trunc u32 i64 %high
-    %value = copy f32 %bits
+    %value = copy f32 %t2
     return f32 %value
 }
 function @volatile_word(%p : ptr) -> f32 [no_inline=yes] {
@@ -54,11 +52,10 @@ function @overwrite(%p : ptr) -> void [no_inline=yes] {
 }
 function @snapshot_call(%p : ptr) -> f32 [no_inline=yes] {
   block ^entry:
-    %word = load i64 %p
+    %t1 = index i8 %p, 4
+    %t2 = load u32 %t1
     call void @overwrite(%p)
-    %high = binary ushr i64 %word, 32
-    %bits = convert trunc u32 i64 %high
-    %value = copy f32 %bits
+    %value = copy f32 %t2
     return f32 %value
 }
 function @shared_word(%p : ptr) -> i64 [no_inline=yes] {
