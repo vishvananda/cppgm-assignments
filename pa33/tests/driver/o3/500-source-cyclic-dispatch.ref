@@ -980,7 +980,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t12 = binary and u32 %t5, 1
     %t13 = copy i32 %t12
     store typed i32 %t13, %t11
-    %t14 = binary add i32 %t10, -18
+    %t14 = binary add nowrap i32 %t10, -18
     %t15 = index inbounds i8 [projection=field] %t11, 4
     store typed i32 %t14, %t15
     %t16 = index inbounds i8 [projection=field] %t11, 8
@@ -989,7 +989,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     store typed ptr 0, %t17
     %t18 = addr $root
     store typed i32 2, %t18
-    %t19 = binary add i32 %t10, -13
+    %t19 = binary add nowrap i32 %t10, -13
     %t20 = index inbounds i8 [projection=field] %t18, 4
     store typed i32 %t19, %t20
     %t21 = index inbounds i8 [projection=field] %t18, 8
@@ -1325,11 +1325,9 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   block ^lor_rhs_59:
     %t126 = load typed u32 @depth_sum
     %t127 = cmp ne u32 %t126, 1
-    branch %t127, ^if_then_60, ^if_end_61
+    %t128 = select i32 %t127, 13, 0
+    return i32 %t128
 
   block ^if_then_60:
     return i32 13
-
-  block ^if_end_61:
-    return i32 0
 }
