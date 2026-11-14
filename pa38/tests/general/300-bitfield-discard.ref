@@ -1,0 +1,108 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $bits : obj<4x4>
+  slot $land__1 : i64
+
+  block ^entry:
+    %t1 = addr $bits
+    %t2 = addr $bits
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    %t4 = binary and u32 7, 0
+    store u32 %t4, %t3
+    %t5 = addr $bits
+    %t6 = index inbounds i8 [projection=field] %t5, 0
+    %t7 = binary and u32 15, 0
+    %t8 = binary shl u32 %t7, 3
+    %t9 = load u32 %t6
+    %t10 = binary and u32 %t9, 4294967175
+    %t11 = binary or u32 %t10, %t8
+    store u32 %t11, %t6
+    %t12 = addr $bits
+    %t13 = index inbounds i8 [projection=field] %t12, 0
+    %t14 = binary and i32 7, 7
+    %t15 = copy u32 %t14
+    %t16 = load i32 %t13
+    %t17 = binary and i32 %t16, -8
+    %t18 = binary or i32 %t17, %t14
+    store i32 %t18, %t13
+    %t19 = addr $bits
+    %t20 = index inbounds i8 [projection=field] %t19, 0
+    %t21 = load i32 %t20
+    %t22 = binary and i32 %t21, 7
+    %t23 = copy u32 %t22
+    %t24 = copy i32 %t23
+    %t25 = binary add nowrap i32 %t24, 2
+    %t26 = copy u32 %t25
+    %t27 = copy i32 %t26
+    %t28 = binary and i32 %t27, 7
+    %t29 = copy u32 %t28
+    %t30 = load i32 %t20
+    %t31 = binary and i32 %t30, -8
+    %t32 = binary or i32 %t31, %t28
+    store i32 %t32, %t20
+    %t33 = addr $bits
+    %t34 = index inbounds i8 [projection=field] %t33, 0
+    %t35 = load i32 %t34
+    %t36 = binary shr i32 %t35, 3
+    %t37 = binary and i32 %t36, 15
+    %t38 = copy u32 %t37
+    %t39 = copy i32 %t38
+    %t40 = binary add nowrap i32 %t39, 1
+    %t41 = addr $bits
+    %t42 = index inbounds i8 [projection=field] %t41, 0
+    %t43 = binary and i32 %t40, 15
+    %t44 = copy u32 %t43
+    %t45 = binary shl i32 %t43, 3
+    %t46 = load i32 %t42
+    %t47 = binary and i32 %t46, -121
+    %t48 = binary or i32 %t47, %t45
+    store i32 %t48, %t42
+    %t49 = addr $bits
+    %t50 = index inbounds i8 [projection=field] %t49, 0
+    %t51 = load i32 %t50
+    %t52 = binary shr i32 %t51, 3
+    %t53 = binary and i32 %t52, 15
+    %t54 = copy u32 %t53
+    %t55 = copy i32 %t54
+    %t56 = binary add nowrap i32 %t55, 1
+    %t57 = binary and i32 %t56, 15
+    %t58 = copy u32 %t57
+    %t59 = binary shl i32 %t57, 3
+    %t60 = load i32 %t50
+    %t61 = binary and i32 %t60, -121
+    %t62 = binary or i32 %t61, %t59
+    store i32 %t62, %t50
+    %t63 = addr $bits
+    %t64 = index inbounds i8 [projection=field] %t63, 0
+    %t65 = load i32 %t64
+    %t66 = binary and i32 %t65, 7
+    %t67 = copy u32 %t66
+    %t68 = copy i32 %t67
+    %t69 = cmp eq i32 %t68, 1
+    %t70 = convert trunc i32 i64 %t69
+    branch %t70, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t71 = addr $bits
+    %t72 = index inbounds i8 [projection=field] %t71, 0
+    %t73 = load i32 %t72
+    %t74 = binary shr i32 %t73, 3
+    %t75 = binary and i32 %t74, 15
+    %t76 = copy u32 %t75
+    %t77 = copy i32 %t76
+    %t78 = cmp eq i32 %t77, 2
+    %t79 = convert trunc i32 i64 %t78
+    %t80 = cmp ne i32 %t79, 0
+    store typed i64 %t80, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t81 = load typed i64 $land__1
+    %t82 = convert trunc i32 i64 %t81
+    %t83 = cmp eq i32 %t82, 0
+    %t84 = convert trunc i32 i64 %t83
+    return i32 %t84
+}

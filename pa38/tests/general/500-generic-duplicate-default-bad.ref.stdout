@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-duplicate-default-bad.t:1:13: more than one default generic association

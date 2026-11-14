@@ -1,0 +1,1 @@
+ERROR: tests/general/300-designator-bound-reject.t:1:25: a C designator is outside its aggregate

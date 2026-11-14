@@ -1,0 +1,1 @@
+{"source":true,"llvm_interop":true,"reference_flags":["-matomics"],"calls":[{"export":"observe","args":["7"],"result":"30"},{"export":"observe","args":["-23"],"result":"0"}]}

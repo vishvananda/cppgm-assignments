@@ -1,0 +1,230 @@
+declare global @__cppgm_runtime_dso_handle [linkage=c, binding=strong, object=__dso_handle]
+
+declare function @__cppgm_runtime_cxa_thread_atexit(%arg0 : ptr, %arg1 : ptr, %arg2 : ptr) -> i32 [linkage=c, binding=strong, object=__cxa_thread_atexit]
+
+global @callbacks : obj<64x8> [binding=internal, object=_ZL9callbacks] = {
+  zero 64
+}
+global @contexts : obj<64x8> [binding=internal, object=_ZL8contexts] = {
+  zero 64
+}
+global @registered : i32 [binding=internal, object=_ZL10registered] = zero
+global @destroyed : i32 [binding=internal, object=_ZL9destroyed] = zero
+global @object : obj<4x4> [storage=thread_local, binding=strong] = {
+  zero 4
+}
+global @__cppgm_tls_guard : i8 [storage=thread_local, binding=internal] = zero
+global @__local_static__local_value__reference__tokens121_130 : ptr [storage=thread_local, binding=internal, object=_ZZL11local_valuevE9reference] = zero
+global @__local_static__local_value__reference__tokens121_130__guard : i64 [storage=thread_local, binding=internal, object=_ZGVZL11local_valuevE9reference] = zero
+global @__cppgm_ref_temporary____local_static__local_value__reference__tokens121_130_0 : obj<4x4> [binding=internal, object=_ZGRZL11local_valuevE9reference_] = {
+  zero 4
+}
+global @__cppgm_ref_temporary____local_static__local_value__reference__tokens121_130_0_constructed : i8 [binding=internal] = zero
+
+function @capture_thread_callback(%callback : ptr, %context : ptr) -> i32 [linkage=c, binding=strong] {
+  slot $callback : ptr
+  slot $context : ptr
+
+  block ^entry:
+    store typed ptr %callback, $callback
+    store typed ptr %context, $context
+    %t1 = load typed ptr $callback
+    %t2 = addr @callbacks
+    %t3 = load typed i32 @registered
+    %t4 = index inbounds ptr [projection=array_element] %t2, %t3
+    store typed ptr %t1, %t4
+    %t5 = load typed ptr $context
+    %t6 = addr @contexts
+    %t7 = load typed i32 @registered
+    %t8 = binary add nowrap i32 %t7, 1
+    store typed i32 %t8, @registered
+    %t9 = index inbounds ptr [projection=array_element] %t6, %t7
+    store typed ptr %t5, %t9
+    return i32 0
+}
+function @__cppgm_local_static_destructor__object(%arg0 : ptr) -> void [unwind=no, binding=internal] {
+  block ^entry:
+    %t1 = addr @object
+    call void @Value___Value(%t1)
+    return void
+}
+function @__cppgm_tls_init__object() -> void [binding=internal] {
+  block ^entry:
+    %t1 = addr @object
+    call void @Value__Value(%t1, 7)
+    %t2 = call i32 @__cppgm_runtime_cxa_thread_atexit(@__cppgm_local_static_destructor__object, 0, @__cppgm_runtime_dso_handle)
+    jump ^local_static_ctor_done_1
+
+  block ^local_static_ctor_done_1:
+    return void
+}
+function @__cppgm_tls_init__object__2() -> void [binding=strong, object=_ZTH6object] {
+  block ^entry:
+    call void @__cppgm_tls_init()
+    return void
+}
+function @__cppgm_tls_wrapper__object() -> ptr [binding=weak, object=_ZTW6object, tls_for=@object] {
+  block ^entry:
+    call void @__cppgm_tls_init()
+    %t1 = addr @object
+    return ptr %t1
+}
+function @__cppgm_local_static_destructor____local_static__local_value__reference__tokens121_130(%arg0 : ptr) -> void [unwind=no, binding=internal] {
+  block ^entry:
+    %t1 = load i8 @__cppgm_ref_temporary____local_static__local_value__reference__tokens121_130_0_constructed
+    branch %t1, ^ref_destroy_1, ^ref_destroy_done_2
+
+  block ^ref_destroy_1:
+    %t2 = addr @__cppgm_ref_temporary____local_static__local_value__reference__tokens121_130_0
+    %t3 = index i8 [projection=array_element] %t2, 0
+    call void @Value___Value(%t3)
+    jump ^ref_destroy_done_2
+
+  block ^ref_destroy_done_2:
+    return void
+}
+function @local_value() -> i32 [binding=internal, object=_ZL11local_valuev] {
+  slot $call__1 : i32
+
+  block ^entry:
+    %t1 = load typed i64 @__local_static__local_value__reference__tokens121_130__guard
+    %t2 = cmp ne i64 %t1, 0
+    branch %t2, ^local_static_ready_1, ^local_static_init_2
+
+  block ^local_static_init_2:
+    %t3 = addr @__local_static__local_value__reference__tokens121_130
+    %t4 = addr @__cppgm_ref_temporary____local_static__local_value__reference__tokens121_130_0
+    %t5 = binary mul i64 0, 4
+    %t6 = index i8 [projection=array_element] %t4, %t5
+    call void @Value__Value(%t6, 11)
+    store i8 1, @__cppgm_ref_temporary____local_static__local_value__reference__tokens121_130_0_constructed
+    %t7 = addr @__cppgm_ref_temporary____local_static__local_value__reference__tokens121_130_0
+    store typed ptr %t7, %t3
+    %t8 = call i32 @__cppgm_runtime_cxa_thread_atexit(@__cppgm_local_static_destructor____local_static__local_value__reference__tokens121_130, 0, @__cppgm_runtime_dso_handle)
+    store typed i32 %t8, $call__1
+    %t9 = load typed i32 $call__1
+    store typed i64 1, @__local_static__local_value__reference__tokens121_130__guard
+    jump ^local_static_ready_1
+
+  block ^local_static_ready_1:
+    %t10 = load typed ptr @__local_static__local_value__reference__tokens121_130
+    %t11 = binary mul i64 0, 4
+    %t12 = index inbounds i8 [projection=array_element] %t10, %t11
+    %t13 = index inbounds i8 [projection=field] %t12, 0
+    %t14 = load typed i32 %t13
+    return i32 %t14
+}
+function @observe() -> i32 [linkage=c, binding=strong] {
+  block ^entry:
+    %t1 = call ptr @__cppgm_tls_wrapper__object()
+    %t2 = index inbounds i8 [projection=field] %t1, 0
+    %t3 = load typed i32 %t2
+    %t4 = cmp ne i32 %t3, 7
+    branch %t4, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    %t5 = call i32 @local_value()
+    %t6 = cmp ne i32 %t5, 11
+    branch %t6, ^if_then_4, ^if_else_5
+
+  block ^if_then_4:
+    return i32 2
+
+  block ^if_else_5:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t7 = load typed i32 @registered
+    %t8 = cmp ne i32 %t7, 2
+    branch %t8, ^if_then_7, ^if_else_8
+
+  block ^if_then_7:
+    %t9 = load typed i32 @registered
+    %t10 = binary add nowrap i32 10, %t9
+    return i32 %t10
+
+  block ^if_else_8:
+    jump ^if_end_9
+
+  block ^if_end_9:
+    jump ^while_cond_10
+
+  block ^while_cond_10:
+    %t11 = load typed i32 @registered
+    branch %t11, ^while_body_11, ^while_end_12
+
+  block ^while_body_11:
+    %t12 = load typed i32 @registered
+    %t13 = binary sub nowrap i32 %t12, 1
+    store typed i32 %t13, @registered
+    %t14 = addr @contexts
+    %t15 = load typed i32 @registered
+    %t16 = index inbounds ptr [projection=array_element] %t14, %t15
+    %t17 = load typed ptr %t16
+    %t18 = addr @callbacks
+    %t19 = load typed i32 @registered
+    %t20 = index inbounds ptr [projection=array_element] %t18, %t19
+    %t21 = load typed ptr %t20
+    call void %t21(%t17) as (%arg0 : ptr) -> void
+    jump ^while_cond_10
+
+  block ^while_end_12:
+    %t22 = load typed i32 @destroyed
+    %t23 = cmp ne i32 %t22, 18
+    %t24 = convert trunc i32 i64 %t23
+    return i32 %t24
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @observe()
+    return i32 %t1
+}
+function @Value__Value(%this : ptr [object_bytes=4], %n : i32) -> void [binding=weak, object=_ZN5ValueC1Ei, inline_hint=yes] {
+  slot $this : ptr
+  slot $n : i32
+
+  block ^entry:
+    store typed ptr %this, $this
+    store typed i32 %n, $n
+    %t1 = load typed i32 $n
+    %t2 = load typed ptr $this
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    store typed i32 %t1, %t3
+    return void
+}
+function @Value___Value(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN5ValueD1Ev, inline_hint=yes] {
+  slot $this : ptr
+
+  block ^entry:
+    store typed ptr %this, $this
+    %t1 = load typed ptr $this
+    %t2 = index inbounds i8 [projection=field] %t1, 0
+    %t3 = load typed i32 %t2
+    %t4 = load typed i32 @destroyed
+    %t5 = binary add nowrap i32 %t4, %t3
+    store typed i32 %t5, @destroyed
+    return void
+}
+function @__cppgm_tls_init() -> void [binding=internal] {
+  block ^entry:
+    %t1 = addr @__cppgm_tls_guard
+    %t2 = load i8 %t1
+    %t3 = cmp ne i8 %t2, 0
+    branch %t3, ^local_static_ctor_done_2, ^local_static_ctor_run_1
+
+  block ^local_static_ctor_run_1:
+    store i8 1, @__cppgm_tls_guard
+    call void @__cppgm_tls_init__object()
+    jump ^local_static_ctor_done_2
+
+  block ^local_static_ctor_done_2:
+    return void
+}
+alias object _ZN5ValueC2Ei = @Value__Value
+alias object _ZN5ValueD2Ev = @Value___Value

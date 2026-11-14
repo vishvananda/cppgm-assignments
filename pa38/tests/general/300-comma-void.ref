@@ -1,0 +1,24 @@
+global @value : i32 [linkage=c, binding=strong] = zero
+
+function @update(%amount : i32) -> void [linkage=c, binding=strong] {
+  slot $amount : i32
+
+  block ^entry:
+    store typed i32 %amount, $amount
+    %t1 = load typed i32 $amount
+    %t2 = load typed i32 @value
+    %t3 = binary add nowrap i32 %t2, %t1
+    store typed i32 %t3, @value
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    store typed i32 7, @value
+    call void @update(3)
+    call void @update(2)
+    call void @update(5)
+    %t1 = load typed i32 @value
+    %t2 = cmp ne i32 %t1, 17
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}

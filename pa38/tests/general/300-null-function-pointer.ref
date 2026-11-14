@@ -1,0 +1,77 @@
+global @callbacks : obj<24x8> [linkage=c, binding=strong] = {
+  zero 24
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $cb : ptr
+  slot $land__1 : i64
+  slot $land__2 : i64
+  slot $land__3 : i64
+
+  block ^entry:
+    store typed ptr 0, $cb
+    %t1 = binary sub nowrap i32 3, 3
+    %t2 = copy ptr %t1
+    store typed ptr %t2, $cb
+    %t3 = load typed ptr $cb
+    %t4 = cmp eq ptr %t3, 0
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t6 = addr @callbacks
+    %t7 = index inbounds i8 [projection=field] %t6, 0
+    %t8 = load typed ptr %t7
+    %t9 = cmp eq ptr 0, %t8
+    %t10 = convert trunc i32 i64 %t9
+    %t11 = cmp ne i32 %t10, 0
+    store typed i64 %t11, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t12 = load typed i64 $land__1
+    branch %t12, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t13 = addr @callbacks
+    %t14 = index inbounds i8 [projection=field] %t13, 8
+    %t15 = load typed ptr %t14
+    %t16 = cmp eq ptr %t15, 0
+    %t17 = convert trunc i32 i64 %t16
+    %t18 = cmp ne i32 %t17, 0
+    store typed i64 %t18, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t19 = load typed i64 $land__2
+    branch %t19, ^land_rhs_7, ^land_short_8
+
+  block ^land_rhs_7:
+    %t20 = addr @callbacks
+    %t21 = index inbounds i8 [projection=field] %t20, 16
+    %t22 = load typed ptr %t21
+    %t23 = cmp eq ptr %t22, 0
+    %t24 = convert trunc i32 i64 %t23
+    %t25 = cmp ne i32 %t24, 0
+    store typed i64 %t25, $land__3
+    jump ^land_end_9
+
+  block ^land_short_8:
+    store typed i64 0, $land__3
+    jump ^land_end_9
+
+  block ^land_end_9:
+    %t26 = load typed i64 $land__3
+    %t27 = convert trunc i32 i64 %t26
+    %t28 = cmp eq i32 %t27, 0
+    %t29 = convert trunc i32 i64 %t28
+    return i32 %t29
+}

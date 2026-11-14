@@ -5,6 +5,21 @@ This contract supplements the [assignment](README.md) and the pinned
 checking and layout. The two targets share a data layout and C/C++ ABI;
 `wasm32-wasip1` additionally supplies the WASI Preview 1 command environment.
 
+The additional `wasm32-unknown-emscripten` SDK profile uses the same Wasm call
+conventions with eight-byte natural alignment for sixteen-byte binary128
+floating types, including `long double` and GNU `__float128` (the pinned
+LLVM 23 convention). Its C++17 default allocation alignment is eight bytes;
+`__int128` and sixteen-byte vectors still align to sixteen. Preserve this
+distinction in object members, arrays, variadic arguments and aligned
+allocation/deallocation. LowIR spells this target `emscripten`.
+
+This SDK profile defines `__EMSCRIPTEN__`, `__unix__` and `__unix`, without
+inventing SDK version macros. Supply its SDK headers with `--sysroot` and
+its runtime archives/imports explicitly with `-nostdlib` or `-nodefaultlibs`.
+Emscripten's JS glue and build-setting-dependent library selection are prepared
+outside the compiler. `--export-ctors` exports initialization for that glue to
+call once; otherwise a core module initializes at instantiation as below.
+
 ## Values and calls
 
 The target is little-endian. `char` is signed, `wchar_t` is a signed 32-bit

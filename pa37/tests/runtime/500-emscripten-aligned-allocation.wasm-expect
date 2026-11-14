@@ -1,0 +1,1 @@
+{"source":true,"target":"wasm32-unknown-emscripten","flags":["-std=c++17","-fno-exceptions"],"reference_flags":["-std=c++17"],"link_flags":["-nostdlib"],"llvm_interop":true,"calls":[{"export":"observe","result":"0"}]}

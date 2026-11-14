@@ -1,0 +1,11 @@
+global @source$ : i32 [binding=strong] = 17
+global @$target : i32 [binding=strong] = 23
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = load typed i32 @source$
+    %t2 = load typed i32 @$target
+    %t3 = binary add nowrap i32 %t1, %t2
+    %t4 = binary sub nowrap i32 %t3, 40
+    return i32 %t4
+}

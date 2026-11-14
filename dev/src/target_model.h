@@ -20,7 +20,8 @@ enum class Environment : std::uint8_t
 	Linux,
 	Darwin,
 	Freestanding,
-	WasiPreview1
+	WasiPreview1,
+	Emscripten
 };
 
 enum class ObjectFormat : std::uint8_t
@@ -69,7 +70,8 @@ enum class Target : std::uint8_t
 	Linux,
 	MacOS,
 	Wasm32,
-	Wasi
+	Wasi,
+	Emscripten
 };
 
 enum class WasmFunctionAttribute : std::uint8_t
@@ -123,22 +125,29 @@ struct OptimizationModel
 
 constexpr bool is_wasm(Target target)
 {
-	return target == Target::Wasm32 || target == Target::Wasi;
+	return target == Target::Wasm32 || target == Target::Wasi || target == Target::Emscripten;
 }
 
 constexpr DataLayout data_layout(Target target)
 {
-	return is_wasm(target) ? DataLayout{ 4, 4, 16, 16, ExtendedFloat::Binary128, ByteOrder::Little }
+	return is_wasm(target) ? DataLayout{ 4, 4, 16, target == Target::Emscripten ? std::uint8_t(8) : std::uint8_t(16),
+		ExtendedFloat::Binary128, ByteOrder::Little }
 						   : DataLayout{ 8, 8, 16, 16, ExtendedFloat::X87, ByteOrder::Little };
+}
+
+constexpr unsigned default_new_alignment(Target target)
+{
+	return target == Target::Emscripten ? 8 : 16;
 }
 
 constexpr Description describe(Target target)
 {
 	return Description{ is_wasm(target) ? Architecture::Wasm32 : Architecture::X86_64,
-		target == Target::Linux       ? Environment::Linux
-			: target == Target::MacOS ? Environment::Darwin
-			: target == Target::Wasi  ? Environment::WasiPreview1
-									  : Environment::Freestanding,
+		target == Target::Linux            ? Environment::Linux
+			: target == Target::MacOS      ? Environment::Darwin
+			: target == Target::Wasi       ? Environment::WasiPreview1
+			: target == Target::Emscripten ? Environment::Emscripten
+										   : Environment::Freestanding,
 		is_wasm(target)               ? ObjectFormat::WebAssembly
 			: target == Target::MacOS ? ObjectFormat::MachO
 									  : ObjectFormat::Elf,
@@ -188,6 +197,8 @@ inline const char* spelling(Target target)
 		return "wasm32-unknown-unknown";
 	case Target::Wasi:
 		return "wasm32-wasip1";
+	case Target::Emscripten:
+		return "wasm32-unknown-emscripten";
 	}
 	return "";
 }
@@ -195,10 +206,10 @@ inline const char* spelling(Target target)
 // Version-one LowIR profile names; distinct from command-line aliases.
 inline const char* lowir_spelling(Target target)
 {
-	static const char* const names[] = { "linux", "macos", "wasm32", "wasi" };
+	static const char* const names[] = { "linux", "macos", "wasm32", "wasi", "emscripten" };
 	return names[static_cast<unsigned>(target)];
 }
 
-const unsigned kTargetCount = static_cast<unsigned>(Target::Wasi) + 1;
+const unsigned kTargetCount = static_cast<unsigned>(Target::Emscripten) + 1;
 
 } // namespace target_model

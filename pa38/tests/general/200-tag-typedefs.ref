@@ -1,0 +1,112 @@
+function @read_context(%context : ptr, %mode : i32) -> i32 [linkage=c, binding=strong] {
+  slot $context : ptr
+  slot $mode : i32
+  slot $cond__1 : i32
+
+  block ^entry:
+    store typed ptr %context, $context
+    store typed i32 %mode, $mode
+    %t1 = load typed ptr $context
+    %t2 = index inbounds i8 [projection=field] %t1, 4
+    %t3 = load typed i32 %t2
+    %t4 = load typed i32 $mode
+    %t5 = cmp eq i32 %t3, %t4
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^cond_then_1, ^cond_else_2
+
+  block ^cond_then_1:
+    %t7 = load typed ptr $context
+    %t8 = index inbounds i8 [projection=field] %t7, 0
+    %t9 = load typed i32 %t8
+    store typed i32 %t9, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_else_2:
+    %t10 = unary neg i32 1
+    store typed i32 %t10, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_end_3:
+    %t11 = load typed i32 $cond__1
+    return i32 %t11
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $tail : obj<16x8>
+  slot $context : obj<16x8>
+  slot $number : obj<4x4>
+  slot $land__1 : i64
+  slot $land__2 : i64
+
+  block ^entry:
+    %t1 = addr $tail
+    %t2 = addr $tail
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    store typed i32 19, %t3
+    %t4 = addr $tail
+    %t5 = index inbounds i8 [projection=field] %t4, 4
+    store typed i32 0, %t5
+    %t6 = addr $tail
+    %t7 = index inbounds i8 [projection=field] %t6, 8
+    store typed ptr 0, %t7
+    %t8 = addr $context
+    %t9 = addr $context
+    %t10 = index inbounds i8 [projection=field] %t9, 0
+    store typed i32 17, %t10
+    %t11 = addr $context
+    %t12 = index inbounds i8 [projection=field] %t11, 4
+    store typed i32 1, %t12
+    %t13 = addr $tail
+    %t14 = addr $context
+    %t15 = index inbounds i8 [projection=field] %t14, 8
+    store typed ptr %t13, %t15
+    %t16 = addr $number
+    %t17 = addr $number
+    %t18 = index inbounds i8 [projection=field] %t17, 0
+    store i32 4, %t18
+    %t19 = addr $context
+    %t20 = call i32 @read_context(%t19, 1)
+    %t21 = cmp eq i32 %t20, 17
+    %t22 = convert trunc i32 i64 %t21
+    branch %t22, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t23 = addr $number
+    %t24 = index inbounds i8 [projection=field] %t23, 0
+    %t25 = load i32 %t24
+    %t26 = cmp eq i32 %t25, 4
+    %t27 = convert trunc i32 i64 %t26
+    %t28 = cmp ne i32 %t27, 0
+    store typed i64 %t28, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t29 = load typed i64 $land__1
+    branch %t29, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t30 = addr $context
+    %t31 = index inbounds i8 [projection=field] %t30, 8
+    %t32 = load typed ptr %t31
+    %t33 = index inbounds i8 [projection=field] %t32, 0
+    %t34 = load typed i32 %t33
+    %t35 = cmp eq i32 %t34, 19
+    %t36 = convert trunc i32 i64 %t35
+    %t37 = cmp ne i32 %t36, 0
+    store typed i64 %t37, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t38 = load typed i64 $land__2
+    %t39 = convert trunc i32 i64 %t38
+    %t40 = cmp eq i32 %t39, 0
+    %t41 = convert trunc i32 i64 %t40
+    return i32 %t41
+}

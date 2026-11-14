@@ -1,0 +1,1 @@
+ERROR: tests/general/300-designator-member-reject.t:1:52: a C designator names no direct record member

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-untyped-association-bad.t:1:42: a braced-init-list is not an expression here

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-function-association-bad.t:1:25: generic association requires a complete object type

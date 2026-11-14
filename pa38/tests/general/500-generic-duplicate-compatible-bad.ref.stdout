@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-duplicate-compatible-bad.t:2:33: compatible types in two generic associations

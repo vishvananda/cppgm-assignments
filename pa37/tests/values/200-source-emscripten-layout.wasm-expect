@@ -1,0 +1,1 @@
+{"source":true,"target":"wasm32-unknown-emscripten","resource_headers":true,"link_flags":["-nostdlib"],"llvm_interop":true,"sequences":[[{"export":"observe","result":"0"},{"export":"observe","result":"0"}]],"reference_initialize":"__wasm_call_ctors"}

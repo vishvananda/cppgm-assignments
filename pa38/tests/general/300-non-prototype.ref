@@ -1,0 +1,110 @@
+function @empty() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    return i32 17
+}
+function @call_before_prototype() -> i32 [linkage=c, binding=strong] {
+  block ^entry:
+    %t1 = convert sext i32 i16 3
+    %t2 = convert fpext f64 f32 4f
+    %t3 = addr @add
+    %t4 = call i32 %t3(%t1, %t2) as (%arg0 : i32, %arg1 : f64) -> i32
+    return i32 %t4
+}
+function @add(%first : i32, %second : f64) -> i32 [linkage=c, binding=strong] {
+  slot $first : i32
+  slot $second : f64
+
+  block ^entry:
+    store typed i32 %first, $first
+    store typed f64 %second, $second
+    %t1 = load typed i32 $first
+    %t2 = load typed f64 $second
+    %t3 = convert fptosi i32 f64 %t2
+    %t4 = binary add nowrap i32 %t1, %t3
+    return i32 %t4
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $callback : ptr
+  slot $land__1 : i64
+  slot $land__2 : i64
+  slot $land__3 : i64
+
+  block ^entry:
+    %t1 = addr @add
+    store typed ptr %t1, $callback
+    %t2 = call i32 @call_before_prototype()
+    %t3 = cmp eq i32 %t2, 7
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t5 = convert sext i32 i8 5
+    %t6 = convert fpext f64 f32 6f
+    %t7 = load typed ptr $callback
+    %t8 = call i32 %t7(%t5, %t6) as (%arg0 : i32, %arg1 : f64) -> i32
+    %t9 = cmp eq i32 %t8, 11
+    %t10 = convert trunc i32 i64 %t9
+    %t11 = cmp ne i32 %t10, 0
+    store typed i64 %t11, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t12 = load typed i64 $land__1
+    branch %t12, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t13 = addr @empty
+    %t14 = call i32 %t13() as () -> i32
+    %t15 = cmp eq i32 %t14, 17
+    %t16 = convert trunc i32 i64 %t15
+    %t17 = cmp ne i32 %t16, 0
+    store typed i64 %t17, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t18 = load typed i64 $land__2
+    branch %t18, ^land_rhs_7, ^land_short_8
+
+  block ^land_rhs_7:
+    %t19 = convert sext i32 i16 2
+    %t20 = convert fpext f64 f32 3f
+    %t21 = addr @external
+    %t22 = call i32 %t21(%t19, %t20) as (%arg0 : i32, %arg1 : f64) -> i32
+    %t23 = cmp eq i32 %t22, 5
+    %t24 = convert trunc i32 i64 %t23
+    %t25 = cmp ne i32 %t24, 0
+    store typed i64 %t25, $land__3
+    jump ^land_end_9
+
+  block ^land_short_8:
+    store typed i64 0, $land__3
+    jump ^land_end_9
+
+  block ^land_end_9:
+    %t26 = load typed i64 $land__3
+    %t27 = convert trunc i32 i64 %t26
+    %t28 = cmp eq i32 %t27, 0
+    %t29 = convert trunc i32 i64 %t28
+    return i32 %t29
+}
+function @external(%first : i32, %second : f64) -> i32 [linkage=c, binding=strong] {
+  slot $first : i32
+  slot $second : f64
+
+  block ^entry:
+    store typed i32 %first, $first
+    store typed f64 %second, $second
+    %t1 = load typed i32 $first
+    %t2 = load typed f64 $second
+    %t3 = convert fptosi i32 f64 %t2
+    %t4 = binary add nowrap i32 %t1, %t3
+    return i32 %t4
+}

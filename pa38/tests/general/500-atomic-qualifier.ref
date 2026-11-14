@@ -1,0 +1,94 @@
+global @counter : i32 [linkage=c, binding=strong] = zero
+global @mask : i64 [linkage=c, binding=strong] = zero
+global @pointer : ptr [linkage=c, binding=strong] = zero
+global @__constexpr_template__1 [storage=readonly, binding=internal] = {
+  i32 17
+  i32 23
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $atomic_expected__1 : i64
+  slot $values : obj<8x4>
+  slot $atomic_expected__2 : i64
+  slot $land__3 : i64
+  slot $land__4 : i64
+
+  block ^entry:
+    atomic_store i32 3, @counter, 5
+    %t1 = atomic_add_fetch i32 @counter, 1, 5
+    %t2 = addr @mask
+    atomic_store i64 8, %t2, 5
+    %t3 = addr @mask
+    %t4 = atomic_load i64 %t3, 0
+    store typed i64 %t4, $atomic_expected__1
+    jump ^atomic_retry_1
+
+  block ^atomic_retry_1:
+    %t5 = load typed i64 $atomic_expected__1
+    %t6 = binary or i64 %t5, 3
+    %t7 = addr $atomic_expected__1
+    %t8 = atomic_compare_exchange i64 %t3, %t7, %t6, 5, 5
+    branch %t8, ^atomic_done_2, ^atomic_retry_1
+
+  block ^atomic_done_2:
+    %t9 = addr $values
+    copyobj 8x4 @__constexpr_template__1, %t9
+    %t10 = addr $values
+    atomic_store ptr %t10, @pointer, 5
+    %t11 = atomic_load i64 @pointer, 0
+    store typed i64 %t11, $atomic_expected__2
+    jump ^atomic_retry_3
+
+  block ^atomic_retry_3:
+    %t12 = load typed i64 $atomic_expected__2
+    %t13 = copy ptr %t12
+    %t14 = binary mul i64 1, 4
+    %t15 = index inbounds i8 %t13, %t14
+    %t16 = copy i64 %t15
+    %t17 = addr $atomic_expected__2
+    %t18 = atomic_compare_exchange i64 @pointer, %t17, %t16, 5, 5
+    branch %t18, ^atomic_done_4, ^atomic_retry_3
+
+  block ^atomic_done_4:
+    %t19 = atomic_load i32 @counter, 5
+    %t20 = cmp eq i32 %t19, 4
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^land_rhs_5, ^land_short_6
+
+  block ^land_rhs_5:
+    %t22 = addr @mask
+    %t23 = atomic_load i64 %t22, 5
+    %t24 = cmp eq i64 %t23, 11
+    %t25 = convert trunc i32 i64 %t24
+    %t26 = cmp ne i32 %t25, 0
+    store typed i64 %t26, $land__3
+    jump ^land_end_7
+
+  block ^land_short_6:
+    store typed i64 0, $land__3
+    jump ^land_end_7
+
+  block ^land_end_7:
+    %t27 = load typed i64 $land__3
+    branch %t27, ^land_rhs_8, ^land_short_9
+
+  block ^land_rhs_8:
+    %t28 = atomic_load ptr @pointer, 5
+    %t29 = load typed i32 %t28
+    %t30 = cmp eq i32 %t29, 23
+    %t31 = convert trunc i32 i64 %t30
+    %t32 = cmp ne i32 %t31, 0
+    store typed i64 %t32, $land__4
+    jump ^land_end_10
+
+  block ^land_short_9:
+    store typed i64 0, $land__4
+    jump ^land_end_10
+
+  block ^land_end_10:
+    %t33 = load typed i64 $land__4
+    %t34 = convert trunc i32 i64 %t33
+    %t35 = cmp eq i32 %t34, 0
+    %t36 = convert trunc i32 i64 %t35
+    return i32 %t36
+}

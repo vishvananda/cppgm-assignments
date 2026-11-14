@@ -1,0 +1,9 @@
+extern unsigned environment[64];
+extern "C" void longjmp(void *, int) __attribute__((noreturn));
+
+__attribute__((noinline)) void jump_from_nested_call(int depth, int value) {
+  volatile unsigned padding[17] = { 23 };
+  if (depth) jump_from_nested_call(depth - 1, value);
+  if (padding[0] != 23) __builtin_trap();
+  longjmp(environment, value);
+}

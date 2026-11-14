@@ -42,22 +42,27 @@ The first fixture set covers these parts of the C17 input profile:
   ordinary C identifiers; `_Bool`, `_Static_assert`, `_Alignas`, `_Alignof`
   and `_Noreturn` use their C meanings.
 - Procedural scalar and pointer expressions, control flow, prototype-based
-  function declarations, calls, callbacks and variadic argument promotions.
+  function declarations, calls, callbacks and variadic argument promotions;
+  declarations without prototypes use default argument promotions and compatible
+  later prototypes retain their parameter checks.
 - Implicit conversions between object pointers and qualified `void*`, without
   discarding pointee qualifiers; integral initialization of enumeration objects.
+- `_Generic` selections preserve the selected expression's type and value
+  category. The control and unselected associations are not evaluated.
 - C character and string literal types. Comparisons and logical operators
   produce `int`. Assignment, comma, conditional and prefix increment results
   do not become C++ lvalues.
-- Struct and enum tags, typedefs, aggregate initialization, member access,
+- Struct and enum tags, typedefs, aggregate initialization, C member and array
+  designators, member access,
   function parameters and results, C object linkage and tentative definitions.
 - Hosted C header declarations and their builtin operations through the
   existing hosted environment.
 
-This is an initial profile, not a claim of complete C17 conformance. Function
-declarations without prototypes are explicitly unsupported; write `(void)`
-for no parameters. K&R definitions, variable-length arrays, `_Generic`, and
-general compound-literal and designated-initializer support are outside this
-initial fixture set. Extend the profile and its tests together. Do not silently
+This is an initial profile, not a claim of complete C17 conformance. Use
+`(void)` for a prototype with no parameters; an empty `()` declares a function
+without a prototype. K&R definitions, variable-length arrays, general compound
+literals and positional continuation after a nested designator remain outside
+this fixture set. Extend the profile and its tests together. Do not silently
 apply a C++ rule where a supported C construct has a different meaning.
 
 Share preprocessing, declarator parsing, type storage, ABI classification,

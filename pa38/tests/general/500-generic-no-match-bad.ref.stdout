@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-no-match-bad.t:1:13: no matching generic association and no default

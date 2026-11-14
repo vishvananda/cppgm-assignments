@@ -1,0 +1,45 @@
+function @before() -> i32 [linkage=c, binding=strong] {
+  block ^entry:
+    %t1 = unary ctz u32 16
+    %t2 = copy i32 %t1
+    return i32 %t2
+}
+function @__builtin_ctz__ov2(%value : i64) -> i32 [linkage=c, binding=internal] {
+  slot $value : i64
+
+  block ^entry:
+    store typed i64 %value, $value
+    %t1 = load typed i64 $value
+    %t2 = convert sext i64 i32 23
+    %t3 = binary add i64 %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    return i32 %t4
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $land__1 : i64
+
+  block ^entry:
+    %t1 = call i32 @before()
+    %t2 = cmp eq i32 %t1, 4
+    %t3 = convert trunc i32 i64 %t2
+    branch %t3, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t4 = call i32 @__builtin_ctz__ov2(7)
+    %t5 = cmp eq i32 %t4, 30
+    %t6 = convert trunc i32 i64 %t5
+    %t7 = cmp ne i32 %t6, 0
+    store typed i64 %t7, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t8 = load typed i64 $land__1
+    %t9 = convert trunc i32 i64 %t8
+    %t10 = cmp eq i32 %t9, 0
+    %t11 = convert trunc i32 i64 %t10
+    return i32 %t11
+}

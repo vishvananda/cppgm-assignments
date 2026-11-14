@@ -29,6 +29,12 @@ lowir2native --target=wasm32-wasip1 -O2 \
   --dump-machine-ir program.mir -o program.wasm source.lowir
 ```
 
+The additional `wasm32-unknown-emscripten` SDK profile carries Emscripten's
+layout and allocation alignment. Use explicit SDK runtime archives and import
+declarations for links; it does not generate JS glue. The
+[target contract](target-abi.md) specifies its differences from the two
+sixteen-byte-aligned `long double` profiles.
+
 Wasm invocations of `lowir2native` may also take relocatable object and
 archive inputs, including the supplied arithmetic/runtime libraries.
 
@@ -60,12 +66,20 @@ remove header search paths.
 
 Implement the following at `-O0`, `-O1`, `-O2` and `-O3`:
 
+- GNU label addresses and computed goto within one function, preserving label
+  pointer identity and retaining every addressed entry through optimization.
+- Empty GNU assembly used as a compiler barrier, including evaluated inputs
+  and scalar read/write register operands. Preserve its memory effects and
+  captured input values; reject output-only operands and machine instructions.
 - Scalar arithmetic and conversions, narrow integer behavior, pointers,
   aggregates, globals, volatile memory, alignment and address-taken locals.
   Preserve wide integer and floating types through valid legalization/helper
   calls where Wasm has no corresponding value type.
 - Complete control flow, including phi transfers, switches, nested loops and
   irreducible graphs accepted by LowIR. Preserve every defined exit path.
+- C `setjmp` continuations and `longjmp` through direct or indirect calls, with
+  invocation-specific targets, zero-to-one return normalization and restored stack state.
+  Preserve unmodified automatic objects and volatile observations.
 - Direct and indirect calls, recursion, variadic functions, aggregate argument
   and result passing, and separately compiled objects.
 - The portable class/template behavior already required by the course,

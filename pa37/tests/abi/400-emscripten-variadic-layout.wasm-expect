@@ -1,0 +1,1 @@
+{"source":true,"target":"wasm32-unknown-emscripten","resource_headers":true,"link_flags":["-nostdlib"],"llvm_interop":true,"units":["400-emscripten-variadic-layout.t.1"],"calls":[{"export":"observe","result":"48"}]}

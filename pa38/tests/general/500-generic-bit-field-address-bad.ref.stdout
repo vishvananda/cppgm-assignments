@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-bit-field-address-bad.t:2:49: taking the address of a bit-field

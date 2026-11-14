@@ -1,0 +1,1 @@
+ERROR: tests/general/300-incompatible-prototype-reject.t:2:5: conflicting C function declarations

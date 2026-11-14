@@ -1,0 +1,1 @@
+{"source":true,"calls":[{"export":"observe","args":[],"result":"0"}],"llvm_interop":true,"units":["500-source-thread-exit-callback-boundary.t.1"]}

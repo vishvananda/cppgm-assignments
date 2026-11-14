@@ -1,0 +1,40 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $values : obj<28x4>
+  slot $pointer : ptr
+  slot $land__1 : i64
+
+  block ^entry:
+    %t1 = addr $values
+    store typed ptr %t1, $pointer
+    %t2 = const i64 28
+    %t3 = const i64 4
+    %t4 = binary udiv i64 %t2, %t3
+    %t5 = const i64 4
+    %t6 = convert sext i64 i32 0
+    %t7 = binary mul i64 %t6, %t5
+    %t8 = binary add i64 %t4, %t7
+    %t9 = convert sext i64 i32 7
+    %t10 = cmp eq i64 %t8, %t9
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t12 = cmp eq i32 1, 0
+    %t13 = convert trunc i32 i64 %t12
+    %t14 = cmp eq i32 %t13, 0
+    %t15 = convert trunc i32 i64 %t14
+    %t16 = cmp ne i32 %t15, 0
+    store typed i64 %t16, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t17 = load typed i64 $land__1
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp eq i32 %t18, 0
+    %t20 = convert trunc i32 i64 %t19
+    return i32 %t20
+}

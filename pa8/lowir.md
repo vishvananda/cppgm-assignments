@@ -67,7 +67,10 @@ target wasm32 1
 ```
 
 Version 1 names `linux` (x86-64 Linux), `macos` (x86-64 Darwin), `wasm32`
-(freestanding wasm32), or `wasi` (wasm32 WASI Preview 1). Omission retains the
+(freestanding wasm32), `wasi` (wasm32 WASI Preview 1), or `emscripten`
+(the wasm32 Emscripten SDK ABI). The Emscripten profile aligns binary128
+`long double` storage to eight bytes; `wasm32` and `wasi` align it to sixteen.
+Omission retains the
 existing x86-64 Linux layout. Each input file must agree on its profile;
 an untagged file cannot be merged into a wasm32 program. Reject unknown names,
 unsupported versions, repeated profiles and profiles after a definition.
