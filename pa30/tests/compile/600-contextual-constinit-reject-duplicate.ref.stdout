@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-contextual-constinit-reject-duplicate.t:1:11: __constinit repeated in a decl-specifier-seq

@@ -215,6 +215,13 @@ Source declarations of the linker boundary `__stack_low` and the backend's
 frame guard must refer to one object symbol. Do not emit duplicate undefined
 symbols when an SDK source file also takes that boundary's address.
 
+LowIR names with the same external `object` name share one object identity.
+Resolve declarations to their definition, prefer strong over weak definitions,
+and preserve references and retention requests through that identity. Reject
+two strong definitions or incompatible function ABI signatures. An address-only
+function declaration may borrow the signature of a typed declaration or
+definition of that object. Internal identities remain distinct.
+
 ## Initialization and execution
 
 For a freestanding module, initialize static storage before any exported call.

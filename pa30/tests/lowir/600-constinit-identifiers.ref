@@ -1,0 +1,137 @@
+global @variables__constinit : i32 [binding=strong, object=_ZN9variables9constinitE] = 2
+global @classes__object [binding=strong, object=_ZN7classes6objectE] = {
+  i32 4
+}
+global @aliases__object : i32 [binding=strong, object=_ZN7aliases6objectE] = 7
+global @constinit__value : i32 [binding=strong, object=_ZN9constinit5valueE] = 11
+
+function @variables__read() -> i32 [binding=strong, object=_ZN9variables4readEv] {
+  slot $constinit : i32
+
+  block ^entry:
+    store typed i32 3, $constinit
+    %t1 = load typed i32 $constinit
+    return i32 %t1
+}
+function @functions__constinit(%value : i32) -> i32 [binding=strong, object=_ZN9functions9constinitEi] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = binary add nowrap i32 %t1, 5
+    return i32 %t2
+}
+function @functions__read() -> i32 [binding=strong, object=_ZN9functions4readEv] {
+  block ^entry:
+    %t1 = call i32 @functions__constinit(3)
+    return i32 %t1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+  slot $lor__6 : i64
+
+  block ^entry:
+    %t1 = load typed i32 @variables__constinit
+    %t2 = cmp ne i32 %t1, 2
+    branch %t2, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t3 = call i32 @variables__read()
+    %t4 = cmp ne i32 %t3, 3
+    store typed i64 %t4, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t5 = load typed i64 $lor__1
+    branch %t5, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t6 = call i32 @functions__read()
+    %t7 = cmp ne i32 %t6, 8
+    store typed i64 %t7, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t8 = load typed i64 $lor__2
+    branch %t8, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t9 = addr @classes__object
+    %t10 = index inbounds i8 [projection=field] %t9, 0
+    %t11 = load typed i32 %t10
+    %t12 = cmp ne i32 %t11, 4
+    store typed i64 %t12, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t13 = load typed i64 $lor__3
+    branch %t13, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t14 = load typed i32 @aliases__object
+    %t15 = cmp ne i32 %t14, 7
+    store typed i64 %t15, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t16 = load typed i64 $lor__4
+    branch %t16, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t17 = load typed i32 @constinit__value
+    %t18 = cmp ne i32 %t17, 11
+    store typed i64 %t18, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t19 = load typed i64 $lor__5
+    branch %t19, ^lor_short_17, ^lor_rhs_16
+
+  block ^lor_rhs_16:
+    %t20 = call i32 @identity(13)
+    %t21 = cmp ne i32 %t20, 13
+    store typed i64 %t21, $lor__6
+    jump ^lor_end_18
+
+  block ^lor_short_17:
+    store typed i64 1, $lor__6
+    jump ^lor_end_18
+
+  block ^lor_end_18:
+    %t22 = load typed i64 $lor__6
+    %t23 = convert trunc i32 i64 %t22
+    return i32 %t23
+}
+function @identity(%value : i32) -> i32 [binding=weak, object=_Z8identityIiET_S0_] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    return i32 %t1
+}

@@ -1,1 +1,1 @@
-ERROR: tests/compile/600-gnu-constinit-reject-automatic-storage.t:1:24: syntax error
+ERROR: tests/compile/600-gnu-constinit-reject-automatic-storage.t:1:28: __constinit requires a variable with static or thread storage duration

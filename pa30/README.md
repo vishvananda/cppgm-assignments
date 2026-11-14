@@ -76,6 +76,10 @@ hosted headers depend on:
 - GCC's `__constinit` requires static or thread storage and static
   initialization, without adding `const` or requiring a literal class type;
   dependent definitions are checked when instantiated
+- Hosted declarations also accept the plain `constinit` spelling as a
+  contextual extension with the same semantic checks. In the supported
+  C++11--17 modes, existing names called `constinit` retain their meaning.
+  This does not select or claim full support for C++20 or C++23.
 - Clang's `__builtin_bitreverse8/16/32/64` converts its argument to the
   corresponding unsigned integer type and reverses all of its bits. The
   result has that same type; the builtins work in constant expressions and
