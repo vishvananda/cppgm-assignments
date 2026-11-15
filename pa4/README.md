@@ -163,10 +163,22 @@ The detailed macro and directive explanations retain material from the
 CPPGM Foundation's 2013 handouts.
 ### Numeric modes through preprocessing
 
-Accept `-std=c++11`, `-std=c++14` or `-std=c++17` before `-o`.
-Set `__cplusplus` to `201103L`, `201402L` or `201703L` respectively.
+Accept `-std=c++11`, `-std=c++14`, `-std=c++17` or `-std=c++20` before `-o`.
+Set `__cplusplus` to `201103L`, `201402L`, `201703L` or `202002L` for the
+selected C++11, C++14, C++17 or bounded C++20 profile. In C++20 mode, evaluate
+UTF-8 character literals as unsigned byte values and provide
+`__cpp_char8_t=202207L`, `__cpp_consteval=201811L` and
+`__cpp_constinit=201907L`; earlier modes do not define these three macros.
+Token pasting must use the same UTF-8 character-prefix rules as the source
+lexer.
 Keep the selected token and literal rules through macro expansion, token
 pasting, stringizing and controlling expressions. Stringizing retains the
 separator spelling; evaluating an integer uses its value. This extends
 PA1–PA3's numeric contracts without requiring hosted include discovery.
 
+
+### C++20 three-way preprocessing
+
+In C++20 mode, `<=>` is one preprocessing punctuator, including when
+formed by token pasting. Preserve that token through macro expansion.
+Earlier modes retain their existing punctuation boundaries.

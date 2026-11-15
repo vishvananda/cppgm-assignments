@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-requires-outside-template-bad.t:1:41: member access on a non-class

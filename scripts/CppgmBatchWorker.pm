@@ -440,10 +440,16 @@ sub standard_args_for
 {
 	my ($test) = @_;
 	(my $base = $test) =~ s/\.(?:cpp|t(?:\.1)?)$//;
-	return () if !-f "$base.cxx-standard";
-	my @standards = read_word_list("$base.cxx-standard");
-	die "Expected one C++ standard in $base.cxx-standard\n"
-		if @standards != 1 || $standards[0] !~ /\A(?:c|gnu)\+\+(?:11|14|17)\z/;
+	my @files = grep { -f $_ } ("$base.cxx-standard", "$base.c-standard");
+	return () if !@files;
+	die "Conflicting language standards for $base\n" if @files != 1;
+	my $path = $files[0];
+	my $is_c = $path =~ /\.c-standard$/;
+	my @standards = read_word_list($path);
+	my $pattern = $is_c ? qr/\A(?:c|gnu)17\z/ : qr/\A(?:c|gnu)\+\+(?:11|14|17|20)\z/;
+	my $language = $is_c ? 'C' : 'C++';
+	die "Expected one $language standard in $path\n"
+		if @standards != 1 || $standards[0] !~ $pattern;
 	return "-std=$standards[0]";
 }
 

@@ -1,0 +1,10 @@
+identifier a
+simple <= OP_LE
+simple > OP_GT
+identifier b
+simple ; OP_SEMICOLON
+simple operator KW_OPERATOR
+simple <= OP_LE
+simple > OP_GT
+simple ; OP_SEMICOLON
+eof

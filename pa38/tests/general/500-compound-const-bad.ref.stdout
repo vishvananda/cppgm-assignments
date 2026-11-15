@@ -1,0 +1,1 @@
+ERROR: tests/general/500-compound-const-bad.t:1:18: assignment to something that is not a modifiable lvalue

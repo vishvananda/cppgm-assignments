@@ -327,3 +327,56 @@ The same monotonic-extension rule applies here:
 - in practice, lambda helper synthesis and `auto` deduction should stay on-demand rather
   than eagerly changing the behavior of ordinary earlier programs that do not use those
   features
+
+### C++20 immediate lambdas
+
+A lambda declared with `consteval` has an immediate call operator. Apply
+PA16's immediate invocation and function-address restrictions to its calls
+and its conversion to a function pointer, including instantiated generic
+call operators. `constexpr` and `consteval` cannot appear together.
+### C++20 explicit lambda templates
+
+A lambda may declare explicit type, non-type and template template parameters.
+Its call operator is a real member template of that closure. Support explicit
+`operator()<Args...>` calls, defaults and mixed explicit/invented parameters.
+Use the existing template substitution, constraint and specialization machinery.
+Keep head and trailing constraints separate and check them before demanding
+the selected body. A trailing requires-clause needs a templated call operator:
+reject it on a lambda with no explicit head and no `auto` parameter outside a
+template. C++20 also permits lambdas in unevaluated operands.
+
+When an enclosing template is instantiated, clone fact-bearing lambda head
+defaults, constraints and signatures. Inner template parameters own their
+names and packs, including names that shadow an outer function parameter pack;
+only the lambda's own call specializations expand them. Captures retain the
+same storage, lifetime and constexpr rules as the other closure forms here.
+
+The closure type's mangled name states the explicit head before the parameter
+types of its signature: `Ty` for a type parameter, `Tn` and its type for a
+non-type parameter, `Tt`, the nested parameters and `E` for a template
+template parameter, and `Tp` before a parameter pack. So
+`[]<class T>(T)` is `UlTyT_E_`, `[]<int N>()` is `UlTnivE_` and
+`[]<class... T>(T...)` is `UlTpTyDpT_E_`. The parameters that written `auto`
+invents add nothing there. Closures with equal signatures share one
+numbering: `UlTyT_E_`, then `UlTyT_E0_`.
+
+### C++20 abbreviated function templates
+
+A function or constructor parameter written with `auto` introduces an invented
+type parameter. A constrained `C auto` parameter introduces a constrained type
+parameter. Append invented parameters to a function's explicit template head
+in parameter order, including packs, without adding a template nesting level.
+Use the same invention for generic lambdas. Keep the written syntax available;
+only the normalized signature needs a copy, and the body remains shared.
+Abbreviated function names are template names for later explicit template calls.
+
+### C++20 constrained placeholders
+
+A variable, a function's declared or trailing return type and a lambda's
+trailing return type may be written `C auto`, `C<Args...> auto` or
+`C decltype(auto)`. Deduce the type as for the plain placeholder, then check
+the concept with the deduced type prepended to its written arguments. Reject
+the declaration or the return statement when the constraint is not satisfied.
+A specialization of a templated function or static data member checks the
+constraint with its own deduced type. A block-scope declaration may begin
+with the type-constraint.

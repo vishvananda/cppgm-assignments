@@ -1,0 +1,10 @@
+1 translation units
+start translation unit 1
+translation-unit
+  variable requires int
+    literal prvalue int 3
+  function-definition get function of () returning int
+    compound-statement
+      return-statement
+        id-expression lvalue int requires
+end translation unit

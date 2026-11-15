@@ -1,0 +1,1 @@
+ERROR: tests/spec/400-cxx20-default-comparison-signature-bad.t:2:24: invalid defaulted comparison declaration

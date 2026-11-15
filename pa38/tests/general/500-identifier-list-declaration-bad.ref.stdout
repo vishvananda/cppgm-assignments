@@ -1,0 +1,1 @@
+ERROR: tests/general/500-identifier-list-declaration-bad.t:1:5: C identifier-list parameters require a function definition

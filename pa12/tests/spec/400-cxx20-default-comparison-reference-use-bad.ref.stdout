@@ -1,0 +1,1 @@
+ERROR: tests/spec/400-cxx20-default-comparison-reference-use-bad.t:3:40: use of a deleted function

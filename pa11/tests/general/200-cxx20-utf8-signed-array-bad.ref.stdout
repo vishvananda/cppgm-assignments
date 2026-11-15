@@ -1,0 +1,1 @@
+ERROR: tests/general/200-cxx20-utf8-signed-array-bad.t:1:13: array initialized from an expression

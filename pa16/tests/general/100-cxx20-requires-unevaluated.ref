@@ -1,0 +1,19 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @check()
+    %t2 = binary sub nowrap i32 %t1, 1
+    return i32 %t2
+}
+function @check() -> i32 [binding=weak, object=_Z5checkv, inline_hint=yes] {
+  slot $value : i32
+  slot $valid : u8
+
+  block ^entry:
+    store typed i32 0, $value
+    store typed u8 1, $valid
+    %t1 = load typed i32 $value
+    %t2 = load typed u8 $valid
+    %t3 = convert zext i32 u8 %t2
+    %t4 = binary add nowrap i32 %t1, %t3
+    return i32 %t4
+}

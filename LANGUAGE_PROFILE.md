@@ -1,11 +1,13 @@
 # Required source-language profile
 
-Build a C++ compiler with the following C++11/14/17 profile. This is a bounded
-course contract, not complete conformance to all three standards. Later hosted
+Build a C++ compiler with the following C++11/14/17 and selected C++20 profile.
+This is a bounded course contract, not complete conformance to these standards. Later hosted
 lessons consume these features rather than making them optional.
 
-The driver default remains GNU C++11. `-std=c++11`, `-std=c++14`, `-std=c++17`
-and their `gnu++` counterparts select the documented mode. A required later
+The driver default remains GNU C++11. `-std=c++11`, `-std=c++14`, `-std=c++17`,
+`-std=c++20` and their `gnu++` counterparts select the documented mode. The
+C++20 profile is bounded to the features listed here; it does not claim full
+conformance to that standard. A required later
 feature need only work in its stated mode; earlier-mode negative checks remain
 required. The existing variable-template, relaxed constexpr and visible-body
 return-deduction extensions remain available in the course's C++11 mode.
@@ -14,16 +16,25 @@ return-deduction extensions remain available in the course's C++11 mode.
 | --- | --- | --- |
 | Binary literals, digit separators | C++14+ | PA1–PA4 token/value/macro boundaries |
 | Hexadecimal floating literals | C++17 | PA1–PA4; GNU compiler modes also retain existing extensions |
+| Distinct `char8_t`, UTF-8 code-unit literals, narrow-array initialization from UTF-8 strings | C++20 | PA1–PA4 token/value/macro boundaries; PA6/PA7 types and conversions; PA9 ABI; PA11 initialization and literal operators |
+| Three-way comparison, rewritten candidates and defaulted comparisons | C++20 | PA2/PA4 tokens and macros; PA5 syntax; PA9 ABI; PA12 class/subobject comparisons; PA16 constexpr and earlier template instantiation |
+| Named concepts, boolean concept-ids, compound return-type requirements | C++20 | PA5 syntax; PA14 lookup and type arguments; PA15 value arguments and packs; PA16 constexpr calls; PA17 variable templates |
+| Requires-expressions with simple, type, `noexcept` compound and nested requirements | C++20 | PA5 syntax; PA7 non-template checks; PA14 substitution; PA15 packs; PA16 constant evaluation; PA17 variable templates |
+| Associated constraints, trailing requires-clauses, constrained friends | C++20 | PA5 syntax; PA15 template-heads and overloads; PA17 partial specializations, alias and variable templates, friends; PA18 template signatures |
+| Implied `typename` in type-only contexts | C++20 | PA14 dependent names; PA15 non-type parameter types |
+| Abbreviated function templates, constrained placeholders (`C auto`, `C decltype(auto)`) | C++20 | PA5 syntax; PA20 parameter invention and deduction checks |
 | Nested namespaces, attribute using-prefixes | C++17 | PA5 syntax, PA6 lookup; vendor effects PA30 |
 | Contextual conversions, aggregate member defaults | C++14+ | PA11/PA12; constexpr PA16 |
 | Public aggregate bases, direct prvalue result objects, inline variables, aligned allocation | C++17 | PA11/PA12; constexpr PA16; multi-TU PA25; host ABI PA32 |
 | Fold expressions | C++17 | PA15; composed deduction PA18/PA19 |
+| Immediate functions (`consteval`), constant-initialization declarations (`constinit`) | C++20 | PA2–PA5 tokens and syntax; PA6 declaration validity; PA16 evaluation; PA20 immediate lambdas |
 | Relaxed constexpr bodies | C++14 rules, existing C++11 extension | PA16 |
 | Variable templates | C++14, existing C++11 extension | PA17 |
 | Template-template `typename`, placeholder non-type parameters, class deduction/guides, using packs | C++17 | PA17 declarations, PA18 deduction; multiple-base/member-pointer combinations PA22 |
 | Selection initializer statements | C++17 | PA10 |
 | `if constexpr` | C++17 | PA19, after substitution and constant evaluation |
 | `decltype(auto)`, generic lambdas, initialized captures | C++14+ | PA20; failure cleanup PA21 |
+| Explicit lambda template heads, mixed invented parameters, head/trailing constraints, lambdas in unevaluated operands | C++20 | PA5 syntax; PA20 closure/template/constexpr ownership; PA21 failure cleanup |
 | `[*this]`, constexpr closures, structured bindings, fixed-enum direct lists | C++17 | PA20; failure cleanup PA21 |
 | `noexcept` function-type identity/conversion | C++17 | PA6/PA7; ABI PA9; deduction PA18; host checks PA32 |
 | General GNU source assembly and shared LowIR assembly | GNU extension | PA8 transport; PA29 binding, integrated encoding and object behavior |

@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-startup-return-bad.t:1:16: a constructor attribute requires a non-template void function with no parameters

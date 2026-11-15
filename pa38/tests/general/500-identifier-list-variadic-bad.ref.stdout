@@ -1,0 +1,1 @@
+ERROR: tests/general/500-identifier-list-variadic-bad.t:1:5: C identifier-list definition cannot be variadic

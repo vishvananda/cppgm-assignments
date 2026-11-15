@@ -1,0 +1,110 @@
+function @match(%value : u32) -> i32 [linkage=c, binding=internal] {
+  slot $value : u32
+
+  block ^entry:
+    store typed u32 %value, $value
+    %t1 = load typed u32 $value
+    jump ^switch_dispatch_1
+
+  block ^switch_dispatch_1:
+    switch %t1, ^switch_default_5, 4294967295:^switch_case_3, 4294967294:^switch_case_4
+
+  block ^switch_case_3:
+    return i32 1
+
+  block ^switch_case_4:
+    return i32 2
+
+  block ^switch_default_5:
+    return i32 3
+
+  block ^switch_end_2:
+    return i32 0
+}
+function @narrow(%value : u8) -> i32 [linkage=c, binding=internal] {
+  slot $value : u8
+
+  block ^entry:
+    store u8 %value, $value
+    %t1 = load u8 $value
+    %t2 = convert zext i32 u8 %t1
+    jump ^switch_dispatch_1
+
+  block ^switch_dispatch_1:
+    switch %t2, ^switch_default_5, -1:^switch_case_3, 255:^switch_case_4
+
+  block ^switch_case_3:
+    return i32 4
+
+  block ^switch_case_4:
+    return i32 5
+
+  block ^switch_default_5:
+    return i32 6
+
+  block ^switch_end_2:
+    return i32 0
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+
+  block ^entry:
+    %t1 = unary bitnot u32 0
+    %t2 = call i32 @match(%t1)
+    %t3 = cmp ne i32 %t2, 1
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t5 = unary bitnot u32 0
+    %t6 = binary sub u32 %t5, 1
+    %t7 = call i32 @match(%t6)
+    %t8 = cmp ne i32 %t7, 2
+    %t9 = convert trunc i32 i64 %t8
+    %t10 = cmp ne i32 %t9, 0
+    store typed i64 %t10, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t11 = load typed i64 $lor__1
+    branch %t11, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t12 = call i32 @match(1)
+    %t13 = cmp ne i32 %t12, 3
+    %t14 = convert trunc i32 i64 %t13
+    %t15 = cmp ne i32 %t14, 0
+    store typed i64 %t15, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t16 = load typed i64 $lor__2
+    branch %t16, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t17 = call i32 @narrow(255)
+    %t18 = cmp ne i32 %t17, 5
+    %t19 = convert trunc i32 i64 %t18
+    %t20 = cmp ne i32 %t19, 0
+    store typed i64 %t20, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t21 = load typed i64 $lor__3
+    %t22 = convert trunc i32 i64 %t21
+    return i32 %t22
+}

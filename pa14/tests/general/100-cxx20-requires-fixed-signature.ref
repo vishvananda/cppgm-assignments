@@ -1,0 +1,15 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $values : obj<4x4>
+
+  block ^entry:
+    %t1 = addr $values
+    call void @function(%t1)
+    return i32 0
+}
+function @function(%__param0 : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_Z8functionIiEvRA1_i] {
+  slot $__param0 : ptr
+
+  block ^entry:
+    store typed ptr %__param0, $__param0
+    return void
+}

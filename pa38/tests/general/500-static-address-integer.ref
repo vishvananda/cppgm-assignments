@@ -1,0 +1,90 @@
+global @values [linkage=c, binding=internal] = {
+  i32 3
+  i32 5
+  i32 7
+}
+global @object_address : i64 [linkage=c, binding=internal] = addr @values + 4
+global @function_address : i64 [linkage=c, binding=internal] = addr @add
+global @wide_address : i64 [linkage=c, binding=internal] = addr @values + 8
+
+function @add(%value : i32) -> i32 [linkage=c, binding=internal] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = binary add nowrap i32 %t1, 1
+    return i32 %t2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = load typed i64 @object_address
+    %t2 = addr @values
+    %t3 = index inbounds i32 [projection=array_element] %t2, 1
+    %t4 = copy i64 %t3
+    %t5 = cmp ne i64 %t1, %t4
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t7 = load typed i64 @object_address
+    %t8 = copy ptr %t7
+    %t9 = load typed i32 %t8
+    %t10 = cmp ne i32 %t9, 5
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t12 = load typed i64 @function_address
+    %t13 = addr @add
+    %t14 = copy i64 %t13
+    %t15 = cmp ne i64 %t12, %t14
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^if_then_5, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t17 = load typed i64 @function_address
+    %t18 = copy ptr %t17
+    %t19 = call i32 %t18(41) as (%arg0 : i32) -> i32
+    %t20 = cmp ne i32 %t19, 42
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 2
+
+  block ^if_else_6:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t22 = load typed i64 @wide_address
+    %t23 = addr @values
+    %t24 = index inbounds i32 [projection=array_element] %t23, 2
+    %t25 = copy i64 %t24
+    %t26 = cmp ne i64 %t22, %t25
+    %t27 = convert trunc i32 i64 %t26
+    branch %t27, ^if_then_9, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t28 = load typed i64 @wide_address
+    %t29 = copy ptr %t28
+    %t30 = load typed i32 %t29
+    %t31 = cmp ne i32 %t30, 7
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 3
+
+  block ^if_else_10:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    return i32 0
+}

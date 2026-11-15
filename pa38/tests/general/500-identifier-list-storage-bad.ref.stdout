@@ -1,0 +1,1 @@
+ERROR: tests/general/500-identifier-list-storage-bad.t:1:11: invalid storage or function specifier in a C parameter

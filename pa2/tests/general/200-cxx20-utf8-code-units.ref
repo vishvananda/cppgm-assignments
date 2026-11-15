@@ -1,0 +1,10 @@
+simple char8_t KW_CHAR8_T
+literal u8'A' char8_t 41
+literal u8'\0' char8_t 00
+literal u8'\xFF' char8_t FF
+literal u8'\377' char8_t FF
+invalid u8'é'
+invalid u8'\x100'
+invalid u8'AB'
+literal u8"Aé" u8R"(raw)" " tail" array of 12 char8_t 41C3A9726177207461696C00
+eof

@@ -1,0 +1,7 @@
+1 translation units
+start translation unit 1
+translation-unit
+  scope namespace <global>
+    type-alias char8_t unsigned char
+    variable unit unsigned char
+end translation unit

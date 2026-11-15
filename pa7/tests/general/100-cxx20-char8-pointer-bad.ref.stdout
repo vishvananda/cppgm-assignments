@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-char8-pointer-bad.t:1:37: invalid implicit conversion

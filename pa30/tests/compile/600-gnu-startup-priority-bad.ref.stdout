@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-startup-priority-bad.t:1:16: constructor priority must be an integer from 0 through 65535

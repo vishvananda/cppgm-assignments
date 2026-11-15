@@ -1,0 +1,4 @@
+simple requires KW_REQUIRES
+identifier requires_value
+identifier requires0
+eof

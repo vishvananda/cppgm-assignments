@@ -479,6 +479,15 @@ data. If the extra ABI surface is separate generated code, such as a thread-loca
 wrapper, represent it as a normal LowIR function declaration or definition with its own
 `object=...` spelling.
 
+A top-level declaration whose object name matches an alias gives that alias
+its own binding and typed source interface. The alias still designates the
+target's code or data; its function ABI is the target's ABI. A public alias
+keeps an internal target available to object emission, without making otherwise
+dead code a final-link root. Without a matching declaration, the alias inherits
+the target's binding. Alias references with independently replaceable bindings
+must retain those identities; non-replaceable references may use the target
+directly. Mutable data exposed through an alias is not private unwritten storage.
+
 `equivalent_entry @entry = @target` is an optional proof that two ABI entries of
 one source function behave identically for every valid argument and do not require
 distinct code addresses. It permits sharing an implementation or forwarding to

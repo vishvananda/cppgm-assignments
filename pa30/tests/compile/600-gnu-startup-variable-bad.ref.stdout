@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-startup-variable-bad.t:1:26: a constructor attribute requires a namespace-scope function

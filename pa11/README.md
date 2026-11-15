@@ -111,6 +111,14 @@ const element contract in serializable LowIR; an ordinary writable character
 array must not gain that storage property merely because it has a static
 initializer.
 
+In C++20 mode, UTF-8 literals use `char8_t` through initialization and literal
+operator selection. An array of `char8_t` accepts a UTF-8 string, including
+concatenated and raw strings. The adopted UTF-8 compatibility rule also permits
+these strings to initialize arrays of `char` or `unsigned char`, but not
+`signed char`; it does not add pointer conversions. This support is advertised
+by `__cpp_char8_t=202207L`. Cooked literal operators may take `char8_t` or
+`const char8_t*` with the usual size parameter.
+
 PA11 writes a single concatenated LowIR program consisting of:
 
 - zero or more `global` definitions

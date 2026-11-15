@@ -1,0 +1,426 @@
+global @__cppgm_ref_temporary__global_scalar_0 [binding=internal, object=_ZGR13global_scalar_] = {
+  i32 42
+}
+global @global_scalar : ptr [linkage=c, binding=internal] = addr @__cppgm_ref_temporary__global_scalar_0
+global @__cppgm_initlist_backing_1 [binding=internal, object=_ZGR12global_array_] = {
+  i32 3
+  i32 5
+  i32 7
+}
+global @global_array : ptr [linkage=c, binding=internal] = addr @__cppgm_initlist_backing_1
+global @__cppgm_ref_temporary__global_record_0 [binding=internal, object=_ZGR13global_record_] = {
+  i32 13
+  i32 11
+}
+global @global_record : ptr [linkage=c, binding=internal] = addr @__cppgm_ref_temporary__global_record_0
+global @scalar_copy : i32 [linkage=c, binding=internal] = zero
+global @__cppgm_ref_temporary__scalar_copy_0 [binding=internal, object=_ZGR11scalar_copy_] = {
+  i32 23
+}
+global @record_copy : obj<8x4> [linkage=c, binding=internal] = {
+  zero 8
+}
+global @__cppgm_ref_temporary__record_copy_0 [binding=internal, object=_ZGR11record_copy_] = {
+  i32 17
+  i32 19
+}
+global @called : i32 [linkage=c, binding=internal] = zero
+
+function @next() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @called
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, @called
+    return i32 %t2
+}
+function @sum(%value : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $value : ptr
+
+  block ^entry:
+    store typed ptr %value, $value
+    %t1 = load typed ptr $value
+    %t2 = index inbounds i8 [projection=field] %t1, 0
+    %t3 = load typed i32 %t2
+    %t4 = load typed ptr $value
+    %t5 = index inbounds i8 [projection=field] %t4, 4
+    %t6 = load typed i32 %t5
+    %t7 = binary add nowrap i32 %t3, %t6
+    return i32 %t7
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $saved : ptr
+  slot $tmpobj__1 : i32
+  slot $unrelated : i32
+  slot $other : ptr
+  slot $tmpobj__2 : i32
+  slot $pair : ptr
+  slot $tmpobj__3 : obj<8x4>
+  slot $tmpobj__4 : obj<8x4>
+  slot $pointer : ptr
+  slot $pointer_object : ptr
+  slot $tmpobj__5 : ptr
+  slot $array : ptr
+  slot $tmpobj__6 : obj<12x4>
+  slot $tmpobj__7 : i32
+  slot $first : ptr
+  slot $again : ptr
+  slot $count : i32
+  slot $tmpobj__8 : i32
+  slot $qualified : ptr
+  slot $tmpobj__9 : i32
+  slot $text : ptr
+  slot $tmpobj__10 : obj<3x1>
+  slot $lor__11 : i64
+
+  block ^entry:
+    %t1 = load typed i32 @scalar_copy
+    %t2 = cmp ne i32 %t1, 23
+    %t3 = convert trunc i32 i64 %t2
+    branch %t3, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t4 = addr @record_copy
+    %t5 = index inbounds i8 [projection=field] %t4, 0
+    %t6 = load typed i32 %t5
+    %t7 = cmp ne i32 %t6, 17
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t9 = addr @record_copy
+    %t10 = index inbounds i8 [projection=field] %t9, 4
+    %t11 = load typed i32 %t10
+    %t12 = cmp ne i32 %t11, 19
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 10
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t14 = call i32 @next()
+    store typed i32 %t14, $tmpobj__1
+    %t15 = addr $tmpobj__1
+    store typed ptr %t15, $saved
+    store typed i32 19, $unrelated
+    %t16 = call i32 @next()
+    store typed i32 %t16, $tmpobj__2
+    %t17 = addr $tmpobj__2
+    store typed ptr %t17, $other
+    %t18 = load typed ptr $saved
+    %t19 = load typed ptr $other
+    %t20 = cmp eq ptr %t18, %t19
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_6, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t22 = load typed ptr $saved
+    %t23 = load typed i32 %t22
+    %t24 = cmp ne i32 %t23, 1
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_6, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t26 = load typed ptr $other
+    %t27 = load typed i32 %t26
+    %t28 = cmp ne i32 %t27, 2
+    %t29 = convert trunc i32 i64 %t28
+    branch %t29, ^if_then_6, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t30 = load typed i32 $unrelated
+    %t31 = cmp ne i32 %t30, 19
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 1
+
+  block ^if_else_7:
+    jump ^if_end_11
+
+  block ^if_end_11:
+    %t33 = load typed ptr $saved
+    store typed i32 17, %t33
+    %t34 = load typed ptr $saved
+    %t35 = load typed i32 %t34
+    %t36 = cmp ne i32 %t35, 17
+    %t37 = convert trunc i32 i64 %t36
+    branch %t37, ^if_then_12, ^lor_rhs_15
+
+  block ^lor_rhs_15:
+    %t38 = load typed ptr @global_scalar
+    %t39 = load typed i32 %t38
+    %t40 = cmp ne i32 %t39, 42
+    %t41 = convert trunc i32 i64 %t40
+    branch %t41, ^if_then_12, ^lor_rhs_14
+
+  block ^lor_rhs_14:
+    %t42 = load typed ptr @global_array
+    %t43 = index inbounds i32 [projection=array_element] %t42, 2
+    %t44 = load typed i32 %t43
+    %t45 = cmp ne i32 %t44, 7
+    %t46 = convert trunc i32 i64 %t45
+    branch %t46, ^if_then_12, ^if_else_13
+
+  block ^if_then_12:
+    return i32 2
+
+  block ^if_else_13:
+    jump ^if_end_16
+
+  block ^if_end_16:
+    %t47 = load typed ptr @global_record
+    %t48 = index inbounds i8 [projection=field] %t47, 0
+    %t49 = load typed i32 %t48
+    %t50 = cmp ne i32 %t49, 13
+    %t51 = convert trunc i32 i64 %t50
+    branch %t51, ^if_then_17, ^lor_rhs_19
+
+  block ^lor_rhs_19:
+    %t52 = load typed ptr @global_record
+    %t53 = index inbounds i8 [projection=field] %t52, 4
+    %t54 = load typed i32 %t53
+    %t55 = cmp ne i32 %t54, 11
+    %t56 = convert trunc i32 i64 %t55
+    branch %t56, ^if_then_17, ^if_else_18
+
+  block ^if_then_17:
+    return i32 3
+
+  block ^if_else_18:
+    jump ^if_end_20
+
+  block ^if_end_20:
+    %t57 = addr $tmpobj__3
+    %t58 = addr $tmpobj__3
+    %t59 = index inbounds i8 [projection=field] %t58, 0
+    store typed i32 31, %t59
+    %t60 = call i32 @next()
+    %t61 = addr $tmpobj__3
+    %t62 = index inbounds i8 [projection=field] %t61, 4
+    store typed i32 %t60, %t62
+    %t63 = addr $tmpobj__3
+    store typed ptr %t63, $pair
+    %t64 = load typed ptr $pair
+    %t65 = index inbounds i8 [projection=field] %t64, 0
+    %t66 = load typed i32 %t65
+    %t67 = cmp ne i32 %t66, 31
+    %t68 = convert trunc i32 i64 %t67
+    branch %t68, ^if_then_21, ^lor_rhs_24
+
+  block ^lor_rhs_24:
+    %t69 = load typed ptr $pair
+    %t70 = index inbounds i8 [projection=field] %t69, 4
+    %t71 = load typed i32 %t70
+    %t72 = cmp ne i32 %t71, 3
+    %t73 = convert trunc i32 i64 %t72
+    branch %t73, ^if_then_21, ^lor_rhs_23
+
+  block ^lor_rhs_23:
+    %t74 = addr $tmpobj__4
+    %t75 = addr $tmpobj__4
+    %t76 = index inbounds i8 [projection=field] %t75, 0
+    store typed i32 4, %t76
+    %t77 = addr $tmpobj__4
+    %t78 = index inbounds i8 [projection=field] %t77, 4
+    store typed i32 5, %t78
+    %t79 = addr $tmpobj__4
+    %t80 = call i32 @sum(%t79)
+    %t81 = cmp ne i32 %t80, 9
+    %t82 = convert trunc i32 i64 %t81
+    branch %t82, ^if_then_21, ^if_else_22
+
+  block ^if_then_21:
+    return i32 4
+
+  block ^if_else_22:
+    jump ^if_end_25
+
+  block ^if_end_25:
+    %t83 = load typed ptr $saved
+    store typed ptr %t83, $pointer
+    %t84 = load typed ptr $pointer
+    store typed ptr %t84, $tmpobj__5
+    %t85 = addr $tmpobj__5
+    store typed ptr %t85, $pointer_object
+    %t86 = load typed ptr $pointer_object
+    %t87 = load typed ptr %t86
+    %t88 = load typed ptr $saved
+    %t89 = cmp ne ptr %t87, %t88
+    %t90 = convert trunc i32 i64 %t89
+    branch %t90, ^if_then_26, ^if_else_27
+
+  block ^if_then_26:
+    return i32 5
+
+  block ^if_else_27:
+    jump ^if_end_28
+
+  block ^if_end_28:
+    %t91 = addr $tmpobj__6
+    %t92 = call i32 @next()
+    store typed i32 %t92, %t91
+    %t93 = index i8 [projection=array_element] %t91, 4
+    store typed i32 23, %t93
+    %t94 = index i8 [projection=array_element] %t91, 8
+    %t95 = call i32 @next()
+    store typed i32 %t95, %t94
+    %t96 = addr $tmpobj__6
+    store typed ptr %t96, $array
+    %t97 = load typed ptr $array
+    %t98 = index inbounds i32 [projection=array_element] %t97, 0
+    %t99 = load typed i32 %t98
+    %t100 = cmp ne i32 %t99, 4
+    %t101 = convert trunc i32 i64 %t100
+    branch %t101, ^if_then_29, ^lor_rhs_32
+
+  block ^lor_rhs_32:
+    %t102 = load typed ptr $array
+    %t103 = index inbounds i32 [projection=array_element] %t102, 1
+    %t104 = load typed i32 %t103
+    %t105 = cmp ne i32 %t104, 23
+    %t106 = convert trunc i32 i64 %t105
+    branch %t106, ^if_then_29, ^lor_rhs_31
+
+  block ^lor_rhs_31:
+    %t107 = load typed ptr $array
+    %t108 = index inbounds i32 [projection=array_element] %t107, 2
+    %t109 = load typed i32 %t108
+    %t110 = cmp ne i32 %t109, 5
+    %t111 = convert trunc i32 i64 %t110
+    branch %t111, ^if_then_29, ^if_else_30
+
+  block ^if_then_29:
+    return i32 6
+
+  block ^if_else_30:
+    jump ^if_end_33
+
+  block ^if_end_33:
+    %t112 = const i64 12
+    %t113 = const i64 4
+    %t114 = convert sext i64 i32 3
+    %t115 = binary mul i64 %t113, %t114
+    %t116 = cmp ne i64 %t112, %t115
+    %t117 = convert trunc i32 i64 %t116
+    branch %t117, ^if_then_34, ^if_else_35
+
+  block ^if_then_34:
+    return i32 7
+
+  block ^if_else_35:
+    jump ^if_end_36
+
+  block ^if_end_36:
+    %t118 = call i32 @next()
+    store typed i32 %t118, $tmpobj__7
+    %t119 = load typed i32 @called
+    %t120 = cmp ne i32 %t119, 6
+    %t121 = convert trunc i32 i64 %t120
+    branch %t121, ^if_then_37, ^if_else_38
+
+  block ^if_then_37:
+    return i32 8
+
+  block ^if_else_38:
+    jump ^if_end_39
+
+  block ^if_end_39:
+    store typed ptr 0, $first
+    store typed i32 0, $count
+    jump ^goto_40
+
+  block ^goto_40:
+    %t122 = load typed i32 $count
+    %t123 = binary add nowrap i32 %t122, 1
+    store typed i32 %t123, $count
+    store typed i32 %t122, $tmpobj__8
+    %t124 = addr $tmpobj__8
+    store typed ptr %t124, $again
+    %t125 = load typed ptr $first
+    %t126 = cmp eq ptr %t125, 0
+    %t127 = convert trunc i32 i64 %t126
+    branch %t127, ^if_then_41, ^if_else_42
+
+  block ^if_then_41:
+    %t128 = load typed ptr $again
+    store typed ptr %t128, $first
+    jump ^goto_40
+
+  block ^if_else_42:
+    jump ^if_end_43
+
+  block ^if_end_43:
+    %t129 = load typed ptr $first
+    %t130 = load typed ptr $again
+    %t131 = cmp ne ptr %t129, %t130
+    %t132 = convert trunc i32 i64 %t131
+    branch %t132, ^if_then_44, ^lor_rhs_46
+
+  block ^lor_rhs_46:
+    %t133 = load typed ptr $first
+    %t134 = load typed i32 %t133
+    %t135 = cmp ne i32 %t134, 1
+    %t136 = convert trunc i32 i64 %t135
+    branch %t136, ^if_then_44, ^if_else_45
+
+  block ^if_then_44:
+    return i32 9
+
+  block ^if_else_45:
+    jump ^if_end_47
+
+  block ^if_end_47:
+    store typed i32 29, $tmpobj__9
+    %t137 = addr $tmpobj__9
+    store typed ptr %t137, $qualified
+    %t138 = addr $tmpobj__10
+    %t139 = convert trunc i8 i32 111
+    store i8 %t139, %t138
+    %t140 = index i8 [projection=array_element] %t138, 1
+    %t141 = convert trunc i8 i32 107
+    store i8 %t141, %t140
+    %t142 = index i8 [projection=array_element] %t138, 2
+    %t143 = convert trunc i8 i32 0
+    store i8 %t143, %t142
+    %t144 = addr $tmpobj__10
+    store typed ptr %t144, $text
+    %t145 = load typed ptr $qualified
+    %t146 = load typed i32 %t145
+    %t147 = cmp ne i32 %t146, 29
+    %t148 = convert trunc i32 i64 %t147
+    branch %t148, ^lor_short_49, ^lor_rhs_48
+
+  block ^lor_rhs_48:
+    %t149 = load typed ptr $text
+    %t150 = index inbounds i8 [projection=array_element] %t149, 1
+    %t151 = load i8 %t150
+    %t152 = convert sext i32 i8 %t151
+    %t153 = cmp ne i32 %t152, 107
+    %t154 = convert trunc i32 i64 %t153
+    %t155 = cmp ne i32 %t154, 0
+    store typed i64 %t155, $lor__11
+    jump ^lor_end_50
+
+  block ^lor_short_49:
+    store typed i64 1, $lor__11
+    jump ^lor_end_50
+
+  block ^lor_end_50:
+    %t156 = load typed i64 $lor__11
+    %t157 = convert trunc i32 i64 %t156
+    return i32 %t157
+}
+function @__cppgm_init() -> void [role=init, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @__cppgm_ref_temporary__scalar_copy_0
+    store typed i32 %t1, @scalar_copy
+    %t2 = addr @record_copy
+    %t3 = addr @__cppgm_ref_temporary__record_copy_0
+    copyobj 8x4 %t3, %t2
+    return void
+}

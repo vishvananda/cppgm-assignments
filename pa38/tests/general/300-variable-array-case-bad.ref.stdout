@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-case-bad.t:1:52: case label bypasses a variable's initialization

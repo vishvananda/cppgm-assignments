@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-associated-class-redeclaration-bad.t:3:45: template redeclared with different associated constraints

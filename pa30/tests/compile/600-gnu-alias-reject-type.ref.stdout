@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-alias-reject-type.t:2:44: an alias and its target require compatible types

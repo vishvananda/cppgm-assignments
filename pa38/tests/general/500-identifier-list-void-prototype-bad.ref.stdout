@@ -1,0 +1,1 @@
+ERROR: tests/general/500-identifier-list-void-prototype-bad.t:1:18: conflicting C function declarations

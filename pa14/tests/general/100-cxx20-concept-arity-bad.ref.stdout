@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-concept-arity-bad.t:1:46: too many template arguments

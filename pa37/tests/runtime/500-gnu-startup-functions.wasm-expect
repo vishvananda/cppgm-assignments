@@ -1,0 +1,9 @@
+{
+  "source": true,
+  "calls": [
+    {
+      "export": "observe",
+      "result": "1234"
+    }
+  ]
+}

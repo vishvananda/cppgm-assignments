@@ -1,0 +1,70 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+
+  block ^entry:
+    %t1 = call u8 @check()
+    %t2 = cmp eq u8 %t1, 0
+    branch %t2, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t3 = call u8 @check__2()
+    %t4 = cmp ne u8 %t3, 0
+    store typed i64 %t4, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t5 = load typed i64 $lor__1
+    branch %t5, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t6 = call u8 @empty()
+    %t7 = cmp eq u8 %t6, 0
+    %t8 = cmp ne i64 %t7, 0
+    store typed i64 %t8, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t9 = load typed i64 $lor__2
+    branch %t9, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t10 = call u8 @empty__2()
+    %t11 = cmp ne u8 %t10, 0
+    store typed i64 %t11, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t12 = load typed i64 $lor__3
+    %t13 = convert trunc i32 i64 %t12
+    return i32 %t13
+}
+function @check() -> u8 [binding=weak, object=_Z5checkIJiiEEbv] {
+  block ^entry:
+    return u8 1
+}
+function @check__2() -> u8 [binding=weak, object=_Z5checkIJvEEbv] {
+  block ^entry:
+    return u8 0
+}
+function @empty() -> u8 [binding=weak, object=_Z5emptyIJEEbv] {
+  block ^entry:
+    return u8 1
+}
+function @empty__2() -> u8 [binding=weak, object=_Z5emptyIJiEEbv] {
+  block ^entry:
+    return u8 0
+}

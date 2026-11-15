@@ -1,0 +1,1 @@
+ERROR: tests/spec/400-cxx20-rewritten-equality-result-bad.t:4:21: a rewritten equality comparison requires operator== returning bool

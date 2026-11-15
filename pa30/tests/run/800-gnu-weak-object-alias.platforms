@@ -1,0 +1,1 @@
+linux # GNU object aliases require ELF in the native profile; PA37 tests Wasm separately.

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-pointer-bad.t:1:34: a variably modified pointer declaration is outside the C profile

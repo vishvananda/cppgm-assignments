@@ -1,0 +1,1 @@
+{"source":true,"flags":["-std=c++20"],"calls":[{"export":"immediate","args":["0"],"result":"40"},{"export":"immediate","args":["7"],"result":"47"},{"export":"immediate_fraction","args":["0"],"result":"0"},{"export":"immediate_fraction","args":["1"],"result":"4611545280939032576"},{"export":"immediate_wide","result":"68719476736"},{"export":"immediate_address","result":"126"}]}

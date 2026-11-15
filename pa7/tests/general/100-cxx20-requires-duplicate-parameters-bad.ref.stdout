@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-requires-duplicate-parameters-bad.t:1:47: duplicate requires-expression parameter

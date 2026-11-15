@@ -1,0 +1,1 @@
+ERROR: tests/general/500-consteval-redeclaration-bad.t:2:15: declarations of a function that disagree on constexpr

@@ -30,6 +30,7 @@ declaration:
 	alias-declaration
 	explicit-instantiation-declaration
 	template-declaration
+	concept-definition
 	class-declaration
 	enum-declaration
 	static-assert-declaration
@@ -67,7 +68,7 @@ explicit-instantiation-target:
 	simple-declaration
 
 template-declaration:
-	KW_TEMPLATE template-parameter-clause declaration
+	KW_TEMPLATE template-parameter-clause requires-clause? declaration
 
 template-parameter-clause:
 	OP_LT template-parameter-list? close-angle-bracket
@@ -80,6 +81,7 @@ template-parameter:
 	non-type-template-parameter
 
 type-parameter:
+	type-constraint OP_DOTS? TT_IDENTIFIER? default-template-argument?
 	type-parameter-key OP_DOTS? TT_IDENTIFIER? default-template-argument?
 	KW_TEMPLATE template-parameter-clause type-parameter-key TT_IDENTIFIER? default-template-argument?
 
@@ -163,6 +165,7 @@ member-function-specifier:
 	KW_VIRTUAL
 	KW_EXPLICIT
 	KW_CONSTEXPR
+	KW_CONSTEVAL
 	KW_FRIEND
 	KW_STATIC
 
@@ -214,6 +217,7 @@ decl-specifier:
 	qualified-type-name
 	elaborated-type-specifier
 	decltype-specifier
+	constrained-placeholder-type
 	cv-qualifier
 	KW_TYPEDEF
 	KW_EXTERN
@@ -221,12 +225,15 @@ decl-specifier:
 	KW_INLINE
 	KW_VIRTUAL
 	KW_CONSTEXPR
+	KW_CONSTEVAL
+	KW_CONSTINIT
 	KW_THREAD_LOCAL
 	KW_AUTO
 
 simple-type-specifier:
 	KW_BOOL
 	KW_CHAR
+	KW_CHAR8_T
 	KW_CHAR16_T
 	KW_CHAR32_T
 	KW_DOUBLE
@@ -294,6 +301,10 @@ namespace-name:
 decltype-specifier:
 	KW_DECLTYPE OP_LPAREN KW_AUTO OP_RPAREN
 	KW_DECLTYPE OP_LPAREN expression OP_RPAREN
+
+constrained-placeholder-type:
+	type-constraint KW_AUTO
+	type-constraint KW_DECLTYPE OP_LPAREN KW_AUTO OP_RPAREN
 
 init-declarator-list:
 	init-declarator (OP_COMMA init-declarator)*
@@ -506,13 +517,16 @@ equality-operator:
 	OP_NE
 
 relational-expression:
-	shift-expression (relational-operator shift-expression)*
+	compare-expression (relational-operator compare-expression)*
 
 relational-operator:
 	OP_LT
 	OP_GT
 	OP_LE
 	OP_GE
+
+compare-expression:
+	shift-expression (OP_SPACESHIP shift-expression)*
 
 shift-expression:
 	additive-expression (shift-operator additive-expression)*
@@ -614,16 +628,20 @@ primary-expression:
 	OP_LPAREN expression OP_RPAREN
 	lambda-expression
 	fold-expression
+	requires-expression
 	braced-init-list
 
 braced-init-list:
 	OP_LBRACE initializer-clause-list? OP_COMMA? OP_RBRACE
 
 lambda-expression:
-	lambda-introducer lambda-declarator? compound-statement
+	lambda-introducer lambda-template-head? lambda-declarator? requires-clause? compound-statement
+
+lambda-template-head:
+	OP_LT template-parameter-list close-angle-bracket requires-clause?
 
 lambda-declarator:
-	parameter-clause KW_MUTABLE? KW_CONSTEXPR? noexcept-specification? trailing-return-type?
+	parameter-clause KW_MUTABLE? (KW_CONSTEXPR | KW_CONSTEVAL)? noexcept-specification? trailing-return-type?
 
 lambda-introducer:
 	OP_LSQUARE lambda-capture? OP_RSQUARE
@@ -736,6 +754,7 @@ operator-token:
 	OP_NE
 	OP_LE
 	OP_GE
+	OP_SPACESHIP
 	OP_LAND
 	OP_LOR
 	OP_INC
@@ -818,3 +837,32 @@ asm-clobber-list:
 
 asm-string-literal:
 	TT_LITERAL
+
+# C++20 requirements retain each parsed operand for substitution.
+requires-expression:
+	KW_REQUIRES parameter-clause? OP_LBRACE requirement+ OP_RBRACE
+
+requirement:
+	expression OP_SEMICOLON
+	KW_TYPENAME nested-name-specifier? simple-template-id OP_SEMICOLON
+	KW_TYPENAME nested-name-specifier? TT_IDENTIFIER OP_SEMICOLON
+	OP_LBRACE expression OP_RBRACE KW_NOEXCEPT? return-type-requirement? OP_SEMICOLON
+	KW_REQUIRES logical-or-expression OP_SEMICOLON
+
+return-type-requirement:
+	OP_ARROW id-expression
+
+concept-definition:
+	KW_CONCEPT TT_IDENTIFIER OP_ASS logical-or-expression OP_SEMICOLON
+
+requires-clause:
+	KW_REQUIRES constraint-logical-or-expression
+
+constraint-logical-or-expression:
+	constraint-logical-and-expression (OP_LOR constraint-logical-and-expression)*
+
+constraint-logical-and-expression:
+	primary-expression (OP_LAND primary-expression)*
+
+type-constraint:
+	id-expression

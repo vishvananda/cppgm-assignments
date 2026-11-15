@@ -1311,9 +1311,11 @@ sub parse_lowir_symbol_metadata_suffix
 					if $value !~ /^(?:internal|strong|weak)$/;
 				$metadata{binding} = $value;
 			}
-			elsif ($key eq 'object')
+			elsif ($key eq 'object' || $key eq 'section')
 			{
-				$metadata{object} = $value;
+				return (0, "invalid object section '$value'")
+					if $key eq 'section' && $value !~ /^[A-Za-z0-9_.]+$/;
+				$metadata{$key} = $value;
 			}
 			elsif ($key eq 'keep_alias')
 			{

@@ -1,0 +1,11 @@
+1 translation units
+start translation unit 1
+translation-unit
+  scope namespace <global>
+    variable unit char8_t
+    variable byte unsigned char
+    variable units pointer to char8_t
+    variable text pointer to const char8_t
+    function distinct function of (char8_t) returning void
+    function distinct function of (unsigned char) returning void
+end translation unit

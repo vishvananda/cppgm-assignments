@@ -1,0 +1,1 @@
+ERROR: tests/general/200-cxx20-concept-nonfinal-pack-bad.t:1:31: a concept parameter pack must be last

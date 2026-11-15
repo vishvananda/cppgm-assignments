@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-concept-parameter-kind-bad.t:1:45: concept arguments do not match its parameters

@@ -1,0 +1,14 @@
+function @select__ov2() -> i32 [arity=variadic, binding=strong, object=_Z6selectz] {
+  block ^entry:
+    return i32 2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $x : i32
+
+  block ^entry:
+    store typed i32 3, $x
+    %t1 = load typed i32 $x
+    %t2 = call i32 @select__ov2(%t1)
+    %t3 = binary sub nowrap i32 %t2, 2
+    return i32 %t3
+}

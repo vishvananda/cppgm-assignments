@@ -1,0 +1,72 @@
+1 translation units
+start translation unit 1
+translation-unit
+  simple-declaration
+    decl-specifier-seq
+      decl-specifier KW_CONSTEVAL:consteval
+      decl-specifier KW_INT:int
+    init-declarator-list
+      init-declarator
+        declarator
+          identifier value
+          parameter-clause
+            parameter-declaration
+              decl-specifier-seq
+                decl-specifier KW_INT:int
+              declarator
+                identifier n
+  class-specifier Immediate
+    class-key KW_STRUCT:struct
+    special-member-declaration Immediate
+      member-specifiers
+        specifier KW_CONSTEVAL:consteval
+      declarator
+        identifier Immediate
+        parameter-clause
+          parameter-declaration
+            decl-specifier-seq
+              decl-specifier KW_INT:int
+    simple-declaration
+      decl-specifier-seq
+        decl-specifier KW_CONSTEVAL:consteval
+        decl-specifier KW_INT:int
+      init-declarator-list
+        init-declarator
+          declarator
+            identifier value
+            parameter-clause
+            cv-qualifier KW_CONST:const
+  simple-declaration
+    decl-specifier-seq
+      decl-specifier constinit
+      decl-specifier KW_INT:int
+    init-declarator-list
+      init-declarator
+        declarator
+          identifier count
+        initializer
+          literal 3
+  simple-declaration
+    decl-specifier-seq
+      decl-specifier KW_AUTO:auto
+    init-declarator-list
+      init-declarator
+        declarator
+          identifier lambda
+        initializer
+          lambda-expression
+            lambda-introducer []
+            lambda-declarator
+              parameter-clause
+                parameter-declaration
+                  decl-specifier-seq
+                    decl-specifier KW_INT:int
+                  declarator
+                    identifier n
+              lambda-specifier KW_CONSTEVAL:consteval
+            compound-statement
+              return-statement
+                binary-expression OP_PLUS:+
+                  id-expression n
+                  literal 1
+end translation unit

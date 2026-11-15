@@ -256,3 +256,10 @@ Clang/LLD and runtime libraries. Its
 explains the reference flags for modern exceptions. These tools may build and
 check reference objects and supplied libraries; the submitted compiler still
 performs its own instruction selection, encoding and static linking.
+
+GNU object aliases and LowIR `alias object` records share the target's function
+index or data address. Preserve each alias's independent strong/weak binding
+and resolve references to that identity, including interposition by another
+object. A differing declared function prototype does not change the target's
+actual Wasm type; calls must use a compatible boundary. Reject cyclic aliases
+or aliases whose target has no definition.

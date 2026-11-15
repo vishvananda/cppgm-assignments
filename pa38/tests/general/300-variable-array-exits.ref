@@ -1,0 +1,220 @@
+function @exits(%n : i32) -> i32 [linkage=c, binding=strong] {
+  slot $n : i32
+  slot $tmpobj__1 : i64
+  slot $i : i32
+  slot $tmpobj__2 : i64
+  slot $tmpobj__3 : i64
+  slot $i__shadow2 : i32
+  slot $tmpobj__4 : i64
+  slot $remaining : i32
+  slot $tmpobj__5 : i64
+
+  block ^entry:
+    store typed i32 %n, $n
+    %t1 = load typed i32 $n
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 1
+    store typed i64 %t3, $tmpobj__1
+    %t4 = stack_save
+    %t5 = stack_alloc %t3
+    %t6 = load typed i32 $n
+    %t7 = binary sub nowrap i32 %t6, 1
+    %t8 = index inbounds i8 [projection=array_element] %t5, %t7
+    store volatile i8 17, %t8
+    store typed i32 0, $i
+    jump ^for_cond_1
+
+  block ^for_cond_1:
+    %t9 = load typed i32 $i
+    %t10 = cmp lt i32 %t9, 12000
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^for_body_2, ^for_end_4
+
+  block ^for_body_2:
+    %t12 = load typed i32 $n
+    %t13 = convert sext i64 i32 %t12
+    %t14 = binary mul i64 %t13, 1
+    store typed i64 %t14, $tmpobj__2
+    %t15 = stack_save
+    %t16 = stack_alloc %t14
+    %t17 = load typed i32 $i
+    %t18 = convert trunc i8 i32 %t17
+    %t19 = load typed i32 $n
+    %t20 = binary sub nowrap i32 %t19, 1
+    %t21 = index inbounds i8 [projection=array_element] %t16, %t20
+    store volatile i8 %t18, %t21
+    %t22 = load typed i32 $i
+    %t23 = binary mod i32 %t22, 2
+    branch %t23, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    stack_restore %t15
+    jump ^for_iter_3
+
+  block ^if_else_6:
+    jump ^if_end_7
+
+  block ^if_end_7:
+    %t24 = load typed i32 $n
+    %t25 = binary add nowrap i32 %t24, 1
+    %t26 = convert sext i64 i32 %t25
+    %t27 = binary mul i64 %t26, 1
+    store typed i64 %t27, $tmpobj__3
+    %t28 = stack_save
+    %t29 = stack_alloc %t27
+    %t30 = load typed i32 $i
+    %t31 = convert trunc i8 i32 %t30
+    %t32 = load typed i32 $n
+    %t33 = index inbounds i8 [projection=array_element] %t29, %t32
+    store volatile i8 %t31, %t33
+    stack_restore %t28
+    stack_restore %t15
+    jump ^for_iter_3
+
+  block ^for_iter_3:
+    %t34 = load typed i32 $i
+    %t35 = binary add nowrap i32 %t34, 1
+    store typed i32 %t35, $i
+    jump ^for_cond_1
+
+  block ^for_end_4:
+    store typed i32 0, $i__shadow2
+    jump ^for_cond_8
+
+  block ^for_cond_8:
+    %t36 = load typed i32 $i__shadow2
+    %t37 = cmp lt i32 %t36, 12000
+    %t38 = convert trunc i32 i64 %t37
+    branch %t38, ^for_body_9, ^for_end_11
+
+  block ^for_body_9:
+    %t39 = load typed i32 $n
+    %t40 = convert sext i64 i32 %t39
+    %t41 = binary mul i64 %t40, 1
+    store typed i64 %t41, $tmpobj__4
+    %t42 = stack_save
+    %t43 = stack_alloc %t41
+    %t44 = load typed i32 $i__shadow2
+    %t45 = convert trunc i8 i32 %t44
+    %t46 = load typed i32 $n
+    %t47 = binary sub nowrap i32 %t46, 1
+    %t48 = index inbounds i8 [projection=array_element] %t43, %t47
+    store volatile i8 %t45, %t48
+    stack_restore %t42
+    jump ^for_end_11
+
+  block ^for_iter_10:
+    %t49 = load typed i32 $i__shadow2
+    %t50 = binary add nowrap i32 %t49, 1
+    store typed i32 %t50, $i__shadow2
+    jump ^for_cond_8
+
+  block ^for_end_11:
+    store typed i32 12000, $remaining
+    jump ^goto_12
+
+  block ^goto_12:
+    %t51 = load typed i32 $n
+    %t52 = convert sext i64 i32 %t51
+    %t53 = binary mul i64 %t52, 1
+    store typed i64 %t53, $tmpobj__5
+    %t54 = stack_save
+    %t55 = stack_alloc %t53
+    %t56 = load typed i32 $remaining
+    %t57 = convert trunc i8 i32 %t56
+    %t58 = load typed i32 $n
+    %t59 = binary sub nowrap i32 %t58, 1
+    %t60 = index inbounds i8 [projection=array_element] %t55, %t59
+    store volatile i8 %t57, %t60
+    %t61 = load typed i32 $remaining
+    %t62 = binary sub nowrap i32 %t61, 1
+    store typed i32 %t62, $remaining
+    branch %t62, ^if_then_13, ^if_else_14
+
+  block ^if_then_13:
+    stack_restore %t54
+    jump ^goto_12
+
+  block ^if_else_14:
+    jump ^if_end_15
+
+  block ^if_end_15:
+    stack_restore %t54
+    %t63 = load typed i32 $n
+    %t64 = binary sub nowrap i32 %t63, 1
+    %t65 = index inbounds i8 [projection=array_element] %t5, %t64
+    %t66 = load volatile i8 %t65
+    %t67 = convert sext i32 i8 %t66
+    %t68 = cmp ne i32 %t67, 17
+    %t69 = convert trunc i32 i64 %t68
+    stack_restore %t4
+    return i32 %t69
+}
+function @back(%n : i32) -> i32 [linkage=c, binding=strong] {
+  slot $n : i32
+  slot $remaining : i32
+  slot $tmpobj__1 : i64
+
+  block ^entry:
+    store typed i32 %n, $n
+    store typed i32 12000, $remaining
+    jump ^goto_1
+
+  block ^goto_1:
+    %t1 = load typed i32 $n
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 1
+    store typed i64 %t3, $tmpobj__1
+    %t4 = stack_save
+    %t5 = stack_alloc %t3
+    %t6 = load typed i32 $remaining
+    %t7 = convert trunc i8 i32 %t6
+    %t8 = load typed i32 $n
+    %t9 = binary sub nowrap i32 %t8, 1
+    %t10 = index inbounds i8 [projection=array_element] %t5, %t9
+    store volatile i8 %t7, %t10
+    %t11 = load typed i32 $remaining
+    %t12 = binary sub nowrap i32 %t11, 1
+    store typed i32 %t12, $remaining
+    branch %t12, ^if_then_2, ^if_else_3
+
+  block ^if_then_2:
+    stack_restore %t4
+    jump ^goto_1
+
+  block ^if_else_3:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t13 = load typed i32 $n
+    %t14 = binary sub nowrap i32 %t13, 1
+    %t15 = index inbounds i8 [projection=array_element] %t5, %t14
+    %t16 = load volatile i8 %t15
+    %t17 = convert sext i32 i8 %t16
+    %t18 = cmp ne i32 %t17, 1
+    %t19 = convert trunc i32 i64 %t18
+    stack_restore %t4
+    return i32 %t19
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = call i32 @exits(2048)
+    branch %t1, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t2 = call i32 @back(2048)
+    %t3 = cmp ne i32 %t2, 0
+    store typed i64 %t3, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t4 = load typed i64 $lor__1
+    %t5 = convert trunc i32 i64 %t4
+    return i32 %t5
+}

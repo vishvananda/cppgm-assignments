@@ -1,0 +1,83 @@
+1 translation units
+start translation unit 1
+translation-unit
+  class-specifier C
+    class-key KW_STRUCT:struct
+    simple-declaration
+      decl-specifier-seq
+        decl-specifier KW_INT:int
+      init-declarator-list
+        init-declarator
+          declarator
+            identifier operator<=>
+            parameter-clause
+              parameter-declaration
+                decl-specifier-seq
+                  decl-specifier KW_CONST:const
+                  decl-specifier TT_IDENTIFIER:C
+                declarator
+                  ptr-operator OP_AMP:&
+            cv-qualifier KW_CONST:const
+  function-definition
+    decl-specifier-seq
+      decl-specifier KW_INT:int
+    declarator
+      identifier f
+      parameter-clause
+        parameter-declaration
+          decl-specifier-seq
+            decl-specifier KW_INT:int
+          declarator
+            identifier a
+        parameter-declaration
+          decl-specifier-seq
+            decl-specifier KW_INT:int
+          declarator
+            identifier b
+        parameter-declaration
+          decl-specifier-seq
+            decl-specifier KW_INT:int
+          declarator
+            identifier c
+    compound-statement
+      return-statement
+        binary-expression OP_EQ:==
+          binary-expression OP_LT:<
+            binary-expression OP_SPACESHIP:<=>
+              binary-expression OP_LSHIFT:<<
+                id-expression a
+                literal 1
+              binary-expression OP_PLUS:+
+                id-expression b
+                id-expression c
+            literal 0
+          keyword-literal KW_TRUE:true
+  function-definition
+    decl-specifier-seq
+      decl-specifier KW_INT:int
+    declarator
+      identifier g
+      parameter-clause
+        parameter-declaration
+          decl-specifier-seq
+            decl-specifier KW_INT:int
+          declarator
+            identifier a
+        parameter-declaration
+          decl-specifier-seq
+            decl-specifier KW_INT:int
+          declarator
+            identifier b
+        parameter-declaration
+          decl-specifier-seq
+            decl-specifier KW_INT:int
+          declarator
+            identifier c
+    compound-statement
+      return-statement
+        binary-expression OP_SPACESHIP:<=>
+          binary-expression OP_SPACESHIP:<=>
+            id-expression a
+            id-expression b
+          id-expression c
+end translation unit

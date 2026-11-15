@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-concept-nonbool-bad.t:1:33: a constraint must have type bool

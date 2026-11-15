@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-concept-bare-name-bad.t:1:46: a concept name requires template arguments

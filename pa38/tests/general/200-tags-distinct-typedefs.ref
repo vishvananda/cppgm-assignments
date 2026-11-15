@@ -1,0 +1,168 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $tag : obj<4x4>
+  slot $alias : obj<4x4>
+  slot $state : i32
+  slot $wide : i64
+  slot $tag_union : obj<4x4>
+  slot $real : f64
+  slot $object : obj<8x8>
+  slot $integer : i32
+  slot $reversed : obj<4x4>
+  slot $scalar : i64
+  slot $node : obj<4x4>
+  slot $device : obj<8x8>
+  slot $recovered : ptr
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = addr $tag
+    %t2 = addr $tag
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    store typed i32 17, %t3
+    %t4 = addr $alias
+    %t5 = addr $alias
+    %t6 = index inbounds i8 [projection=field] %t5, 0
+    store typed i32 23, %t6
+    store typed i32 7, $state
+    store typed i64 3, $wide
+    %t7 = addr $tag_union
+    %t8 = addr $tag_union
+    %t9 = index inbounds i8 [projection=field] %t8, 0
+    store i32 5, %t9
+    store typed f64 1.5, $real
+    %t10 = addr $object
+    %t11 = addr $object
+    %t12 = index inbounds i8 [projection=field] %t11, 0
+    store typed i64 11, %t12
+    store typed i32 13, $integer
+    %t13 = addr $reversed
+    %t14 = addr $reversed
+    %t15 = index inbounds i8 [projection=field] %t14, 0
+    store typed i32 31, %t15
+    store typed i64 37, $scalar
+    %t16 = addr $reversed
+    %t17 = index inbounds i8 [projection=field] %t16, 0
+    %t18 = load typed i32 %t17
+    %t19 = cmp ne i32 %t18, 31
+    %t20 = convert trunc i32 i64 %t19
+    branch %t20, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t21 = load typed i64 $scalar
+    %t22 = cmp ne i64 %t21, 37
+    %t23 = convert trunc i32 i64 %t22
+    branch %t23, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 3
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t24 = addr $node
+    %t25 = addr $node
+    %t26 = index inbounds i8 [projection=field] %t25, 0
+    store typed i32 19, %t26
+    %t27 = addr $device
+    %t28 = addr $node
+    %t29 = addr $device
+    %t30 = index inbounds i8 [projection=field] %t29, 0
+    store typed ptr %t28, %t30
+    %t31 = addr $device
+    %t32 = index inbounds i8 [projection=field] %t31, 0
+    %t33 = load typed ptr %t32
+    store typed ptr %t33, $recovered
+    %t34 = addr $tag
+    %t35 = index inbounds i8 [projection=field] %t34, 0
+    %t36 = load typed i32 %t35
+    %t37 = cmp ne i32 %t36, 17
+    %t38 = convert trunc i32 i64 %t37
+    branch %t38, ^if_then_5, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t39 = addr $alias
+    %t40 = index inbounds i8 [projection=field] %t39, 0
+    %t41 = load typed i32 %t40
+    %t42 = cmp ne i32 %t41, 23
+    %t43 = convert trunc i32 i64 %t42
+    branch %t43, ^if_then_5, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t44 = load typed i32 $state
+    %t45 = cmp ne i32 %t44, 7
+    %t46 = convert trunc i32 i64 %t45
+    branch %t46, ^if_then_5, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t47 = load typed i64 $wide
+    %t48 = cmp ne i64 %t47, 3
+    %t49 = convert trunc i32 i64 %t48
+    branch %t49, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 1
+
+  block ^if_else_6:
+    jump ^if_end_10
+
+  block ^if_end_10:
+    %t50 = addr $tag_union
+    %t51 = index inbounds i8 [projection=field] %t50, 0
+    %t52 = load i32 %t51
+    %t53 = cmp ne i32 %t52, 5
+    %t54 = convert trunc i32 i64 %t53
+    branch %t54, ^if_then_11, ^lor_rhs_15
+
+  block ^lor_rhs_15:
+    %t55 = load typed f64 $real
+    %t56 = cmp ne f64 %t55, 1.5
+    %t57 = convert trunc i32 i64 %t56
+    branch %t57, ^if_then_11, ^lor_rhs_14
+
+  block ^lor_rhs_14:
+    %t58 = addr $object
+    %t59 = index inbounds i8 [projection=field] %t58, 0
+    %t60 = load typed i64 %t59
+    %t61 = cmp ne i64 %t60, 11
+    %t62 = convert trunc i32 i64 %t61
+    branch %t62, ^if_then_11, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t63 = load typed i32 $integer
+    %t64 = cmp ne i32 %t63, 13
+    %t65 = convert trunc i32 i64 %t64
+    branch %t65, ^if_then_11, ^if_else_12
+
+  block ^if_then_11:
+    return i32 2
+
+  block ^if_else_12:
+    jump ^if_end_16
+
+  block ^if_end_16:
+    %t66 = load typed ptr $recovered
+    %t67 = index inbounds i8 [projection=field] %t66, 0
+    %t68 = load typed i32 %t67
+    %t69 = cmp ne i32 %t68, 19
+    %t70 = convert trunc i32 i64 %t69
+    branch %t70, ^lor_short_18, ^lor_rhs_17
+
+  block ^lor_rhs_17:
+    %t71 = const i64 8
+    %t72 = const i64 8
+    %t73 = cmp ne i64 %t71, %t72
+    %t74 = convert trunc i32 i64 %t73
+    %t75 = cmp ne i32 %t74, 0
+    store typed i64 %t75, $lor__1
+    jump ^lor_end_19
+
+  block ^lor_short_18:
+    store typed i64 1, $lor__1
+    jump ^lor_end_19
+
+  block ^lor_end_19:
+    %t76 = load typed i64 $lor__1
+    %t77 = convert trunc i32 i64 %t76
+    return i32 %t77
+}

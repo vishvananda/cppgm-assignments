@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-alias-reject-missing.t:1:44: an alias target is not defined in this translation unit

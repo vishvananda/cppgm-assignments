@@ -1,0 +1,60 @@
+1 translation units
+start translation unit 1
+translation-unit
+  template-declaration
+    template-parameter-clause
+      template-parameter-list
+        type-parameter
+          parameter-key KW_CLASS:class
+          identifier T
+    concept-definition C
+      binary-expression OP_GT:>
+        sizeof-expression
+          type-id
+            type-specifier-seq
+              type-name T
+        literal 1
+  template-declaration
+    template-parameter-clause
+      template-parameter-list
+        type-parameter
+          type-constraint
+            name C
+          identifier T
+    requires-clause
+      id-expression C<T>
+    class-specifier Box
+      class-key KW_STRUCT:struct
+  template-declaration
+    template-parameter-clause
+      template-parameter-list
+        type-parameter
+          type-constraint
+            name C
+          parameter-pack ...
+          identifier T
+    class-specifier Pack
+      class-key KW_STRUCT:struct
+  template-declaration
+    template-parameter-clause
+      template-parameter-list
+        type-parameter
+          parameter-key KW_CLASS:class
+          identifier U
+    requires-clause
+      parenthesized-expression
+        binary-expression OP_LAND:&&
+          id-expression C<U>
+          keyword-literal KW_TRUE:true
+    simple-declaration
+      decl-specifier-seq
+        decl-specifier KW_INT:int
+      init-declarator-list
+        init-declarator
+          declarator
+            identifier take
+            parameter-clause
+              parameter-declaration
+                decl-specifier-seq
+                  decl-specifier TT_IDENTIFIER:U
+end translation unit

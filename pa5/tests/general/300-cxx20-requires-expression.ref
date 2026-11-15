@@ -1,0 +1,48 @@
+1 translation units
+start translation unit 1
+translation-unit
+  template-declaration
+    template-parameter-clause
+      template-parameter-list
+        type-parameter
+          parameter-key KW_CLASS:class
+          identifier T
+    function-definition
+      decl-specifier-seq
+        decl-specifier KW_BOOL:bool
+      declarator
+        identifier check
+        parameter-clause
+      compound-statement
+        return-statement
+          requires-expression
+            parameter-clause
+              parameter-declaration
+                decl-specifier-seq
+                  decl-specifier TT_IDENTIFIER:T
+                declarator
+                  identifier value
+            simple-requirement
+              binary-expression OP_PLUS:+
+                id-expression value
+                id-expression value
+            type-requirement
+              type-id
+                type-specifier-seq
+                  type-name T::type
+            compound-requirement
+              call-expression
+                member-expression OP_DOT:.
+                  id-expression value
+                  identifier run
+                argument-list
+              noexcept
+            nested-requirement
+              parenthesized-expression
+                binary-expression OP_GT:>
+                  sizeof-expression
+                    type-id
+                      type-specifier-seq
+                        type-name T
+                  literal 1
+end translation unit

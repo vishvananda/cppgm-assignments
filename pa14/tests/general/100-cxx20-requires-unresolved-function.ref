@@ -1,0 +1,30 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = call u8 @valid()
+    branch %t1, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t2 = call u8 @valid__2()
+    %t3 = cmp ne u8 %t2, 0
+    store typed i64 %t3, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t4 = load typed i64 $lor__1
+    %t5 = convert trunc i32 i64 %t4
+    return i32 %t5
+}
+function @valid() -> u8 [binding=weak, object=_Z5validI10OverloadedEbv] {
+  block ^entry:
+    return u8 0
+}
+function @valid__2() -> u8 [binding=weak, object=_Z5validI6MemberEbv] {
+  block ^entry:
+    return u8 0
+}

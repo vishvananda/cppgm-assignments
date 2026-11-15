@@ -1,0 +1,1 @@
+ERROR: tests/general/500-identifier-list-duplicate-name-bad.t:1:13: duplicate parameter name

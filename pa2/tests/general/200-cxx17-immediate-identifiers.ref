@@ -1,0 +1,5 @@
+identifier consteval
+identifier constinit
+identifier consteval_name
+identifier constinit_name
+eof

@@ -41,6 +41,15 @@ hosted headers depend on:
 - GNU anonymous structs expose their fields as members of the enclosing class;
   these field names remain values when distinguishing casts from calls
 
+- hosted GNU source may define, expand, paste and undefine `new` and `delete`
+  macros. Alternative operator names such as `and` remain operators, and PA1
+  retains its original preprocessing-token categories
+- GNU `constructor` and `constructor(priority)` attributes retain a
+  namespace-scope `void()` function and run it once before program entry.
+  Priorities range from 0 through 65535, with smaller values running first;
+  the omitted priority is 65535. Preserve the priority through ordinary LowIR
+  function-address tables and object startup records. Reject conflicting
+  priorities and unsupported function signatures
 - hosted source-file comments may contain opaque legacy 8-bit bytes; line
   splicing, trigraphs and comment delimiters retain their usual behavior.
   This does not relax UTF-8 diagnostics for tokens or literals, or the strict
@@ -383,12 +392,20 @@ To complete PA30, implement hosted compatibility for:
   `__no_unique_address__`, and `0` for any other name, scoped ones included;
   `__has_attribute` likewise answers nonzero for the GNU and Clang
   attributes the compiler implements (`always_inline`, `noinline`,
-  `noreturn`, `deprecated`, `pure`, `const`, `used`, `weak`, `packed`, `aligned`,
+  `noreturn`, `deprecated`, `pure`, `const`, `used`, `weak`, `alias`, `packed`, `aligned`,
   `section`, `vector_size`, `mode`, `gnu_inline`, `abi_tag`, `may_alias`, `using_if_exists` and
   `exclude_from_explicit_instantiation`, each also spelled `__name__`) and
   `0` for any other.
   PA37 adds the Wasm-specific import/export binding attributes and probes;
   native profiles continue to report no support for those target attributes.
+  GNU `alias("object-name")` declares another name for a function or global
+  defined in the same translation unit. Preserve its address and independent
+  strong or weak binding. Resolve the literal as an ABI object name, including
+  mangled C++ names and asm labels; reject cycles, undefined targets and
+  separate definitions of the alias. A function alias uses its target's actual
+  calling ABI even when its declaration has another prototype; calling through
+  it requires a compatible function pointer type. This hosted extension is
+  supported for ELF and PA37's Wasm objects; Mach-O rejects it.
   GNU `deprecated` / `__deprecated__` is recognized with no argument, an
   empty argument list, or one string-literal message (also as a `gnu::`
   attribute). It does not change program behavior, type, or ABI. Deprecation

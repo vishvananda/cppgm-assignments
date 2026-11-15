@@ -1,0 +1,1 @@
+ERROR: tests/general/200-typedef-redeclaration-distinct-bad.t:3:14: typedef redefinition with a different type

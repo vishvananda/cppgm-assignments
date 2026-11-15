@@ -1,0 +1,5 @@
+simple consteval KW_CONSTEVAL
+simple constinit KW_CONSTINIT
+identifier consteval_name
+identifier constinit_name
+eof

@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-alias-reject-cycle.t:1:42: cyclic GNU object aliases

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-tag-struct-union-conflict-bad.t:2:7: class redefinition

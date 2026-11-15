@@ -1,0 +1,1 @@
+ERROR: tests/general/200-tag-struct-enum-conflict-bad.t:2:1: enumeration name redeclared as a different kind of type

@@ -419,3 +419,38 @@ Keep declaration, layout and body demands separate: requiring a type must not
 instantiate unrelated bodies. Where body copies are needed, share immutable
 structure when useful and keep instance facts directly accessible. Check both
 growth and reuse; proportional work can still repeat avoidable analysis.
+
+### C++20 requires-expressions
+
+In C++20 mode, retain requires-expressions as parsed requirements. Simple
+requirements check an unevaluated expression, type requirements name a type
+without demanding its definition, compound requirements can require `noexcept`,
+and nested requirements check boolean constant constraints. Local parameters
+use function-parameter adjustment, with no default arguments or terminal
+varargs ellipsis. Invalid immediate substitution makes a template requirement
+false; an invalid requirement outside a templated declaration is an error.
+Check in source order and stop once satisfaction is known. Constraint `&&` and
+`||` short-circuit substitution as well as evaluation. Later template and
+constant-evaluation assignments apply these rules to their added source forms.
+
+### C++20 named concepts
+
+A concept is a namespace-scope template definition with a boolean constraint;
+it is not a variable or an emitted specialization. A concept-id is a bool
+prvalue. Reuse template argument matching, defaults, parameter packs and the
+constant-evaluation layer introduced by this assignment and its prerequisites.
+Cache satisfaction by concept identity and canonical arguments, detect recursive
+satisfaction and preserve substitution short-circuiting. A compound requirement
+`{ expression } noexcept -> Concept<Args...>;` checks the expression, then its
+non-throwing property, then the concept with `decltype((expression))` prepended
+to its explicit arguments. Its value category and cv-qualifiers are preserved.
+
+### C++20 implied `typename`
+
+In C++20 mode, a qualified name whose nested-name-specifier depends on a
+template parameter names a type without `typename` where only a type can
+appear: the decl-specifier-seq of a declaration at namespace or class scope,
+the parameters of a member function and of a function declared with a
+qualified name, the target of an alias-declaration, a trailing return type, a
+`new` type and the target type of a named cast. A block-scope declaration
+still needs `typename`, and so does every such name in an earlier mode.

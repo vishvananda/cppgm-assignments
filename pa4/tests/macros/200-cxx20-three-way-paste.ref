@@ -1,0 +1,6 @@
+preproc 1
+sof tests/macros/200-cxx20-three-way-paste.t
+simple <=> OP_SPACESHIP
+simple <=> OP_SPACESHIP
+simple <=> OP_SPACESHIP
+eof

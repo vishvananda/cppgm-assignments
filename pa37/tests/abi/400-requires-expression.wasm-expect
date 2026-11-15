@@ -1,0 +1,1 @@
+{"source":true,"flags":["-std=c++20"],"reference_flags":["-std=c++20"],"calls":[{"export":"requirements","args":["1"],"result":"42"}]}

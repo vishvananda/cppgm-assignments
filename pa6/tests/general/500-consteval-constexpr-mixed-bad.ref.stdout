@@ -1,0 +1,1 @@
+ERROR: tests/general/500-consteval-constexpr-mixed-bad.t:1:11: constexpr and consteval in one declaration

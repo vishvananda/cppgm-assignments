@@ -1,0 +1,43 @@
+{
+  "source": true,
+  "units": [
+    "400-named-data-sections.t.1"
+  ],
+  "llvm_link": true,
+  "llvm_interop": true,
+  "exports": [
+    "first_entry",
+    "__start_entries",
+    "__stop_entries",
+    "second_entry",
+    "other_entry"
+  ],
+  "calls": [
+    {
+      "export": "observe",
+      "result": "1"
+    }
+  ],
+  "global_abi": {
+    "first_entry": {
+      "type": "i32",
+      "mutable": false
+    },
+    "__start_entries": {
+      "type": "i32",
+      "mutable": false
+    },
+    "__stop_entries": {
+      "type": "i32",
+      "mutable": false
+    },
+    "second_entry": {
+      "type": "i32",
+      "mutable": false
+    },
+    "other_entry": {
+      "type": "i32",
+      "mutable": false
+    }
+  }
+}

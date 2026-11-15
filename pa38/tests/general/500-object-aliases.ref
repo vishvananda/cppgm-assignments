@@ -1,0 +1,91 @@
+declare global @shared : i32 [linkage=c, binding=strong]
+
+declare function @public_alias(%arg0 : i32) -> i32 [linkage=c, binding=strong]
+declare function @weak_alias(%arg0 : i32) -> i32 [linkage=c, binding=weak, replaceable=yes]
+declare function @chain(%arg0 : i32) -> i32 [linkage=c, binding=strong]
+
+global @storage : i32 [linkage=c, binding=internal] = 5
+
+function @implementation(%value : i32) -> i32 [linkage=c, binding=internal] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = binary add nowrap i32 %t1, 1
+    return i32 %t2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $pointer : ptr
+  slot $address : ptr
+
+  block ^entry:
+    %t1 = addr @public_alias
+    store volatile ptr %t1, $pointer
+    %t2 = load volatile ptr $pointer
+    %t3 = addr @implementation
+    %t4 = cmp ne ptr %t2, %t3
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t6 = load volatile ptr $pointer
+    %t7 = addr @weak_alias
+    %t8 = cmp ne ptr %t6, %t7
+    %t9 = convert trunc i32 i64 %t8
+    branch %t9, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t10 = load volatile ptr $pointer
+    %t11 = addr @chain
+    %t12 = cmp ne ptr %t10, %t11
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t14 = addr @shared
+    store volatile ptr %t14, $address
+    %t15 = load volatile ptr $address
+    %t16 = addr @storage
+    %t17 = cmp ne ptr %t15, %t16
+    %t18 = convert trunc i32 i64 %t17
+    branch %t18, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    store typed i32 9, @shared
+    %t19 = load typed i32 @storage
+    %t20 = cmp ne i32 %t19, 9
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_9, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t22 = call i32 @public_alias(41)
+    %t23 = cmp ne i32 %t22, 42
+    %t24 = convert trunc i32 i64 %t23
+    branch %t24, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 3
+
+  block ^if_else_10:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    return i32 0
+}
+alias object public_alias = @implementation
+alias object weak_alias = @implementation
+alias object chain = @implementation
+alias object shared = @storage

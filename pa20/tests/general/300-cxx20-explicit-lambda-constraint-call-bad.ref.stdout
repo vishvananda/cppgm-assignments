@@ -1,0 +1,1 @@
+ERROR: tests/general/300-cxx20-explicit-lambda-constraint-call-bad.t:3:10: no viable function for the call

@@ -222,6 +222,8 @@ during parsing rather than being preserved as opaque placeholder nodes.
 The source driver accepts `-std=c++11`, `-std=c++14` and `-std=c++17`;
 the default stays C++11. Parse the forms in the
 [required language profile](../LANGUAGE_PROFILE.md) into structured nodes.
+The C++20 mode recognizes `char8_t` as a simple-type-specifier; its type
+identity and conversions are taught in PA6 and PA7.
 These include nested namespace definitions and attribute using-prefixes,
 placeholder declarations, folds, deduction guides, initializer statements,
 `if constexpr`, structured bindings, generic/initialized lambda captures and
@@ -403,6 +405,8 @@ type-name <name>                   a name the parser knows as a type
 identifier <name>                  any other name
 cv-qualifier <token>
 decltype-specifier <text>
+constrained-placeholder-type <name> auto
+constrained-placeholder-type <name> decltype(auto)
 global-scope
 type-id
 declarator
@@ -489,3 +493,66 @@ The mode-tagged [modern syntax example](tests/spec/100-required-modern-syntax.t)
 and its [AST reference](tests/spec/100-required-modern-syntax.ref) show the
 required later forms together. The dump preserves their syntax before the
 owning semantic lessons perform deduction, capture analysis or instantiation.
+
+### C++20 requires-expressions
+
+In C++20 mode, retain requires-expressions as parsed requirements. Simple
+requirements check an unevaluated expression, type requirements name a type
+without demanding its definition, compound requirements can require `noexcept`,
+and nested requirements check boolean constant constraints. Local parameters
+use function-parameter adjustment, with no default arguments or terminal
+varargs ellipsis. Invalid immediate substitution makes a template requirement
+false; an invalid requirement outside a templated declaration is an error.
+Check in source order and stop once satisfaction is known. Constraint `&&` and
+`||` short-circuit substitution as well as evaluation. Later template and
+constant-evaluation assignments apply these rules to their added source forms.
+
+### C++20 named concepts
+
+A concept is a namespace-scope template definition with a boolean constraint;
+it is not a variable or an emitted specialization. A concept-id is a bool
+prvalue. Reuse template argument matching, defaults, parameter packs and the
+constant-evaluation layer introduced by this assignment and its prerequisites.
+Cache satisfaction by concept identity and canonical arguments, detect recursive
+satisfaction and preserve substitution short-circuiting. A compound requirement
+`{ expression } noexcept -> Concept<Args...>;` checks the expression, then its
+non-throwing property, then the concept with `decltype((expression))` prepended
+to its explicit arguments. Its value category and cv-qualifiers are preserved.
+
+### C++20 associated constraints
+
+Retain a template-head's optional `requires` clause. Its grammar accepts
+primary expressions joined by `&&` and `||`; calls and comparisons need
+parentheses. A type template parameter may use a named concept in place of
+`class` or `typename`, optionally followed by an ellipsis and a parameter name.
+Retain the concept name and its explicit arguments for later semantic analysis.
+Keep this uncommon syntax separate so ordinary template declarations and
+parameters stay compact on both native and wasm32 targets.
+### C++20 comparison syntax
+
+Retain `<=>` as a binary operator and in operator-function names. It
+associates to the left, between shift and relational precedence. Keep
+its source operands for semantic analysis, including defaulted declarations.
+### C++20 immediate declarations
+
+In C++20 mode, parse `consteval` among function and constructor specifiers,
+`constinit` among declaration specifiers, and `consteval` as an alternative
+to `constexpr` in a lambda declarator. Retain these specifiers in the AST.
+PA6 checks declaration validity, PA16 checks immediate invocations and
+constant initialization, and PA20 supplies immediate lambda semantics.
+
+Retain a type-constraint before `auto` or `decltype(auto)` as one placeholder
+specifier, the `constrained-placeholder-type` node. Its payload is the
+type-constraint as a `<name>`, one space, then `auto` or `decltype(auto)`.
+Keep its concept name and explicit arguments, and distinguish the
+two deduction rules. Generic and abbreviated parameters later use these parsed
+facts to introduce constrained template parameters without parsing them again.
+
+### C++20 explicit lambda template heads
+
+Retain the lambda's explicit template parameter list and its head and trailing
+requires-clauses separately. A generic lambda's written `auto` parameters
+remain source syntax; append their invented template parameters after the
+explicit list for semantic analysis. AST dumps show the explicit source head.
+An explicit head has at least one template parameter: `[]<>() {}` is a
+syntax error.

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-startup-later-prototype-bad.t:2:1: a constructor function cannot acquire parameters in a later declaration

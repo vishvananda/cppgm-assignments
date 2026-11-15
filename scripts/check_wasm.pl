@@ -10,7 +10,7 @@ use FindBin;
 use JSON::PP qw(decode_json);
 use lib $FindBin::Bin;
 use CppgmBatchWorker qw(collect_tests run_command_capture);
-use CppgmWasmModule qw(export_signatures export_tag_signatures sequence_module redirect_wasi_exit);
+use CppgmWasmModule qw(export_signatures export_tag_signatures export_global_types sequence_module redirect_wasi_exit);
 use CppgmWasmFixture qw(mutate_object);
 use CppgmWasmQuality qw(check_quality);
 use CppgmWasmGlobals qw(initialize_globals metadata_first group_object);
@@ -258,7 +258,7 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
     my $tool = $expect->{source} ? $source_compiler : $compiler;
     ($status, $stdout, $stderr) = command("compile-$level", $tool, "-O$level",
         '--target', ($expect->{target} // 'wasm32-unknown-unknown'),
-        @target_flags, @{$expect->{flags} // []}, @{$expect->{link_flags} // []}, @exports, '-o', $module, $test, @units, @supplied_inputs);
+        @target_flags, ($expect->{assembly} ? ('-x', 'assembler-with-cpp') : ()), @{$expect->{flags} // []}, @{$expect->{link_flags} // []}, @exports, '-o', $module, $test, @units, @supplied_inputs);
     if ($expect->{reject} || $expect->{reject_link}) {
         die "$test: invalid input accepted at O$level\n" if $status == 0;
         die "$test: rejection was not a compiler diagnostic: $stdout$stderr\n"
@@ -270,12 +270,12 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
     ($status, $stdout, $stderr) = command("validate-$level", $validator, 'validate', $module);
     die "$test: invalid module at O$level: $stdout$stderr\n" if $status;
     push @modules, $module;
-    if ($expect->{source} && !@units) {
+    if ($expect->{source} && !$expect->{assembly} && !@units) {
         my $lowir = $lowered_source{$test} // "$directory/source.lowir";
         if (!$lowered_source{$test}) {
             ($status, $stdout, $stderr) = command("lowir-$level", $source_compiler,
                 '--target', ($expect->{target} // 'wasm32-unknown-unknown'),
-                @target_flags, @{$expect->{flags} // []}, '--emit-lowir', '-O0', '-o', $lowir, $test, @units);
+                @target_flags, ($expect->{assembly} ? ('-x', 'assembler-with-cpp') : ()), @{$expect->{flags} // []}, '--emit-lowir', '-O0', '-o', $lowir, $test, @units);
             die "$test: LowIR lowering failed: $stdout$stderr\n" if $status;
             $lowered_source{$test} = $lowir;
         }
@@ -311,17 +311,17 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
         my $object = "$directory/input-$index-$level.o";
         ($status, $stdout, $stderr) = command("object-$index-$level", $source_compiler,
             '--target', ($expect->{target} // 'wasm32-unknown-unknown'),
-            @target_flags, @{$expect->{flags} // []}, "-O$level", '-c', $inputs[$index], '-o', $object);
+            @target_flags, ($expect->{assembly} ? ('-x', 'assembler-with-cpp') : ()), @{$expect->{flags} // []}, "-O$level", '-c', $inputs[$index], '-o', $object);
         die "$test: object compile failed: $stdout$stderr\n" if $status;
         ($status, $stdout, $stderr) = command("object-validate-$index-$level", $validator, 'validate', $object);
         die "$test: invalid relocatable object: $stdout$stderr\n" if $status;
         push @objects, $object;
-        if ($expect->{source} && @units) {
+        if ($expect->{source} && !$expect->{assembly} && @units) {
             my $lowir = $lowered_source{$inputs[$index]} // "$directory/unit-$index.lowir";
             if (!$lowered_source{$inputs[$index]}) {
                 ($status, $stdout, $stderr) = command("unit-lowir-$index-$level", $source_compiler,
                     '--target', ($expect->{target} // 'wasm32-unknown-unknown'),
-                    @target_flags, @{$expect->{flags} // []}, '--emit-lowir', '-O0', $inputs[$index], '-o', $lowir);
+                    @target_flags, ($expect->{assembly} ? ('-x', 'assembler-with-cpp') : ()), @{$expect->{flags} // []}, '--emit-lowir', '-O0', $inputs[$index], '-o', $lowir);
                 die "$test: unit LowIR lowering failed: $stdout$stderr\n" if $status;
                 $lowered_source{$inputs[$index]} = $lowir;
             }
@@ -426,8 +426,8 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
         for my $index (0 .. $#inputs) {
             my $object = "$directory/llvm-$index-$level.o";
             ($status, $stdout, $stderr) = command("llvm-object-$index-$level", $clang,
-                '--target=' . ($expect->{target} // 'wasm32-unknown-unknown'), '-std=c++11', '-fno-exceptions',
-                @{$expect->{reference_flags} // []}, "-O$level", '-x', 'c++', '-c', $inputs[$index], '-o', $object);
+                '--target=' . ($expect->{target} // 'wasm32-unknown-unknown'), ($expect->{assembly} ? () : ('-std=c++11', '-fno-exceptions')),
+                @{$expect->{reference_flags} // []}, "-O$level", '-x', ($expect->{assembly} ? 'assembler-with-cpp' : 'c++'), '-c', $inputs[$index], '-o', $object);
             die "$test: pinned LLVM compile failed: $stdout$stderr\n" if $status;
             push @reference_objects, $object;
         }
@@ -468,6 +468,16 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
                    join("\0", sort keys %$actual) ne join("\0", sort @{$expect->{export_names}});
         }
         check_quality($run_module, $expect->{quality}, $level) if $expect->{quality};
+        if ($expect->{global_abi}) {
+            my $actual = export_global_types($run_module);
+            for my $name (sort keys %{$expect->{global_abi}}) {
+                die "$test: missing exported global $name\n" unless $actual->{$name};
+                for my $part ('type', 'mutable') {
+                    die "$test: global $name ABI $part differs\n"
+                        if "$actual->{$name}{$part}" ne "$expect->{global_abi}{$name}{$part}";
+                }
+            }
+        }
         if ($expect->{tag_abi}) {
             my $actual = export_tag_signatures($run_module);
             for my $name (sort keys %{$expect->{tag_abi}}) {

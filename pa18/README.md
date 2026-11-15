@@ -288,3 +288,13 @@ Useful intermediate representations include:
   error
 - deferred instantiation records for dependent calls and bodies that must not be
   forced before their template arguments are known
+
+### C++20 function template signatures
+
+The return type and the template-head are part of a function template's
+signature. Two function templates with equal parameter types and different
+return types are different templates, and overload resolution or SFINAE
+selects between them. A class template may redeclare itself as a friend
+inside its own definition. That template-head is one template level deeper,
+so compare its constraints with the first declaration's by parameter position,
+not by depth.

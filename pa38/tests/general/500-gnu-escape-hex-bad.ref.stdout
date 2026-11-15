@@ -1,0 +1,1 @@
+ERROR: tests/general/500-gnu-escape-hex-bad.t:1:21: hex escape has no digits

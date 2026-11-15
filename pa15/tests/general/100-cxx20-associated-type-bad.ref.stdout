@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-associated-type-bad.t:1:28: a constraint must have type bool

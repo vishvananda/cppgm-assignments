@@ -31,6 +31,12 @@ procedural, non-template, non-class-aware subset. Class-aware calls,
 constructors, user-defined conversions, overloaded operators, and template
 functions are assigned later.
 
+In C++20 mode, a UTF-8 character literal has type `char8_t` and promotes to
+`int`. UTF-8 string literals are lvalue arrays of `const char8_t`, including
+their terminating zero. Ordinary overload and pointer-conversion rules use
+the distinct element type: a UTF-8 string does not convert to `const char*`
+or `const unsigned char*`.
+
 ### Starter Kit
 
 The PA7 starter kit contains:
@@ -404,3 +410,16 @@ source files in the same invocation, in lexical order. They remain separate
 translation units; the harness counts the group once. Headers and other
 support files stay with
 the owning case and are not concatenated into one source file.
+
+### C++20 requires-expressions
+
+In C++20 mode, retain requires-expressions as parsed requirements. Simple
+requirements check an unevaluated expression, type requirements name a type
+without demanding its definition, compound requirements can require `noexcept`,
+and nested requirements check boolean constant constraints. Local parameters
+use function-parameter adjustment, with no default arguments or terminal
+varargs ellipsis. Invalid immediate substitution makes a template requirement
+false; an invalid requirement outside a templated declaration is an error.
+Check in source order and stop once satisfaction is known. Constraint `&&` and
+`||` short-circuit substitution as well as evaluation. Later template and
+constant-evaluation assignments apply these rules to their added source forms.

@@ -1,0 +1,25 @@
+{
+  "source": true,
+  "llvm_link": true,
+  "llvm_interop": true,
+  "exports": [
+    "data_value",
+    "alias_value"
+  ],
+  "calls": [
+    {
+      "export": "observe",
+      "result": "1"
+    }
+  ],
+  "global_abi": {
+    "data_value": {
+      "type": "i32",
+      "mutable": false
+    },
+    "alias_value": {
+      "type": "i32",
+      "mutable": false
+    }
+  }
+}

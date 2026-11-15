@@ -521,6 +521,32 @@ The core contract can use minimal declarations of `std::align_val_t` and the
 allocation functions; PA33 adds the real host `<new>` integration.
 See N4659 `[basic.align]`, `[expr.new]`, `[expr.delete]` and `[dcl.fct.spec]`.
 
+### C++20 comparisons
+
+Resolve user-defined `<=>` and rewritten comparison candidates using the
+ordinary conversion rankings. Prefer a non-rewritten candidate on a tie,
+then a non-reversed one. Rewritten equality requires an operator returning
+`bool`. Retain operand evaluation, conversions and temporary destruction.
+
+Built-in three-way comparisons return the actual declared standard
+comparison category and its static constants. Integer, enumeration and
+object-pointer comparisons yield `std::strong_ordering`; floating-point
+comparisons yield `std::partial_ordering`, including unordered results.
+Apply the arithmetic, narrowing and pointer restrictions of C++20.
+
+Defaulted comparisons compare base and member subobjects in declaration
+order, expanding arrays in index order. Generate counted loops for arrays.
+Infer defaulted `<=>`'s category, declare its matching equality when
+required, and use the specified equality/less fallback for an explicit
+standard category. Invalid subobject comparisons, reference and variant
+members delete the applicable defaulted comparison. Secondary defaulted
+comparisons require a usable rewritten comparison. These functions
+have ordinary analyzed bodies shared by native and Wasm lowering.
+
+The comparison categories are class values passed and returned by value, and
+rewritten candidates can use conversion functions, so these tests are in
+cluster 400.
+
 ### Out Of Scope
 
 The following are explicitly out of scope for PA12:

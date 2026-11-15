@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-float-bad.t:1:42: a C array bound must have integer type

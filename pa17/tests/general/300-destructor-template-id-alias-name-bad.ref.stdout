@@ -1,0 +1,1 @@
+ERROR: tests/general/300-destructor-template-id-alias-name-bad.t:1:76: destructor name does not match its class

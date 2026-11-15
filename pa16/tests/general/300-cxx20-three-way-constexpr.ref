@@ -1,0 +1,238 @@
+global @std__strong_ordering__less [storage=readonly, binding=weak, object=_ZNSt15strong_ordering4lessE] = {
+  i32 71
+  i8 -1
+  zero 3
+}
+global @std__strong_ordering__equal [storage=readonly, binding=weak, object=_ZNSt15strong_ordering5equalE] = {
+  i32 71
+  i8 0
+  zero 3
+}
+global @std__strong_ordering__greater [storage=readonly, binding=weak, object=_ZNSt15strong_ordering7greaterE] = {
+  i32 71
+  i8 1
+  zero 3
+}
+global @std__partial_ordering__less [storage=readonly, binding=weak, object=_ZNSt16partial_ordering4lessE] = {
+  i8 -1
+}
+global @std__partial_ordering__equivalent [storage=readonly, binding=weak, object=_ZNSt16partial_ordering10equivalentE] = {
+  i8 0
+}
+global @std__partial_ordering__greater [storage=readonly, binding=weak, object=_ZNSt16partial_ordering7greaterE] = {
+  i8 1
+}
+global @std__partial_ordering__unordered [storage=readonly, binding=weak, object=_ZNSt16partial_ordering9unorderedE] = {
+  i8 -127
+}
+global @null : ptr [storage=readonly, binding=internal, object=_ZL4null] = 0
+global @calls : i32 [binding=strong] = zero
+
+function @next() -> i32 [binding=strong, object=_Z4nextv] {
+  block ^entry:
+    %t1 = load typed i32 @calls
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, @calls
+    return i32 %t2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $x : obj<8x4>
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $argobj__4 : obj<8x4>
+  slot $argobj__5 : obj<4x4>
+  slot $argobj__6 : obj<4x4>
+
+  block ^entry:
+    %t1 = addr $x
+    %t2 = call i32 @next()
+    %t3 = call i32 @next()
+    %t4 = cmp eq i32 %t2, %t3
+    branch %t4, ^cond_then_2, ^cond_else_3
+
+  block ^cond_then_2:
+    %t5 = addr @std__strong_ordering__equal
+    copyobj 5x4 %t5, %t1
+    jump ^cond_end_1
+
+  block ^cond_else_3:
+    %t6 = cmp lt i32 %t2, %t3
+    branch %t6, ^cond_then_4, ^cond_else_5
+
+  block ^cond_then_4:
+    %t7 = addr @std__strong_ordering__less
+    copyobj 5x4 %t7, %t1
+    jump ^cond_end_1
+
+  block ^cond_else_5:
+    %t8 = addr @std__strong_ordering__greater
+    copyobj 5x4 %t8, %t1
+    jump ^cond_end_1
+
+  block ^cond_end_1:
+    %t9 = load typed i32 @calls
+    %t10 = cmp ne i32 %t9, 2
+    branch %t10, ^lor_short_7, ^lor_rhs_6
+
+  block ^lor_rhs_6:
+    %t11 = addr $x
+    %t12 = index inbounds i8 [projection=field] %t11, 4
+    %t13 = load i8 %t12
+    %t14 = unary neg i32 1
+    %t15 = convert sext i32 i8 %t13
+    %t16 = cmp ne i32 %t15, %t14
+    store typed i64 %t16, $lor__1
+    jump ^lor_end_8
+
+  block ^lor_short_7:
+    store typed i64 1, $lor__1
+    jump ^lor_end_8
+
+  block ^lor_end_8:
+    %t17 = load typed i64 $lor__1
+    branch %t17, ^lor_short_10, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t18 = addr $x
+    %t19 = index inbounds i8 [projection=field] %t18, 0
+    %t20 = load typed i32 %t19
+    %t21 = cmp ne i32 %t20, 71
+    store typed i64 %t21, $lor__2
+    jump ^lor_end_11
+
+  block ^lor_short_10:
+    store typed i64 1, $lor__2
+    jump ^lor_end_11
+
+  block ^lor_end_11:
+    %t22 = load typed i64 $lor__2
+    branch %t22, ^lor_short_13, ^lor_rhs_12
+
+  block ^lor_rhs_12:
+    %t23 = addr $argobj__4
+    %t24 = addr $argobj__5
+    call void @Box__Box__aggregate(%t24, 2)
+    %t25 = addr $argobj__6
+    call void @Box__Box__aggregate(%t25, 1)
+    %t26 = call obj<8x4> @operator___($argobj__5, $argobj__6)
+    copyobj 8x4 %t26, %t23
+    %t27 = call u8 @std__operator_($argobj__4, 0)
+    %t28 = cmp eq u8 %t27, 0
+    %t29 = cmp ne i64 %t28, 0
+    store typed i64 %t29, $lor__3
+    jump ^lor_end_14
+
+  block ^lor_short_13:
+    store typed i64 1, $lor__3
+    jump ^lor_end_14
+
+  block ^lor_end_14:
+    %t30 = load typed i64 $lor__3
+    %t31 = convert trunc i32 i64 %t30
+    return i32 %t31
+}
+function @Box__Box__aggregate(%this : ptr [object_bytes=4], %value : i32) -> void [unwind=no, binding=internal] {
+  slot $this : ptr
+  slot $value : i32
+
+  block ^entry:
+    store typed ptr %this, $this
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = load typed ptr $this
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    store typed i32 %t1, %t3
+    return void
+}
+function @std__strong_ordering__strong_ordering(%this : ptr [object_bytes=8], %v : i32) -> void [binding=weak, object=_ZNSt15strong_orderingC1Ei, inline_hint=yes] {
+  slot $this : ptr
+  slot $v : i32
+
+  block ^entry:
+    store typed ptr %this, $this
+    store typed i32 %v, $v
+    %t1 = load typed ptr $this
+    %t2 = index inbounds i8 [projection=field] %t1, 0
+    store typed i32 71, %t2
+    %t3 = load typed i32 $v
+    %t4 = convert trunc i8 i32 %t3
+    %t5 = load typed ptr $this
+    %t6 = index inbounds i8 [projection=field] %t5, 4
+    store i8 %t4, %t6
+    return void
+}
+function @std__partial_ordering__partial_ordering(%this : ptr [object_bytes=1], %v : i32) -> void [binding=weak, object=_ZNSt16partial_orderingC1Ei, inline_hint=yes] {
+  slot $this : ptr
+  slot $v : i32
+
+  block ^entry:
+    store typed ptr %this, $this
+    store typed i32 %v, $v
+    %t1 = load typed i32 $v
+    %t2 = convert trunc i8 i32 %t1
+    %t3 = load typed ptr $this
+    %t4 = index inbounds i8 [projection=field] %t3, 0
+    store i8 %t2, %t4
+    return void
+}
+function @operator___(%a : obj<4x4>, %b : obj<4x4>) -> obj<8x4> [binding=weak, object=_Zss3BoxS_, inline_hint=yes] {
+  slot $a : obj<4x4>
+  slot $b : obj<4x4>
+  slot $retobj__1 : obj<8x4>
+
+  block ^entry:
+    %t1 = addr $a
+    copyobj 4x4 %a, %t1
+    %t2 = addr $b
+    copyobj 4x4 %b, %t2
+    %t3 = addr $retobj__1
+    %t4 = addr $a
+    %t5 = index inbounds i8 [projection=field] %t4, 0
+    %t6 = load typed i32 %t5
+    %t7 = addr $b
+    %t8 = index inbounds i8 [projection=field] %t7, 0
+    %t9 = load typed i32 %t8
+    %t10 = cmp eq i32 %t6, %t9
+    branch %t10, ^cond_then_2, ^cond_else_3
+
+  block ^cond_then_2:
+    %t11 = addr @std__strong_ordering__equal
+    copyobj 5x4 %t11, %t3
+    jump ^cond_end_1
+
+  block ^cond_else_3:
+    %t12 = cmp lt i32 %t6, %t9
+    branch %t12, ^cond_then_4, ^cond_else_5
+
+  block ^cond_then_4:
+    %t13 = addr @std__strong_ordering__less
+    copyobj 5x4 %t13, %t3
+    jump ^cond_end_1
+
+  block ^cond_else_5:
+    %t14 = addr @std__strong_ordering__greater
+    copyobj 5x4 %t14, %t3
+    jump ^cond_end_1
+
+  block ^cond_end_1:
+    return obj<8x4> $retobj__1
+}
+function @std__operator_(%a : obj<8x4>, %__param1 : i32) -> u8 [binding=weak, object=_ZStgtSt15strong_orderingi, inline_hint=yes] {
+  slot $a : obj<8x4>
+  slot $__param1 : i32
+
+  block ^entry:
+    %t1 = addr $a
+    copyobj 8x4 %a, %t1
+    store typed i32 %__param1, $__param1
+    %t2 = addr $a
+    %t3 = index inbounds i8 [projection=field] %t2, 4
+    %t4 = load i8 %t3
+    %t5 = convert sext i32 i8 %t4
+    %t6 = cmp gt i32 %t5, 0
+    %t7 = convert trunc u8 i64 %t6
+    return u8 %t7
+}
+alias object _ZNSt15strong_orderingC2Ei = @std__strong_ordering__strong_ordering
+alias object _ZNSt16partial_orderingC2Ei = @std__partial_ordering__partial_ordering

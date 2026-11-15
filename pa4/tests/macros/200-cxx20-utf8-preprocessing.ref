@@ -1,0 +1,5 @@
+preproc 1
+sof tests/macros/200-cxx20-utf8-preprocessing.t
+literal u8'A' char8_t 41
+simple char8_t KW_CHAR8_T
+eof

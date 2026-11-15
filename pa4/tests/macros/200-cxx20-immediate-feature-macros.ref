@@ -1,0 +1,5 @@
+preproc 1
+sof tests/macros/200-cxx20-immediate-feature-macros.t
+simple consteval KW_CONSTEVAL
+simple constinit KW_CONSTINIT
+eof

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-cxx20-explicit-lambda-template-argument-bad.t:1:55: no viable function for the call

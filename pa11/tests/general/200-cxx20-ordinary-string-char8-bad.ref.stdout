@@ -1,0 +1,1 @@
+ERROR: tests/general/200-cxx20-ordinary-string-char8-bad.t:1:9: array initialized from an expression

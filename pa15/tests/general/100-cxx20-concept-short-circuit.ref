@@ -1,0 +1,5 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = convert zext i32 u8 0
+    return i32 %t1
+}

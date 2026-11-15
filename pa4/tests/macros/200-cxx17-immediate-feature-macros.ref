@@ -1,0 +1,5 @@
+preproc 1
+sof tests/macros/200-cxx17-immediate-feature-macros.t
+identifier consteval
+identifier constinit
+eof

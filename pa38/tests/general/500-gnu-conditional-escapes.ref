@@ -1,0 +1,121 @@
+global @__strlit__1 [storage=readonly, binding=internal] = {
+  i8 37
+  i8 113
+  i8 56
+  i8 10
+  i8 65
+  i8 65
+  i8 0
+}
+global @__strlit__2 [storage=readonly, binding=internal] = {
+  i32 37
+  i32 0
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $text : ptr
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = addr @__strlit__1
+    store typed ptr %t1, $text
+    %t2 = load typed ptr $text
+    %t3 = index inbounds i8 [projection=array_element] %t2, 0
+    %t4 = load i8 %t3
+    %t5 = convert sext i32 i8 %t4
+    %t6 = cmp ne i32 %t5, 37
+    %t7 = convert trunc i32 i64 %t6
+    branch %t7, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t8 = load typed ptr $text
+    %t9 = index inbounds i8 [projection=array_element] %t8, 1
+    %t10 = load i8 %t9
+    %t11 = convert sext i32 i8 %t10
+    %t12 = cmp ne i32 %t11, 113
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t14 = load typed ptr $text
+    %t15 = index inbounds i8 [projection=array_element] %t14, 2
+    %t16 = load i8 %t15
+    %t17 = convert sext i32 i8 %t16
+    %t18 = cmp ne i32 %t17, 56
+    %t19 = convert trunc i32 i64 %t18
+    branch %t19, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t20 = load typed ptr $text
+    %t21 = index inbounds i8 [projection=array_element] %t20, 3
+    %t22 = load i8 %t21
+    %t23 = convert sext i32 i8 %t22
+    %t24 = cmp ne i32 %t23, 10
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_6, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t26 = load typed ptr $text
+    %t27 = index inbounds i8 [projection=array_element] %t26, 4
+    %t28 = load i8 %t27
+    %t29 = convert sext i32 i8 %t28
+    %t30 = cmp ne i32 %t29, 65
+    %t31 = convert trunc i32 i64 %t30
+    branch %t31, ^if_then_6, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t32 = load typed ptr $text
+    %t33 = index inbounds i8 [projection=array_element] %t32, 5
+    %t34 = load i8 %t33
+    %t35 = convert sext i32 i8 %t34
+    %t36 = cmp ne i32 %t35, 65
+    %t37 = convert trunc i32 i64 %t36
+    branch %t37, ^if_then_6, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t38 = load typed ptr $text
+    %t39 = index inbounds i8 [projection=array_element] %t38, 6
+    %t40 = load i8 %t39
+    %t41 = convert sext i32 i8 %t40
+    %t42 = cmp ne i32 %t41, 0
+    %t43 = convert trunc i32 i64 %t42
+    branch %t43, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_11
+
+  block ^if_end_11:
+    %t44 = addr @__strlit__2
+    %t45 = index inbounds i32 [projection=array_element] %t44, 0
+    %t46 = load typed i32 %t45
+    %t47 = cmp ne i32 %t46, 37
+    %t48 = convert trunc i32 i64 %t47
+    branch %t48, ^lor_short_13, ^lor_rhs_12
+
+  block ^lor_rhs_12:
+    %t49 = const i64 2
+    %t50 = convert sext i64 i32 2
+    %t51 = cmp ne i64 %t49, %t50
+    %t52 = convert trunc i32 i64 %t51
+    %t53 = cmp ne i32 %t52, 0
+    store typed i64 %t53, $lor__1
+    jump ^lor_end_14
+
+  block ^lor_short_13:
+    store typed i64 1, $lor__1
+    jump ^lor_end_14
+
+  block ^lor_end_14:
+    %t54 = load typed i64 $lor__1
+    %t55 = convert trunc i32 i64 %t54
+    return i32 %t55
+}

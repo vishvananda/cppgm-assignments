@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-concept-address-bad.t:1:53: taking the address of an rvalue

@@ -72,6 +72,14 @@ the parsed qualified name for semantic lookup and continue its declarator.
 A following operator with an operand remains an expression; a genuinely
 dependent qualified type still requires `typename`.
 
+### Destructor template-ids
+
+The C++11 destructor spelling `~Value<T>()` may name the enclosing class
+template's current instantiation. Resolve its arguments through the ordinary
+template model and compare class identities, including equivalent aliases in
+arguments. Diagnose a different specialization, template, or argument count;
+do not discard the written template arguments.
+
 ### Dependent qualified types
 
 Within a retained template definition, a qualified member type whose qualifier
@@ -350,3 +358,42 @@ During partial ordering, a direct array-bound parameter retains its synthesized
 non-type value in the transformed type. Deduction relates those typed values,
 including repeated bounds and arrays nested under pointers or references; a
 compound bound expression remains a non-deduced context.
+
+### C++20 requires-expressions
+
+In C++20 mode, retain requires-expressions as parsed requirements. Simple
+requirements check an unevaluated expression, type requirements name a type
+without demanding its definition, compound requirements can require `noexcept`,
+and nested requirements check boolean constant constraints. Local parameters
+use function-parameter adjustment, with no default arguments or terminal
+varargs ellipsis. Invalid immediate substitution makes a template requirement
+false; an invalid requirement outside a templated declaration is an error.
+Check in source order and stop once satisfaction is known. Constraint `&&` and
+`||` short-circuit substitution as well as evaluation. Later template and
+constant-evaluation assignments apply these rules to their added source forms.
+
+### C++20 named concepts
+
+A concept is a namespace-scope template definition with a boolean constraint;
+it is not a variable or an emitted specialization. A concept-id is a bool
+prvalue. Reuse template argument matching, defaults, parameter packs and the
+constant-evaluation layer introduced by this assignment and its prerequisites.
+Cache satisfaction by concept identity and canonical arguments, detect recursive
+satisfaction and preserve substitution short-circuiting. A compound requirement
+`{ expression } noexcept -> Concept<Args...>;` checks the expression, then its
+non-throwing property, then the concept with `decltype((expression))` prepended
+to its explicit arguments. Its value category and cv-qualifiers are preserved.
+
+### C++20 constrained templates
+
+Apply associated constraints to this assignment's partial specializations,
+alias and variable templates, and member and friend templates. Reject an
+unsatisfied alias or variable specialization before publishing it. A partial
+specialization may keep the primary's argument pattern when its constraints
+make it more specialized. Preserve distinct constrained partials with equal
+patterns and use normalized atomic subsumption to order viable matches.
+Equivalent redeclarations may rename parameters. Constrained hidden friends
+remain hidden until their own namespace declaration makes them visible. A
+friend function defined in a class template may end with a requires-clause
+that names the class's parameters; each specialization checks it with its own
+arguments, and friends that differ only in that clause stay distinct.

@@ -1,0 +1,1 @@
+ERROR: tests/preproc/400-keyword-alternative-operator-macro-bad.t:1:2: a macro name must be an identifier

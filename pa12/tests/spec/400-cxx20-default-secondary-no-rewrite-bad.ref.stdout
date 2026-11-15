@@ -1,0 +1,1 @@
+ERROR: tests/spec/400-cxx20-default-secondary-no-rewrite-bad.t:3:21: use of a deleted function

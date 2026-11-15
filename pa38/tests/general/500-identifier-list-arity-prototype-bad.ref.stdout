@@ -1,0 +1,1 @@
+ERROR: tests/general/500-identifier-list-arity-prototype-bad.t:1:17: conflicting C function declarations

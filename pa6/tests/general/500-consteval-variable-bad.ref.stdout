@@ -1,0 +1,1 @@
+ERROR: tests/general/500-consteval-variable-bad.t:1:15: consteval requires a function declaration

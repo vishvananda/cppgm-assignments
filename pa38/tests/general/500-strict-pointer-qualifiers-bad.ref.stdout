@@ -1,0 +1,1 @@
+ERROR: tests/general/500-strict-pointer-qualifiers-bad.t:1:53: invalid implicit conversion

@@ -678,6 +678,32 @@ inline Immediate immediate_form(Op op)
 	return Immediate::Invalid;
 }
 
+// Shared assembler spelling lookup, generated from the encoder vocabulary.
+inline bool read_operation(const char* text, std::uint32_t length, Op& operation)
+{
+	static const struct
+	{
+		const char* text;
+		Op op;
+	} entries[] = {
+#define CPPGM_WASM_READ(name, code, form, text) { text, Op::name },
+		CPPGM_WASM_OPERATIONS(CPPGM_WASM_READ)
+#undef CPPGM_WASM_READ
+	};
+	for (const auto& entry : entries)
+	{
+		std::uint32_t i = 0;
+		while (i < length && entry.text[i] != 0 && text[i] == entry.text[i])
+			++i;
+		if (i == length && entry.text[i] == 0)
+		{
+			operation = entry.op;
+			return true;
+		}
+	}
+	return false;
+}
+
 inline const char* spelling(Op op)
 {
 	switch (op)

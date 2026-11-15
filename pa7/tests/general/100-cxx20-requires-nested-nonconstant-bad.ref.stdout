@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-requires-nested-nonconstant-bad.t:1:55: a constraint must be a constant expression

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-consteval-destructor-bad.t:1:16: a destructor or allocation function cannot be consteval

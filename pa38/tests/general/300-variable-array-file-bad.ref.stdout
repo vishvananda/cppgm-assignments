@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-file-bad.t:1:12: a runtime array bound requires a one-dimensional block-scope object

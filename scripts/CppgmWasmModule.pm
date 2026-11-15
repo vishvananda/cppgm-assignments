@@ -3,7 +3,7 @@ package CppgmWasmModule;
 use strict;
 use warnings;
 use Exporter 'import';
-our @EXPORT_OK = qw(export_signatures export_tag_signatures sequence_module redirect_wasi_exit);
+our @EXPORT_OK = qw(export_signatures export_tag_signatures export_global_types sequence_module redirect_wasi_exit);
 
 # Read only the public core-module type/index/export sections. Instruction
 # choices, local allocation and control structure are deliberately unobserved.
@@ -40,12 +40,81 @@ sub limits {
     number($reader) if $flags & 1;
 }
 
-sub value_types {
+sub value_type {
     my ($reader) = @_;
     my %names = (0x7f => 'i32', 0x7e => 'i64', 0x7d => 'f32', 0x7c => 'f64',
                  0x7b => 'v128', 0x70 => 'funcref', 0x6f => 'externref', 0x69 => 'exnref');
-    return [map { $names{byte($reader)} // die "Unsupported ABI value type\n" }
-        1 .. number($reader)];
+    return $names{byte($reader)} // die "Unsupported ABI value type\n";
+}
+
+sub value_types {
+    my ($reader) = @_;
+    return [map { value_type($reader) } 1 .. number($reader)];
+}
+
+# Only the public global interface: initializer instruction choices are not
+# expectations. These are the constant-expression forms in the course profile.
+sub skip_constant_expression {
+    my ($reader) = @_;
+    while (1) {
+        my $op = byte($reader);
+        return if $op == 0x0b;
+        if ($op == 0x41 || $op == 0x42 || $op == 0x23 || $op == 0xd0 || $op == 0xd2) {
+            1 while byte($reader) & 128;
+        } elsif ($op == 0x43 || $op == 0x44) {
+            bytes($reader, $op == 0x43 ? 4 : 8);
+        } elsif ($op == 0xfd) {
+            number($reader) == 12 or die "Unsupported vector constant expression\n";
+            bytes($reader, 16);
+        } elsif ($op != 0x6a && $op != 0x6b && $op != 0x6c &&
+                 $op != 0x7c && $op != 0x7d && $op != 0x7e) {
+            die "Unsupported global constant expression\n";
+        }
+    }
+}
+
+sub export_global_types {
+    my ($path) = @_;
+    my (undef, undef, $module) = export_interfaces($path, 1);
+    my (@globals, %exports);
+    my $global_type = sub {
+        my ($reader) = @_;
+        my $type = value_type($reader);
+        my $mutable = byte($reader);
+        return {type => $type, mutable => $mutable};
+    };
+    for my $section (@{$module->{sections}}) {
+        my ($id, $payload) = @$section;
+        my $reader = {data => $payload, offset => 0};
+        if ($id == 2) {
+            for (1 .. number($reader)) {
+                bytes($reader, number($reader)) for 1 .. 2;
+                my $kind = byte($reader);
+                if ($kind == 0) { number($reader); }
+                elsif ($kind == 1) { byte($reader); limits($reader); }
+                elsif ($kind == 2) { limits($reader); }
+                elsif ($kind == 3) { push @globals, $global_type->($reader); }
+                elsif ($kind == 4) { byte($reader); number($reader); }
+                else { die "Unknown Wasm import kind\n"; }
+            }
+        } elsif ($id == 6) {
+            for (1 .. number($reader)) {
+                push @globals, $global_type->($reader);
+                skip_constant_expression($reader);
+            }
+        } elsif ($id == 7) {
+            for (1 .. number($reader)) {
+                my $name = bytes($reader, number($reader));
+                my $kind = byte($reader);
+                my $index = number($reader);
+                if ($kind == 3) {
+                    die "Invalid Wasm global export\n" if $index >= @globals;
+                    $exports{$name} = $globals[$index];
+                }
+            }
+        }
+    }
+    return \%exports;
 }
 
 sub export_interfaces {

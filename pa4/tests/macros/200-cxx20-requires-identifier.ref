@@ -1,0 +1,4 @@
+preproc 1
+sof tests/macros/200-cxx20-requires-identifier.t
+simple requires KW_REQUIRES
+eof

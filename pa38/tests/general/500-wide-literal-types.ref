@@ -1,0 +1,148 @@
+global @__strlit__1 [storage=readonly, binding=internal] = {
+  i32 119
+  i32 105
+  i32 100
+  i32 101
+  i32 0
+}
+global @wide : ptr [linkage=c, binding=internal] = addr @__strlit__1
+global @__strlit__2 [storage=readonly, binding=internal] = {
+  u16 104
+  u16 101
+  u16 108
+  u16 108
+  u16 111
+  u16 0
+}
+global @utf16 : ptr [linkage=c, binding=internal] = addr @__strlit__2
+global @__strlit__3 [storage=readonly, binding=internal] = {
+  u32 119
+  u32 111
+  u32 114
+  u32 108
+  u32 100
+  u32 0
+}
+global @utf32 : ptr [linkage=c, binding=internal] = addr @__strlit__3
+global @buffer [linkage=c, binding=internal] = {
+  i32 99
+  i32 111
+  i32 112
+  i32 105
+  i32 101
+  i32 100
+  i32 0
+}
+global @__strlit__4 [storage=readonly, binding=internal] = {
+  i32 108
+  i32 111
+  i32 99
+  i32 97
+  i32 108
+  i32 0
+}
+
+function @first(%text : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $text : ptr
+
+  block ^entry:
+    store typed ptr %text, $text
+    %t1 = load typed ptr $text
+    %t2 = index inbounds i32 [projection=array_element] %t1, 0
+    %t3 = load typed i32 %t2
+    return i32 %t3
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $local : ptr
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = addr @__strlit__4
+    store typed ptr %t1, $local
+    %t2 = load typed ptr @wide
+    %t3 = call i32 @first(%t2)
+    %t4 = cmp ne i32 %t3, 119
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t6 = addr @buffer
+    %t7 = index inbounds i32 [projection=array_element] %t6, 2
+    %t8 = load typed i32 %t7
+    %t9 = cmp ne i32 %t8, 112
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t11 = load typed ptr $local
+    %t12 = index inbounds i32 [projection=array_element] %t11, 1
+    %t13 = load typed i32 %t12
+    %t14 = cmp ne i32 %t13, 111
+    %t15 = convert trunc i32 i64 %t14
+    branch %t15, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t16 = load typed ptr @utf16
+    %t17 = index inbounds u16 [projection=array_element] %t16, 4
+    %t18 = load typed u16 %t17
+    %t19 = convert zext i32 u16 %t18
+    %t20 = cmp ne i32 %t19, 111
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_6, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t22 = load typed ptr @utf32
+    %t23 = index inbounds u32 [projection=array_element] %t22, 4
+    %t24 = load typed u32 %t23
+    %t25 = cmp ne u32 %t24, 100
+    %t26 = convert trunc i32 i64 %t25
+    branch %t26, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_9
+
+  block ^if_end_9:
+    %t27 = cmp eq i32 1, 0
+    %t28 = convert trunc i32 i64 %t27
+    branch %t28, ^if_then_10, ^if_else_11
+
+  block ^if_then_10:
+    return i32 3
+
+  block ^if_else_11:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    %t29 = const i64 4
+    %t30 = const i64 4
+    %t31 = cmp ne i64 %t29, %t30
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t33 = const i64 2
+    %t34 = const i64 2
+    %t35 = cmp ne i64 %t33, %t34
+    %t36 = convert trunc i32 i64 %t35
+    %t37 = cmp ne i32 %t36, 0
+    store typed i64 %t37, $lor__1
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__1
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t38 = load typed i64 $lor__1
+    %t39 = convert trunc i32 i64 %t38
+    return i32 %t39
+}

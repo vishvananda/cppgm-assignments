@@ -1,0 +1,17 @@
+static int implementation(int value) { return value + 1; }
+extern "C" int selected(int) __attribute__((weak, alias("_ZL14implementationi")));
+extern "C" int stable(int) __attribute__((alias("_ZL14implementationi")));
+int (*volatile selected_pointer)(int) = selected;
+static int storage = 5;
+extern "C" int selected_value __attribute__((weak, alias("_ZL7storage")));
+extern "C" int stable_value __attribute__((alias("_ZL7storage")));
+static int internal_implementation(int left, int right) { return left + right; }
+static int internal_prototype(int) __attribute__((alias("_ZL23internal_implementationii")));
+int main() {
+  using Actual = int (*)(int, int);
+  Actual volatile internal = reinterpret_cast<Actual>(internal_prototype);
+  if (internal(19, 23) != 42) return 3;
+  if (selected_value != 42 || stable_value != 5 || &selected_value == &stable_value) return 2;
+  if (stable(40) != 41 || selected(40) != 42 || selected_pointer(40) != 42) return 1;
+  return selected_pointer == stable;
+}

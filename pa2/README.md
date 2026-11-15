@@ -545,6 +545,17 @@ The course mapping for simple tokens is given below, and this has also been tran
 	simple xor_eq OP_XORASS
 	simple xor OP_XOR
 
+In C++20 mode, six more spellings are simple tokens. The starter code has the
+table above without them. Earlier modes read the five words as identifiers and
+`<=>` as `<=` followed by `>`:
+
+	simple char8_t KW_CHAR8_T
+	simple concept KW_CONCEPT
+	simple consteval KW_CONSTEVAL
+	simple constinit KW_CONSTINIT
+	simple requires KW_REQUIRES
+	simple <=> OP_SPACESHIP
+
 ### Design Tips (Optional)
 
 These design tips are optional, and only suggest one way to complete this assignment.
@@ -581,3 +592,17 @@ Use N4140/N4659 `[lex.icon]`, `[lex.fcon]` and `[lex.ext]`; see
 [the reference guide](../doc/REFERENCES.md). Normal tests select modes with
 `.cxx-standard` sidecars.
 
+In C++20 mode, `char8_t` is a keyword and UTF-8 character and string literals
+have the distinct unsigned `char8_t` code-unit type. A UTF-8 character literal
+must fit one UTF-8 code unit: a source character must be ASCII; a numeric
+escape may supply any byte from 0 through 255. Reject multicharacter forms
+and values needing multiple UTF-8 code units. UTF-8 string concatenation keeps
+its combined encoding and terminating zero. Earlier modes retain `char8_t`
+as an identifier and UTF-8 strings as arrays of `char`.
+
+
+### C++20 three-way comparison token
+
+In C++20 mode, classify `<=>` as `OP_SPACESHIP`. Earlier modes continue
+to read the two tokens `<=` and `>`. Preserve longest-token rules and
+keep this operator distinct from the later-mode keywords.

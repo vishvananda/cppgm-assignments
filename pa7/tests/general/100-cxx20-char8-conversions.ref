@@ -1,0 +1,26 @@
+1 translation units
+start translation unit 1
+translation-unit
+  function-declaration select function of (char8_t) returning int
+  function-declaration select function of (unsigned char) returning int
+  function-definition use function of (char8_t) returning int
+    parameter byte char8_t
+    compound-statement
+      simple-declaration
+        variable promoted int
+          unary-expression prvalue int OP_PLUS:+
+            id-expression lvalue char8_t byte
+      simple-declaration
+        variable text pointer to const char8_t
+          literal lvalue array of 5 const char8_t u8"text"
+      return-statement
+        binary-expression prvalue int OP_PLUS:+
+          binary-expression prvalue int OP_PLUS:+
+            id-expression lvalue int promoted
+            call-expression prvalue int
+              callee select function of (char8_t) returning int
+              literal prvalue char8_t u8'A'
+          subscript-expression lvalue const char8_t
+            id-expression lvalue pointer to const char8_t text
+            literal prvalue int 0
+end translation unit

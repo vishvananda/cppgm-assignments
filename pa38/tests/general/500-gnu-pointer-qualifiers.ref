@@ -1,0 +1,161 @@
+global @number : i32 [linkage=c, binding=internal] = 17
+global @readonly_number : ptr [linkage=c, binding=internal] = addr @number
+global @global_number : ptr [linkage=c, binding=internal] = addr @number
+
+function @recover(%value : ptr) -> ptr [linkage=c, binding=internal] {
+  slot $value : ptr
+
+  block ^entry:
+    store typed ptr %value, $value
+    %t1 = load typed ptr $value
+    return ptr %t1
+}
+function @recover_void(%value : ptr) -> ptr [linkage=c, binding=internal] {
+  slot $value : ptr
+
+  block ^entry:
+    store typed ptr %value, $value
+    %t1 = load typed ptr $value
+    return ptr %t1
+}
+function @erase(%value : ptr) -> ptr [linkage=c, binding=internal] {
+  slot $value : ptr
+
+  block ^entry:
+    store typed ptr %value, $value
+    %t1 = load typed ptr $value
+    return ptr %t1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $assigned : ptr
+  slot $initialized : ptr
+  slot $pair : obj<16x8>
+  slot $volatile_view : ptr
+  slot $plain : ptr
+  slot $handle : ptr
+  slot $unqualified_void : ptr
+
+  block ^entry:
+    %t1 = load typed ptr @readonly_number
+    store typed ptr %t1, $assigned
+    %t2 = load typed ptr @readonly_number
+    store typed ptr %t2, $initialized
+    %t3 = addr $pair
+    %t4 = load typed ptr @readonly_number
+    %t5 = addr $pair
+    %t6 = index inbounds i8 [projection=field] %t5, 0
+    store typed ptr %t4, %t6
+    %t7 = load typed ptr @readonly_number
+    %t8 = addr $pair
+    %t9 = index inbounds i8 [projection=field] %t8, 8
+    store typed ptr %t7, %t9
+    %t10 = addr @number
+    store typed ptr %t10, $volatile_view
+    %t11 = load typed ptr $volatile_view
+    store typed ptr %t11, $plain
+    %t12 = addr @number
+    store typed ptr %t12, $handle
+    %t13 = load typed ptr $handle
+    store typed ptr %t13, $unqualified_void
+    %t14 = load typed ptr @readonly_number
+    %t15 = call ptr @recover(%t14)
+    %t16 = addr @number
+    %t17 = cmp ne ptr %t15, %t16
+    %t18 = convert trunc i32 i64 %t17
+    branch %t18, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t19 = load typed ptr $handle
+    %t20 = call ptr @recover_void(%t19)
+    %t21 = addr @number
+    %t22 = cmp ne ptr %t20, %t21
+    %t23 = convert trunc i32 i64 %t22
+    branch %t23, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t24 = load typed ptr @readonly_number
+    %t25 = call ptr @erase(%t24)
+    %t26 = addr @number
+    %t27 = cmp ne ptr %t25, %t26
+    %t28 = convert trunc i32 i64 %t27
+    branch %t28, ^if_then_5, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t29 = load typed ptr @global_number
+    %t30 = addr @number
+    %t31 = cmp ne ptr %t29, %t30
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 2
+
+  block ^if_else_6:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t33 = load typed ptr @readonly_number
+    store typed ptr %t33, $assigned
+    %t34 = load typed ptr $assigned
+    store typed i32 42, %t34
+    %t35 = load typed ptr $initialized
+    %t36 = load typed i32 %t35
+    %t37 = cmp ne i32 %t36, 42
+    %t38 = convert trunc i32 i64 %t37
+    branch %t38, ^if_then_9, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t39 = load typed ptr $plain
+    %t40 = load typed i32 %t39
+    %t41 = cmp ne i32 %t40, 42
+    %t42 = convert trunc i32 i64 %t41
+    branch %t42, ^if_then_9, ^lor_rhs_12
+
+  block ^lor_rhs_12:
+    %t43 = addr $pair
+    %t44 = index inbounds i8 [projection=field] %t43, 0
+    %t45 = load typed ptr %t44
+    %t46 = addr @number
+    %t47 = cmp ne ptr %t45, %t46
+    %t48 = convert trunc i32 i64 %t47
+    branch %t48, ^if_then_9, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t49 = addr $pair
+    %t50 = index inbounds i8 [projection=field] %t49, 8
+    %t51 = load typed ptr %t50
+    %t52 = addr @number
+    %t53 = cmp ne ptr %t51, %t52
+    %t54 = convert trunc i32 i64 %t53
+    branch %t54, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 3
+
+  block ^if_else_10:
+    jump ^if_end_14
+
+  block ^if_end_14:
+    %t55 = cmp ne i32 1, 1
+    %t56 = convert trunc i32 i64 %t55
+    branch %t56, ^if_then_15, ^if_else_16
+
+  block ^if_then_15:
+    return i32 4
+
+  block ^if_else_16:
+    jump ^if_end_17
+
+  block ^if_end_17:
+    %t57 = load typed ptr $unqualified_void
+    %t58 = addr @number
+    %t59 = cmp ne ptr %t57, %t58
+    %t60 = convert trunc i32 i64 %t59
+    return i32 %t60
+}

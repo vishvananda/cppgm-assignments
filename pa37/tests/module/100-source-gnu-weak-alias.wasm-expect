@@ -1,0 +1,1 @@
+{"source":true,"reference_sources":["100-source-gnu-weak-alias.oracle.cpp"],"calls":[{"export":"observe","result":"1"}]}

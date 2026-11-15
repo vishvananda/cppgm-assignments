@@ -321,3 +321,58 @@ Useful intermediate representations include:
   cases
 - compile-time constant bindings that can be reused by both `static_assert` and template
   argument resolution
+
+### C++20 requires-expressions
+
+In C++20 mode, retain requires-expressions as parsed requirements. Simple
+requirements check an unevaluated expression, type requirements name a type
+without demanding its definition, compound requirements can require `noexcept`,
+and nested requirements check boolean constant constraints. Local parameters
+use function-parameter adjustment, with no default arguments or terminal
+varargs ellipsis. Invalid immediate substitution makes a template requirement
+false; an invalid requirement outside a templated declaration is an error.
+Check in source order and stop once satisfaction is known. Constraint `&&` and
+`||` short-circuit substitution as well as evaluation. Later template and
+constant-evaluation assignments apply these rules to their added source forms.
+
+### C++20 named concepts
+
+A concept is a namespace-scope template definition with a boolean constraint;
+it is not a variable or an emitted specialization. A concept-id is a bool
+prvalue. Reuse template argument matching, defaults, parameter packs and the
+constant-evaluation layer introduced by this assignment and its prerequisites.
+Cache satisfaction by concept identity and canonical arguments, detect recursive
+satisfaction and preserve substitution short-circuiting. A compound requirement
+`{ expression } noexcept -> Concept<Args...>;` checks the expression, then its
+non-throwing property, then the concept with `decltype((expression))` prepended
+to its explicit arguments. Its value category and cv-qualifiers are preserved.
+
+### C++20 associated constraints
+
+A template-head may have a `requires` clause. A type template parameter may
+use a named concept in place of `class` or `typename`; a constrained pack
+checks every element and accepts an empty pack. Check these constraints
+before publishing a specialization or retaining a candidate. Unsatisfied
+immediate substitution rejects the candidate without instantiating its body.
+Preserve the written order and short-circuit substitution.
+
+Keep different constrained overloads distinct, even when their function types
+agree. Equivalent
+redeclarations may rename parameters or qualify the same concept differently.
+Substitute a head clause only as satisfaction reaches its operands, including
+when enclosing class-template instantiations bind packs. For ordering, normalize named concepts
+to their original atomic expressions with canonical parameter mappings.
+Subsumption uses atomic identity, not equal spelling or equal boolean values;
+unused concept parameters do not make otherwise identical atoms distinct.
+Preserve symbolic pack and non-type argument mappings during normalization.
+Constraint metadata and normalization caches must not enlarge ordinary
+function, template-head or expression records.
+
+A constrained parameter pack introduces one atomic fold constraint in C++20;
+do not apply C++26 fold-expanded ordering. Later assignments apply these rules
+to their partial specializations, alias and variable templates, and friends.
+
+The operands of a requires-clause are primary expressions. A name operand
+before `{` is an id-expression, and the brace opens the function body. The
+type of a non-type template parameter is a type-only context for PA14's
+implied `typename`.

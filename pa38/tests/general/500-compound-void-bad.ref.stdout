@@ -1,0 +1,1 @@
+ERROR: tests/general/500-compound-void-bad.t:1:18: C compound literal requires an object type

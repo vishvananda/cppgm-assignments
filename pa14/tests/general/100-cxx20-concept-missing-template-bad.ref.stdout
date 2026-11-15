@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-concept-missing-template-bad.t:1:1: a concept definition requires a template parameter list

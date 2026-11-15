@@ -1,0 +1,1 @@
+ERROR: tests/general/200-destructor-template-id-wrong-default-bad.t:1:45: destructor template-id does not name the enclosing class

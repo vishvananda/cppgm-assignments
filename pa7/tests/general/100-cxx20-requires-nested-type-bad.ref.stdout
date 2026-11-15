@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-requires-nested-type-bad.t:1:43: a constraint must have type bool

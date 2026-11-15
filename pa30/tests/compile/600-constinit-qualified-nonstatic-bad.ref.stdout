@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-constinit-qualified-nonstatic-bad.t:2:15: an out-of-class definition names a non-static data member

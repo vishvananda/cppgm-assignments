@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-constrained-class-bad.t:3:1: class template constraints are not satisfied

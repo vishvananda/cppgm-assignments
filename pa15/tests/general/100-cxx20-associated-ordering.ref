@@ -1,0 +1,51 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @pick(1)
+    %t2 = call i32 @pick__2(1)
+    %t3 = binary add nowrap i32 %t1, %t2
+    %t4 = call i32 @pick__3(1)
+    %t5 = binary add nowrap i32 %t3, %t4
+    %t6 = call i32 @mapped(1, 2)
+    %t7 = binary add nowrap i32 %t5, %t6
+    %t8 = call i32 @either(1)
+    %t9 = binary add nowrap i32 %t7, %t8
+    %t10 = binary sub nowrap i32 %t9, 10
+    return i32 %t10
+}
+function @pick(%__param0 : i32) -> i32 [binding=weak, object=_Z4pickIiEiT_] {
+  slot $__param0 : i32
+
+  block ^entry:
+    store typed i32 %__param0, $__param0
+    return i32 2
+}
+function @pick__2(%__param0 : i16) -> i32 [binding=weak, object=_Z4pickIsEiT_] {
+  slot $__param0 : i16
+
+  block ^entry:
+    store typed i16 %__param0, $__param0
+    return i32 1
+}
+function @pick__3(%__param0 : i8) -> i32 [binding=weak, object=_Z4pickIcEiT_] {
+  slot $__param0 : i8
+
+  block ^entry:
+    store i8 %__param0, $__param0
+    return i32 3
+}
+function @mapped(%__param0 : i32, %__param1 : i32) -> i32 [binding=weak, object=_Z6mappedIiiEiT_T0_] {
+  slot $__param0 : i32
+  slot $__param1 : i32
+
+  block ^entry:
+    store typed i32 %__param0, $__param0
+    store typed i32 %__param1, $__param1
+    return i32 2
+}
+function @either(%__param0 : i32) -> i32 [binding=weak, object=_Z6eitherIiEiT_] {
+  slot $__param0 : i32
+
+  block ^entry:
+    store typed i32 %__param0, $__param0
+    return i32 2
+}

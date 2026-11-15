@@ -1,0 +1,50 @@
+global @sequence : i32 [binding=internal, object=_ZL8sequence] = zero
+global @__cppgm_startup : ptr [section=.init_array.100, binding=internal, object_root=yes] = addr @early
+global @__cppgm_startup__2 : ptr [section=.init_array.200, binding=internal, object_root=yes] = addr @middle
+global @__cppgm_startup__3 : ptr [section=.init_array.300, binding=internal, object_root=yes] = addr @late
+global @__cppgm_startup__4 : ptr [section=.init_array.65535, binding=internal, object_root=yes] = addr @last
+
+function @append(%digit : i32) -> void [binding=internal, object=_ZL6appendi] {
+  slot $digit : i32
+
+  block ^entry:
+    store typed i32 %digit, $digit
+    %t1 = load typed i32 @sequence
+    %t2 = binary mul nowrap i32 %t1, 10
+    %t3 = load typed i32 $digit
+    %t4 = binary add nowrap i32 %t2, %t3
+    store typed i32 %t4, @sequence
+    return void
+}
+function @late() -> void [binding=internal, object=_ZL4latev, object_root=yes] {
+  block ^entry:
+    call void @append(3)
+    return void
+}
+function @middle() -> void [binding=internal, object=_ZL6middlev, object_root=yes] {
+  block ^entry:
+    call void @append(2)
+    return void
+}
+function @last() -> void [binding=internal, object=_ZL4lastv, object_root=yes] {
+  block ^entry:
+    call void @append(4)
+    return void
+}
+function @observe() -> i32 [binding=strong, object=_Z7observev] {
+  block ^entry:
+    %t1 = load typed i32 @sequence
+    return i32 %t1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = load typed i32 @sequence
+    %t2 = cmp ne i32 %t1, 1234
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}
+function @early() -> void [binding=internal, object=_ZL5earlyv, object_root=yes, inline_hint=yes] {
+  block ^entry:
+    call void @append(1)
+    return void
+}

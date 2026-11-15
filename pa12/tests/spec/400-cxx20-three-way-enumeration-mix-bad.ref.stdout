@@ -1,0 +1,1 @@
+ERROR: tests/spec/400-cxx20-three-way-enumeration-mix-bad.t:9:18: three-way comparison mixes incompatible enumeration types

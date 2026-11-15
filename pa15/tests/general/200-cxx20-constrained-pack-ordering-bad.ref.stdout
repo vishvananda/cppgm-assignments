@@ -1,0 +1,1 @@
+ERROR: tests/general/200-cxx20-constrained-pack-ordering-bad.t:4:21: ambiguous call to overloaded function

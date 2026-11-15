@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-concept-associated-constraints-bad.t:2:19: a concept definition cannot have associated constraints

@@ -1,0 +1,1 @@
+{"source":true,"assembly":true,"llvm_interop":true,"reference_sources":["100-assembly-memory.oracle.cpp"],"calls":[{"export":"observe","result":"42"}]}

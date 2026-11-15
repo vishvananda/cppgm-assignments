@@ -1,0 +1,137 @@
+1 translation units
+start translation unit 1
+translation-unit
+  function-definition
+    decl-specifier-seq
+      decl-specifier KW_VOID:void
+    declarator
+      identifier declarations
+      parameter-clause
+    compound-statement
+      simple-declaration
+        decl-specifier-seq
+          decl-specifier KW_AUTO:auto
+        init-declarator-list
+          init-declarator
+            declarator
+              identifier mixed
+            initializer
+              lambda-expression
+                lambda-introducer []
+                template-parameter-clause
+                  template-parameter-list
+                    type-parameter
+                      parameter-key KW_CLASS:class
+                      identifier T
+                    non-type-template-parameter
+                      decl-specifier-seq
+                        decl-specifier KW_INT:int
+                      declarator
+                        identifier N
+                      default-template-argument
+                        literal 3
+                lambda-declarator
+                  parameter-clause
+                    parameter-declaration
+                      decl-specifier-seq
+                        decl-specifier TT_IDENTIFIER:T
+                      declarator
+                        identifier value
+                    parameter-declaration
+                      decl-specifier-seq
+                        decl-specifier KW_AUTO:auto
+                      declarator
+                        identifier extra
+                compound-statement
+                  return-statement
+                    binary-expression OP_PLUS:+
+                      binary-expression OP_PLUS:+
+                        id-expression value
+                        id-expression extra
+                      id-expression N
+      simple-declaration
+        decl-specifier-seq
+          decl-specifier KW_AUTO:auto
+        init-declarator-list
+          init-declarator
+            declarator
+              identifier nested
+            initializer
+              lambda-expression
+                lambda-introducer []
+                template-parameter-clause
+                  template-parameter-list
+                    type-parameter
+                      template-template-parameter
+                      template-parameter-clause
+                        template-parameter-list
+                          type-parameter
+                            parameter-key KW_CLASS:class
+                      parameter-key KW_CLASS:class
+                      identifier C
+                    type-parameter
+                      parameter-key KW_CLASS:class
+                      parameter-pack ...
+                      identifier T
+                lambda-declarator
+                  parameter-clause
+                    parameter-declaration
+                      decl-specifier-seq
+                        decl-specifier C<T>
+                      declarator
+                        parameter-pack ...
+                        identifier value
+                compound-statement
+                  return-statement
+                    sizeof-pack-expression value
+      simple-declaration
+        decl-specifier-seq
+          decl-specifier KW_AUTO:auto
+        init-declarator-list
+          init-declarator
+            declarator
+              identifier constrained
+            initializer
+              lambda-expression
+                lambda-introducer []
+                template-parameter-clause
+                  template-parameter-list
+                    type-parameter
+                      parameter-key KW_CLASS:class
+                      identifier T
+                requires-clause
+                  parenthesized-expression
+                    binary-expression OP_GT:>
+                      sizeof-expression
+                        type-id
+                          type-specifier-seq
+                            type-name T
+                      literal 1
+                lambda-declarator
+                  parameter-clause
+                    parameter-declaration
+                      decl-specifier-seq
+                        decl-specifier TT_IDENTIFIER:T
+                      declarator
+                        identifier x
+                    parameter-declaration
+                      decl-specifier-seq
+                        decl-specifier KW_AUTO:auto
+                      declarator
+                        identifier y
+                  trailing-return-type
+                    type-id
+                      type-specifier-seq
+                        type-name T
+                requires-clause
+                  requires-expression
+                    simple-requirement
+                      binary-expression OP_PLUS:+
+                        id-expression x
+                        id-expression y
+                compound-statement
+                  return-statement
+                    binary-expression OP_PLUS:+
+                      id-expression x
+                      id-expression y
+end translation unit

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-destructor-template-id-wrong-arity-bad.t:1:34: too many template arguments

@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-alias-reject-defined.t:2:50: an alias requires a definition of its target and no separate definition

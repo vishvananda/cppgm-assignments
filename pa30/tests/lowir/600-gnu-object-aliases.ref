@@ -1,0 +1,98 @@
+declare global @shared : i32 [linkage=c, binding=strong]
+
+declare function @public_alias(%arg0 : i32) -> i32 [linkage=c, binding=strong]
+declare function @weak_alias(%arg0 : i32) -> i32 [linkage=c, binding=weak, replaceable=yes]
+declare function @chain(%arg0 : i32) -> i32 [linkage=c, binding=strong]
+
+global @storage : i32 [binding=internal, object=_ZL7storage] = 5
+
+function @implementation(%value : i32) -> i32 [binding=internal, object=_ZL14implementationi] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = binary add nowrap i32 %t1, 1
+    return i32 %t2
+}
+function @observe() -> i32 [linkage=c, binding=strong] {
+  slot $pointer : ptr
+  slot $address : ptr
+
+  block ^entry:
+    %t1 = addr @public_alias
+    store volatile ptr %t1, $pointer
+    %t2 = load volatile ptr $pointer
+    %t3 = addr @implementation
+    %t4 = cmp ne ptr %t2, %t3
+    branch %t4, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t5 = load volatile ptr $pointer
+    %t6 = addr @weak_alias
+    %t7 = cmp ne ptr %t5, %t6
+    branch %t7, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t8 = load volatile ptr $pointer
+    %t9 = addr @chain
+    %t10 = cmp ne ptr %t8, %t9
+    branch %t10, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t11 = addr @shared
+    store volatile ptr %t11, $address
+    %t12 = load volatile ptr $address
+    %t13 = addr @storage
+    %t14 = cmp ne ptr %t12, %t13
+    branch %t14, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    store typed i32 9, @shared
+    %t15 = load typed i32 @storage
+    %t16 = cmp ne i32 %t15, 9
+    branch %t16, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 3
+
+  block ^if_else_10:
+    jump ^if_end_11
+
+  block ^if_end_11:
+    %t17 = call i32 @public_alias(41)
+    %t18 = addr @chain
+    %t19 = addr @implementation
+    %t20 = cmp eq ptr %t18, %t19
+    %t21 = convert trunc i32 i64 %t20
+    %t22 = binary add nowrap i32 %t17, %t21
+    %t23 = addr @weak_alias
+    %t24 = addr @public_alias
+    %t25 = cmp eq ptr %t23, %t24
+    %t26 = convert trunc i32 i64 %t25
+    %t27 = binary add nowrap i32 %t22, %t26
+    return i32 %t27
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @observe()
+    %t2 = cmp ne i32 %t1, 44
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}
+alias object public_alias = @implementation
+alias object weak_alias = @implementation
+alias object chain = @implementation
+alias object shared = @storage

@@ -1,0 +1,37 @@
+preproc 1
+sof tests/preproc/400-keyword-new-delete-macros.t
+simple new KW_NEW
+simple ( OP_LPAREN
+literal 0 int 00000000
+simple ) OP_RPAREN
+simple int KW_INT
+simple ( OP_LPAREN
+literal 42 int 2A000000
+simple ) OP_RPAREN
+simple ; OP_SEMICOLON
+simple new KW_NEW
+simple ( OP_LPAREN
+literal 0 int 00000000
+simple ) OP_RPAREN
+simple int KW_INT
+simple ( OP_LPAREN
+literal 17 int 11000000
+simple ) OP_RPAREN
+simple ; OP_SEMICOLON
+literal "new(0)" array of 7 char 6E657728302900
+simple new KW_NEW
+simple int KW_INT
+simple ( OP_LPAREN
+literal 23 int 17000000
+simple ) OP_RPAREN
+simple ; OP_SEMICOLON
+identifier release
+simple ( OP_LPAREN
+identifier pointer
+simple ) OP_RPAREN
+simple ; OP_SEMICOLON
+literal "release" array of 8 char 72656C6561736500
+simple delete KW_DELETE
+identifier pointer
+simple ; OP_SEMICOLON
+eof

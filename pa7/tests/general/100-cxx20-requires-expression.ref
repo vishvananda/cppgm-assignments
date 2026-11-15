@@ -1,0 +1,16 @@
+1 translation units
+start translation unit 1
+translation-unit
+  function-declaration safe function of () returning int
+  function-declaration throwing function of () returning int
+  function-definition test function of () returning int
+    compound-statement
+      return-statement
+        binary-expression prvalue int OP_PLUS:+
+          binary-expression prvalue int OP_PLUS:+
+            binary-expression prvalue int OP_PLUS:+
+              literal prvalue bool 1
+              literal prvalue bool 1
+            literal prvalue bool 1
+          literal prvalue bool 0
+end translation unit

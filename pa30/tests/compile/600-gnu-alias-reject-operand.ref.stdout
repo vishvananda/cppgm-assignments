@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-gnu-alias-reject-operand.t:1:33: an alias target requires an ordinary string literal

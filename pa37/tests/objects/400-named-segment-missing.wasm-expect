@@ -1,0 +1,7 @@
+{
+  "source": true,
+  "exports": [
+    "__start_missing_entries"
+  ],
+  "reject_link": true
+}
