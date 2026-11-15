@@ -25,8 +25,11 @@ compile with `CC`; use the C++ host driver to link the library.
 
 ## Construction and ownership
 
-1. Call `cppgm_lowir_create` with `CPPGM_LOWIR_ABI_VERSION` and target 0 (Linux
-   x86-64 ELF) or 1 (macOS x86-64 Mach-O). Reject unsupported versions/targets.
+1. Call `cppgm_lowir_create` with `CPPGM_LOWIR_ABI_VERSION` and target
+   `CPPGM_TARGET_LINUX` (x86-64 ELF) or `CPPGM_TARGET_MACOS` (x86-64 Mach-O).
+   Reject unsupported versions/targets. `cppgm_lowir_abi_version` returns
+   `CPPGM_LOWIR_ABI_VERSION`, and `cppgm_lowir_version` returns the release text
+   of your library; neither takes a module.
 2. Intern symbols and add signatures, declarations, definitions and globals.
    IDs are dense and stable. Symbol strings, signature parameter arrays and
    global initializer arrays are borrowed for the call and copied as needed.
@@ -59,6 +62,9 @@ from the same record declarations. The supported ABI is little endian, with
 encode kind in bits 0–7, alignment log2 in 8–15 and object size in 16–63. Values
 store kind and floating kind as separate bytes, a zero reserved halfword and an
 index. See the headers and PA8 format reference for opcode properties and flags.
+Every number an argument or a field takes has a name: an enumerator of the
+generated `dev/src/lowir_c_vocabulary.h`, or of `lowir_interface.h`
+(`CPPGM_TARGET_*`, `CPPGM_FUNCTION_*`, `CPPGM_GLOBAL_*`, `CPPGM_CODE_*`).
 
 Failures return zero (or `CPPGM_NO_ID` for IDs), retain a diagnostic and poison
 the module. Failed creation returns null; destruction accepts null. No C++
@@ -78,6 +84,8 @@ direct construction must preserve behavior; object bytes need not be identical
 across valid student implementations. No timing threshold is graded.
 
 This extension covers native C-linkage scalar functions, globals and plain
-slots. Wasm objects, inline assembly, debug information and the complete C++
-aggregate ABI are outside this optional facade. Their ordinary compiler lanes
-continue to exercise the full LowIR model.
+slots. The header also declares the additions of ABI version 3: boundary and
+symbol metadata, argument facts, assembly templates and debug information. The
+starter file has failing functions for them and the supplied client does not
+call them, so they are outside this optional lane, as Wasm objects are. Their
+ordinary compiler lanes continue to exercise the full LowIR model.

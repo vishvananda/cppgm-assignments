@@ -25,7 +25,7 @@ def main():
     cc = shlex.split(os.environ.get("CC", "cc"))
     cxx = shlex.split(os.environ.get("CPPGM_HOST_CXX", os.environ.get("CXX", "g++")))
     stdlib = shlex.split(os.environ.get("CPPGM_STDLIB_FLAGS", ""))
-    target = 1 if platform.system() == "Darwin" else 0
+    target = "CPPGM_TARGET_MACOS" if platform.system() == "Darwin" else "CPPGM_TARGET_LINUX"
     with tempfile.TemporaryDirectory(prefix="cppgm-library-") as directory:
         out = Path(directory)
         source = ROOT / "pa27/tests/lowir-library/client.c"

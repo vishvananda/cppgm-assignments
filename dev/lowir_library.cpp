@@ -4,6 +4,16 @@
 // with a facade over the same typed model used by the command-line tools.
 extern "C" {
 
+uint32_t cppgm_lowir_abi_version(void)
+{
+	return CPPGM_LOWIR_ABI_VERSION;
+}
+
+const char* cppgm_lowir_version(void)
+{
+	return "0.0.0";
+}
+
 int cppgm_lowir_body_reserve(CppgmLowir*, uint32_t, const CppgmBodyCounts*, CppgmBodyBuffers*)
 {
 	return 0;
@@ -68,6 +78,63 @@ const uint8_t* cppgm_lowir_object_data(const CppgmLowir*)
 }
 
 uint64_t cppgm_lowir_object_size(const CppgmLowir*)
+{
+	return 0;
+}
+
+// The additions of ABI version 3. The course client does not call them.
+uint32_t cppgm_lowir_boundary(CppgmLowir*, CppgmType, const CppgmParameter*, uint32_t, const CppgmBoundary*)
+{
+	return CPPGM_NO_ID;
+}
+
+int cppgm_lowir_symbol_fact(CppgmLowir*, uint32_t, uint32_t, uint32_t)
+{
+	return 0;
+}
+
+int cppgm_lowir_symbol_name(CppgmLowir*, uint32_t, uint32_t, const char*, uint32_t)
+{
+	return 0;
+}
+
+int cppgm_lowir_body_argument_facts(CppgmLowir*, uint32_t, const CppgmArgumentFact*, uint32_t)
+{
+	return 0;
+}
+
+uint32_t cppgm_lowir_assembly(CppgmLowir*, const CppgmAssembly*)
+{
+	return CPPGM_NO_ID;
+}
+
+uint32_t cppgm_lowir_debug_file(CppgmLowir*, const char*, uint32_t)
+{
+	return CPPGM_NO_ID;
+}
+
+int cppgm_lowir_function_location(CppgmLowir*, uint32_t, const CppgmDebugLocation*)
+{
+	return 0;
+}
+
+int cppgm_lowir_body_locations(CppgmLowir*, uint32_t, const CppgmDebugLocation*, uint32_t, const uint32_t*)
+{
+	return 0;
+}
+
+uint32_t cppgm_lowir_debug_type(CppgmLowir*, const CppgmDebugType*)
+{
+	return CPPGM_NO_ID;
+}
+
+uint32_t cppgm_lowir_debug_scope(CppgmLowir*, uint32_t, uint32_t)
+{
+	return CPPGM_NO_ID;
+}
+
+int cppgm_lowir_debug_local(
+	CppgmLowir*, uint32_t, uint32_t, uint32_t, uint32_t, const char*, uint32_t, const CppgmDebugLocation*)
 {
 	return 0;
 }

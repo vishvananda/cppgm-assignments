@@ -38,13 +38,14 @@ static LowirInstruction instruction(uint32_t block, uint8_t op, uint32_t result,
 static int finish(CppgmLowir* module, char** argv)
 {
 	check(module, cppgm_lowir_write(module, argv[2]));
-	check(module, cppgm_lowir_compile(module, (uint32_t)atoi(argv[3]), strcmp(argv[4], "pic") == 0));
+	check(module, cppgm_lowir_compile(
+		module, (uint32_t)atoi(argv[3]), strcmp(argv[4], "pic") == 0 ? CPPGM_CODE_PIC : CPPGM_CODE_FIXED));
 	const uint8_t* bytes = cppgm_lowir_object_data(module);
 	uint64_t size = cppgm_lowir_object_size(module);
 	FILE* file = fopen(argv[1], "wb");
 	if (file == NULL || size == 0 || fwrite(bytes, 1, size, file) != size || fclose(file))
 		return 5;
-	if (cppgm_lowir_compile(module, 0, 0) || cppgm_lowir_error(module)[0] == 0)
+	if (cppgm_lowir_compile(module, 0, CPPGM_CODE_FIXED) || cppgm_lowir_error(module)[0] == 0)
 		return 6;
 	cppgm_lowir_destroy(module);
 	cppgm_lowir_destroy(NULL);
@@ -55,15 +56,21 @@ static int compile_case(int argc, char** argv)
 {
 	if (argc != 5)
 		return 2;
-	CppgmLowir* module = cppgm_lowir_create(CPPGM_LOWIR_ABI_VERSION, strcmp(argv[4], "macos") == 0 ? 1 : CPPGM_TEST_TARGET);
+	/* The library states its ABI version and its release without a module. */
+	if (cppgm_lowir_abi_version() != CPPGM_LOWIR_ABI_VERSION || cppgm_lowir_version()[0] == 0)
+		return 9;
+	CppgmLowir* module = cppgm_lowir_create(
+		CPPGM_LOWIR_ABI_VERSION, strcmp(argv[4], "macos") == 0 ? CPPGM_TARGET_MACOS : CPPGM_TEST_TARGET);
 	check(module, module != NULL);
-	if (cppgm_lowir_create(CPPGM_LOWIR_ABI_VERSION + 1, 0) != NULL || cppgm_lowir_create(CPPGM_LOWIR_ABI_VERSION, 99) != NULL)
+	if (cppgm_lowir_create(CPPGM_LOWIR_ABI_VERSION + 1, CPPGM_TARGET_LINUX) != NULL ||
+		cppgm_lowir_create(CPPGM_LOWIR_ABI_VERSION, 99) != NULL)
 		return 3;
 	if (strcmp(argv[4], "entry") == 0)
 	{
 		uint32_t main_symbol = cppgm_lowir_symbol(module, "main", 4);
-		uint32_t main_signature = cppgm_lowir_signature(module, CPPGM_TYPE_I32, NULL, 0, 0);
-		check(module, cppgm_lowir_function(module, main_symbol, main_signature, 2, 1));
+		uint32_t main_signature = cppgm_lowir_signature(module, CPPGM_TYPE_I32, NULL, 0, CPPGM_ARITY_FIXED);
+		check(module, cppgm_lowir_function(
+			module, main_symbol, main_signature, CPPGM_BINDING_STRONG, CPPGM_FUNCTION_DEFINITION));
 		LowirBodyCounts counts = { 3, 0, 1, 1, 1 };
 		LowirBodyBuffers buffers;
 		check(module, cppgm_lowir_body_reserve(module, main_symbol, &counts, &buffers));
@@ -84,15 +91,17 @@ static int compile_case(int argc, char** argv)
 	CppgmDataItem data = { 0 };
 	data.type = CPPGM_TYPE_I64;
 	data.bits.low = 7;
-	check(module, cppgm_lowir_global(module, bias, 0, 2, 1, &data, 1, 0));
+	data.kind = CPPGM_DATA_SCALAR;
+	check(module, cppgm_lowir_global(module, bias, CPPGM_TYPE_VOID, CPPGM_BINDING_STRONG, CPPGM_STORAGE_READONLY, &data, 1,
+		CPPGM_GLOBAL_DEFINITION));
 	uint32_t host = cppgm_lowir_symbol(module, "host_adjust", 11);
 	uint32_t compute = cppgm_lowir_symbol(module, "compute", 7);
 	CppgmType parameter = CPPGM_TYPE_I64;
-	uint32_t sig = cppgm_lowir_signature(module, CPPGM_TYPE_I64, &parameter, 1, 0);
+	uint32_t sig = cppgm_lowir_signature(module, CPPGM_TYPE_I64, &parameter, 1, CPPGM_ARITY_FIXED);
 	check(module, sig != CPPGM_NO_ID);
-	check(module, cppgm_lowir_function(module, host, sig, 2, 0));
-	check(module, cppgm_lowir_function(module, compute, sig, 2, 0));
-	check(module, cppgm_lowir_function(module, compute, sig, 2, 1));
+	check(module, cppgm_lowir_function(module, host, sig, CPPGM_BINDING_STRONG, CPPGM_FUNCTION_DECLARATION));
+	check(module, cppgm_lowir_function(module, compute, sig, CPPGM_BINDING_STRONG, CPPGM_FUNCTION_DECLARATION));
+	check(module, cppgm_lowir_function(module, compute, sig, CPPGM_BINDING_STRONG, CPPGM_FUNCTION_DEFINITION));
 	LowirBodyCounts counts = { 11, 9, 2, 0, 4 };
 	LowirBodyCounts small = { 1, 1, 1, 0, 1 };
 	LowirBodyBuffers buffers;
@@ -184,7 +193,7 @@ static int compile_case(int argc, char** argv)
 		result = cppgm_lowir_validate(module);
 	if (strncmp(argv[4], "bad-", 4) == 0)
 	{
-		if (result || cppgm_lowir_error(module)[0] == 0 || cppgm_lowir_compile(module, 0, 0))
+		if (result || cppgm_lowir_error(module)[0] == 0 || cppgm_lowir_compile(module, 0, CPPGM_CODE_FIXED))
 			return 4;
 		cppgm_lowir_destroy(module);
 		return 0;

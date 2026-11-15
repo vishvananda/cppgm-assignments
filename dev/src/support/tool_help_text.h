@@ -46,6 +46,8 @@ inline const char* cppgm_help_text()
 		   "  -o <outfile>        explicit output path\n"
 		   "  -I <dir> / -I<dir>  user include search path\n"
 		   "  -isystem <dir>      system include search path\n"
+		   "  -nostdinc           no standard include search paths\n"
+		   "  --gcc-install-dir=<dir>  GCC installation that has the standard headers\n"
 		   "  -D <macro> / -D<macro>\n"
 		   "  -U <macro> / -U<macro>\n"
 		   "  -include <file>\n"

@@ -129,6 +129,12 @@ with, so it may agree, and a flag that disagrees is refused rather than
 honoured -- honouring it would compile against one library's headers while
 claiming another.
 
+The course solution adds one case for its released binaries, which run on
+machines other than the build machine. When the baked C++ library directory
+is not there, it reads the directories of a GCC installation on that machine
+(`--gcc-install-dir=<dir>` names one). It runs no program, and the predefined
+macros stay the baked ones. Your compiler does not need this.
+
 ### Starter Kit
 
 The starter kit provides:
