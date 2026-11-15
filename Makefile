@@ -185,10 +185,10 @@ test-target-features-nobuild:
 
 inception: build
 	@$(MAKE) -C pa35 \
-		CXX=../dev/cppgm++ \
+		CXX=../dev/cppgm \
 		CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" \
 		CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)" \
-		compare-cppgm++-inception
+		compare-cppgm-inception
 
 # Toolchain cells.  Each supported (host compiler, standard library) pair keeps
 # its own object roots, so switching cells relinks the tools in dev/ but does
@@ -229,7 +229,7 @@ ASAN_CELL_OBJ ?= obj-asan
 ASAN_CC_FLAGS ?= -std=gnu++11 -O1 -g -fno-omit-frame-pointer -fsanitize=address
 
 asan-build: require-clang
-	@$(MAKE) -C dev cppgm++ \
+	@$(MAKE) -C dev cppgm \
 		CXX=$(CLANG_CXX) \
 		CPPGM_HOST_CXX=$(CLANG_CXX) \
 		OBJ=../$(ASAN_CELL_OBJ) \
@@ -416,7 +416,7 @@ run-cppgm-nobuild:
 		echo "usage: make run-cppgm-nobuild CPPGM_ARGS='...'" >&2; \
 		exit 2; \
 	fi
-	@./dev/cppgm++ $(CPPGM_ARGS)
+	@./dev/cppgm $(CPPGM_ARGS)
 
 clean:
 	-$(MAKE) -C dev clean

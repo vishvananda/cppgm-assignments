@@ -44,7 +44,7 @@ if (@ARGV && $ARGV[0] eq '--list')
 	exit 0;
 }
 
-@ARGV == 2 or die "Usage: check_inline_assembly.pl <cppgm++> <test-or-directory>\n";
+@ARGV == 2 or die "Usage: check_inline_assembly.pl <cppgm> <test-or-directory>\n";
 my ($app, $selection) = @ARGV;
 $app = File::Spec->rel2abs($app); # preserve a reference wrapper's basename
 my $lowir = $ENV{CPPGM_ASSEMBLY_LOWIR_APP} // '../dev/lowir';

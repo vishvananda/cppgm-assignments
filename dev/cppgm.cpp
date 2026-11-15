@@ -1,4 +1,4 @@
-// Student-facing scaffold for the PA5+ `cppgm++` binary.
+// Student-facing scaffold for the PA5+ `cppgm` binary.
 
 #include "support/not_implemented.h"
 #include "support/tool_help_text.h"

@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# check_kernels.pl [--compiler ../dev/cppgm++] [--limit 1.50] [--scale 16] [--out obj/kernels]
+# check_kernels.pl [--compiler ../dev/cppgm] [--limit 1.50] [--scale 16] [--out obj/kernels]
 #
 # PA34's dynamic code-quality check. Runs PA36's kernels
 # (../pa36/scripts/kernels.pl) with the compiler under test: each kernel is
@@ -21,7 +21,7 @@ use Getopt::Long;
 
 my $pa34 = dirname($FindBin::Bin);
 my $root = dirname($pa34);
-my %o = (compiler => "$root/dev/cppgm++", limit => 1.50, scale => 16, out => "$pa34/obj/" . run_result_name('kernels'));
+my %o = (compiler => "$root/dev/cppgm", limit => 1.50, scale => 16, out => "$pa34/obj/" . run_result_name('kernels'));
 GetOptions(\%o, 'compiler=s', 'limit=f', 'scale=i', 'out=s') && $o{limit} > 0 && $o{scale} >= 1
 	or die "usage: check_kernels.pl [--compiler C] [--limit L] [--scale N] [--out DIR]\n";
 exit 0 unless CppgmTestPlatform::require_platform('linux', 'test-kernels', 'Cachegrind instruction-count gate');

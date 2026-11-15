@@ -24,7 +24,7 @@ sub usage {
   die "usage: run_object_lowir_roundtrip_tests.pl [--debuginfo] --app APP (--test-root DIR | --test FILE)...\n";
 }
 
-my $app = "../dev/cppgm++";
+my $app = "../dev/cppgm";
 my $debuginfo = 0;
 my @roots;
 my @tests;

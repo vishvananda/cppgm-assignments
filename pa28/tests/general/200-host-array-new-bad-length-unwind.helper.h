@@ -1,6 +1,6 @@
-// An invalid array new count in cppgm++ code obtains no storage and throws
+// An invalid array new count in cppgm code obtains no storage and throws
 // std::bad_array_new_length through __cxa_throw_bad_array_new_length; the
-// host catches it after the cppgm++ frame's locals were destroyed.
+// host catches it after the cppgm frame's locals were destroyed.
 typedef unsigned long size_type;
 
 extern int live;

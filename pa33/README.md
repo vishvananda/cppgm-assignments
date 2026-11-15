@@ -6,7 +6,7 @@ PA33 adds the first explicit optimization stage to the compiler. The new tool,
 `lowiropt`, reads PA8 LowIR text, applies a deterministic optimization
 pipeline selected by `-O0`, `-O1`, `-O2`, or `-O3`, and writes LowIR text.
 
-The same LowIR optimizer is also reached from `cppgm++` when source programs
+The same LowIR optimizer is also reached from `cppgm` when source programs
 are compiled with `--emit-lowir -O1`, `--emit-lowir -O2`,
 `--emit-lowir -O3`, or through the ordinary compile/link driver at an
 optimization level.
@@ -84,25 +84,25 @@ PA33 also requires the source driver to route these options through the same
 optimizer:
 
 ```sh
-cppgm++ --emit-lowir -g0 -O1 -o <outfile> <srcfile>...
-cppgm++ --emit-lowir -g0 -O2 -o <outfile> <srcfile>...
-cppgm++ --emit-lowir -g0 -O3 -o <outfile> <srcfile>...
-cppgm++ --emit-lowir -gline-tables-only -O1 -o <outfile> <srcfile>...
-cppgm++ --emit-lowir -gline-tables-only -O2 -o <outfile> <srcfile>...
-cppgm++ --emit-lowir -gline-tables-only -O3 -o <outfile> <srcfile>...
+cppgm --emit-lowir -g0 -O1 -o <outfile> <srcfile>...
+cppgm --emit-lowir -g0 -O2 -o <outfile> <srcfile>...
+cppgm --emit-lowir -g0 -O3 -o <outfile> <srcfile>...
+cppgm --emit-lowir -gline-tables-only -O1 -o <outfile> <srcfile>...
+cppgm --emit-lowir -gline-tables-only -O2 -o <outfile> <srcfile>...
+cppgm --emit-lowir -gline-tables-only -O3 -o <outfile> <srcfile>...
 ```
 
-The ordinary `cppgm++ -c` and link-driver paths must also accept `-O0`, `-O1`,
+The ordinary `cppgm -c` and link-driver paths must also accept `-O0`, `-O1`,
 `-O2`, and `-O3` and use the same LowIR optimization level before object
 generation. As with GCC and Clang, omitting `-O` selects `-O0`; optimization
 must be requested explicitly.
 Compile mode must also accept serialized LowIR text as an input:
 
 ```sh
-cppgm++ -c -O0 -o <objfile> <lowirfile>
-cppgm++ -c -O1 -o <objfile> <lowirfile>
-cppgm++ -c -O2 -o <objfile> <lowirfile>
-cppgm++ -c -O3 -o <objfile> <lowirfile>
+cppgm -c -O0 -o <objfile> <lowirfile>
+cppgm -c -O1 -o <objfile> <lowirfile>
+cppgm -c -O2 -o <objfile> <lowirfile>
+cppgm -c -O3 -o <objfile> <lowirfile>
 ```
 
 This LowIR object input mode parses LowIR text, runs the same object-prep and
@@ -125,8 +125,8 @@ may keep LowIR in memory for speed, but it must not pass private frontend or
 semantic side data around the serialized LowIR representation. If object
 emission needs a fact after optimization, that fact must either be represented
 in LowIR or derived again by the object-lowering layer from LowIR. The direct
-`cppgm++ -c` source object and the object produced by `--emit-lowir -O0`
-followed by `cppgm++ -c -O<level>` on that LowIR file should therefore match
+`cppgm -c` source object and the object produced by `--emit-lowir -O0`
+followed by `cppgm -c -O<level>` on that LowIR file should therefore match
 for the same source, flags, and optimization level.
 
 This durability rule includes PA27 global section placement. A token-safe GNU
@@ -183,7 +183,7 @@ For each LowIR or `--emit-lowir` driver fixture `x.t`, the course checks:
 - the output meets every predicate in its `x.ref.expect`
   (`../scripts/expect_ir.pl`);
 - the output lowers through the object path at `-O0`
-  (`cppgm++ -c -O0 x.lowir`) whenever the input does.  `make test` sets
+  (`cppgm -c -O0 x.lowir`) whenever the input does.  `make test` sets
   `CPPGM_LOWER_CHECK_APP` so the harness runs that floor; an optimizer's
   output is not correct until the backend accepts it;
 - the optimized program behaves as the input's: both are built through the
@@ -541,14 +541,14 @@ source-language clauses.
 - `tests/o1` runs `lowiropt -O1` on handwritten LowIR.
 - `tests/o2` runs `lowiropt -O2` on handwritten LowIR.
 - `tests/o3` runs `lowiropt -O3` on handwritten LowIR.
-- `tests/driver/o0` runs `cppgm++ --emit-lowir -g0 -O0` on source programs
+- `tests/driver/o0` runs `cppgm --emit-lowir -g0 -O0` on source programs
   whose boundary facts come from attributes that PA27-PA30 introduce (GNU
   `noinline`, `pure` and `const`, `[[noreturn]]`) and from PA33's GNU `cold`:
   the C++ lowering's own output, compared as PA10-PA23 compare theirs, facts
   included.
-- `tests/driver/o1` runs `cppgm++ --emit-lowir -g0 -O1` on source programs.
-- `tests/driver/o2` runs `cppgm++ --emit-lowir -g0 -O2` on source programs.
-- `tests/driver/o3` runs `cppgm++ --emit-lowir -g0 -O3` on source programs.
+- `tests/driver/o1` runs `cppgm --emit-lowir -g0 -O1` on source programs.
+- `tests/driver/o2` runs `cppgm --emit-lowir -g0 -O2` on source programs.
+- `tests/driver/o3` runs `cppgm --emit-lowir -g0 -O3` on source programs.
 - `tests/host/o1` and `tests/host/o2` build host-compatible objects at their level,
   link them with the host compiler and check program output and exit status.
   They cover nested catches and shared normal/handler continuations after
@@ -568,8 +568,8 @@ source-language clauses.
 - `tests/improvements` supplies optional vector, memory traversal and scheduling
   experiments. `make test-improvements` checks their behavior and reports work
   without a speed threshold; see [improvements.md](improvements.md).
-- `tests/object-roundtrip` compares direct `cppgm++ -c` output against an
-  object produced by `cppgm++ --emit-lowir -O0` followed by `cppgm++ -c` on
+- `tests/object-roundtrip` compares direct `cppgm -c` output against an
+  object produced by `cppgm --emit-lowir -O0` followed by `cppgm -c` on
   the generated LowIR file. This checks that object emission can be
   reconstructed from serialized LowIR instead of from hidden frontend side
   data. These tests may be standalone `.cpp` files or symlinks to existing
@@ -592,7 +592,7 @@ make test-debuginfo
 ```
 
 This also runs `tests/object-roundtrip` in debuginfo mode, comparing direct
-`cppgm++ -c` output against LowIR-input `cppgm++ -c` output with
+`cppgm -c` output against LowIR-input `cppgm -c` output with
 `-gline-tables-only` at `-O0`, `-O1`, `-O2`, and `-O3`.
 
 `make test-debuginfo` runs:
@@ -606,7 +606,7 @@ This also runs `tests/object-roundtrip` in debuginfo mode, comparing direct
 
 The direct debug-info tests run `lowiropt -O*` over LowIR containing
 `!dbg(...)` metadata. The driver debug-info tests run
-`cppgm++ --emit-lowir -gline-tables-only -O*` and check that source locations
+`cppgm --emit-lowir -gline-tables-only -O*` and check that source locations
 survive the source-to-LowIR optimizer path: the locations of
 `../pa8/lowir.md` "Debug Locations", which each surviving, moved or copied
 instruction keeps.

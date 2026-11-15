@@ -1,8 +1,8 @@
 .cproject
 .project
 tests/**/*.my*
-cppgm++
-cppgm++-debug
+cppgm
+cppgm-debug
 *.dSYM
 tests/testin
 testout

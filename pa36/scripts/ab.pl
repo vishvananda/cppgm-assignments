@@ -2,7 +2,7 @@
 # ab.pl OLD [NEW] [--levels O0,O3] [--counter auto|callgrind|perf] [--sim] [--no-cache] [--out DIR]
 #
 # Codegen comparison at constant work: builds this repository's current
-# source with compiler OLD and with compiler NEW (default dev/cppgm++), then
+# source with compiler OLD and with compiler NEW (default dev/cppgm), then
 # counts both builds on the frozen workload. Both builds run the same
 # source, so they do the same work and must write identical objects; any
 # difference is the generated code. Prints NEW / OLD per level (with
@@ -26,7 +26,7 @@ my %o = (levels => 'O0,O3', counter => 'auto', out => "$PA36::PA36/obj/ab");
 GetOptions(\%o, 'levels=s', 'counter=s', 'sim', 'no-cache', 'out=s') && (@ARGV == 1 || @ARGV == 2)
 	or die "usage: ab.pl OLD [NEW] [--levels O0,O3] [--counter auto|callgrind|perf] [--sim] [--no-cache] [--out DIR]\n";
 $o{counter} = 'callgrind' if $o{sim};
-my ($old, $new) = (abs_path($ARGV[0]), abs_path($ARGV[1] // "$PA36::ROOT/dev/cppgm++"));
+my ($old, $new) = (abs_path($ARGV[0]), abs_path($ARGV[1] // "$PA36::ROOT/dev/cppgm"));
 -x $old or die "not executable: $ARGV[0]\n";
 -x $new or die "not executable: $new\n";
 my %built;

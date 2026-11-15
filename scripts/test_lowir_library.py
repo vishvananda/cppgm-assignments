@@ -45,7 +45,7 @@ def main():
                 text = obj.with_suffix(".lowir")
                 run([exe, obj, text, level, "valid"])
                 comparison = out / "text.o"
-                run(["dev/cppgm++", f"-O{level}", "-c", text, "-o", comparison])
+                run(["dev/cppgm", f"-O{level}", "-c", text, "-o", comparison])
                 if args.exact_objects and obj.read_bytes() != comparison.read_bytes():
                     raise AssertionError(f"{form} -O{level}: direct and text objects differ")
                 host = ROOT / ("pa27/tests/lowir-library/host.c" if level == 0 else "pa33/tests/lowir-library/host.c")
@@ -66,7 +66,7 @@ def main():
                 text = out / "mac.lowir"
                 run([exe, mac, text, args.levels[-1], "macos"])
                 comparison = out / "mac-text.o"
-                run(["dev/cppgm++", "--target=x86_64-apple-darwin", f"-O{args.levels[-1]}", "-c", text, "-o", comparison])
+                run(["dev/cppgm", "--target=x86_64-apple-darwin", f"-O{args.levels[-1]}", "-c", text, "-o", comparison])
                 if mac.read_bytes() != comparison.read_bytes():
                     raise AssertionError(f"{form}: direct and text Mach-O objects differ")
     print("LowIR library: static/shared, levels " + ",".join(map(str, args.levels)) + ", execution, malformed input, growth, isolation: PASS")

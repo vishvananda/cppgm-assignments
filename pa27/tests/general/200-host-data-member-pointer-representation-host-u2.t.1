@@ -1,6 +1,6 @@
 // Itanium ABI 2.3: a pointer to data member is the member's offset (null = -1)
-// as a ptrdiff_t; cppgm++ and host objects exchanging one must agree;
-// expect exit 0 under every mix of units built by cppgm++ and by the host
+// as a ptrdiff_t; cppgm and host objects exchanging one must agree;
+// expect exit 0 under every mix of units built by cppgm and by the host
 // compiler
 struct S { int a; int b; };
 typedef int S::* DM;

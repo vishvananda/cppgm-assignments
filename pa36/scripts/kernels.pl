@@ -18,7 +18,7 @@ use File::Path qw(make_path);
 use Getopt::Long;
 use PA36;
 
-my %a = (compiler => "$PA36::ROOT/dev/cppgm++", host => 'g++', out => "$PA36::PA36/obj/kernels", scale => 1);
+my %a = (compiler => "$PA36::ROOT/dev/cppgm", host => 'g++', out => "$PA36::PA36/obj/kernels", scale => 1);
 GetOptions(\%a, 'compiler=s', 'host=s', 'out=s', 'scale=i', 'list') && $a{scale} >= 1
 	or die "usage: kernels.pl [--compiler C] [--host g++] [--out DIR] [--scale N] | --list\n";
 my $K = "$PA36::PA36/kernels";

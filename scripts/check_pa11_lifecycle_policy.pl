@@ -54,7 +54,7 @@ if (@ARGV && $ARGV[0] eq '--list')
 if (scalar(@ARGV) != 2)
 {
 	die "Usage: check_pa11_lifecycle_policy.pl " .
-		"<cppgm++> <test-or-directory>\n";
+		"<cppgm> <test-or-directory>\n";
 }
 
 my ($app, $root) = @ARGV;

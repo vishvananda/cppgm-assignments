@@ -8,7 +8,7 @@ extend. They prescribe no allocator or internal representation.
 
 A backend can separate these stages for each function:
 
-- read LowIR into the PA8 model (`cppgm++` hands the backend the same model
+- read LowIR into the PA8 model (`cppgm` hands the backend the same model
   directly)
 - decide where each value that lives across blocks is placed
 - select instructions into a machine-IR function, giving each value used only

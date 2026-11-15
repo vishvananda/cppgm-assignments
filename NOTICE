@@ -1,12 +1,12 @@
-cppgm-extended
+cppgm
 
-Copyright 2026 The cppgm-extended Authors.
+Copyright 2026 The cppgm Authors.
 
 Portions of the original CPPGM assignment descriptions, tests and starter code
 are copyright 2013 CPPGM Foundation. Original copyright notices are retained
 with inherited material.
 
-cppgm-extended is an independently maintained adaptation. Its authors have
+cppgm is an independently maintained adaptation. Its authors have
 substantially edited, consolidated, renumbered and extended the original
 course into 37 assignments. The compiler implementation, reference tools,
 regenerated outputs and current teaching sequence are maintained by this

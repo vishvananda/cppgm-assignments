@@ -9,7 +9,7 @@ required language and hosted-library profile; see
 
 This student repository contains scaffolds, handouts, tests, references and
 wrappers that download pinned reference tools. The complete course solution
-is maintained in [cppgm-extended](https://github.com/vishvananda/cppgm-extended).
+is maintained in [cppgm](https://github.com/vishvananda/cppgm).
 
 ## Environment and workflow
 
@@ -45,17 +45,17 @@ ahead of time. Personal test inputs and harnesses can live in `student.tests/`.
 See [PROJECT_LAYOUT.md](PROJECT_LAYOUT.md) for the assignment map,
 [TESTING_AND_REFERENCES.md](TESTING_AND_REFERENCES.md) for test and reference
 policy, and [AGENTS.md](AGENTS.md) for coding-agent instructions. The
-[offline reference guide](doc/REFERENCES.md) covers the C++11/14/17 drafts. The [offline CWG reference index](doc/cwg/INDEX.txt)
+[offline reference guide](doc/REFERENCES.md) covers the C++11/14/17 drafts; the handouts state the rules of the selected C++20 features. The [offline CWG reference index](doc/cwg/INDEX.txt)
 collects the cited decisions and related papers, including later corrections.
 
 ## Origins and license
 
 This is an independently maintained adaptation of the original C++ Grandmaster
-Certification course. The cppgm-extended authors substantially edited,
+Certification course. The cppgm authors substantially edited,
 combined, renumbered and extended the inherited handouts, tests and starter
 code. Current PA numbers and reference tools belong to this 36-assignment
 version of the course.
 
-Copyright 2026 The cppgm-extended Authors. Project-maintained code and materials
+Copyright 2026 The cppgm Authors. Project-maintained code and materials
 use the Apache License 2.0; inherited material retains its original notices.
 See [LICENSE](LICENSE), [NOTICE](NOTICE) and [AUTHORS](AUTHORS).

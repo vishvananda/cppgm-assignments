@@ -1,11 +1,11 @@
-## CPPGM Programming Assignment 5 (`cppgm++ --emit-ast`)
+## CPPGM Programming Assignment 5 (`cppgm --emit-ast`)
 
 ### Overview
 
-Write the first `cppgm++` source-compiler mode:
+Write the first `cppgm` source-compiler mode:
 
 ```sh
-cppgm++ --emit-ast -o <outfile> <srcfile1> [<srcfile2> ...]
+cppgm --emit-ast -o <outfile> <srcfile1> [<srcfile2> ...]
 ```
 
 The program reads one or more C++ source files, runs translation phases 1
@@ -32,8 +32,8 @@ does not require implementing template deduction or instantiation.
 The PA5 starter kit contains:
 
 - `README.md`, this assignment handout
-- `Makefile`, which builds `cppgm++` and runs the PA5 tests
-- `cppgm++.cpp`, a link to the editable `dev/cppgm++.cpp` entry point
+- `Makefile`, which builds `cppgm` and runs the PA5 tests
+- `cppgm.cpp`, a link to the editable `dev/cppgm.cpp` entry point
 - the grammar for this assignment called `pa5.gram`
 - an HTML grammar explorer of `pa5.gram` in the sub-directory `grammar/`
 - `scripts/run_all_tests.pl` and `scripts/compare_results.pl`
@@ -41,17 +41,17 @@ The PA5 starter kit contains:
 - `tests/general/`, broader parser tests
 - checked-in `.ref` and `.ref.exit_status` files used as the oracle
 
-Your main editable file is `dev/cppgm++.cpp`. You may add or change other
+Your main editable file is `dev/cppgm.cpp`. You may add or change other
 implementation files under `dev/` as needed. Preserve the supplied test inputs,
 harness scripts and grammar. Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-The starter `dev/cppgm++.cpp` is a command-line scaffold for the long-lived
-`cppgm++` binary. It establishes the expected mode flags and help path; the AST
+The starter `dev/cppgm.cpp` is a command-line scaffold for the long-lived
+`cppgm` binary. It establishes the expected mode flags and help path; the AST
 parser, AST data model, and AST output behavior are your assignment work.
 
 The checked-in reference files under `tests/` are the grading oracle. The
-`cppgm++-ref` wrapper is available for investigation under the root reference
+`cppgm-ref` wrapper is available for investigation under the root reference
 policy; the harness runs your compiler.
 
 ### Build And Test Commands
@@ -67,7 +67,7 @@ make check TEST='tests/general/300-*.t'
 make test
 ```
 
-`make` builds `cppgm++`. `make test` runs the local PA5 suite.
+`make` builds `cppgm`. `make test` runs the local PA5 suite.
 
 ### Required Driver Surface
 
@@ -90,12 +90,12 @@ The following modes and driver features are not part of PA5:
 Behavior is undefined unless the command line has this form:
 
 ```sh
-cppgm++ --emit-ast -o <outfile> <srcfile1> [<srcfile2> ...]
+cppgm --emit-ast -o <outfile> <srcfile1> [<srcfile2> ...]
 ```
 
 ### Input Contract
 
-The authoritative source syntax is the shared `cppgm++` source grammar, exposed
+The authoritative source syntax is the shared `cppgm` source grammar, exposed
 for this assignment as `pa5.gram`. The grammar defines accepted syntax only;
 the PA5 AST-output requirements are defined by the Required Features and Out Of
 Scope sections below.
@@ -122,7 +122,7 @@ If this README and `pa5.gram` disagree about accepted source syntax, use
 
 ### Output Format
 
-On success, `cppgm++` writes the AST dump to `<outfile>`.
+On success, `cppgm` writes the AST dump to `<outfile>`.
 
 The first line is:
 
@@ -169,7 +169,7 @@ grading contract.
 
 ### Error Handling
 
-If preprocessing, tokenization, or parsing fails, `cppgm++` must exit with
+If preprocessing, tokenization, or parsing fails, `cppgm` must exit with
 `EXIT_FAILURE`.
 
 The contents of `<outfile>` are unspecified on failure. For failing tests, the
@@ -219,8 +219,8 @@ during parsing rather than being preserved as opaque placeholder nodes.
 
 ### Required C++14/17 syntax
 
-The source driver accepts `-std=c++11`, `-std=c++14` and `-std=c++17`;
-the default stays C++11. Parse the forms in the
+The source driver accepts `-std=c++11`, `-std=c++14`, `-std=c++17` and
+`-std=c++20`; the default stays C++11. Parse the forms in the
 [required language profile](../LANGUAGE_PROFILE.md) into structured nodes.
 The C++20 mode recognizes `char8_t` as a simple-type-specifier; its type
 identity and conversions are taught in PA6 and PA7.
@@ -260,7 +260,7 @@ The PA5 harness discovers every `.t` file under the requested test root.
 For each test case `x.t`, it runs:
 
 ```sh
-cppgm++ --emit-ast -o x.my x.t
+cppgm --emit-ast -o x.my x.t
 ```
 
 and records `x.my.exit_status`.
@@ -392,6 +392,8 @@ ellipsis ...
 pack-expansion <token>             OP_DOTS:...
 pack-expansion-expression
 sizeof-pack-expression <name>
+deduction-guide                    a `name`, the parameter-clause, then the type-id
+name <name>                        the template of a deduction-guide; the concept of a type-constraint
 ```
 
 Specifiers, declarators and initializers:
@@ -405,6 +407,7 @@ type-name <name>                   a name the parser knows as a type
 identifier <name>                  any other name
 cv-qualifier <token>
 decltype-specifier <text>
+qualified-type-name <name>         the member that a decl-specifier names after `decltype(...)::`
 constrained-placeholder-type <name> auto
 constrained-placeholder-type <name> decltype(auto)
 global-scope
@@ -417,6 +420,7 @@ array-suffix
 parameter-clause
 parameter-declaration
 function-qualifier <text>          `noexcept`, `throw()`, `throw(int,Y*)`
+ref-qualifier <token>              a function declarator's `&` or `&&`
 noexcept-specification
 trailing-return-type [<name>]      the payload repeats a return type that is one type-name
 initializer
@@ -487,7 +491,28 @@ lambda-expression
 lambda-introducer <text>
 lambda-declarator
 lambda-specifier <token>
+fold-expression                    its operands, in source order
 ```
+
+C++20 constraints:
+
+```text
+concept-definition <name>          the child of its template-declaration; one child, the constraint-expression
+requires-clause                    one child, the constraint-expression
+type-constraint                    first child of a constrained type-parameter; one child, a `name`
+requires-expression                a parameter-clause when the source has one, then the requirements
+simple-requirement                 one child, the expression
+type-requirement                   one child, the type-id
+compound-requirement               the expression, then `noexcept` and `return-constraint` when the source has them
+noexcept                           a compound-requirement's `noexcept`
+return-constraint <name>           the type-constraint after `->`
+nested-requirement                 one child, the constraint-expression
+```
+
+A concept's `<name>` has its explicit arguments joined: `Same<int&>`. A
+template-declaration's requires-clause follows its template-parameter-clause.
+A lambda's head requires-clause follows its template-parameter-clause, and its
+trailing requires-clause follows its lambda-declarator.
 
 The mode-tagged [modern syntax example](tests/spec/100-required-modern-syntax.t)
 and its [AST reference](tests/spec/100-required-modern-syntax.ref) show the
@@ -506,6 +531,8 @@ false; an invalid requirement outside a templated declaration is an error.
 Check in source order and stop once satisfaction is known. Constraint `&&` and
 `||` short-circuit substitution as well as evaluation. Later template and
 constant-evaluation assignments apply these rules to their added source forms.
+A requirement that starts with `{` is a compound requirement. PA5 parses and
+dumps the requirements; PA7 and later assignments check them.
 
 ### C++20 named concepts
 

@@ -2,7 +2,7 @@
 
 ### Overview
 
-Extend `cppgm++`, `lowir` and the native backend with a shared assembly boundary.
+Extend `cppgm`, `lowir` and the native backend with a shared assembly boundary.
 C++ source describes operands and effects; another language frontend can supply
 that same contract directly as LowIR. Generate native instructions and object
 fixups with your own encoder.
@@ -35,8 +35,8 @@ compiler in `dev/`; preserve the supplied fixtures and observers.
 
 ```sh
 lowir -o canonical.lowir program.lowir
-cppgm++ -O0 -c source.cpp -o source.o
-cppgm++ -O0 -c program.lowir -o program.o
+cppgm -O0 -c source.cpp -o source.o
+cppgm -O0 -c program.lowir -o program.o
 ```
 
 Source and direct LowIR use the same required path, producing host-linkable

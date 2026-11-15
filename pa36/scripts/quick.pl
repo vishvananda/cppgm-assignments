@@ -27,7 +27,7 @@ my $t0 = time;
 
 print "make build ...\n";
 PA36::run_or_die('make', '-C', $PA36::ROOT, 'build');
-copy("$PA36::ROOT/dev/cppgm++", "$Q/seed") or die "copy: $!\n";
+copy("$PA36::ROOT/dev/cppgm", "$Q/seed") or die "copy: $!\n";
 chmod 0755, "$Q/seed";
 print "self build ...\n";
 my ($self) = PA36::build_with(compiler => "$Q/seed", out => "$Q/self-build");

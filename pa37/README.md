@@ -2,7 +2,7 @@
 
 ### Overview
 
-Add a wasm32 backend to `cppgm++` and `lowir2native`. Compile the portable
+Add a wasm32 backend to `cppgm` and `lowir2native`. Compile the portable
 course language profile to WebAssembly while preserving the existing native
 targets. Reuse your frontend, typed LowIR and LowIR optimizer. Refactor your
 machine representations where needed so shared analyses do not assume x86
@@ -20,10 +20,10 @@ Support `wasm32-unknown-unknown` for freestanding core modules and
 default target and optimization levels. Support these forms:
 
 ```sh
-cppgm++ --target=wasm32-wasip1 -O2 source.cpp -o program.wasm
-cppgm++ --target=wasm32-wasip1 -O2 -c source.cpp -o source.o
-cppgm++ --target=wasm32-wasip1 source.o other.o -o program.wasm
-cppgm++ --target=wasm32-wasip1 --emit-lowir source.cpp -o source.lowir
+cppgm --target=wasm32-wasip1 -O2 source.cpp -o program.wasm
+cppgm --target=wasm32-wasip1 -O2 -c source.cpp -o source.o
+cppgm --target=wasm32-wasip1 source.o other.o -o program.wasm
+cppgm --target=wasm32-wasip1 --emit-lowir source.cpp -o source.lowir
 lowir2native --target=wasm32-wasip1 -O2 -o program.wasm source.lowir
 lowir2native --target=wasm32-wasip1 -O2 \
   --dump-machine-ir program.mir -o program.wasm source.lowir

@@ -1,6 +1,6 @@
 # Agent instructions
 
-Build one cumulative C++ compiler with the required C++11/14/17 profile for Linux x86-64 and PA37’s wasm32 targets, working through PA1–PA37.
+Build one cumulative C++ compiler with the required C++11/14/17 and selected C++20 profile for Linux x86-64 and PA37’s wasm32 targets, working through PA1–PA37.
 Read the current `paN/README.md` and [Testing and references](TESTING_AND_REFERENCES.md)
 before changing code. [Project layout](PROJECT_LAYOUT.md) gives the assignment map.
 

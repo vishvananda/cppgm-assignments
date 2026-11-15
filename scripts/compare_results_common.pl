@@ -433,7 +433,7 @@ sub evaluate_expectations
 	return (0, "ERROR: expectations not met ($output)", $hint);
 }
 
-# With CPPGM_LOWER_CHECK_APP naming a `cppgm++`, every successful LowIR
+# With CPPGM_LOWER_CHECK_APP naming a `cppgm`, every successful LowIR
 # output must also lower through the object path at -O0: the optimizer's
 # output is not correct until the backend accepts it.
 sub lowir_lowers
@@ -928,7 +928,7 @@ sub lowir_behavior_summary
 	return "$line\n";
 }
 
-# With CPPGM_BEHAVIOR_CHECK_APP naming a `cppgm++`, a source fixture whose
+# With CPPGM_BEHAVIOR_CHECK_APP naming a `cppgm`, a source fixture whose
 # optimized LowIR the driver emitted is also built and run two ways: the
 # source at the lane's level, and the emitted LowIR through the object
 # path at -O0; both
@@ -3006,7 +3006,7 @@ sub validate_lowir_text
 	return scalar(@errors) == 0 ? (1, undef) : (0, join('; ', @errors));
 }
 
-# The source-to-LowIR lanes (PA10-PA23 and PA8's `cppgm++ --emit-lowir`
+# The source-to-LowIR lanes (PA10-PA23 and PA8's `cppgm --emit-lowir`
 # debug-information lanes) compare the facts the C++ lowering states by rule
 # (pa8/lowir.md, "Facts The C++ Lowering States"), as they compare the
 # instruction facts.  PA33's optimized lanes (mode lowir_optimized_t) leave
@@ -5023,7 +5023,7 @@ sub compare_lowir_text
 	        lowir_compare_failure_hint($ref_compare, $my_compare, $diff_path));
 }
 
-# The debug-information lanes of `cppgm++ --emit-lowir` check that source
+# The debug-information lanes of `cppgm --emit-lowir` check that source
 # locations reach the emitted LowIR.  Names of temporaries, slots and blocks
 # are presentation there as in every relaxed comparison, but the
 # `!dbg(file, line, column)` carrier is what these lanes test: the output

@@ -17,13 +17,13 @@ The target performs three builds:
 
 | Generation | Built by | Output |
 | --- | --- | --- |
-| Seed | The host C++ compiler | `dev/cppgm++` |
-| Self | The seed compiler | `pa35/cppgm++-self` |
-| Inception | The self-built compiler | `pa35/cppgm++-inception` |
+| Seed | The host C++ compiler | `dev/cppgm` |
+| Self | The seed compiler | `pa35/cppgm-self` |
+| Inception | The self-built compiler | `pa35/cppgm-inception` |
 
 The self and inception binaries must match byte for byte. The seed is built
 by a different compiler and is not the binary comparison target. A successful
-run prints `MATCH cppgm++` and exits successfully.
+run prints `MATCH cppgm` and exits successfully.
 
 The host compiler still links the generated object files and supplies the
 hosted configuration. Your compiler must perform the C++ compilation and
@@ -44,7 +44,7 @@ make -C pa35 test-through-pa34 CPPGM_HOST_CXX=g++
 make inception CXX=g++ CPPGM_HOST_CXX=g++
 ```
 
-Within `pa35/`, `CXX` defaults to `../dev/cppgm++`. Keep
+Within `pa35/`, `CXX` defaults to `../dev/cppgm`. Keep
 `CPPGM_HOST_CXX` set to a real host compiler. Do not pass the host compiler
 as PA35's `CXX`, since that would bypass self-compilation.
 
@@ -59,14 +59,14 @@ expected outputs do not change.
 | PA2 | `posttoken-self` |
 | PA3 | `ppexpr-self` |
 | PA4 | `preproc-self` |
-| PA5–PA7, PA10–PA23, PA25–PA32 | `cppgm++-self` |
+| PA5–PA7, PA10–PA23, PA25–PA32 | `cppgm-self` |
 | PA8 | `lowir-self` |
 | PA9 | `abimangle-self` |
 | PA24, PA34 | `lowir2native-self` |
-| PA33 | `lowiropt-self`, with `cppgm++-self` for driver checks |
+| PA33 | `lowiropt-self`, with `cppgm-self` for driver checks |
 
 PA1–PA4 rebuild the smaller preprocessing tools. PA5 must build the complete
-`cppgm++` implementation even though its tests use only `--emit-ast`; later
+`cppgm` implementation even though its tests use only `--emit-ast`; later
 source-language rungs reuse that binary in the appropriate mode. The ladder
 is a sequence of checks, not a sequence of partial implementations of your
 compiler.
@@ -84,9 +84,9 @@ that uses a shared module.
 From the repository root:
 
 ```sh
-make -C pa35 cppgm++-self CPPGM_HOST_CXX=g++
+make -C pa35 cppgm-self CPPGM_HOST_CXX=g++
 make -C pa35 test-pa12 CPPGM_HOST_CXX=g++
-make -C pa35 compare-cppgm++-inception CPPGM_HOST_CXX=g++
+make -C pa35 compare-cppgm-inception CPPGM_HOST_CXX=g++
 ```
 
 The last command performs the final comparison without rebuilding the seed
@@ -101,7 +101,7 @@ Do not combine object generations for the final comparison.
 For a quick single-source diagnosis:
 
 ```sh
-make -C pa35 probe-self-object SOURCE=../dev/cppgm++.cpp CPPGM_HOST_CXX=g++
+make -C pa35 probe-self-object SOURCE=../dev/cppgm.cpp CPPGM_HOST_CXX=g++
 ```
 
 This uses the self-host flags but writes a scratch object under

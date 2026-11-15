@@ -9,6 +9,9 @@
 | [Itanium ABI](itanium-mangling.txt) | ABI names and runtime conventions |
 | [WebAssembly bundle](wasm/README.md) | PA37 core encoding, wasm32 data model and object ABI |
 
+No C++20 draft is retained here. The handouts state the rules of the selected
+C++20 features; N4861 is the C++20 working draft that they follow.
+
 These are references, not a requirement to implement their full language or
 library chapters. The [required profile](../LANGUAGE_PROFILE.md) and handouts
 define course scope. Cite the draft number and stable clause tag, such as

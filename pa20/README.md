@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 20 (`cppgm++ --emit-lowir`)
+## CPPGM Programming Assignment 20 (`cppgm --emit-lowir`)
 
 ### Overview
 
@@ -42,14 +42,14 @@ The intended direction is:
 The starter kit contains:
 
 - `pa20/README.md`, `pa20/Makefile`, and the test scripts in `pa20/scripts/`
-- your cumulative `dev/cppgm++.cpp` compiler entry point
-- the `pa20/cppgm++.cpp` symlink back to `../dev/cppgm++.cpp`
+- your cumulative `dev/cppgm.cpp` compiler entry point
+- the `pa20/cppgm.cpp` symlink back to `../dev/cppgm.cpp`
 - shared support sources and headers under `dev/src/`
 - the grammar for this assignment called `pa20.gram`
 - an HTML grammar explorer of `pa20.gram` in the sub-directory `grammar/`
 - a checked-in local test suite under `tests/`
 
-Students should implement the assignment in `dev/cppgm++.cpp` and any reusable
+Students should implement the assignment in `dev/cppgm.cpp` and any reusable
 student-owned helpers they add under `dev/src/`. The assignment directory, grammar files,
 test fixtures, comparison scripts, and checked-in reference outputs are support
 files, not implementation files to edit for normal solutions. Reuse your earlier compiler infrastructure when implementing this milestone.
@@ -61,14 +61,14 @@ your compiler with the checked-in contract references.
 
 Behaviour is undefined unless the command-line arguments match:
 
-    $ cppgm++ --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
+    $ cppgm --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
 
 `-O0` is the PA20 test mode. Other optimization levels are later optimizer work and
 are not required for this milestone.
 
 ### Output Format
 
-`cppgm++` shall write LowIR text to `<outfile>`.
+`cppgm` shall write LowIR text to `<outfile>`.
 
 The authoritative LowIR definition is `../pa8/lowir.md`. PA20 extends the PA19 lowering
 surface only by making more of the C++ source language lower into the already-defined LowIR
@@ -98,13 +98,13 @@ Enforces") lists both sides.
 ### Error Handling
 
 If an error occurs during preprocessing, tokenization, parsing, semantic analysis, or LowIR
-generation, `cppgm++` shall `EXIT_FAILURE`.
+generation, `cppgm` shall `EXIT_FAILURE`.
 
 The output file is not required to be meaningful on failure.
 
 ### Standard Output / Error
 
-Standard output and standard error are ignored for automated testing of `cppgm++`.
+Standard output and standard error are ignored for automated testing of `cppgm`.
 
 You are free to use them for debugging, tracing, or diagnostic messages.
 
@@ -112,7 +112,7 @@ You are free to use them for debugging, tracing, or diagnostic messages.
 
 Tests compare your output with the checked-in references using the LowIR
 comparison described in [the format guide](../pa8/lowir.md). The `Makefile` invokes
-`cppgm++` with `--emit-lowir -O0`.
+`cppgm` with `--emit-lowir -O0`.
 
 The local checked-in tests live in `tests/general/`. That directory contains
 PA20 source-to-LowIR tests, cross-feature combinations, and boundary cases over
@@ -121,7 +121,7 @@ anchored to specific clauses; the harness runs them like the general suite.
 
 For each test case `x`:
 
-- `cppgm++` is executed to produce `x.my`
+- `cppgm` is executed to produce `x.my`
 - the exit status is recorded in `x.my.exit_status`
 - `x.my` is compared against `x.ref`
 - `x.my.exit_status` is compared against `x.ref.exit_status`
@@ -135,7 +135,7 @@ The shipped PA20 tests are the contract for this milestone.
 Self-checking controls in `tests/controls/` state their expected outcome in
 their leading comment (`expect exit N` or `expect reject`) or in an
 `x.expect` sidecar. `make test` compiles each with your
-`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`cppgm --emit-lowir -O0`, builds the LowIR with the supplied
 `lowir2native-ref -O0` and requires the stated exit status (and the output in
 `x.stdout`, when present), or requires your frontend to reject the program.
 The LowIR text of a control is not compared. `make test-controls` runs only
@@ -143,13 +143,13 @@ the controls; `make check TEST=tests/controls/<name>.t` runs one.
 
 ### PA20 Syntax Spec
 
-The authoritative source syntax is the shared `cppgm++` source grammar, exposed
+The authoritative source syntax is the shared `cppgm` source grammar, exposed
 for this assignment as `pa20.gram`. The grammar defines accepted syntax only;
 the PA20 semantic and lowering requirements are defined by the Assignment
 Boundary and Out Of Scope sections below.
 
 As in the earlier assignments, that grammar defines accepted input syntax only. The output
-format for `cppgm++` is specified by this README, PA8 `lowir.md`, and the checked-in
+format for `cppgm` is specified by this README, PA8 `lowir.md`, and the checked-in
 `.ref` files.
 
 PA20 does not add a new source-language grammar format. It instead enables more

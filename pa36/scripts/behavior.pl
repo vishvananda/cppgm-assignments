@@ -18,7 +18,7 @@ use File::Temp qw(tempdir);
 use Getopt::Long;
 use PA36;
 
-my %a = (compiler => "$PA36::ROOT/dev/cppgm++", host => 'g++', levels => 'O0,O1,O2,O3', jobs => PA36::default_jobs());
+my %a = (compiler => "$PA36::ROOT/dev/cppgm", host => 'g++', levels => 'O0,O1,O2,O3', jobs => PA36::default_jobs());
 GetOptions(\%a, 'compiler=s', 'host=s', 'levels=s', 'jobs=i', 'lowir2native=s')
 	or die "usage: behavior.pl [--compiler C] [--levels ...] [--lowir2native L] [TEST...]\n";
 my $compiler = abs_path($a{compiler}) // die "no compiler $a{compiler}\n";

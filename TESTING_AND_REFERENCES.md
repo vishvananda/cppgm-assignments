@@ -31,7 +31,7 @@ make CXX=g++ CPPGM_HOST_CXX=g++
 `TEST=` accepts a path, quoted glob or quoted list; mixed-input assignments
 route each fixture to its runner. Finish with the root through target.
 Keep a real host compiler in `CPPGM_HOST_CXX` when PA35 uses
-`CXX=../dev/cppgm++`. Use a separate object root for different toolchains.
+`CXX=../dev/cppgm`. Use a separate object root for different toolchains.
 
 Each `make` test invocation gives fixture results a unique run ID, inherited by
 its recursive makes, runners and comparers. A full report and a focused check
@@ -88,7 +88,7 @@ LowIR construction and later C++ lowering itself.
 From PA10 through PA23, a control whose leading comment says `expect exit N`
 or `expect reject` (or with an `x.expect` sidecar) is a self-checking program
 that executes your source-generated LowIR through the supplied native backend.
-`make test` compiles it with your `cppgm++ --emit-lowir -O0`, builds the result
+`make test` compiles it with your `cppgm --emit-lowir -O0`, builds the result
 with `lowir2native-ref -O0` and requires that exit status (and the output in
 `x.stdout`, when present), or requires your frontend to reject it. A program
 killed by a signal never has the stated status, and a frontend that crashes
@@ -101,7 +101,7 @@ size and, on Linux, virtual address space. macOS reports the small address-space
 gate as a platform skip; correctness and CPU/file limits still run.
 
 Reference wrappers download and verify a pinned bundle built from the current
-cppgm-extended solution. They provide examples of the required behavior and
+cppgm solution. They provide examples of the required behavior and
 are not the original CPPGM binaries. Fetch them ahead of time with:
 
 ```sh
@@ -130,7 +130,7 @@ rules.
 
 The [language profile](LANGUAGE_PROFILE.md) is required in the owning lessons.
 Mode-tagged checks run in normal tests and cumulative reports. A fixture's
-`NAME.cxx-standard` selects the same C++11/14/17 mode for implementation and
+`NAME.cxx-standard` selects the same C++11/14/17/20 mode for implementation and
 reference requests; driver cases can use their `.flags` file. No separate
 later-language validation command is needed.
 

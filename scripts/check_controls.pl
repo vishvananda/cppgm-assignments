@@ -2,7 +2,7 @@
 # Self-checking controls for the LowIR-graded assignments (PA10-PA23).
 #
 # A `tests/controls/*.t` that states its expected outcome is compiled by the
-# student's frontend (`cppgm++ --emit-lowir -O0`), the LowIR is built by the
+# student's frontend (`cppgm --emit-lowir -O0`), the LowIR is built by the
 # supplied reference backend (`lowir2native-ref -O0`), and the program is run
 # with no input: it must exit with the stated status, and print the stated
 # output when one is given.  A control that states a rejection must make the
@@ -21,7 +21,7 @@
 # Files that state no outcome belong to the assignment's focused checkers
 # (scripts/check_pa1[012]_*.pl) and are skipped when a directory is checked.
 #
-# Usage: check_controls.pl <cppgm++> <native-reference> <test-or-directory>
+# Usage: check_controls.pl <cppgm> <native-reference> <test-or-directory>
 #        check_controls.pl --owns <test> [<test> ...]
 #            exits 0 when every named file states an expected outcome.
 #        check_controls.pl --list <test-or-directory> [...]
@@ -228,7 +228,7 @@ if (@ARGV && $ARGV[0] eq '--list')
 	exit 0;
 }
 
-die "Usage: check_controls.pl <cppgm++> <native-reference> <test-or-directory>\n"
+die "Usage: check_controls.pl <cppgm> <native-reference> <test-or-directory>\n"
 	if scalar(@ARGV) != 3;
 my ($app, $native_reference, $root) = @ARGV;
 my @candidates = collect_tests($root, qr/\.(?:cpp|t)$/);

@@ -476,7 +476,7 @@ it when the symbol is emitted, not as a key for finding entities.
 
 ### Stage Handoff
 
-The next stage is PA10, where `cppgm++ --emit-lowir` first emits compiler-owned
+The next stage is PA10, where `cppgm --emit-lowir` first emits compiler-owned
 symbols. From then on the compiler's symbols must equal what `abimangle`
 produces for the same entities; one encoder serving both is the direct way to
 keep them equal, and later class, template, native-object, exception, and

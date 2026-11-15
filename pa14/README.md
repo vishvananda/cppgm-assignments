@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 14 (`cppgm++ --emit-lowir`)
+## CPPGM Programming Assignment 14 (`cppgm --emit-lowir`)
 
 ### Overview
 
@@ -55,14 +55,14 @@ The intended direction is:
 
 The starter kit contains:
 
-- a `cppgm++.cpp` assignment entry point, linked to the editable compiler source
-  in `../dev/cppgm++.cpp`
+- a `cppgm.cpp` assignment entry point, linked to the editable compiler source
+  in `../dev/cppgm.cpp`
 - the standard assignment `Makefile` and harness scripts
 - the grammar for this assignment called `pa14.gram`
 - an HTML grammar explorer of `pa14.gram` in the sub-directory `grammar/`
 - a checked-in local test suite under `tests/`
 
-Extend the `cppgm++` implementation you built in earlier assignments; the
+Extend the `cppgm` implementation you built in earlier assignments; the
 initial scaffold is not reinstalled at this milestone.
 
 Use the supplied reference tools to inspect example output. Tests compare
@@ -72,7 +72,7 @@ your compiler with the checked-in contract references.
 
 The PA14 invocation is the unoptimized LowIR mode:
 
-    $ cppgm++ --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
+    $ cppgm --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
 
 Behaviour is undefined unless the command-line arguments match that shape, with
 the same source-file ordering and `-o` relaxations as PA13. Preserve the earlier dump modes;
@@ -93,7 +93,7 @@ specialization is formed.
 
 ### Output Format
 
-On success, `cppgm++` shall write LowIR text to `<outfile>` and exit
+On success, `cppgm` shall write LowIR text to `<outfile>` and exit
 `EXIT_SUCCESS`.
 
 The authoritative LowIR definition is `../pa8/lowir.md`. PA14 extends the PA13
@@ -132,14 +132,14 @@ reference's after that canonicalization, in its order.
 ### Error Handling
 
 If an error occurs during preprocessing, tokenization, parsing, semantic analysis, or LowIR
-generation, `cppgm++` shall `EXIT_FAILURE`.
+generation, `cppgm` shall `EXIT_FAILURE`.
 
 The output file is not required to be meaningful on failure.
 Diagnostics are not part of the grading contract.
 
 ### Standard Output / Error
 
-Standard output and standard error are ignored for automated testing of `cppgm++`.
+Standard output and standard error are ignored for automated testing of `cppgm`.
 
 You are free to use them for debugging, tracing, or diagnostic messages.
 
@@ -150,7 +150,7 @@ comparison described in [the format guide](../pa8/lowir.md).
 
 For each test case `x`:
 
-- `cppgm++` is executed to produce `x.my`
+- `cppgm` is executed to produce `x.my`
 - the exit status is recorded in `x.my.exit_status`
 - `x.my` is compared against `x.ref`
 - `x.my.exit_status` is compared against `x.ref.exit_status`
@@ -178,7 +178,7 @@ path is not the PA14 grading contract.
 Self-checking controls in `tests/controls/` state their expected outcome in
 their leading comment (`expect exit N` or `expect reject`) or in an
 `x.expect` sidecar. `make test` compiles each with your
-`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`cppgm --emit-lowir -O0`, builds the LowIR with the supplied
 `lowir2native-ref -O0` and requires the stated exit status (and the output in
 `x.stdout`, when present), or requires your frontend to reject the program.
 The LowIR text of a control is not compared. `make test-controls` runs only
@@ -196,13 +196,13 @@ to later assignments.
 
 ### PA14 Syntax Spec
 
-The authoritative source syntax is the shared `cppgm++` source grammar, exposed
+The authoritative source syntax is the shared `cppgm` source grammar, exposed
 for this assignment as `pa14.gram`. The grammar defines accepted syntax only;
 the PA14 semantic and lowering requirements are defined by the Assignment
 Boundary and Out Of Scope sections below.
 
 As in the earlier assignments, that grammar defines accepted input syntax only. The output
-format for `cppgm++` is specified by this README, PA8 `lowir.md`, and the checked-in
+format for `cppgm` is specified by this README, PA8 `lowir.md`, and the checked-in
 `.ref` files.
 
 Template declarations, template-parameter clauses, common template-id syntax,
@@ -353,7 +353,8 @@ The following are explicitly out of scope for PA14:
 - explicit specialization
 - full standard two-phase lookup
 - function-template partial ordering
-- substitution-failure candidate dropping and SFINAE
+- substitution-failure candidate dropping and SFINAE, except that an invalid
+  type or expression in a C++20 requirement makes that requirement false
 - full `constexpr` evaluation
 - alias templates and variable templates
 - hosted/vendor-only template traits and intrinsics
@@ -444,6 +445,10 @@ satisfaction and preserve substitution short-circuiting. A compound requirement
 `{ expression } noexcept -> Concept<Args...>;` checks the expression, then its
 non-throwing property, then the concept with `decltype((expression))` prepended
 to its explicit arguments. Its value category and cv-qualifiers are preserved.
+
+A concept's constraint-expression has type `bool`; check this at the
+definition, without a use. A concept-id and a requires-expression lower as the
+`u8` constant `1` or `0`.
 
 ### C++20 implied `typename`
 

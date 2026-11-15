@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 31 (`cppgm++ -c`)
+## CPPGM Programming Assignment 31 (`cppgm -c`)
 
 ### Overview
 
@@ -7,7 +7,7 @@ PA30 establishes that hosted source/header inputs preprocess and compile at all
 (intrinsics, parser concessions, builtin traits, header-free conformance
 anchors, and lightweight C-wrapper header smokes). PA31 raises the bar to
 **compiling the heaviest real C++ standard-library headers** end to end with
-`cppgm++ -c`, within a workable compile time.
+`cppgm -c`, within a workable compile time.
 
 By PA30, hosted headers and source should preprocess and compile for the
 lighter hosted workload. PA31 raises the bar to large, template- and trait-heavy
@@ -19,7 +19,7 @@ checks whether emitted header code links and runs.
 
 To complete PA31, implement these goals:
 
-- compile the heaviest hosted standard-library headers cleanly with `cppgm++ -c`
+- compile the heaviest hosted standard-library headers cleanly with `cppgm -c`
 - carry the template instantiation, trait evaluation, and overload-resolution
   depth those headers exercise without exponential blow-up
 - stay within a workable compile time on the heavy-header workload (the
@@ -36,7 +36,7 @@ You will want to reuse:
 - the PA30 hosted preprocess/compile compatibility surface (intrinsics, parser
   concessions, builtin traits/types, header-free conformance anchors, and
   lightweight C-wrapper header smokes)
-- the PA27/PA28 `cppgm++ -c` host-object path
+- the PA27/PA28 `cppgm -c` host-object path
 
 The tests assume a Linux shell environment with `make`, `bash`, `perl`, and a
 working host C++ compiler with hosted C++ headers installed. You may override the
@@ -49,48 +49,48 @@ so the course compiler and host compiler agree.
 
 The starter kit provides:
 
-- your cumulative `dev/cppgm++.cpp` compiler entry point
+- your cumulative `dev/cppgm.cpp` compiler entry point
 - the shared implementation you built under `dev/src/`
-- `pa31/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
+- `pa31/cppgm.cpp`, a link to `../dev/cppgm.cpp`
 - `pa31/Makefile`
 - `pa31/scripts/`, the hosted `-c` compile test harness (shared with PA30)
 - `pa31/tests/compile/`, the heavy-STL header-compile tests and checked-in
   reference files
 
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
+Put your code changes in `dev/`, especially `dev/cppgm.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Preserve supplied test inputs.
 Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-Use `cppgm++-ref` to inspect example output.
+Use `cppgm-ref` to inspect example output.
 Tests run your implementation against the checked-in contract fixtures.
 
 ### Command-Line Contract
 
-PA31 introduces no new `cppgm++` flags. It reuses the compile-mode surface
+PA31 introduces no new `cppgm` flags. It reuses the compile-mode surface
 already required by PA30:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c -isystem <dir> -o <objfile> <srcfile>
-cppgm++ -c -D <macro> -U <macro> -include <file> -o <objfile> <srcfile>
+cppgm -c -o <objfile> <srcfile>
+cppgm -c -isystem <dir> -o <objfile> <srcfile>
+cppgm -c -D <macro> -U <macro> -include <file> -o <objfile> <srcfile>
 ```
 
 ### Output Format
 
-`cppgm++ -c` shall write a host-linker-compatible relocatable object as in
+`cppgm -c` shall write a host-linker-compatible relocatable object as in
 PA27/PA28/PA30. For PA31 the emitted object is discarded — the requirement is
 simply that the heavy hosted header compiles cleanly to an object without error.
 
 The hosted header path should still lower through the same LowIR representation
-used by `cppgm++ --emit-lowir`. Performance work may avoid unnecessary file
+used by `cppgm --emit-lowir`. Performance work may avoid unnecessary file
 I/O; the object must remain the one serialized LowIR produces (PA33's object
 round trip), so the facts the backend needs for hosted code are LowIR facts.
 
 ### Error Handling
 
 If preprocessing, parsing, semantic analysis, lowering, object emission, or
-output writing fails, `cppgm++` shall exit with failure. Exact diagnostics are
+output writing fails, `cppgm` shall exit with failure. Exact diagnostics are
 not the grading contract; the harness compares exit status and checked output
 sidecars.
 
@@ -110,7 +110,7 @@ make check TEST=tests/compile/600-const-unordered-map-find.t
 
 The local tests live in `tests/compile/`. Each test is `.t` (source) plus an
 empty `.ref` base, a `.ref.exit_status`, and a `.ref.stdout`. Most expect
-`EXIT_SUCCESS` and pass iff `cppgm++ -c` compiles them cleanly; the few
+`EXIT_SUCCESS` and pass iff `cppgm -c` compiles them cleanly; the few
 negative tests expect `EXIT_FAILURE`. Each test includes a real heavy
 header together with a semantic check — a trait, `decltype`, `sizeof`, or
 `static_assert` that cannot be satisfied without analyzing the header,

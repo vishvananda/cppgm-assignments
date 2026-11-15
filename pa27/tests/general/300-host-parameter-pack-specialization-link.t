@@ -1,1 +1,1 @@
-# host code resolves a cppgm++ variadic-template specialization
+# host code resolves a cppgm variadic-template specialization

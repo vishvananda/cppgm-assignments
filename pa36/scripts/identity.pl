@@ -2,14 +2,14 @@
 # identity.pl OLD NEW [--out DIR] [--jobs N] [--no-work]
 #
 # For changes that must not change generated code (compiler efficiency
-# work): builds every cppgm++ object of this repository's dev/ source with
+# work): builds every cppgm object of this repository's dev/ source with
 # OLD and with NEW (build_with) and compares each object byte for byte,
 # compiles the frozen workload at -O0..-O3 with both and compares, and
 # reports each compiler's own work (callgrind instructions) on the workload
 # at -O0 and -O3. Exits nonzero if any output differs.
 #
 # OLD and NEW are compiler binaries, normally g++-built seeds before and
-# after the change (freeze.pl seed-L files, or copies of dev/cppgm++).
+# after the change (freeze.pl seed-L files, or copies of dev/cppgm).
 use strict;
 use warnings;
 use FindBin;

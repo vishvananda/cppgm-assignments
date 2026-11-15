@@ -189,7 +189,7 @@ sub default_jobs {
 	return $n > 32 ? 32 : $n;
 }
 
-# Builds dev/'s cppgm++ from the source tree at $repo with $compiler, using
+# Builds dev/'s cppgm from the source tree at $repo with $compiler, using
 # the g++ build's own compile lines (same flags and defines, the compiler
 # swapped) and its link line (same host link, same malloc). The source tree
 # must have been built once with `make build` (generated headers). make_vars
@@ -207,14 +207,14 @@ sub build_with {
 	# (an OBJ= in the environment reaches it like any other make variable).
 	my ($status, $dry) = run_capture('make', '-C', $repo, '-n', '-B', 'build', @{ $a{make_vars} // [] });
 	my @lines = split /\n/, $dry;
-	# The link is the line that writes cppgm++ (the Makefile links a .tmp it
+	# The link is the line that writes cppgm (the Makefile links a .tmp it
 	# then moves into place) and compiles nothing.
-	my ($link) = grep { / -o (?:\S*\/)?cppgm\+\+(?:\.tmp)?(?: |$)/ && !/(?:^| )-c(?: |$)/ } @lines;
-	die "no cppgm++ link line in `make -n -B build` output: the self build takes the g++ build's own link line, which must name cppgm++ (or cppgm++.tmp) as its -o output\n"
+	my ($link) = grep { / -o (?:\S*\/)?cppgm(?:\.tmp)?(?: |$)/ && !/(?:^| )-c(?: |$)/ } @lines;
+	die "no cppgm link line in `make -n -B build` output: the self build takes the g++ build's own link line, which must name cppgm (or cppgm.tmp) as its -o output\n"
 		unless $link;
 	my @linked = $link =~ /(?:^| )(\S+\.o)(?= |$)/g;
 	my %linked = map { $_ => 1 } @linked;
-	die "the cppgm++ link line names no object files\n" unless @linked;
+	die "the cppgm link line names no object files\n" unless @linked;
 	# The objects keep their layout below the directory they share, whatever
 	# object root the build uses.
 	my $root = common_directory(@linked);
@@ -234,14 +234,14 @@ sub build_with {
 		make_path(dirname($dest));
 		push @jobs, "cd '$repo/dev' && '$compiler' @keep -o '$dest'";
 	}
-	die "found no compile lines for the objects the cppgm++ link names\n" unless @jobs;
+	die "found no compile lines for the objects the cppgm link names\n" unless @jobs;
 	my $failures = run_parallel($jobs, @jobs);
 	die "$failures of " . scalar(@jobs) . " compiles failed\n" if $failures;
 	(my $relinked = $link) =~ s{(?:^| )\K(\S+\.o)(?= |$)}{ $linked{$1} ? "'$out/objs/" . substr($1, length($root)) . "'" : $1 }ge;
-	$relinked =~ s{-o (?:\S*\/)?cppgm\+\+(?:\.tmp)?(?= |$)}{-o '$out/cppgm++'};
+	$relinked =~ s{-o (?:\S*\/)?cppgm(?:\.tmp)?(?= |$)}{-o '$out/cppgm'};
 	my ($ls, $lout) = run_capture('/bin/sh', '-c', "cd '$repo/dev' && $relinked");
 	die "link failed:\n$lout" if $ls;
-	return ("$out/cppgm++", scalar @jobs);
+	return ("$out/cppgm", scalar @jobs);
 }
 
 # The longest directory prefix (with its trailing slash) the paths share.

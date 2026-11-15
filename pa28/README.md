@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 28 (`cppgm++ -c`)
+## CPPGM Programming Assignment 28 (`cppgm -c`)
 
 ### Overview
 
@@ -26,7 +26,7 @@ Complete PA27 before starting this assignment.
 You will want to reuse:
 
 - the full C++ language pipeline through PA27
-- the PA27 host-compatible `cppgm++ -c` path
+- the PA27 host-compatible `cppgm -c` path
 - the PA24 native backend and PA25 object-emission path
 - the PA26 exception/runtime lowering concepts
 
@@ -52,19 +52,19 @@ host-link path while exercising richer host ABI/runtime interactions.
 
 The starter kit provides:
 
-- your cumulative `dev/cppgm++.cpp` compiler entry point
+- your cumulative `dev/cppgm.cpp` compiler entry point
 - the shared implementation you built under `dev/src/`
-- `pa28/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
+- `pa28/cppgm.cpp`, a link to `../dev/cppgm.cpp`
 - `pa28/Makefile`
 - `pa28/scripts/`, the host-ABI test harness
 - `pa28/tests/general/`, the PA28 tests and checked-in reference files
 
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
+Put your code changes in `dev/`, especially `dev/cppgm.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Preserve supplied test inputs.
 Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-Use `cppgm++-ref` to inspect example output.
+Use `cppgm-ref` to inspect example output.
 Tests run your implementation against the checked-in contract fixtures.
 
 ### Command-Line Contract
@@ -73,26 +73,26 @@ PA28 does not introduce new command-line flags. It reuses the PA27 compile-mode
 surface:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c --target <target> -o <objfile> <srcfile>
-cppgm++ -c -I <dir> -o <objfile> <srcfile>
-cppgm++ -c -I<dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I <dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I<dir> -o <objfile> <srcfile>
+cppgm -c -o <objfile> <srcfile>
+cppgm -c --target <target> -o <objfile> <srcfile>
+cppgm -c -I <dir> -o <objfile> <srcfile>
+cppgm -c -I<dir> -o <objfile> <srcfile>
+cppgm -c --target <target> -I <dir> -o <objfile> <srcfile>
+cppgm -c --target <target> -I<dir> -o <objfile> <srcfile>
 ```
 
 `<target>` may be `linux` or the corresponding x86_64 Linux host triple form
 accepted by your implementation. PA28 only requires compile mode. The normal
-PA28 final link is performed outside `cppgm++` by the host C++ compiler driver.
+PA28 final link is performed outside `cppgm` by the host C++ compiler driver.
 
 ### Output Format
 
-`cppgm++ -c` shall continue to write one host-linker-compatible relocatable
+`cppgm -c` shall continue to write one host-linker-compatible relocatable
 object file to `<objfile>`.
 
 The PA28 tests do not compare object bytes directly. They observe:
 
-- `cppgm++ -c` exit status
+- `cppgm -c` exit status
 - host final-link exit status
 - final program exit status
 - final program standard output
@@ -102,7 +102,7 @@ The PA28 tests do not compare object bytes directly. They observe:
 ### Error Handling
 
 If preprocessing, parsing, semantic analysis, lowering, object emission, or
-output writing fails, `cppgm++` shall exit with failure.
+output writing fails, `cppgm` shall exit with failure.
 
 For negative tests, exact diagnostics are not the grading contract. The harness
 compares exit status first. If the reference compile/link path fails, stdout and

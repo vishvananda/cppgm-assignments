@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 18 (`cppgm++ --emit-lowir`)
+## CPPGM Programming Assignment 18 (`cppgm --emit-lowir`)
 
 ### Overview
 
@@ -26,12 +26,12 @@ You will want to reuse:
 
 The starter kit contains:
 
-- a `cppgm++.cpp` assignment entry point, linked to the editable compiler source
-  in `../dev/cppgm++.cpp`
+- a `cppgm.cpp` assignment entry point, linked to the editable compiler source
+  in `../dev/cppgm.cpp`
 - the standard assignment `Makefile` and harness scripts
 - the PA18 deduction/substitution test suite under `tests/`
 
-Extend the `cppgm++` implementation you built in earlier assignments; the
+Extend the `cppgm` implementation you built in earlier assignments; the
 initial scaffold is not reinstalled at this milestone.
 
 Use the supplied reference tools to inspect example output. Tests compare
@@ -41,7 +41,7 @@ your compiler with the checked-in contract references.
 
 The PA18 invocation is the unoptimized LowIR mode:
 
-    $ cppgm++ --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
+    $ cppgm --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
 
 Behaviour is undefined unless the command-line arguments match that shape, with
 the same source-file ordering and `-o` relaxations as the earlier source-to-LowIR
@@ -91,7 +91,7 @@ hard errors in ordinary expressions and instantiated function bodies.
 
 ### Output Format
 
-On success, `cppgm++` shall write LowIR text to `<outfile>` and exit
+On success, `cppgm` shall write LowIR text to `<outfile>` and exit
 `EXIT_SUCCESS`.
 
 The authoritative LowIR definition is `../pa8/lowir.md`. PA18 extends the
@@ -123,7 +123,7 @@ from PA8. Constant-expression evaluation still uses the PA16 semantic engine.
 ### Error Handling
 
 If an error occurs during preprocessing, tokenization, parsing, semantic
-analysis, or LowIR generation, `cppgm++` shall `EXIT_FAILURE`.
+analysis, or LowIR generation, `cppgm` shall `EXIT_FAILURE`.
 
 The output file is not required to be meaningful on failure.
 Diagnostics are not part of the grading contract.
@@ -131,7 +131,7 @@ Diagnostics are not part of the grading contract.
 ### Standard Output / Error
 
 Standard output and standard error are ignored for automated testing of
-`cppgm++`.
+`cppgm`.
 
 You are free to use them for debugging, tracing, or diagnostic messages.
 
@@ -164,7 +164,7 @@ of template completion:
 Self-checking controls in `tests/controls/` state their expected outcome in
 their leading comment (`expect exit N` or `expect reject`) or in an
 `x.expect` sidecar. `make test` compiles each with your
-`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`cppgm --emit-lowir -O0`, builds the LowIR with the supplied
 `lowir2native-ref -O0` and requires the stated exit status (and the output in
 `x.stdout`, when present), or requires your frontend to reject the program.
 The LowIR text of a control is not compared. `make test-controls` runs only
@@ -172,7 +172,7 @@ the controls; `make check TEST=tests/controls/<name>.t` runs one.
 
 ### PA18 Syntax Boundary
 
-The authoritative source syntax is the shared `cppgm++` source grammar, exposed
+The authoritative source syntax is the shared `cppgm` source grammar, exposed
 for this assignment as `pa18.gram`. The grammar defines accepted syntax only;
 the PA18 semantic and lowering requirements are defined by the Assignment
 Boundary and Out Of Scope sections below.

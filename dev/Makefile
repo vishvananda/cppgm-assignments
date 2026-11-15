@@ -24,7 +24,7 @@ TARGETS = \
 	lowir \
 	lowiropt \
 	lowir2native \
-	cppgm++
+	cppgm
 
 CXX ?= g++
 V ?= 0

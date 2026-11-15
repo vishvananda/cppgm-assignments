@@ -14,13 +14,13 @@ inline const char* abimangle_help_text()
 
 inline const char* cppgm_help_text()
 {
-	return "usage: cppgm++ --emit-ast -o <outfile> <srcfile>...\n"
-		   "   or: cppgm++ --emit-types -o <outfile> <srcfile>...\n"
-		   "   or: cppgm++ --emit-semantics -o <outfile> <srcfile>...\n"
-		   "   or: cppgm++ --emit-lowir -o <outfile> <srcfile>...\n"
-		   "   or: cppgm++ -c [options] <srcfile-or-lowirfile>...\n"
-		   "   or: cppgm++ -E [options] <srcfile>...\n"
-		   "   or: cppgm++ [options] <input>...\n"
+	return "usage: cppgm --emit-ast -o <outfile> <srcfile>...\n"
+		   "   or: cppgm --emit-types -o <outfile> <srcfile>...\n"
+		   "   or: cppgm --emit-semantics -o <outfile> <srcfile>...\n"
+		   "   or: cppgm --emit-lowir -o <outfile> <srcfile>...\n"
+		   "   or: cppgm -c [options] <srcfile-or-lowirfile>...\n"
+		   "   or: cppgm -E [options] <srcfile>...\n"
+		   "   or: cppgm [options] <input>...\n"
 		   "\n"
 		   "emit-mode flags (every --emit-* mode):\n"
 		   "  -x c++ / -x c      input language (optional C assignment)\n"

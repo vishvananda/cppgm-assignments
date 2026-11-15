@@ -37,7 +37,7 @@ if (@ARGV && $ARGV[0] eq '--list')
 if (scalar(@ARGV) != 2)
 {
 	die "Usage: check_pa27_section_contract.pl " .
-		"<cppgm++> <test-or-directory>\n";
+		"<cppgm> <test-or-directory>\n";
 }
 
 my ($app, $root) = @ARGV;

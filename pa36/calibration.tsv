@@ -36,7 +36,7 @@ gate	kernel-accessor-alias	<=	1.30	2.0% (count)	0.9925	30.98%	pass
 gate	kernel-lookup	<=	1.30	2.0% (count)	1.1238	15.68%	pass
 gate	kernel-exceptions	<=	1.30	2.0% (count)	1.1034	17.82%	pass
 #
-# measurement	seed or cppgm++	self or host	ratio
+# measurement	seed or cppgm	self or host	ratio
 detail	O0-own	2882800895	2874943264	0.997274
 detail	O0-total	3029945567	3015093176	0.995098
 detail	O0-calls	47818670	56088283	1.172937

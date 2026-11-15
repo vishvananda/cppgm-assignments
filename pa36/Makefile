@@ -9,8 +9,8 @@
 #   make measure LABEL=L [SIM=1]  callgrind both at -O0 and -O3 into obj/results/L
 #   make abba LABEL=L [LEVEL=-O3] [BLOCKS=12]  paired timing of seed-L and self-L
 #   make identity OLD=A NEW=B   generated output identical, compiler work A -> B
-#   make kernels | behavior | generated | speed | scaling   one gate family, dev/cppgm++
-#   make profile [LEVEL=-O0] [INPUT=file.cpp] [SECONDS=30]   where dev/cppgm++ spends its time
+#   make kernels | behavior | generated | speed | scaling   one gate family, dev/cppgm
+#   make profile [LEVEL=-O0] [INPUT=file.cpp] [SECONDS=30]   where dev/cppgm spends its time
 #   make parity [REFERENCE=compiler] [SIM=1] [NO_CACHE=1]   this compiler beside the reference on this machine (scripts/parity.pl)
 
 PERL ?= perl

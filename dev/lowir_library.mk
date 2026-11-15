@@ -49,7 +49,7 @@ clean-lowir-library:
 -include $(LOWIR_LIBRARY_OBJS:.o=.d)
 
 .PHONY: test-lowir-library
-test-lowir-library: lowir-library cppgm++
+test-lowir-library: lowir-library cppgm
 	$(Q)cd .. && CC="$(CC)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)" python3 scripts/test_lowir_library.py
 
 clean: clean-lowir-library

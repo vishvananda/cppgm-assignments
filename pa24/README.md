@@ -116,7 +116,7 @@ Not yet required here:
 - link-map dumping
 - the private exception/runtime ABI path
 
-Those later pipeline surfaces are owned by the later `cppgm++` object,
+Those later pipeline surfaces are owned by the later `cppgm` object,
 compile/link, and host-EH assignments.
 
 ### Input / Command-Line Arguments
@@ -760,7 +760,7 @@ The following are explicitly out of scope for PA24:
 - exception-aware native runtime metadata
 - optimization passes
 - non-x86 native instruction selection
-- source-level end-to-end runtime programs that depend on the later `cppgm++ -c`
+- source-level end-to-end runtime programs that depend on the later `cppgm -c`
   driver and object/library flow
 
 Inputs that rely on those features have undefined behaviour for this milestone.
@@ -769,7 +769,7 @@ Inputs that rely on those features have undefined behaviour for this milestone.
 
 The intended next stages are:
 
-- PA25 `cppgm++` compile/link mode adds source-driven separate compilation
+- PA25 `cppgm` compile/link mode adds source-driven separate compilation
   and linking on top of the native backend.
 - PA26 adds host-compatible exception metadata in relocatable objects.
 

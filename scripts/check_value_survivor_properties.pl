@@ -109,7 +109,7 @@ if (@ARGV && $ARGV[0] eq '--list')
 if(scalar(@ARGV) != 3)
 {
 	die "Usage: check_value_survivor_properties.pl " .
-		"<cppgm++> <native-reference> <test-or-directory>\n";
+		"<cppgm> <native-reference> <test-or-directory>\n";
 }
 
 my ($app, $native_reference, $root) = @ARGV;

@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 27 (`cppgm++ -c`)
+## CPPGM Programming Assignment 27 (`cppgm -c`)
 
 ### Overview
 
@@ -8,11 +8,11 @@ the PA9 ABI naming layer. PA9 built ABI names from normalized fact files;
 PA27 connects that same naming work to the compiler's semantic/linkage facts
 and writes the resulting names into real object files:
 
-- `cppgm++ -c` must emit ordinary relocatable object files for the current host
+- `cppgm -c` must emit ordinary relocatable object files for the current host
   object format.
 - Those objects must be accepted by the host C++ compiler driver when it performs
   the final link.
-- Objects produced by `cppgm++` must interoperate with host-built C and C++
+- Objects produced by `cppgm` must interoperate with host-built C and C++
   objects, static archives, and shared libraries in the practical subset tested
   here.
 - Header-emitted inline/template definitions must use host-correct symbol
@@ -30,14 +30,14 @@ and writes the resulting names into real object files:
 - `-fno-strict-aliasing` lets accesses of different types read one object;
   `-fstrict-aliasing` restores the default. The last option wins.
 
-The PA27 harness does not normally use `cppgm++` as the final linker. It runs:
+The PA27 harness does not normally use `cppgm` as the final linker. It runs:
 
-1. `cppgm++ -c` once for each C++ translation unit.
+1. `cppgm -c` once for each C++ translation unit.
 2. The host C++ compiler driver on the generated objects and any helper objects
    supplied by the test.
 3. The linked program, when the link succeeds.
 
-The main PA27 question is: can `cppgm++` produce ordinary host-linkable object
+The main PA27 question is: can `cppgm` produce ordinary host-linkable object
 files?
 
 ### Prerequisites
@@ -47,7 +47,7 @@ Complete PA26 before starting this assignment.
 You will want to reuse:
 
 - the full C++ language pipeline through PA25
-- the PA25 `cppgm++ -c` driver path
+- the PA25 `cppgm -c` driver path
 - the PA9 ABI naming layer
 - the PA24 native backend and PA25 object-emission path
 - the PA25 cross-translation-unit compile/link model
@@ -68,20 +68,20 @@ x86_64 Linux host object ABI.
 
 The starter kit provides:
 
-- your cumulative `dev/cppgm++.cpp` compiler entry point
+- your cumulative `dev/cppgm.cpp` compiler entry point
 - the shared implementation you built under `dev/src/`
-- `pa27/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
+- `pa27/cppgm.cpp`, a link to `../dev/cppgm.cpp`
 - `pa27/Makefile`
 - `pa27/scripts/`, the host-interoperability test harness
 - `pa27/tests/general/`, the PA27 tests and checked-in reference files
 - `pa27/tests/controls/`, focused checks of the GNU `section` attribute
 
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
+Put your code changes in `dev/`, especially `dev/cppgm.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Preserve supplied test inputs.
 Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-Use `cppgm++-ref` to inspect example output.
+Use `cppgm-ref` to inspect example output.
 Tests run your implementation against the checked-in contract fixtures.
 
 ### Command-Line Contract
@@ -96,26 +96,26 @@ discovery and the remaining hosted preprocessor controls.
 Required forms:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c --target <target> -o <objfile> <srcfile>
-cppgm++ -c -I <dir> -o <objfile> <srcfile>
-cppgm++ -c -I<dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I <dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I<dir> -o <objfile> <srcfile>
+cppgm -c -o <objfile> <srcfile>
+cppgm -c --target <target> -o <objfile> <srcfile>
+cppgm -c -I <dir> -o <objfile> <srcfile>
+cppgm -c -I<dir> -o <objfile> <srcfile>
+cppgm -c --target <target> -I <dir> -o <objfile> <srcfile>
+cppgm -c --target <target> -I<dir> -o <objfile> <srcfile>
 ```
 
 `<target>` may be `linux` or the corresponding x86_64 Linux host triple form
 accepted by your implementation. PA27 only requires compile mode. The normal
-PA27 final link is performed outside `cppgm++` by the host C++ compiler driver.
+PA27 final link is performed outside `cppgm` by the host C++ compiler driver.
 
 ### Output Format
 
-`cppgm++ -c` shall write one host-linker-compatible relocatable object file to
+`cppgm -c` shall write one host-linker-compatible relocatable object file to
 `<objfile>`.
 
 The PA27 tests do not compare object bytes directly. They observe:
 
-- `cppgm++ -c` exit status
+- `cppgm -c` exit status
 - host final-link exit status
 - final program exit status
 - final program standard output
@@ -124,7 +124,7 @@ The PA27 tests do not compare object bytes directly. They observe:
 ### Error Handling
 
 If preprocessing, parsing, semantic analysis, lowering, object emission, or
-output writing fails, `cppgm++` shall exit with failure.
+output writing fails, `cppgm` shall exit with failure.
 
 For negative tests, exact diagnostics are not the grading contract. The harness
 compares exit status first. If the reference compile/link path fails, stdout and
@@ -166,7 +166,7 @@ x.t.2
 Optional sidecars control or check the host flow:
 
 - `x.flags`: extra compiler flags for each source
-- `x.system-includes`: system include search directories passed to `cppgm++`
+- `x.system-includes`: system include search directories passed to `cppgm`
   as `-isystem <dir>`
 - `x.link.flags`: extra flags passed to the host link driver
 - `x.lib.*`: host-built C or C++ helper sources
@@ -191,7 +191,7 @@ The checked-in PA27 tests cover:
   more, as the AMD64 psABI requires, while preserving the source type alignment
 - functions named only as non-type template arguments remain semantically checked;
   native objects emit their bodies when code or data actually needs them
-- host linking across multiple `cppgm++`-generated objects
+- host linking across multiple `cppgm`-generated objects
 - host linking against host-built objects
 - host linking against static archives and shared libraries
 - import/export of host-built `thread_local` variables in the tested subset

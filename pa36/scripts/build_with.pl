@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
 # build_with.pl --compiler C --out DIR [--repo R] [--jobs N]
 #
-# Builds the cppgm++ in R/dev (default: this repository) with compiler C:
-# every object of the g++ build's cppgm++ link, compiled with the g++
+# Builds the cppgm in R/dev (default: this repository) with compiler C:
+# every object of the g++ build's cppgm link, compiled with the g++
 # build's own flags and defines, then linked with the g++ build's link line
-# (same host libraries, same malloc). Writes DIR/cppgm++.
+# (same host libraries, same malloc). Writes DIR/cppgm.
 #
-# Uses: the self build (C = dev/cppgm++), and codegen A/B at constant work:
+# Uses: the self build (C = dev/cppgm), and codegen A/B at constant work:
 # build the same source with an old and a new compiler, then compare the
 # two results; only code generation differs between them.
 use strict;

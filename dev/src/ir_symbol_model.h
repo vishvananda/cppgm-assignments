@@ -247,7 +247,7 @@ const unsigned kIndexProjectionKindCount = IPK_FIELD + 1;
 // OC_STATED with the classes of eightbytes 0 and 1 in bits 0-1 and 2-3
 // (EightbyteClass), or OC_STATED with OC_MEMORY.  OC_X87, OC_COMPLEX_X87
 // and EB_SSEUP occur only in host-object LowIR (the object dialect
-// `cppgm++ -c` reads), never in course LowIR.
+// `cppgm -c` reads), never in course LowIR.
 
 enum EightbyteClass : std::uint8_t
 {

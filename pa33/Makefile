@@ -2,7 +2,7 @@ TARGET = lowiropt
 TARGET_ARGS =
 export CPPGM_APP_ARGS := $(TARGET_ARGS)
 LOWIROPT_APP ?= ../dev/$(TARGET)
-CPPGM_DRIVER_APP ?= ../dev/cppgm++
+CPPGM_DRIVER_APP ?= ../dev/cppgm
 LOWIROPT_REF_APP ?= $(LOWIROPT_APP)-ref
 CPPGM_DRIVER_REF_APP ?= $(CPPGM_DRIVER_APP)-ref
 TEST_DEPS ?= dev-shared-target
@@ -230,7 +230,7 @@ include ../scripts/pa_run_check_targets.mk
 	$(MAKE) -C ../dev $(TARGET) CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX)
 
 dev-shared-target:
-	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) cppgm++ CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
+	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) cppgm CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
 
 clean:
 	-rm -f $(TARGET) $(TARGET)-debug $(OBJ)/release/*.o $(OBJ)/debug/*.o

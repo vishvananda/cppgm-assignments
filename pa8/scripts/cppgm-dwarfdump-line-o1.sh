@@ -18,5 +18,5 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-"${CPPGM_CPPGM_APP:-../dev/cppgm++}" -c -gline-tables-only -O1 -o "$objfile" "$@"
+"${CPPGM_CPPGM_APP:-../dev/cppgm}" -c -gline-tables-only -O1 -o "$objfile" "$@"
 cppgm_dump_dwarf "$objfile" 0 > "$outfile"

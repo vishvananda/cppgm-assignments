@@ -517,11 +517,11 @@ Constructor or destructor entry equivalence needs a source-language proof; match
 instruction bytes alone does not establish it. Virtual bases, implicit copies and
 tail padding can make superficially similar entries behave differently.
 
-Canonical `cppgm++ --emit-lowir` output is expected to carry all backend-relevant symbol/export
+Canonical `cppgm --emit-lowir` output is expected to carry all backend-relevant symbol/export
 and runtime-support information needed by later object preparation. Later object-path steps such
 as debug stripping or LowIR optimization may transform that canonical program, but they should
 not depend on hidden semantic side data that is absent from textual LowIR. An in-process
-`cppgm++ -c` implementation may skip writing a temporary `.lowir` file for speed, but it should
+`cppgm -c` implementation may skip writing a temporary `.lowir` file for speed, but it should
 operate on facts that could have been obtained by serializing the LowIR program and parsing it
 again.
 
@@ -915,7 +915,7 @@ LowIR token. Relative Unix-style source paths such as `main.cpp`,
 `src/main.cpp`, or `tests/input.t` are valid. The parser rejects zero or
 negative line/column values.
 
-`cppgm++ --emit-lowir` emits these locations at every debug-information
+`cppgm --emit-lowir` emits these locations at every debug-information
 level except `-g0` (`-g`, `-g1` to `-g3`, `-gline-tables-only`), and none
 without a `-g` option. Each location is the line and column where a source
 construct begins:
@@ -1668,7 +1668,7 @@ These forms have no single SSE name:
 - `sqrtss`, `sqrtsd`, `rcpss` and `rsqrtss` compute on the low lane of `%b` and
   keep the upper lanes of `%a`.
 
-`cppgm++` uses the operations of the x86-64 baseline for GNU vector operators.
+`cppgm` uses the operations of the x86-64 baseline for GNU vector operators.
 Operations past SSE2 come only from builtins, which a program reaches through
 its own feature macros. An operation with no form here, such as `pmulld` on a
 GNU `*`, goes lane by lane.
@@ -2341,7 +2341,7 @@ PA33's `-O0` driver lane judge an output by
 comparing it with the course solution's LowIR after a presentation
 canonicalization: the relaxed LowIR
 comparison of `scripts/compare_results_common.pl`. PA8's debug-information
-lanes for `cppgm++ --emit-lowir` (`tests/debuginfo/source` and `source-g0`)
+lanes for `cppgm --emit-lowir` (`tests/debuginfo/source` and `source-g0`)
 use it as well, and also require the reference's `!dbg` locations (Debug
 Locations above): each one, as often as the reference carries it, and no
 other. This section is the whole

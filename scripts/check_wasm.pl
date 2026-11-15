@@ -71,7 +71,7 @@ my $directory = tempdir('cppgm-wasm-XXXXXX', TMPDIR => 1, CLEANUP => 1);
 my $validator = $ENV{CPPGM_WASM_TOOLS} // 'wasm-tools';
 my $runtime = $ENV{CPPGM_WASMTIME} // 'wasmtime';
 my $source_compiler = $ENV{CPPGM_WASM_CPPGM} // File::Spec->catfile(dirname($compiler),
-    $compiler =~ /-ref\z/ ? 'cppgm++-ref' : 'cppgm++');
+    $compiler =~ /-ref\z/ ? 'cppgm-ref' : 'cppgm');
 my $command_sequence = 0;
 my $checked = CppgmWasmCheckCache->new(validator => $validator, runtime => $runtime);
 my %lowered_source;

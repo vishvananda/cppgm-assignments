@@ -9,12 +9,12 @@
 #            (speed.pl on each): the figures themselves, with each
 #            compiler's ratio to the host compiler beside them
 #   codegen  generated code at constant work: this repository's own source
-#            built by the reference compiler and by dev/cppgm++, both
+#            built by the reference compiler and by dev/cppgm, both
 #            counted on the workload (ab.pl), with the text size of each;
 #            --sim counts under callgrind's cache and branch simulation and
 #            adds its cycle proxy
-# The reference is C, else reference-binaries/cppgm++ (after
-# `make reference-binaries`), else dev/cppgm++-ref. Prints one table with
+# The reference is C, else reference-binaries/cppgm (after
+# `make reference-binaries`), else dev/cppgm-ref. Prints one table with
 # the reference's figure, yours and the ratio yours / reference, writes
 # DIR/parity.tsv (default pa36/obj/parity), and exits 1 when a figure is
 # missing: a compile that failed or ran over its limit is shown as such.
@@ -35,10 +35,10 @@ GetOptions(\%o, 'reference=s', 'levels=s', 'counter=s', 'sim', 'no-cache', 'out=
 $o{out} = $o{from} if defined $o{from};
 my ($reference, $ours);
 if (!defined $o{from}) {
-	$reference = $o{reference} // (-x "$PA36::ROOT/reference-binaries/cppgm++"
-		? "$PA36::ROOT/reference-binaries/cppgm++" : "$PA36::ROOT/dev/cppgm++-ref");
+	$reference = $o{reference} // (-x "$PA36::ROOT/reference-binaries/cppgm"
+		? "$PA36::ROOT/reference-binaries/cppgm" : "$PA36::ROOT/dev/cppgm-ref");
 	$reference = abs_path($reference) // die "no reference compiler $reference (run `make reference-binaries`)\n";
-	$ours = abs_path("$PA36::ROOT/dev/cppgm++") // die "no dev/cppgm++ (run `make build`)\n";
+	$ours = abs_path("$PA36::ROOT/dev/cppgm") // die "no dev/cppgm (run `make build`)\n";
 }
 make_path($o{out});
 my $out = abs_path($o{out}) // die "no directory $o{out}\n";
@@ -77,7 +77,7 @@ for my $metric (qw(time-O0 time-O3 rss-O3)) {
 # Constant work: both compilers build this source, and the two builds run
 # the workload.
 if (!defined $o{from}) {
-	print "codegen: this source built by the reference and by dev/cppgm++ ...\n";
+	print "codegen: this source built by the reference and by dev/cppgm ...\n";
 	my ($st, $log) = PA36::run_capture($^X, "$S/ab.pl", $reference, $ours,
 		'--levels', $o{levels}, '--counter', $o{counter}, '--out', "$out/ab",
 		($o{sim} ? '--sim' : ()), ($o{'no-cache'} ? '--no-cache' : ()));

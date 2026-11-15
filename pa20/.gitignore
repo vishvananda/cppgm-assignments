@@ -1,5 +1,5 @@
-cppgm++
-cppgm++-debug
+cppgm
+cppgm-debug
 testout
 .test_failed
 tests/**/*.my

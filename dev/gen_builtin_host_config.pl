@@ -116,7 +116,7 @@ sub main {
         $predefined = $predefined_probe->{stdout};
     }
     # The strict ISO dialect's macros (-std=c++11: __STRICT_ANSI__, and
-    # what the host withholds under it), for cppgm++'s -std=c++NN.
+    # what the host withholds under it), for cppgm's -std=c++NN.
     my $strict = $predefined;
     my $strict_probe =
         run_probe([@base_args, "-std=c++11", "-dM", "-E", "-x", "c++", "-"], "");

@@ -1,9 +1,9 @@
-## CPPGM Programming Assignment 26 (`cppgm++ -c` Host EH Facts)
+## CPPGM Programming Assignment 26 (`cppgm -c` Host EH Facts)
 
 ### Overview
 
 PA26 is the host exception-handling metadata assignment. Earlier assignments
-lower C++ source to LowIR and native code; PA26 makes EH-bearing `cppgm++ -c`
+lower C++ source to LowIR and native code; PA26 makes EH-bearing `cppgm -c`
 objects participate in the host C++ unwinder.
 
 The main PA26 question is: does a generated relocatable object contain the host
@@ -37,7 +37,7 @@ You will want to reuse:
 - the PA8 LowIR parser and EH instruction model
 - the PA24 native backend and PA25 object pipeline
 - the PA19-PA23 source-to-LowIR surface
-- the PA25 compile-mode driver path used by `cppgm++ -c`
+- the PA25 compile-mode driver path used by `cppgm -c`
 - the PA9 ABI naming layer and runtime-role classification used by host object
   emission
 
@@ -59,19 +59,19 @@ that rejoin a loop. These checks are separate from the required Linux suite.
 
 The starter kit provides:
 
-- your cumulative `dev/cppgm++.cpp` compiler entry point
+- your cumulative `dev/cppgm.cpp` compiler entry point
 - the shared implementation you built under `dev/src/`
-- `pa26/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
+- `pa26/cppgm.cpp`, a link to `../dev/cppgm.cpp`
 - `pa26/Makefile`
 - `pa26/scripts/`, the host-interoperability test harness
 - `pa26/tests/general/`, the PA26 tests and checked-in reference files
 
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
+Put your code changes in `dev/`, especially `dev/cppgm.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Preserve supplied test inputs.
 Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-Use `cppgm++-ref` to inspect example output.
+Use `cppgm-ref` to inspect example output.
 Tests run your implementation against the checked-in contract fixtures.
 
 ### Command-Line Contract
@@ -79,27 +79,27 @@ Tests run your implementation against the checked-in contract fixtures.
 PA26 uses compile mode:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c --target <target> -o <objfile> <srcfile>
-cppgm++ -c -I <dir> -o <objfile> <srcfile>
-cppgm++ -c -I<dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I <dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I<dir> -o <objfile> <srcfile>
+cppgm -c -o <objfile> <srcfile>
+cppgm -c --target <target> -o <objfile> <srcfile>
+cppgm -c -I <dir> -o <objfile> <srcfile>
+cppgm -c -I<dir> -o <objfile> <srcfile>
+cppgm -c --target <target> -I <dir> -o <objfile> <srcfile>
+cppgm -c --target <target> -I<dir> -o <objfile> <srcfile>
 ```
 
 `<srcfile>` is a C++ source file in the supported course language subset.
 `<target>` may be `linux` or the corresponding x86_64 Linux host triple form
 accepted by your implementation. PA26 only requires compile mode. The final link
-in the tests is performed outside `cppgm++` by the host C++ compiler driver.
+in the tests is performed outside `cppgm` by the host C++ compiler driver.
 
 ### Output Format
 
-`cppgm++ -c` shall write one host-linker-compatible relocatable object file to
+`cppgm -c` shall write one host-linker-compatible relocatable object file to
 `<objfile>`.
 
 The PA26 tests do not compare object bytes directly. They observe:
 
-- `cppgm++ -c` exit status
+- `cppgm -c` exit status
 - host final-link exit status
 - final program exit status
 - final program standard output
@@ -114,7 +114,7 @@ absence of private `cppgm_eh_*` symbols.
 ### Error Handling
 
 If preprocessing, parsing, semantic analysis, lowering, object emission, or
-output writing fails, `cppgm++` shall exit with failure.
+output writing fails, `cppgm` shall exit with failure.
 
 For negative tests, exact diagnostics are not the grading contract. The harness
 compares exit status first. If the reference compile/link path fails, stdout and
@@ -122,7 +122,7 @@ stderr are diagnostic side effects rather than required output.
 
 ### Standard Output / Error
 
-Standard output and standard error from `cppgm++ -c` are ignored for successful
+Standard output and standard error from `cppgm -c` are ignored for successful
 tests. They may be used for diagnostics.
 
 ### Testing
@@ -176,7 +176,7 @@ Optional sidecars control or check the host flow:
 
 For each test case:
 
-1. `cppgm++ -c` is executed once for each companion C++ source file.
+1. `cppgm -c` is executed once for each companion C++ source file.
 2. The host C++ compiler driver links the generated objects.
 3. Any inspect sidecar is run against the generated objects. For
    `.inspect.facts`, the harness records normalized text facts in
@@ -188,7 +188,7 @@ For each test case:
 ### Required Implementation Surface
 
 To complete PA26, implement the basic host-compatible EH metadata and
-runtime-helper object surface for `cppgm++ -c` within the supported subset:
+runtime-helper object surface for `cppgm -c` within the supported subset:
 
 1. Lower `throw` expressions to host ABI throw helper calls.
 2. Lower typed catches to host landing-pad selector dispatch and

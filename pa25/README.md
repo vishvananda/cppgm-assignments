@@ -1,11 +1,11 @@
-## CPPGM Programming Assignment 25 (`cppgm++ -c` and link mode)
+## CPPGM Programming Assignment 25 (`cppgm -c` and link mode)
 
 ### Overview
 
-PA25 does not introduce a new executable. It extends the same `cppgm++` binary
+PA25 does not introduce a new executable. It extends the same `cppgm` binary
 used since PA5 with practical compiler-driver behavior.
 
-`cppgm++` has two required PA25 modes:
+`cppgm` has two required PA25 modes:
 
 - compile mode, `-c`, which takes one C++ source file and writes one
   implementation-defined compiler object file
@@ -14,16 +14,16 @@ used since PA5 with practical compiler-driver behavior.
 
 In link mode, each input may be either:
 
-- a C++ source file, which `cppgm++` compiles as its own translation unit before
+- a C++ source file, which `cppgm` compiles as its own translation unit before
   linking
-- a compiler object file previously produced by `cppgm++ -c`
+- a compiler object file previously produced by `cppgm -c`
 
 The contract is source-driven. The PA25 tests start from C++ source
-files, validate explicit separate compilation with `cppgm++ -c`, and then link
-the resulting objects with `cppgm++`. The harness also checks two practical
+files, validate explicit separate compilation with `cppgm -c`, and then link
+the resulting objects with `cppgm`. The harness also checks two practical
 driver consistency properties:
 
-- linking the same source files directly through `cppgm++` must match explicit
+- linking the same source files directly through `cppgm` must match explicit
   compile-then-link behavior
 - linking a mixture of precompiled objects and remaining source files must also
   match explicit compile-then-link behavior
@@ -58,22 +58,22 @@ Linux target name or the corresponding x86_64 Linux triple,
 
 The starter kit provides:
 
-- your cumulative `dev/cppgm++.cpp` compiler entry point
+- your cumulative `dev/cppgm.cpp` compiler entry point
 - the shared implementation you built under `dev/src/`
-- `pa25/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
+- `pa25/cppgm.cpp`, a link to `../dev/cppgm.cpp`
 - `pa25/Makefile`
 - `pa25/scripts/`, the compiler-driver test harness
 - `pa25/tests/general/`, the PA25 tests and checked-in reference files
-- the shared `cppgm++` source grammar, exposed for this assignment as
+- the shared `cppgm` source grammar, exposed for this assignment as
   `pa25.gram`
 - an HTML grammar explorer of `pa25.gram` in the sub-directory `grammar/`
 
-Student code changes should go in `dev/`, especially `dev/cppgm++.cpp` and the
+Student code changes should go in `dev/`, especially `dev/cppgm.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Preserve supplied test inputs.
 Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-Use `cppgm++-ref` to inspect example output.
+Use `cppgm-ref` to inspect example output.
 Tests run your implementation against the checked-in contract fixtures.
 
 ### Driver Surface
@@ -111,23 +111,23 @@ Not yet required here:
 Required compile forms:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c --target <target> -o <objfile> <srcfile>
-cppgm++ -c -I <dir> -o <objfile> <srcfile>
-cppgm++ -c -I<dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I <dir> -o <objfile> <srcfile>
-cppgm++ -c --target <target> -I<dir> -o <objfile> <srcfile>
+cppgm -c -o <objfile> <srcfile>
+cppgm -c --target <target> -o <objfile> <srcfile>
+cppgm -c -I <dir> -o <objfile> <srcfile>
+cppgm -c -I<dir> -o <objfile> <srcfile>
+cppgm -c --target <target> -I <dir> -o <objfile> <srcfile>
+cppgm -c --target <target> -I<dir> -o <objfile> <srcfile>
 ```
 
 Required link forms:
 
 ```sh
-cppgm++ -o <outfile> <input1> <input2> ... <inputN>
-cppgm++ --target <target> -o <outfile> <input1> <input2> ... <inputN>
-cppgm++ -I <dir> -o <outfile> <input1> <input2> ... <inputN>
-cppgm++ -I<dir> -o <outfile> <input1> <input2> ... <inputN>
-cppgm++ -L <dir> -l<name> -o <outfile> <input1> <input2> ... <inputN>
-cppgm++ -L<dir> -l <name> -o <outfile> <input1> <input2> ... <inputN>
+cppgm -o <outfile> <input1> <input2> ... <inputN>
+cppgm --target <target> -o <outfile> <input1> <input2> ... <inputN>
+cppgm -I <dir> -o <outfile> <input1> <input2> ... <inputN>
+cppgm -I<dir> -o <outfile> <input1> <input2> ... <inputN>
+cppgm -L <dir> -l<name> -o <outfile> <input1> <input2> ... <inputN>
+cppgm -L<dir> -l <name> -o <outfile> <input1> <input2> ... <inputN>
 ```
 
 Options may be combined when their meanings are compatible, for example
@@ -136,7 +136,7 @@ Options may be combined when their meanings are compatible, for example
 In link mode, each `<inputK>` may be:
 
 - a C++ source file
-- an object-like file produced by `cppgm++ -c`
+- an object-like file produced by `cppgm -c`
 
 For PA25, object files are identified by implementation-supported object-like
 filenames such as `.o` or `.obj`. The checked-in tests use `.obj`.
@@ -152,13 +152,13 @@ All linked inputs in one invocation must target the same native backend target.
 
 ### Output Format
 
-In compile mode, `cppgm++` shall write one compiler object file to `<objfile>`.
+In compile mode, `cppgm` shall write one compiler object file to `<objfile>`.
 
-In link mode, `cppgm++` shall write one native executable program to
+In link mode, `cppgm` shall write one native executable program to
 `<outfile>`.
 
-The PA25 object-file encoding is intentionally an internal `cppgm++` contract:
-the file must be consumable by `cppgm++` link mode, but it does not need to be
+The PA25 object-file encoding is intentionally an internal `cppgm` contract:
+the file must be consumable by `cppgm` link mode, but it does not need to be
 accepted by the host linker. The exact object-file encoding is not directly
 compared by the PA25 tests. The exact final binary encoding is also not
 directly compared. Instead, the tests compare:
@@ -170,7 +170,7 @@ directly compared. Instead, the tests compare:
 ### Error Handling
 
 If an error occurs during preprocessing, parsing, semantic analysis, lowering,
-object-file emission, linking, or native output writing, `cppgm++` shall exit
+object-file emission, linking, or native output writing, `cppgm` shall exit
 with failure.
 
 Important PA25 error cases include:
@@ -187,7 +187,7 @@ stderr are diagnostic side effects rather than required output.
 ### Standard Output And Error
 
 Standard output and standard error are ignored for successful automated testing
-of `cppgm++` in PA25. You may use them for diagnostics.
+of `cppgm` in PA25. You may use them for diagnostics.
 
 ### Testing
 
@@ -217,7 +217,7 @@ x.t.2
 
 Optional sidecars include:
 
-- `x.flags`: extra flags passed to `cppgm++`
+- `x.flags`: extra flags passed to `cppgm`
 - `x.lib.*`: host-built helper C or C++ sources that become object-like
   libraries for `-L`/`-l` tests
 - `x.stdin`: standard input for the generated program
@@ -225,10 +225,10 @@ Optional sidecars include:
 For each test case, the harness checks:
 
 1. Explicit separate compilation:
-   `cppgm++ -c` is executed once for each companion source file, and then
-   `cppgm++` links the generated objects.
+   `cppgm -c` is executed once for each companion source file, and then
+   `cppgm` links the generated objects.
 2. Direct source linking:
-   `cppgm++` is executed directly on the same source files.
+   `cppgm` is executed directly on the same source files.
 3. Mixed source/object linking for multi-source tests:
    one generated object and the remaining source files are linked together.
 
@@ -273,7 +273,7 @@ Within that supported subset, PA25 should:
   against harness-provided object-style support libraries, without requiring
   host libc or hosted headers
 - allow an implementation-defined compiler object format with your own linker
-  for PA25, as long as the `cppgm++` behavior matches the contract
+  for PA25, as long as the `cppgm` behavior matches the contract
 
 To complete PA25, implement these goals:
 

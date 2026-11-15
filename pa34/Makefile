@@ -1,7 +1,7 @@
 include ../scripts/test_run_id.mk
 TARGET = lowir2native
 LOWIR2NATIVE_APP ?= ../dev/$(TARGET)
-CPPGM_DRIVER_APP ?= ../dev/cppgm++
+CPPGM_DRIVER_APP ?= ../dev/cppgm
 LOWIR2NATIVE_REF_APP ?= $(LOWIR2NATIVE_APP)-ref
 TEST_DEPS ?= dev-shared-target
 HOST_UNAME_S = $(shell uname -s)
@@ -132,7 +132,7 @@ include ../scripts/pa_run_check_targets.mk
 	$(MAKE) -C ../dev $(TARGET) CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX)
 
 dev-shared-target:
-	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) lowiropt cppgm++ CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
+	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev $(TARGET) lowiropt cppgm CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
 
 clean:
 	-rm -f $(TARGET) $(TARGET)-debug

@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 38 (`cppgm++ --emit-lowir -x c`)
+## CPPGM Programming Assignment 38 (`cppgm --emit-lowir -x c`)
 
 ### Overview
 
@@ -21,7 +21,7 @@ through PA30. PA37 is needed for the additional Wasm test target.
 The assignment's test mode is:
 
 ```sh
-cppgm++ --emit-lowir -O0 -x c -std=c17 -o output.lowir input.t
+cppgm --emit-lowir -O0 -x c -std=c17 -o output.lowir input.t
 ```
 
 `-std=gnu17` selects the GNU extension dialect. It also accepts discarding

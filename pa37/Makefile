@@ -13,7 +13,7 @@ WASM_BENCH_ARGS ?=
 all: dev-shared-target
 
 dev-shared-target:
-	@$(MAKE) -C ../dev CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" $(TARGET) cppgm++
+	@$(MAKE) -C ../dev CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" $(TARGET) cppgm
 
 test: $(TEST_DEPS)
 	@perl ../scripts/run_all_tests_common.pl control_t $(CPPGM_TEST_APP) my tests
@@ -29,7 +29,7 @@ include ../scripts/pa_run_check_targets.mk
 
 
 benchmark: $(TEST_DEPS)
-	perl ../scripts/wasm_benchmarks.pl --compiler ../dev/cppgm++ --tools "$(WASM_TOOLS)" \
+	perl ../scripts/wasm_benchmarks.pl --compiler ../dev/cppgm --tools "$(WASM_TOOLS)" \
 		--host-cxx "$(CPPGM_HOST_CXX)" $(WASM_BENCH_ARGS)
 
 clean:

@@ -50,7 +50,7 @@ if (@ARGV && $ARGV[0] eq '--list')
 
 if (scalar(@ARGV) != 2)
 {
-	die "Usage: check_scalar_lowir_properties.pl <cppgm++> <test-or-directory>\n";
+	die "Usage: check_scalar_lowir_properties.pl <cppgm> <test-or-directory>\n";
 }
 
 my ($app, $root) = @ARGV;

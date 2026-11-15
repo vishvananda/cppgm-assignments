@@ -1,6 +1,6 @@
 ## CPPGM Programming Assignment 1 (pptoken)
 
-Adapted from the original CPPGM material; revised for cppgm-extended.
+Adapted from the original CPPGM material; revised for cppgm.
 See [NOTICE](../NOTICE) for attribution.
 
 ### Overview
@@ -522,8 +522,8 @@ From this assignment directory:
 Compare a few source lines with `/tmp/pptoken.my` to check the tokens.
 ### Language modes and numeric token boundaries
 
-The default input remains C++11. Also accept `-std=c++14` and `-std=c++17`
-before reading standard input. C++14 pp-numbers can contain an apostrophe
+The default input remains C++11. Also accept `-std=c++14`, `-std=c++17` and
+`-std=c++20` before reading standard input. C++14 pp-numbers can contain an apostrophe
 followed by a digit or nondigit; this is a token-boundary rule, not a check
 that the resulting number has a value. In C++17, hexadecimal floating
 pp-numbers also retain a sign after `p` or `P`. Keep character literals and

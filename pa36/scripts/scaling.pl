@@ -26,7 +26,7 @@ use File::Temp qw(tempdir);
 use Getopt::Long;
 use PA36;
 
-my %o = (compiler => "$PA36::ROOT/dev/cppgm++", host => 'g++', out => "$PA36::PA36/obj/scaling.tsv", family => '');
+my %o = (compiler => "$PA36::ROOT/dev/cppgm", host => 'g++', out => "$PA36::PA36/obj/scaling.tsv", family => '');
 GetOptions(\%o, 'compiler=s', 'host=s', 'family=s', 'keep=s', 'out=s', 'no-host')
 	or die "usage: scaling.pl [--compiler C] [--host g++] [--family NAME,...] [--keep DIR] [--out FILE]\n";
 my $C = abs_path($o{compiler}) // die "no compiler $o{compiler}\n";

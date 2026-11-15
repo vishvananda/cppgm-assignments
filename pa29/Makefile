@@ -1,6 +1,6 @@
 # Required integrated assembly, before hosted compatibility.
 include ../scripts/test_run_id.mk
-TARGET = cppgm++
+TARGET = cppgm
 CPPGM_TEST_APP ?= ../dev/$(TARGET)
 REF_TEST_APP ?= $(CPPGM_TEST_APP)-ref
 LOWIR_APP ?= ../dev/lowir
@@ -18,7 +18,7 @@ TEST ?= tests
 all: dev-shared-target
 
 dev-shared-target:
-	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" != "1" ]; then $(MAKE) -C ../dev cppgm++ lowir lowir2native CXX="$(CXX)"; fi
+	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" != "1" ]; then $(MAKE) -C ../dev cppgm lowir lowir2native CXX="$(CXX)"; fi
 
 test test-batch: $(TEST_DEPS)
 

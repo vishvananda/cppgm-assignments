@@ -1,11 +1,11 @@
-## CPPGM Programming Assignment 6 (`cppgm++ --emit-types`)
+## CPPGM Programming Assignment 6 (`cppgm --emit-types`)
 
 ### Overview
 
-Extend `cppgm++` with the PA6 type/scope dump mode:
+Extend `cppgm` with the PA6 type/scope dump mode:
 
 ```sh
-cppgm++ --emit-types -o <outfile> <srcfile1> [<srcfile2> ...]
+cppgm --emit-types -o <outfile> <srcfile1> [<srcfile2> ...]
 ```
 
 The program reads one or more C++ source files, runs translation phases 1
@@ -51,8 +51,8 @@ evaluates the calls of these functions.
 The PA6 starter kit contains:
 
 - `README.md`, this assignment handout
-- `Makefile`, which builds `cppgm++` and runs the PA6 tests
-- `cppgm++.cpp`, a link to the editable `dev/cppgm++.cpp` entry point
+- `Makefile`, which builds `cppgm` and runs the PA6 tests
+- `cppgm.cpp`, a link to the editable `dev/cppgm.cpp` entry point
 - the grammar for this assignment called `pa6.gram`
 - an HTML grammar explorer of `pa6.gram` in the sub-directory `grammar/`
 - `scripts/run_all_tests.pl` and `scripts/compare_results.pl`
@@ -60,17 +60,17 @@ The PA6 starter kit contains:
 - `tests/general/`, broader scope/type tests
 - checked-in `.ref` and `.ref.exit_status` files used as the oracle
 
-Your main editable file is `dev/cppgm++.cpp`. You may add or change other
+Your main editable file is `dev/cppgm.cpp`. You may add or change other
 implementation files under `dev/` as needed. Preserve the supplied test inputs,
 harness scripts and grammar. Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-The starter `dev/cppgm++.cpp` is the same long-lived `cppgm++` dispatcher used
+The starter `dev/cppgm.cpp` is the same long-lived `cppgm` dispatcher used
 from PA5 onward. For PA6, extend it so `--emit-types` runs your scope/type
 analysis and dump path.
 
 The checked-in reference files under `tests/` are the grading oracle. The
-`cppgm++-ref` wrapper is available for investigation under the root reference
+`cppgm-ref` wrapper is available for investigation under the root reference
 policy; tests run your implementation.
 
 ### Build And Test Commands
@@ -85,7 +85,7 @@ make check TEST='tests/general/200-*using*.t tests/general/200-*namespace*.t'
 make test
 ```
 
-`make` builds `cppgm++`. `make test` runs the local PA6 suite.
+`make` builds `cppgm`. `make test` runs the local PA6 suite.
 
 ### Required Driver Surface
 
@@ -102,12 +102,12 @@ No new compile or link driver flags are introduced in PA6. Behavior is
 undefined unless the command line has this form:
 
 ```sh
-cppgm++ --emit-types -o <outfile> <srcfile1> [<srcfile2> ...]
+cppgm --emit-types -o <outfile> <srcfile1> [<srcfile2> ...]
 ```
 
 ### Input Contract
 
-The authoritative source syntax is the shared `cppgm++` source grammar, exposed
+The authoritative source syntax is the shared `cppgm` source grammar, exposed
 for this assignment as `pa6.gram`. The grammar defines accepted syntax only;
 the PA6 scope/type requirements are defined by the Required Features and Out Of
 Scope sections below.
@@ -131,7 +131,7 @@ If this README and `pa6.gram` disagree about accepted source syntax, use
 
 ### Output Format
 
-On success, `cppgm++` writes the PA6 semantic dump to `<outfile>`.
+On success, `cppgm` writes the PA6 semantic dump to `<outfile>`.
 
 The first line is:
 
@@ -214,7 +214,7 @@ Standard output and standard error are ignored by the automated PA6 tests.
 ### Error Handling
 
 If preprocessing, tokenization, parsing, or PA6 semantic analysis fails,
-`cppgm++` must exit with `EXIT_FAILURE`.
+`cppgm` must exit with `EXIT_FAILURE`.
 
 The contents of `<outfile>` are unspecified on failure. For failing tests, the
 harness compares only the named exit status, not diagnostic text and not the
@@ -337,7 +337,7 @@ The PA6 harness discovers every `.t` file under the requested test root.
 For each test case `x.t`, it runs:
 
 ```sh
-cppgm++ --emit-types -o x.my x.t
+cppgm --emit-types -o x.my x.t
 ```
 
 and records `x.my.exit_status`.

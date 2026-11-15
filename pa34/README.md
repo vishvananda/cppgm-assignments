@@ -5,7 +5,7 @@
 Improve the native code produced from LowIR while preserving program behavior,
 the ABI, unwinding and debug information. PA33 optimizes LowIR; PA34 optimizes
 its translation to machine instructions. Reuse this backend in both
-`lowir2native` and the `cppgm++` object and executable paths.
+`lowir2native` and the `cppgm` object and executable paths.
 
 Complete PA24 and PA33 first. Continue working in `dev/lowir2native.cpp` and
 your shared backend under `dev/src/`. The assignment wrapper points there.
@@ -50,7 +50,7 @@ Pass order, register allocation and instruction selection are your choices.
 If your existing backend already meets a bound, no extra pass is needed for
 that case. Completion depends on the output, not on adding named optimizations.
 Higher optimization levels must preserve the correctness established by
-previous assignments. In `cppgm++`, apply PA33's LowIR optimization before
+previous assignments. In `cppgm`, apply PA33's LowIR optimization before
 native lowering at the requested level.
 
 Loop fixtures combine invariant inputs, changing phi values and paths that
@@ -127,7 +127,7 @@ These bounds are a deterministic, lightweight code-quality bar; fewer static
 instructions do not always mean faster code. `make test-kernels` adds a
 dynamic bar: the four kernels built from `../pa36/kernels/`
 (`accessor-distinct` and `accessor-alias` at `-O2`, `lookup` and
-`exceptions` at `-O3`), compiled by `cppgm++` and by the host GCC at the
+`exceptions` at `-O3`), compiled by `cppgm` and by the host GCC at the
 kernel's level (`-std=c++11 -O<level> -g0`) and linked against one GCC-built
 driver, each execute at most 1.50 times GCC's instructions, counted with
 Cachegrind (which this check requires). They exercise an accessor chain around a call

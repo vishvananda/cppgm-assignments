@@ -9,7 +9,7 @@ use FindBin;
 use lib $FindBin::Bin;
 use CppgmBatchWorker qw(collect_tests read_word_list resolve_host_command run_command_capture);
 
-die "Usage: check_cppgm_native_programs.pl <cppgm++> <test-or-directory> [lowir2native]\n"
+die "Usage: check_cppgm_native_programs.pl <cppgm> <test-or-directory> [lowir2native]\n"
 	if @ARGV != 2 && @ARGV != 3;
 my ($app, $root, $backend) = @ARGV;
 my @tests = collect_tests($root, qr/\.t$/);

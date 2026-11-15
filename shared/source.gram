@@ -9,7 +9,7 @@
 #
 # Required C++11/14/17 forms and the GNU assembly profile share this grammar.
 # Mode restrictions and semantic prerequisites are specified by the handouts.
-# PA5 and later cppgm++ frontend assignments use this same source grammar. The
+# PA5 and later cppgm frontend assignments use this same source grammar. The
 # grammar defines accepted source syntax only; each assignment README defines the
 # semantic and lowering subset required at that stage.
 #

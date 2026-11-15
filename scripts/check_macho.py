@@ -140,7 +140,7 @@ def main():
     parser.add_argument('--fixtures', type=Path)
     parser.add_argument('--list', action='store_true', help='list selected fixture inputs without running them')
     parser.add_argument('roots', nargs='*', type=Path)
-    parser.add_argument('--compiler', type=Path, default=Path('dev/cppgm++'))
+    parser.add_argument('--compiler', type=Path, default=Path('dev/cppgm'))
     parser.add_argument('--lowir2native', type=Path, default=Path('dev/lowir2native'))
     parser.add_argument('--host-cxx', default='clang++')
     args = parser.parse_args()

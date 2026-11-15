@@ -1,12 +1,12 @@
 # CPPGM Programming Assignment 36: Optimizing the compiler
 
 Complete PA35, then make the compiler you built fast in two senses: the code
-it generates, judged by compiling `cppgm++` with itself and running the
-result, and the work `cppgm++` itself does, judged against the host compiler
+it generates, judged by compiling `cppgm` with itself and running the
+result, and the work `cppgm` itself does, judged against the host compiler
 on the same input. PA36 adds no language feature or output format.
 
 The yardstick for generated code is the host compiler. The **seed** is
-`dev/cppgm++` built by the host (`make build`, `g++ -O3`). The **self**
+`dev/cppgm` built by the host (`make build`, `g++ -O3`). The **self**
 compiler is the same source compiled by the seed with the same flags and
 linked by the host exactly like the seed. Seed and self compile the frozen
 workload to identical objects, so any difference in the work they execute
@@ -41,7 +41,7 @@ belong to the machine, so compare measurements only on one machine and
 toolchain. Every measurement compiles it the same way:
 
 ```sh
-cppgm++ -O<n> -c pa36/workload/semantic_overload.cpp -I pa36/workload/include \
+cppgm -O<n> -c pa36/workload/semantic_overload.cpp -I pa36/workload/include \
   -U__LDBL_MAX__ -D__LDBL_MAX__=1.0e300L -U__LDBL_MIN__ -D__LDBL_MIN__=1.0e-300L \
   -U__LDBL_DENORM_MIN__ -D__LDBL_DENORM_MIN__=1.0e-310L \
   -U__LDBL_NORM_MAX__ -D__LDBL_NORM_MAX__=1.0e300L -o out.o
@@ -63,7 +63,7 @@ reported as not run. `make -C pa36 test-correctness`, `test-speed` and
 | Group | Gate | Measurement | Limit |
 |---|---|---|---|
 | correctness | `workload-compiles` | the seed compiles the workload at `-O0` and `-O3` | required |
-| correctness | `behavior` | each `tests/behavior/*.cpp`, compiled by `cppgm++` at `-O0` to `-O3` and linked by the host, prints what the host build prints; its `-O3` LowIR lowers through `lowir2native` with a MIR dump | all pass |
+| correctness | `behavior` | each `tests/behavior/*.cpp`, compiled by `cppgm` at `-O0` to `-O3` and linked by the host, prints what the host build prints; its `-O3` LowIR lowers through `lowir2native` with a MIR dump | all pass |
 | correctness | `generated` | seeded programs exercising narrow values, Booleans, returned objects, frames and unwinding, at `-O0` to `-O3`, against the host build | all pass |
 | speed | `compile-O0-time` | seed `-O0` user time on the workload / host `-O0` | <= 0.50 |
 | speed | `compile-O3-time` | seed `-O3` user time / host `-O3` | <= 0.50 |
@@ -75,7 +75,7 @@ reported as not run. `make -C pa36 test-correctness`, `test-speed` and
 | codegen | `codegen-O0-cycle-proxy` | self / seed cycle proxy for the whole process at `-O0` | <= 1.09 |
 | codegen | `codegen-O3-cycle-proxy` | the same at `-O3` | <= 1.10 |
 | codegen | `text-size` | self / seed `.text` bytes | <= 1.20 |
-| codegen | `kernel-*` (4) | each kernel in `kernels/`, compiled by `cppgm++` and by GCC and linked against one GCC-built driver: instructions for the measured input relative to GCC | <= 1.30 each |
+| codegen | `kernel-*` (4) | each kernel in `kernels/`, compiled by `cppgm` and by GCC and linked against one GCC-built driver: instructions for the measured input relative to GCC | <= 1.30 each |
 
 The cycle proxy is `Ir/3 + 15 Bcm + 20 Bim + 10 I1mr + 10 (D1mr + D1mw)` from
 callgrind's cache and branch simulation: deterministic, and closer to time
@@ -139,7 +139,7 @@ generated seeds, into `pa36/obj/smoke` (it leaves the measurements that
 your compiler is fast; run it after every optimizer or backend change.
 
 `ab.pl OLD [NEW]` builds the current source with compiler `OLD` and with
-`NEW` (default `dev/cppgm++`) and compares the two builds on the workload.
+`NEW` (default `dev/cppgm`) and compares the two builds on the workload.
 Both run the same source and do the same work, so the difference is the
 generated code alone. Use it for optimizer changes: they also change the
 work the workload's compile does, for the seed and self alike, so a fresh
@@ -186,19 +186,19 @@ scripts build). Each starts with a usage comment.
 | `make -C pa36 freeze LABEL=L` | freeze `pa36/obj/bin/{seed,self}-L` from the current tree |
 | `make -C pa36 measure LABEL=L [SIM=1]` | callgrind on seed-L and self-L at `-O0` and `-O3`: own-binary instructions, mix by instruction class, call and function excess, and each matched function's excess by class (`<level>-owners.txt`), in `pa36/obj/results/L` (`L-sim` with `SIM=1`) |
 | `make -C pa36 abba LABEL=L [LEVEL=-O3]` | paired timing of seed-L and self-L |
-| `perl pa36/scripts/build_with.pl --compiler C --out DIR` | build `cppgm++` from this source with any compiler |
-| `make -C pa36 identity OLD=A NEW=B` | whether two compilers generate identical code for every `cppgm++` object and the workload, and their compiler work |
-| `make -C pa36 kernels` / `behavior` / `generated` / `speed` / `scaling` | one gate family, using `dev/cppgm++` |
+| `perl pa36/scripts/build_with.pl --compiler C --out DIR` | build `cppgm` from this source with any compiler |
+| `make -C pa36 identity OLD=A NEW=B` | whether two compilers generate identical code for every `cppgm` object and the workload, and their compiler work |
+| `make -C pa36 kernels` / `behavior` / `generated` / `speed` / `scaling` | one gate family, using `dev/cppgm` |
 
 The gate scripts take `--compiler C` (and `check.pl` takes `--seed A --self
 B`), so they also run against the reference tools: for example
-`perl pa36/scripts/kernels.pl --compiler reference-binaries/cppgm++` after
+`perl pa36/scripts/kernels.pl --compiler reference-binaries/cppgm` after
 `make reference-binaries`.
 
 `freeze.pl`, `build_with.pl` and the codegen checks take the seed's compile
 and link lines from a dry run of `make build`: keep a `make build` that
-compiles each `dev/src` object with `-c` and links `cppgm++` (or
-`cppgm++.tmp`, which the shipped Makefile then moves into place) from those
+compiles each `dev/src` object with `-c` and links `cppgm` (or
+`cppgm.tmp`, which the shipped Makefile then moves into place) from those
 objects, so the self build can repeat the same lines with another compiler
 and the same host link. An `OBJ=` override or another object root is fine.
 
@@ -210,7 +210,7 @@ side by side: compile time and
 memory on the workload (the figures themselves, with each compiler's ratio
 to the host beside them), and generated code at constant work, since both
 compilers build this repository's own source and the two builds run the
-workload (`ab.pl reference-binaries/cppgm++`; `SIM=1` adds callgrind's
+workload (`ab.pl reference-binaries/cppgm`; `SIM=1` adds callgrind's
 cycle proxy). It prints the reference's figure, yours and the ratio, and
 says when a figure is missing. Use the limits in `gates.txt` to determine
 whether your implementation meets the assignment requirements.
@@ -226,7 +226,7 @@ whether your implementation meets the assignment requirements.
   A change may improve both compile time and generated code; measure each
   effect on its own.
 - **No profile feedback, link-time optimization or ISA extensions.** The self
-  build may use only what one `cppgm++ -O3 -c` of one translation unit can
+  build may use only what one `cppgm -O3 -c` of one translation unit can
   know, as the seed's `g++ -O3` does.
 - **Earlier contracts stay intact.** `-O0` output still meets PA24's
   contract. PA33 and
@@ -236,7 +236,7 @@ whether your implementation meets the assignment requirements.
 - **No special cases.** Do not recognize the workload, kernel or test
   sources, file names, symbol names or library type spellings.
 - **Same allocator.** `freeze.pl` and `build_with.pl` link self like the seed;
-  PA35's `cppgm++-self` may link a different `malloc` and is not comparable.
+  PA35's `cppgm-self` may link a different `malloc` and is not comparable.
 
 PA36 does not require vectorization, profile feedback, link-time or
 whole-program optimization, a new IR, or any particular allocator, pass

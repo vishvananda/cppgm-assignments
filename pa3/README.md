@@ -1,6 +1,6 @@
 ## CPPGM Programming Assignment 3 (ppexpr)
 
-Adapted from the original CPPGM material; revised for cppgm-extended.
+Adapted from the original CPPGM material; revised for cppgm.
 See [NOTICE](../NOTICE) for attribution.
 
 ### Overview

@@ -7,7 +7,7 @@ TARGETS = \
 	lowiropt-self \
 	lowir-self \
 	lowir2native-self \
-	cppgm++-self
+	cppgm-self
 
 DEFAULT_BUILD_JOBS = $(shell getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
 INCEPTION_DEFAULT_BUILD_JOB_CAP ?= 8
@@ -35,11 +35,11 @@ endif
 
 
 ifeq ($(origin CXX), default)
-CXX := ../dev/cppgm++
+CXX := ../dev/cppgm
 endif
 
 ifeq ($(origin CPPGM_HOST_CXX), undefined)
-ifeq ($(abspath $(CXX)),$(abspath ../dev/cppgm++))
+ifeq ($(abspath $(CXX)),$(abspath ../dev/cppgm))
 	CPPGM_HOST_CXX := g++
 else
 	CPPGM_HOST_CXX := $(CXX)
@@ -67,7 +67,7 @@ INCEPTION_SOURCE_ROOT ?= $(INCEPTION_ENTRY_ROOT)/src
 INCEPTION_BUILTIN_HOST_CONFIG = $(INCEPTION_GENERATED)/cppgm_builtin_host_config.h
 INCEPTION_INCLUDE_PATHS := $(INCEPTION_SOURCE_ROOT) $(INCEPTION_GENERATED)
 INCEPTION_DEFINES ?=
-# Extra cppgm++ compile flags for measurement harnesses (e.g. --inline-limit
+# Extra cppgm compile flags for measurement harnesses (e.g. --inline-limit
 # doses).  Exported with ?= so a caller-provided value survives the
 # MAKEFLAGS-clearing object sub-make; empty by default.
 INCEPTION_EXTRA_CC_FLAGS ?=
@@ -87,7 +87,7 @@ include ../dev/frontend_source_sets.mk
 FRONTEND_TEST_RUNNER_SOURCE_ID ?= support/testing/test_runner
 FRONTEND_BUILTIN_CONFIG_SOURCE_ID ?= preprocess/preprocessor
 
-ifeq ($(abspath $(CXX)),$(abspath ../dev/cppgm++))
+ifeq ($(abspath $(CXX)),$(abspath ../dev/cppgm))
 INCEPTION_COMPILER_FLAVOR ?= selfhost
 else
 INCEPTION_COMPILER_FLAVOR ?= host
@@ -105,8 +105,8 @@ INCEPTION_BIN_ROOT ?= $(INCEPTION_BIN_ROOT_BASE)/$(INCEPTION_COMPILER_FLAVOR)
 INCEPTION_OUTPUT_SUFFIX ?= -self
 INCEPTION_SELFHOST_OBJ_ROOT ?= $(INCEPTION_OBJ_ROOT_BASE)/selfhost
 INCEPTION_COMPARE_OBJECTS ?= $(if $(filter inception,$(INCEPTION_COMPILER_FLAVOR)),$(if $(wildcard $(INCEPTION_SELFHOST_OBJ_ROOT)),1,0),0)
-PROBE_CXX ?= ../dev/cppgm++
-PROBE_TARGET ?= cppgm++
+PROBE_CXX ?= ../dev/cppgm
+PROBE_TARGET ?= cppgm
 PROBE_OBJ_ROOT_BASE ?= $(INCEPTION_OBJ_ROOT_BASE)/probe
 PROBE_OBJ_ROOT ?= $(PROBE_OBJ_ROOT_BASE)/selfhost
 PROBE_BIN_ROOT ?= $(PROBE_OBJ_ROOT_BASE)/bin/selfhost
@@ -116,7 +116,7 @@ PROBE_CANON_OBJ_ROOT ?= $(INCEPTION_OBJ_ROOT_BASE)/selfhost
 PROBE_TIMEOUT_SEC ?= $(INCEPTION_SELFHOST_COMPILE_TIMEOUT_SEC)
 PROBE_LINK_OUTPUT ?= $(PROBE_BIN_ROOT)/$(PROBE_TARGET)-probe
 
-CHECKPOINTS = pptoken posttoken ppexpr preproc cppgm++ abimangle lowiropt lowir lowir2native
+CHECKPOINTS = pptoken posttoken ppexpr preproc cppgm abimangle lowiropt lowir lowir2native
 TEST_TARGETS = $(addprefix test-,$(CHECKPOINTS))
 THROUGH_TARGETS = $(addprefix through-,$(CHECKPOINTS))
 TEST_THROUGH_TARGETS = $(addprefix test-through-,$(CHECKPOINTS))
@@ -135,50 +135,50 @@ INCEPTION_PREV_pptoken =
 INCEPTION_PREV_posttoken = pptoken
 INCEPTION_PREV_ppexpr = posttoken
 INCEPTION_PREV_preproc = ppexpr
-INCEPTION_PREV_cppgm++ = preproc
-INCEPTION_PREV_abimangle = cppgm++
-INCEPTION_PREV_lowiropt = cppgm++
-INCEPTION_PREV_lowir = cppgm++
+INCEPTION_PREV_cppgm = preproc
+INCEPTION_PREV_abimangle = cppgm
+INCEPTION_PREV_lowiropt = cppgm
+INCEPTION_PREV_lowir = cppgm
 INCEPTION_PREV_lowir2native = lowir
 
 INCEPTION_CHECKPOINT_FOR_pa1 = pptoken
 INCEPTION_CHECKPOINT_FOR_pa2 = posttoken
 INCEPTION_CHECKPOINT_FOR_pa3 = ppexpr
 INCEPTION_CHECKPOINT_FOR_pa4 = preproc
-INCEPTION_CHECKPOINT_FOR_pa5 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa6 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa7 = cppgm++
+INCEPTION_CHECKPOINT_FOR_pa5 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa6 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa7 = cppgm
 INCEPTION_CHECKPOINT_FOR_pa8 = lowir
 INCEPTION_CHECKPOINT_FOR_pa9 = abimangle
-INCEPTION_CHECKPOINT_FOR_pa10 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa11 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa12 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa13 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa14 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa15 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa16 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa17 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa18 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa19 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa20 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa21 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa22 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa23 = cppgm++
+INCEPTION_CHECKPOINT_FOR_pa10 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa11 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa12 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa13 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa14 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa15 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa16 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa17 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa18 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa19 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa20 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa21 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa22 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa23 = cppgm
 INCEPTION_CHECKPOINT_FOR_pa24 = lowir2native
-INCEPTION_CHECKPOINT_FOR_pa25 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa26 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa27 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa28 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa30 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa31 = cppgm++
-INCEPTION_CHECKPOINT_FOR_pa32 = cppgm++
+INCEPTION_CHECKPOINT_FOR_pa25 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa26 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa27 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa28 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa30 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa31 = cppgm
+INCEPTION_CHECKPOINT_FOR_pa32 = cppgm
 INCEPTION_CHECKPOINT_FOR_pa33 = lowiropt
 INCEPTION_CHECKPOINT_FOR_pa34 = lowir2native
 INCEPTION_PRIMARY_STAGE_pptoken = pa1
 INCEPTION_PRIMARY_STAGE_posttoken = pa2
 INCEPTION_PRIMARY_STAGE_ppexpr = pa3
 INCEPTION_PRIMARY_STAGE_preproc = pa4
-INCEPTION_PRIMARY_STAGE_cppgm++ = pa5
+INCEPTION_PRIMARY_STAGE_cppgm = pa5
 INCEPTION_PRIMARY_STAGE_abimangle = pa9
 INCEPTION_PRIMARY_STAGE_lowiropt = pa33
 INCEPTION_PRIMARY_STAGE_lowir = pa8
@@ -277,7 +277,7 @@ inception_inception_binary_path = $(INCEPTION_BIN_ROOT_BASE)/inception/$(1)-ince
 inception_selfhost_entry_object_path = $(INCEPTION_SELFHOST_OBJ_ROOT)/$(1)/release/$(call inception_entry_stem,$(INCEPTION_ENTRY_$(1)))$(inception_entry_suffix).o
 inception_selfhost_runner_object_path = $(INCEPTION_SELFHOST_OBJ_ROOT)/shared/release/test_runner$(inception_runner_suffix).o
 inception_selfhost_shared_object_path = $(INCEPTION_SELFHOST_OBJ_ROOT)/shared/release/$(call inception_shared_id,$(1)).o
-INCEPTION_RESTORED_CPPGM_SELF ?= $(call inception_self_binary_path,cppgm++)
+INCEPTION_RESTORED_CPPGM_SELF ?= $(call inception_self_binary_path,cppgm)
 inception_entry_object_path = $(call inception_objdir,$(1))/$(call inception_entry_stem,$(INCEPTION_ENTRY_$(1)))$(inception_entry_suffix).o
 inception_entry_depfile_path = $(call inception_depdir,$(1))/$(call inception_entry_stem,$(INCEPTION_ENTRY_$(1)))$(inception_entry_suffix).d
 inception_runner_object_path = $(INCEPTION_SHARED_OBJDIR)/test_runner$(inception_runner_suffix).o
@@ -291,7 +291,7 @@ inception_link_inputs = $(call inception_entry_object_path,$(1)) $(call inceptio
 inception_missing_link_inputs = $(strip $(foreach obj,$(call inception_link_inputs,$(1)),$(if $(wildcard $(obj)),,$(obj))))
 inception_existing_link_inputs = $(filter-out $(call inception_missing_link_inputs,$(1)),$(call inception_link_inputs,$(1)))
 inception_stage_binary = $(call inception_self_binary_path,$(INCEPTION_CHECKPOINT_FOR_$(1)))
-INCEPTION_INCEPTION_CXX ?= $(call inception_self_binary_path,cppgm++)
+INCEPTION_INCEPTION_CXX ?= $(call inception_self_binary_path,cppgm)
 
 all: $(TARGETS)
 
@@ -307,12 +307,12 @@ compare-inception: $(INCEPTION_COMPARE_TARGETS)
 
 bitcmp: compare-inception
 
-cppgm++-inception-from-restored-self:
+cppgm-inception-from-restored-self:
 	@if [ ! -x "$(INCEPTION_RESTORED_CPPGM_SELF)" ]; then \
 		echo "missing restored self compiler: $(INCEPTION_RESTORED_CPPGM_SELF)" >&2; \
 		exit 2; \
 	fi
-	+env MAKEFLAGS= $(MAKE) -j$(INCEPTION_BUILD_JOBS) "$(call inception_inception_binary_path,cppgm++)" \
+	+env MAKEFLAGS= $(MAKE) -j$(INCEPTION_BUILD_JOBS) "$(call inception_inception_binary_path,cppgm)" \
 		INCEPTION_COMPILER_FLAVOR=inception \
 		INCEPTION_COMPARE_OBJECTS=0 \
 		INCEPTION_OUTPUT_SUFFIX=-inception \
@@ -326,12 +326,12 @@ cppgm++-inception-from-restored-self:
 		CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)" \
 		CPPGM_TEST_RUNNER="$(CPPGM_TEST_RUNNER)" \
 		INCEPTION_DEFINES='$(INCEPTION_DEFINES)'
-	@ln -sf $(call inception_inception_binary_path,cppgm++) cppgm++-inception
+	@ln -sf $(call inception_inception_binary_path,cppgm) cppgm-inception
 
-compare-cppgm++-inception-from-restored-self: cppgm++-inception-from-restored-self
-	@cmp -s "$(INCEPTION_RESTORED_CPPGM_SELF)" "$(call inception_inception_binary_path,cppgm++)" || \
-		(echo "mismatch: $(INCEPTION_RESTORED_CPPGM_SELF) != $(call inception_inception_binary_path,cppgm++)" >&2; exit 1)
-	@echo "MATCH cppgm++: $(call inception_inception_binary_path,cppgm++)"
+compare-cppgm-inception-from-restored-self: cppgm-inception-from-restored-self
+	@cmp -s "$(INCEPTION_RESTORED_CPPGM_SELF)" "$(call inception_inception_binary_path,cppgm)" || \
+		(echo "mismatch: $(INCEPTION_RESTORED_CPPGM_SELF) != $(call inception_inception_binary_path,cppgm)" >&2; exit 1)
+	@echo "MATCH cppgm: $(call inception_inception_binary_path,cppgm)"
 
 compiler-ready:
 	@if [ -x "$(CXX)" ]; then \
@@ -341,8 +341,8 @@ compiler-ready:
 		exit 0; \
 	fi; \
 	if [ ! -x "$(CXX)" ]; then \
-		if [ "$(CXX)" = "../dev/cppgm++" ]; then \
-			$(MAKE) -C ../dev cppgm++ \
+		if [ "$(CXX)" = "../dev/cppgm" ]; then \
+			$(MAKE) -C ../dev cppgm \
 				CXX="$(CPPGM_HOST_CXX)" \
 				CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" \
 				CPPGM_TEST_RUNNER="$(CPPGM_TEST_RUNNER)"; \
@@ -359,8 +359,8 @@ probe-compiler-ready:
 	if command -v "$(PROBE_CXX)" >/dev/null 2>&1; then \
 		exit 0; \
 	fi; \
-	if [ "$(PROBE_CXX)" = "../dev/cppgm++" ]; then \
-		$(MAKE) -C ../dev cppgm++ \
+	if [ "$(PROBE_CXX)" = "../dev/cppgm" ]; then \
+		$(MAKE) -C ../dev cppgm \
 			CXX="$(CPPGM_HOST_CXX)" \
 			CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" \
 			CPPGM_TEST_RUNNER="$(CPPGM_TEST_RUNNER)"; \
@@ -371,7 +371,7 @@ probe-compiler-ready:
 
 probe-self-object: probe-compiler-ready $(INCEPTION_BUILTIN_HOST_CONFIG)
 	@if [ -z "$(strip $(SOURCE))" ]; then \
-		echo "Usage: make probe-self-object SOURCE=$(INCEPTION_SOURCE_ROOT)/<relative/file>.cpp [PROBE_CXX=../dev/cppgm++]" >&2; \
+		echo "Usage: make probe-self-object SOURCE=$(INCEPTION_SOURCE_ROOT)/<relative/file>.cpp [PROBE_CXX=../dev/cppgm]" >&2; \
 		exit 2; \
 	fi
 	@src='$(SOURCE)'; \
@@ -480,8 +480,8 @@ $(INCEPTION_BUILTIN_HOST_CONFIG): FORCE
 		perl ../dev/gen_builtin_host_config.pl > $@.tmp
 	@if ! cmp -s $@.tmp $@ 2>/dev/null; then mv $@.tmp $@; else rm -f $@.tmp; fi
 
-../dev/cppgm++:
-	$(MAKE) -C ../dev cppgm++ \
+../dev/cppgm:
+	$(MAKE) -C ../dev cppgm \
 		CXX="$(CPPGM_HOST_CXX)" \
 		CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" \
 		CPPGM_TEST_RUNNER="$(CPPGM_TEST_RUNNER)"
@@ -586,7 +586,7 @@ test-$(1)-nobuild:
 			CPPGM_STDLIB_FLAGS="$(CPPGM_STDLIB_FLAGS)" \
 			CPPGM_TEST_RUNNER="$(CPPGM_TEST_RUNNER)" \
 			LOWIROPT_APP="$(call inception_stage_binary,$(1))" \
-			CPPGM_DRIVER_APP="$(call inception_binary_path,cppgm++)" \
+			CPPGM_DRIVER_APP="$(call inception_binary_path,cppgm)" \
 			test; \
 	elif [ "$(1)" = "pa34" ]; then \
 		$(call inception_stage_test_env,$(1)) $(MAKE) -C ../pa34 \
@@ -619,7 +619,7 @@ test-through-$(1): $(if $(INCEPTION_PREV_STAGE_$(1)),test-through-$(INCEPTION_PR
 endef
 
 define INCEPTION_INCEPTION_RULES
-$(1)-inception: cppgm++-self $(1)-self
+$(1)-inception: cppgm-self $(1)-self
 	+env MAKEFLAGS= $$(MAKE) -j$(INCEPTION_BUILD_JOBS) "$(call inception_inception_binary_path,$(1))" \
 		INCEPTION_COMPILER_FLAVOR=inception \
 		INCEPTION_OUTPUT_SUFFIX=-inception \
@@ -646,7 +646,7 @@ $(foreach src,$(INCEPTION_ALL_SHARED_SOURCES),$(eval $(call INCEPTION_SOURCE_RUL
 $(foreach pa,$(PA_STAGE_NAMES),$(eval $(call INCEPTION_STAGE_RULES,$(pa))))
 $(foreach checkpoint,$(CHECKPOINTS),$(eval $(call INCEPTION_INCEPTION_RULES,$(checkpoint))))
 
-test-pa33: cppgm++-self
+test-pa33: cppgm-self
 
 clean:
 	-rm -f $(TARGETS) $(INCEPTION_TARGETS)
@@ -654,8 +654,8 @@ clean:
 
 .PHONY: all test ladder preservation clean compiler-ready \
 	inception compare-inception bitcmp \
-	cppgm++-inception-from-restored-self \
-	compare-cppgm++-inception-from-restored-self \
+	cppgm-inception-from-restored-self \
+	compare-cppgm-inception-from-restored-self \
 	probe-compiler-ready probe-self-object probe-self-link \
 	$(TARGETS) $(INCEPTION_TARGETS) $(INCEPTION_COMPARE_TARGETS) \
 	$(TEST_TARGETS) $(THROUGH_TARGETS) $(TEST_THROUGH_TARGETS) \

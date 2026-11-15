@@ -18,7 +18,7 @@ use File::Path qw(make_path);
 use Getopt::Long;
 use PA36;
 
-my %o = (compiler => "$PA36::ROOT/dev/cppgm++", level => '-O0', seconds => 30, out => "$PA36::PA36/obj/profile", top => 40);
+my %o = (compiler => "$PA36::ROOT/dev/cppgm", level => '-O0', seconds => 30, out => "$PA36::PA36/obj/profile", top => 40);
 GetOptions(\%o, 'compiler=s', 'level=s', 'input=s', 'seconds=i', 'exact', 'out=s', 'top=i')
 	or die "usage: profile.pl [--compiler C] [--level -O0] [--input FILE] [--seconds 30] [--exact] [--out DIR]\n";
 my $C = abs_path($o{compiler}) // die "no compiler $o{compiler}\n";

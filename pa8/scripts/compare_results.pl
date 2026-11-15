@@ -6,7 +6,7 @@ use File::Basename qw(dirname);
 my $repo_root = dirname(dirname($FindBin::Bin));
 die "Usage: compare_results.pl <ref-suffix> <my-suffix> <test-spec>\n" if @ARGV != 3;
 my ($reference, $candidate, $tests) = @ARGV;
-# The `cppgm++ --emit-lowir` debug lanes compare LowIR by the relaxed rules
+# The `cppgm --emit-lowir` debug lanes compare LowIR by the relaxed rules
 # and require the reference's `!dbg` locations; the other debug lanes compare
 # tool output text.
 exec("perl", "$repo_root/scripts/run_routed_test_spec.pl", $tests,

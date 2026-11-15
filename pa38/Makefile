@@ -1,4 +1,4 @@
-TARGET = cppgm++
+TARGET = cppgm
 TARGET_ARGS = --emit-lowir -O0 -x c -std=c17
 export CPPGM_APP_ARGS := $(TARGET_ARGS)
 CXX ?= g++

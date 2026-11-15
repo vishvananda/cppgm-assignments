@@ -1,4 +1,4 @@
-TARGET = cppgm++
+TARGET = cppgm
 TARGET_ARGS = --emit-ast
 export CPPGM_APP_ARGS := $(TARGET_ARGS)
 CXX = g++

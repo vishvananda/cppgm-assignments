@@ -14,7 +14,7 @@
 # --group all (the default) stops after the first group with a failing gate
 # and reports the later gates as not run.
 #
-# The seed is dev/cppgm++ after `make build`. The codegen group freezes the
+# The seed is dev/cppgm after `make build`. The codegen group freezes the
 # current tree first (freeze.pl --label check: self = the same source built by
 # the seed, linked the same way) unless --seed and --self are given. The
 # behavior suite's MIR dump uses the lowir2native beside the compiler it
@@ -50,7 +50,7 @@ for my $line (split /\n/, PA36::slurp("$PA36::PA36/gates.txt")) {
 }
 my @GROUPS = $o{group} eq 'all' ? qw(correctness speed codegen) : ($o{group});
 
-# The compiler under test: an explicit seed, or dev/cppgm++ built now.
+# The compiler under test: an explicit seed, or dev/cppgm built now.
 my $seed;
 if ($o{seed}) {
 	$seed = abs_path($o{seed});
@@ -61,13 +61,13 @@ if ($o{seed}) {
 	die "make build failed (see $out/build.log)\n" if $st;
 	make_path("$PA36::PA36/obj/bin");
 	$seed = "$PA36::PA36/obj/bin/seed-check";
-	copy("$PA36::ROOT/dev/cppgm++", $seed) or die "copy: $!\n";
+	copy("$PA36::ROOT/dev/cppgm", $seed) or die "copy: $!\n";
 	chmod 0755, $seed;
 }
-# behavior.pl and generated.pl run dev/cppgm++ unless --tools names another
+# behavior.pl and generated.pl run dev/cppgm unless --tools names another
 # compiler; the behavior suite's MIR dump runs the lowir2native beside it
 # unless --lowir2native names one (a seed built elsewhere has none beside it).
-my $tools = abs_path($o{tools} // ($o{seed} ? $seed : "$PA36::ROOT/dev/cppgm++"));
+my $tools = abs_path($o{tools} // ($o{seed} ? $seed : "$PA36::ROOT/dev/cppgm"));
 my $lowir2native = $o{lowir2native} ? abs_path($o{lowir2native}) : dirname($tools) . '/lowir2native';
 
 my (%value, %note);

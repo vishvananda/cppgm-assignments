@@ -17,7 +17,7 @@ use File::Temp qw(tempdir);
 use Getopt::Long;
 use PA36;
 
-my %o = (compiler => "$PA36::ROOT/dev/cppgm++", host => 'g++', rounds => 3, out => "$PA36::PA36/obj/speed.tsv");
+my %o = (compiler => "$PA36::ROOT/dev/cppgm", host => 'g++', rounds => 3, out => "$PA36::PA36/obj/speed.tsv");
 GetOptions(\%o, 'compiler=s', 'host=s', 'rounds=i', 'out=s') or die "usage: speed.pl [--compiler C] [--host g++] [--rounds N]\n";
 my $C = abs_path($o{compiler}) // die "no compiler $o{compiler}\n";
 PA36::verify_workload();
@@ -62,12 +62,12 @@ for my $mode (@order) {
 	my $host_label = $MODES{$mode}[1];
 	if (my $why = $state{$c}) {
 		my $shown = $why eq 'timeout' ? sprintf('over %d s', $state{"limit-$mode"}) : 'failed';
-		printf "%-4s cppgm++ %s (host %s %.3fs)\n", $mode, $shown, $host_label, $user{$h};
+		printf "%-4s cppgm %s (host %s %.3fs)\n", $mode, $shown, $host_label, $user{$h};
 		push @rows, "time-$mode\t$why\t$user{$h}\t$why";
 		push @rows, "rss-$mode\t$why\t$rss{$h}\t$why";
 		next;
 	}
-	printf "%-4s cppgm++ %.3fs (%d MB), host %s %.3fs (%d MB): time %.3fx, rss %.3fx\n",
+	printf "%-4s cppgm %.3fs (%d MB), host %s %.3fs (%d MB): time %.3fx, rss %.3fx\n",
 		$mode, $user{$c}, $rss{$c} / 1024, $host_label, $user{$h}, $rss{$h} / 1024,
 		$user{$c} / $user{$h}, $rss{$c} / $rss{$h};
 	push @rows, sprintf("time-%s\t%.6f\t%.6f\t%.6f", $mode, $user{$c}, $user{$h}, $user{$c} / $user{$h});

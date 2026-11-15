@@ -1,9 +1,9 @@
-## CPPGM Programming Assignment 30 (`cppgm++ -E` / `cppgm++ -c`)
+## CPPGM Programming Assignment 30 (`cppgm -E` / `cppgm -c`)
 
 ### Overview
 
 PA30 is the hosted source/header compatibility assignment. Its job is to make
-`cppgm++` preprocess and compile the hosted standard-library and vendor
+`cppgm` preprocess and compile the hosted standard-library and vendor
 extension environment needed by later bootstrap-style builds.
 
 This milestone is intentionally distinct from the previous host-toolchain
@@ -31,7 +31,7 @@ Complete PA29 before starting this assignment.
 You will want to reuse:
 
 - the full earlier language, template, and lowering stack
-- the PA27/PA28 `cppgm++ -c` host-object path
+- the PA27/PA28 `cppgm -c` host-object path
 - the PA28 host-ABI-compatible output path
 - the earlier preprocessor pipeline, now with hosted-driver controls
 
@@ -118,7 +118,7 @@ Library traits use their declared template definitions and specializations.
 A familiar standard-library name does not define an incomplete primary or
 replace its member declarations and values.
 
-Those answers are discovered **once, when `cppgm++` is built**, and baked into
+Those answers are discovered **once, when `cppgm` is built**, and baked into
 it. The compiler does not probe the host toolchain at run time to find its
 include paths: a compiler that decided where the standard library lives each
 time it ran would give different answers on different machines and would make
@@ -133,9 +133,9 @@ claiming another.
 
 The starter kit provides:
 
-- your cumulative `dev/cppgm++.cpp` compiler entry point
+- your cumulative `dev/cppgm.cpp` compiler entry point
 - the shared implementation you built under `dev/src/`
-- `pa30/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
+- `pa30/cppgm.cpp`, a link to `../dev/cppgm.cpp`
 - `pa30/Makefile`
 - `pa30/scripts/`, the hosted preprocessor/compile test harness
 - `pa30/tests/preproc/`, hosted preprocessor tests and references
@@ -145,12 +145,12 @@ The starter kit provides:
 - `pa30/tests/run/`, small host-link/run smokes for hosted C-wrapper headers
   and builtin/runtime interop
 
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
+Put your code changes in `dev/`, especially `dev/cppgm.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Preserve supplied test inputs.
 Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-Use `cppgm++-ref` to inspect example output.
+Use `cppgm-ref` to inspect example output.
 Tests run your implementation against the checked-in contract fixtures.
 
 ### Driver Surface
@@ -190,57 +190,57 @@ New or newly required in PA30:
 
 ### Command-Line Contract
 
-PA30 continues extending the same `cppgm++` frontend used in PA25–PA29.
+PA30 continues extending the same `cppgm` frontend used in PA25–PA29.
 
 Required preprocess forms:
 
 ```sh
-cppgm++ -E -o <outfile> <srcfile>
-cppgm++ -E <srcfile1> <srcfile2> ...
-cppgm++ -E -D <macro> -U <macro> -include <file> -isystem <dir> <srcfile>
+cppgm -E -o <outfile> <srcfile>
+cppgm -E <srcfile1> <srcfile2> ...
+cppgm -E -D <macro> -U <macro> -include <file> -isystem <dir> <srcfile>
 ```
 
 Required compile forms:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c <srcfile1> <srcfile2> ...
-cppgm++ -c -D <macro> -U <macro> -include <file> -isystem <dir> -o <objfile> <srcfile>
+cppgm -c -o <objfile> <srcfile>
+cppgm -c <srcfile1> <srcfile2> ...
+cppgm -c -D <macro> -U <macro> -include <file> -isystem <dir> -o <objfile> <srcfile>
 ```
 
 Query flags are required only as direct driver queries. For example:
 
 ```sh
-cppgm++ --version
-cppgm++ -dumpmachine
-cppgm++ -print-search-dirs
+cppgm --version
+cppgm -dumpmachine
+cppgm -print-search-dirs
 ```
 
 ### Output Format
 
-`cppgm++ -E` shall write the same structured posttoken/preprocessor stream
+`cppgm -E` shall write the same structured posttoken/preprocessor stream
 format used by the PA4 `preproc` frontend. When `-o <outfile>` is present, that
 stream is written to `<outfile>`.
 
-`cppgm++ -c` shall continue to write host-linker-compatible relocatable object
+`cppgm -c` shall continue to write host-linker-compatible relocatable object
 files as in PA27/PA28.
 
 The new PA30 requirement is not a new object format. It is the ability to
 preprocess and compile hosted source/header inputs successfully through the
-`cppgm++` path.
+`cppgm` path.
 
 Hosted compatibility should use the same source-to-LowIR-to-object pipeline as
 ordinary compilation. Hosted include search, predefined macros, and builtin
 probes can affect the source program being compiled, but `--emit-lowir` should
 remain representative of the LowIR that object emission consumes: the object
-`cppgm++ -c` writes must be the object the serialized LowIR produces (PA33's
+`cppgm -c` writes must be the object the serialized LowIR produces (PA33's
 object round trip checks it), so the facts hosted code needs in the backend
 are LowIR facts; how they travel in memory is yours.
 
 ### Error Handling
 
 If preprocessing, parsing, semantic analysis, lowering, object emission, or
-output writing fails, `cppgm++` shall exit with failure.
+output writing fails, `cppgm` shall exit with failure.
 
 For compile-only tests, exact diagnostics are not the grading contract. The
 harness compares exit status and any checked output sidecars. If the reference
@@ -271,7 +271,7 @@ PA30 has four test directories:
 - `tests/compile/`: hosted compile-only compatibility. The oracle is successful
   object emission, compile exit status, and any stdout/reference sidecars used
   by the harness.
-- `tests/lowir/`: the LowIR that `cppgm++ --emit-lowir -O0` writes for
+- `tests/lowir/`: the LowIR that `cppgm --emit-lowir -O0` writes for
   hosted builtins, such as the branch predictions of `__builtin_expect` and
   the order branches of atomic stores and fences. The
   oracle is the relaxed LowIR comparison of the source-to-LowIR assignments
@@ -303,7 +303,7 @@ limits.
 
 GNU `q`/`Q` floating suffixes denote `__float128`, as specified in
 [GCC's floating-type extensions](https://gcc.gnu.org/onlinedocs/gcc/Floating-Types.html),
-in both normal compilation and the typed `cppgm++ -E` stream. Emit binary128
+in both normal compilation and the typed `cppgm -E` stream. Emit binary128
 bytes for these literals; `l`/`L` still denote `long double`. This PA30
 extension does not change the strict C++11 literal grammar of PA2–PA4.
 
@@ -342,7 +342,7 @@ they do not imply full C++20/23 coverage.
 
 PA30 is mostly about accepting hosted headers, but compile-only hosted tests can
 still expose symbol-spelling problems through emitted objects and unresolved
-references. The `cppgm++ -c` path should continue producing host ABI names that
+references. The `cppgm -c` path should continue producing host ABI names that
 PA27 and PA28 already made observable.
 
 A recommended implementation style is to keep the PA9 mangler in the

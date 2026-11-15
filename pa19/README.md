@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 19 (`cppgm++ --emit-lowir`)
+## CPPGM Programming Assignment 19 (`cppgm --emit-lowir`)
 
 ### Overview
 
@@ -32,12 +32,12 @@ You will want to reuse:
 
 The starter kit contains:
 
-- a `cppgm++.cpp` assignment entry point, linked to the editable compiler source
-  in `../dev/cppgm++.cpp`
+- a `cppgm.cpp` assignment entry point, linked to the editable compiler source
+  in `../dev/cppgm.cpp`
 - the standard assignment `Makefile` and harness scripts
 - the PA19 template-integration test suite under `tests/`
 
-Extend the `cppgm++` implementation you built in earlier assignments; the
+Extend the `cppgm` implementation you built in earlier assignments; the
 initial scaffold is not reinstalled at this milestone.
 
 Use the supplied reference tools to inspect example output. Tests compare
@@ -47,7 +47,7 @@ your compiler with the checked-in contract references.
 
 The PA19 invocation is the unoptimized LowIR mode:
 
-    $ cppgm++ --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
+    $ cppgm --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
 
 Behaviour is undefined unless the command-line arguments match that shape, with
 the same source-file ordering and `-o` relaxations as the earlier source-to-LowIR
@@ -56,7 +56,7 @@ LowIR output are not required in PA19.
 
 ### Output Format
 
-On success, `cppgm++` shall write LowIR text to `<outfile>` and exit
+On success, `cppgm` shall write LowIR text to `<outfile>` and exit
 `EXIT_SUCCESS`.
 
 The authoritative LowIR definition is `../pa8/lowir.md`. PA19 extends the
@@ -84,7 +84,7 @@ grading requirement.
 ### Error Handling
 
 If an error occurs during preprocessing, tokenization, parsing, semantic
-analysis, or LowIR generation, `cppgm++` shall `EXIT_FAILURE`.
+analysis, or LowIR generation, `cppgm` shall `EXIT_FAILURE`.
 
 The output file is not required to be meaningful on failure. Diagnostics are not
 part of the grading contract.
@@ -92,7 +92,7 @@ part of the grading contract.
 ### Standard Output / Error
 
 Standard output and standard error are ignored for automated testing of
-`cppgm++`.
+`cppgm`.
 
 You are free to use them for debugging, tracing, or diagnostic messages.
 
@@ -137,7 +137,7 @@ no `tests/controls/`, and every PA19 case is graded by its LowIR.
 
 ### PA19 Syntax Boundary
 
-The authoritative source syntax is the shared `cppgm++` source grammar, exposed
+The authoritative source syntax is the shared `cppgm` source grammar, exposed
 for this assignment as `pa19.gram`. The grammar defines accepted syntax only;
 the PA19 semantic and lowering requirements are defined by the Assignment
 Boundary and Out Of Scope sections below.

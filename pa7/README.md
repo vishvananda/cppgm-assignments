@@ -1,11 +1,11 @@
-## CPPGM Programming Assignment 7 (`cppgm++ --emit-semantics`)
+## CPPGM Programming Assignment 7 (`cppgm --emit-semantics`)
 
 ### Overview
 
-Extend `cppgm++` with the PA7 call-semantics dump mode:
+Extend `cppgm` with the PA7 call-semantics dump mode:
 
 ```sh
-cppgm++ --emit-semantics -o <outfile> <srcfile1> [<srcfile2> ...]
+cppgm --emit-semantics -o <outfile> <srcfile1> [<srcfile2> ...]
 ```
 
 The program reads one or more C++ source files, runs translation phases 1
@@ -42,8 +42,8 @@ or `const unsigned char*`.
 The PA7 starter kit contains:
 
 - `README.md`, this assignment handout
-- `Makefile`, which builds `cppgm++` and runs the PA7 tests
-- `cppgm++.cpp`, a link to the editable `dev/cppgm++.cpp` entry point
+- `Makefile`, which builds `cppgm` and runs the PA7 tests
+- `cppgm.cpp`, a link to the editable `dev/cppgm.cpp` entry point
 - the grammar for this assignment called `pa7.gram`
 - an HTML grammar explorer of `pa7.gram` in the sub-directory `grammar/`
 - `scripts/run_all_tests.pl` and `scripts/compare_results.pl`
@@ -51,16 +51,16 @@ The PA7 starter kit contains:
 - `tests/general/`, broader call-semantics tests
 - checked-in `.ref` and `.ref.exit_status` files used as the oracle
 
-Your main editable file is `dev/cppgm++.cpp`. You may add or change other
+Your main editable file is `dev/cppgm.cpp`. You may add or change other
 implementation files under `dev/` as needed. Preserve the supplied test inputs,
 harness scripts and grammar. Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-The starter `dev/cppgm++.cpp` is the same long-lived `cppgm++` dispatcher used
+The starter `dev/cppgm.cpp` is the same long-lived `cppgm` dispatcher used
 from PA5 onward. For PA7, extend it so `--emit-semantics` runs your resolved
 semantic-analysis and dump path.
 
-Use `cppgm++-ref` to inspect example output. Tests run your compiler against the checked-in contract fixtures.
+Use `cppgm-ref` to inspect example output. Tests run your compiler against the checked-in contract fixtures.
 
 ### Build And Test Commands
 
@@ -71,7 +71,7 @@ make
 make test
 ```
 
-`make` builds `cppgm++`. `make test` runs the local PA7 suite.
+`make` builds `cppgm`. `make test` runs the local PA7 suite.
 
 ### Required Driver Surface
 
@@ -89,12 +89,12 @@ No new compile or link driver flags are introduced in PA7. Behavior is
 undefined unless the command line has this form:
 
 ```sh
-cppgm++ --emit-semantics -o <outfile> <srcfile1> [<srcfile2> ...]
+cppgm --emit-semantics -o <outfile> <srcfile1> [<srcfile2> ...]
 ```
 
 ### Input Contract
 
-The authoritative source syntax is the shared `cppgm++` source grammar, exposed
+The authoritative source syntax is the shared `cppgm` source grammar, exposed
 for this assignment as `pa7.gram`. The grammar defines accepted syntax only;
 the PA7 procedural semantic requirements are defined by the Required Features
 and Out Of Scope sections below.
@@ -114,7 +114,7 @@ If this README and `pa7.gram` disagree about accepted source syntax, use
 
 ### Output Format
 
-On success, `cppgm++` writes the PA7 semantic dump to `<outfile>`.
+On success, `cppgm` writes the PA7 semantic dump to `<outfile>`.
 
 The first line is:
 
@@ -232,7 +232,7 @@ Standard output and standard error are ignored by the automated PA7 tests.
 ### Error Handling
 
 If preprocessing, tokenization, parsing, or PA7 semantic analysis fails,
-`cppgm++` must exit with `EXIT_FAILURE`.
+`cppgm` must exit with `EXIT_FAILURE`.
 
 The contents of `<outfile>` are unspecified on failure. For failing tests, the
 harness compares only the named exit status, not diagnostic text and not the
@@ -345,7 +345,7 @@ The PA7 harness discovers every `.t` file under the requested test root.
 For each test case `x.t`, it runs:
 
 ```sh
-cppgm++ --emit-semantics -o x.my x.t
+cppgm --emit-semantics -o x.my x.t
 ```
 
 and records `x.my.exit_status`.
@@ -423,3 +423,7 @@ false; an invalid requirement outside a templated declaration is an error.
 Check in source order and stop once satisfaction is known. Constraint `&&` and
 `||` short-circuit substitution as well as evaluation. Later template and
 constant-evaluation assignments apply these rules to their added source forms.
+
+The dump writes a requires-expression outside a template as
+`literal prvalue bool 1` when it is satisfied and `literal prvalue bool 0`
+when it is not. Its parameters and requirements have no dump lines.

@@ -5,7 +5,7 @@ CPPGM_STDLIB_FLAGS ?=
 CPPGM_TEST_APP ?= ../dev/$(TARGET)
 REF_TEST_APP ?= $(CPPGM_TEST_APP)-ref
 DEBUGINFO_LOWIROPT_REF_APP ?= ../dev/lowiropt-ref
-DEBUGINFO_CPPGM_REF_APP ?= ../dev/cppgm++-ref
+DEBUGINFO_CPPGM_REF_APP ?= ../dev/cppgm-ref
 DEBUGINFO_LOWIR2NATIVE_REF_APP ?= ../dev/lowir2native-ref
 TEST_DEPS ?= dev-shared-target native-reference-target
 NATIVE_REFERENCE_APP ?= ../dev/lowir2native-ref
@@ -108,7 +108,7 @@ debuginfo-lowiropt-target:
 	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ] && [ -x ../dev/lowiropt ]; then true; else $(MAKE) -C ../dev lowiropt CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
 
 debuginfo-cppgm-target:
-	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ] && [ -x ../dev/cppgm++ ]; then true; else $(MAKE) -C ../dev cppgm++ CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
+	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ] && [ -x ../dev/cppgm ]; then true; else $(MAKE) -C ../dev cppgm CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi
 
 debuginfo-lowir2native-target:
 	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ] && [ -x ../dev/lowir2native ]; then true; else $(MAKE) -C ../dev lowir2native CXX=$(CXX) CPPGM_HOST_CXX=$(CPPGM_HOST_CXX); fi

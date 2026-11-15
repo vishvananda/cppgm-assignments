@@ -1,4 +1,4 @@
-TARGET = cppgm++
+TARGET = cppgm
 TARGET_ARGS =
 export CPPGM_APP_ARGS := $(TARGET_ARGS)
 CXX = g++
@@ -127,7 +127,7 @@ $(DDEPDIR)/%.d: ;
 .PHONY: test-macho
 test-macho: $(TEST_DEPS)
 	python3 ../scripts/check_macho.py --mode host --fixtures tests/macho \
-		--compiler ../dev/cppgm++ --host-cxx "$(CPPGM_HOST_CXX)"
+		--compiler ../dev/cppgm --host-cxx "$(CPPGM_HOST_CXX)"
 
 ifeq ($(shell uname -s),Darwin)
 test: test-macho

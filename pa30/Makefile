@@ -1,4 +1,4 @@
-TARGET = cppgm++
+TARGET = cppgm
 TARGET_ARGS = 
 export CPPGM_APP_ARGS := $(TARGET_ARGS)
 HOST_UNAME_S = $(shell uname -s)

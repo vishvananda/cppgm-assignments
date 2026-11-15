@@ -23,7 +23,7 @@ use File::Temp qw(tempdir);
 use Getopt::Long;
 use PA36;
 
-my %a = (compiler => "$PA36::ROOT/dev/cppgm++", host => 'g++', seeds => 20, levels => 'O0,O1,O2,O3', jobs => PA36::default_jobs());
+my %a = (compiler => "$PA36::ROOT/dev/cppgm", host => 'g++', seeds => 20, levels => 'O0,O1,O2,O3', jobs => PA36::default_jobs());
 GetOptions(\%a, 'compiler=s', 'host=s', 'seeds=i', 'levels=s', 'jobs=i')
 	or die "usage: generated.pl [--compiler C] [--host g++] [--seeds N] [--levels O0,O1,O2,O3] [--jobs J]\n";
 my $compiler = abs_path($a{compiler}) // die "no compiler $a{compiler}\n";

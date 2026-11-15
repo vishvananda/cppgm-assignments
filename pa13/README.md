@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 13 (`cppgm++ --emit-lowir`)
+## CPPGM Programming Assignment 13 (`cppgm --emit-lowir`)
 
 ### Overview
 
@@ -39,8 +39,8 @@ The intended direction is:
 
 The starter kit contains:
 
-- the student-editable `../dev/cppgm++.cpp` entry point, initially seeded from the course
-  `cppgm++` scaffold and reached from this directory through the `cppgm++.cpp` symlink
+- the student-editable `../dev/cppgm.cpp` entry point, initially seeded from the course
+  `cppgm` scaffold and reached from this directory through the `cppgm.cpp` symlink
 - shared `../dev/` and `../dev/src/` support code from the earlier compiler pipeline
 - the grammar for this assignment called `pa13.gram`
 - an HTML grammar explorer of `pa13.gram` in the sub-directory `grammar/`
@@ -54,13 +54,13 @@ your compiler with the checked-in contract references.
 
 ### Input / Command-Line Arguments
 
-The same as PA12 `cppgm++ --emit-lowir`. The PA13 test mode is unoptimized LowIR
+The same as PA12 `cppgm --emit-lowir`. The PA13 test mode is unoptimized LowIR
 generation. `make test` passes `--emit-lowir -O0` through the harness, so individual test
 files do not spell those flags themselves.
 
 Behaviour is undefined unless the command-line arguments match:
 
-    $ cppgm++ --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
+    $ cppgm --emit-lowir -O0 -o <outfile> <srcfile1> <srcfile2> ... <srcfileN>
 
 with the same relaxations as PA12.
 
@@ -69,7 +69,7 @@ but optimized LowIR output is not part of PA13.
 
 ### Output Format
 
-`cppgm++` shall write LowIR text to `<outfile>`.
+`cppgm` shall write LowIR text to `<outfile>`.
 
 The authoritative LowIR definition is `../pa8/lowir.md`. PA13 extends the PA12
 object/value-semantics subset of that IR with the polymorphic lowering needed by this
@@ -129,13 +129,13 @@ is the one list of what it absorbs and of the conventions it enforces.
 ### Error Handling
 
 If an error occurs during preprocessing, tokenization, parsing, semantic analysis, or LowIR
-generation, `cppgm++` shall `EXIT_FAILURE`.
+generation, `cppgm` shall `EXIT_FAILURE`.
 
 The output file is not required to be meaningful on failure.
 
 ### Standard Output / Error
 
-Standard output and standard error are ignored for automated testing of `cppgm++`.
+Standard output and standard error are ignored for automated testing of `cppgm`.
 
 You are free to use them for debugging, tracing, or diagnostic messages.
 
@@ -146,7 +146,7 @@ comparison described in [the format guide](../pa8/lowir.md).
 
 For each test case `x`:
 
-- `cppgm++` is executed to produce `x.my`
+- `cppgm` is executed to produce `x.my`
 - the exit status is recorded in `x.my.exit_status`
 - `x.my` is validated as LowIR and compared against `x.ref` using the normalized
   LowIR comparison
@@ -176,7 +176,7 @@ PA13 is tested against the generated LowIR text.
 Self-checking controls in `tests/controls/` state their expected outcome in
 their leading comment (`expect exit N` or `expect reject`) or in an
 `x.expect` sidecar. `make test` compiles each with your
-`cppgm++ --emit-lowir -O0`, builds the LowIR with the supplied
+`cppgm --emit-lowir -O0`, builds the LowIR with the supplied
 `lowir2native-ref -O0` and requires the stated exit status (and the output in
 `x.stdout`, when present), or requires your frontend to reject the program.
 The LowIR text of a control is not compared. `make test-controls` runs only
@@ -184,13 +184,13 @@ the controls; `make check TEST=tests/controls/<name>.t` runs one.
 
 ### PA13 Syntax Spec
 
-The authoritative source syntax is the shared `cppgm++` source grammar, exposed
+The authoritative source syntax is the shared `cppgm` source grammar, exposed
 for this assignment as `pa13.gram`. The grammar defines accepted syntax only;
 the PA13 semantic and lowering requirements are defined by the Assignment
 Boundary and Out Of Scope sections below.
 
 As in the earlier assignments, that grammar defines accepted input syntax only. The output
-format for `cppgm++` is specified by this README, PA8 `lowir.md`, and the checked-in
+format for `cppgm` is specified by this README, PA8 `lowir.md`, and the checked-in
 `.ref` files.
 
 The virtual syntax used here was already preserved by PA5; PA13 is the first

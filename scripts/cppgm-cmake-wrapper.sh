@@ -4,7 +4,7 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "$script_dir/.." && pwd)"
 
-cppgm_bin="${CPPGM_CMAKE_COMPILER:-$repo_root/dev/cppgm++}"
+cppgm_bin="${CPPGM_CMAKE_COMPILER:-$repo_root/dev/cppgm}"
 host_query_cxx="${CPPGM_CMAKE_QUERY_CXX:-${CPPGM_HOST_CXX:-${CXX:-g++}}}"
 
 if [[ ! -x "$cppgm_bin" ]]; then

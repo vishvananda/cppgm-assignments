@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 32 (`cppgm++ -c`)
+## CPPGM Programming Assignment 32 (`cppgm -c`)
 
 ### Overview
 
@@ -45,41 +45,41 @@ a non-default standard library, pass the same choice through
 
 The starter kit provides:
 
-- your cumulative `dev/cppgm++.cpp` compiler entry point
+- your cumulative `dev/cppgm.cpp` compiler entry point
 - the shared implementation you built under `dev/src/`
-- `pa32/cppgm++.cpp`, a link to `../dev/cppgm++.cpp`
+- `pa32/cppgm.cpp`, a link to `../dev/cppgm.cpp`
 - `pa32/Makefile`
 - `pa32/scripts/`, the hosted link/runtime test harness
 - `pa32/tests/link/`, the PA32 tests and checked-in reference files
 
-Put your code changes in `dev/`, especially `dev/cppgm++.cpp` and the
+Put your code changes in `dev/`, especially `dev/cppgm.cpp` and the
 shared implementation files it calls. Do not edit generated `.my` files. Preserve supplied test inputs.
 Corrections to reference outputs follow the
 [reference policy](../TESTING_AND_REFERENCES.md).
 
-Use `cppgm++-ref` to inspect example output.
+Use `cppgm-ref` to inspect example output.
 Tests run your implementation against the checked-in contract fixtures.
 
 ### Command-Line Contract
 
-PA32 does not introduce new `cppgm++` flags. It reuses the compile-mode surface
+PA32 does not introduce new `cppgm` flags. It reuses the compile-mode surface
 already required by PA30:
 
 ```sh
-cppgm++ -c -o <objfile> <srcfile>
-cppgm++ -c --target <target> -o <objfile> <srcfile>
-cppgm++ -c -I <dir> -o <objfile> <srcfile>
-cppgm++ -c -I<dir> -o <objfile> <srcfile>
-cppgm++ -c -isystem <dir> -o <objfile> <srcfile>
-cppgm++ -c -D <macro> -U <macro> -include <file> -o <objfile> <srcfile>
+cppgm -c -o <objfile> <srcfile>
+cppgm -c --target <target> -o <objfile> <srcfile>
+cppgm -c -I <dir> -o <objfile> <srcfile>
+cppgm -c -I<dir> -o <objfile> <srcfile>
+cppgm -c -isystem <dir> -o <objfile> <srcfile>
+cppgm -c -D <macro> -U <macro> -include <file> -o <objfile> <srcfile>
 ```
 
-The normal PA32 final link is performed outside `cppgm++` by the host C++
+The normal PA32 final link is performed outside `cppgm` by the host C++
 compiler driver.
 
 ### Output Format
 
-`cppgm++ -c` shall continue to write host-linker-compatible relocatable object
+`cppgm -c` shall continue to write host-linker-compatible relocatable object
 files.
 
 The PA32 requirement is not a new file format. It is correct symbol ownership,
@@ -87,14 +87,14 @@ ABI spelling, and runtime behavior for hosted header-generated code once those
 objects are host-linked.
 
 Hosted objects should still be generated from the same LowIR facts exposed by
-`cppgm++ --emit-lowir`. If hosted header emission needs symbol ownership,
+`cppgm --emit-lowir`. If hosted header emission needs symbol ownership,
 object symbol spellings, TLS wrapper facts, or runtime hooks, those facts are
 LowIR facts (metadata, declarations, definitions, object aliases), so that the
 object serialized LowIR produces equals the direct one.
 
 The PA32 tests observe:
 
-- `cppgm++ -c` exit status
+- `cppgm -c` exit status
 - host final-link exit status
 - final program exit status
 - final program standard output
@@ -105,7 +105,7 @@ The PA32 tests observe:
 
 If preprocessing, parsing, semantic analysis, lowering, object emission, host
 linking, or output writing fails, the relevant tool invocation shall report
-failure. For `cppgm++`, that means exiting with failure.
+failure. For `cppgm`, that means exiting with failure.
 
 For negative tests, exact diagnostics are not the grading contract. The harness
 compares exit status first. If the reference compile/link path fails, stdout and
@@ -115,7 +115,7 @@ stderr are diagnostic side effects rather than required output.
 
 Hosted headers expose many inline functions, function templates, constants,
 helpers, and implementation-detail declarations. PA32 does not require
-`cppgm++ -c` to emit every hosted entity that was parsed, referenced during
+`cppgm -c` to emit every hosted entity that was parsed, referenced during
 semantic analysis, or made visible by an include.
 
 The emitted object should be demand-driven:

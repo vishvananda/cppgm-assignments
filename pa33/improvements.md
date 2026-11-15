@@ -89,7 +89,7 @@ For a longer diagnostic run from the repository root:
 
 ```sh
 python3 scripts/check_optimization_quality.py pa33/tests/improvements \
-  --mode native --compiler dev/cppgm++ --report-only \
+  --mode native --compiler dev/cppgm --report-only \
   --iterations 1000000 --timing-rounds 6 --out obj/quality-experiments
 ```
 

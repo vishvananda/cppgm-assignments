@@ -18,7 +18,7 @@ use CppgmWasmBenchmark qw(oracle module_sizes summarize median);
 
 my $root = abs_path("$FindBin::Bin/..");
 my $repo_root = $root;
-my $compiler = "$root/dev/cppgm++";
+my $compiler = "$root/dev/cppgm";
 my $tools = "$root/obj/wasm-tools";
 my $output = "$root/obj/wasm-benchmarks/" . time() . "-$$";
 my $host_cxx = $ENV{CPPGM_HOST_CXX} // 'g++';

@@ -2,7 +2,7 @@
 # freeze.pl --label L [--jobs N]
 #
 # Freezes the current source as a seed/self pair in pa36/obj/bin:
-#   seed-L  dev/cppgm++ built by the host compiler (`make build`)
+#   seed-L  dev/cppgm built by the host compiler (`make build`)
 #   self-L  the same source built by seed-L at the g++ build's flags,
 #           linked exactly like the seed (same host libraries and malloc)
 # and records the commit, dirty state and hashes in pa36/obj/bin/L.txt.
@@ -25,7 +25,7 @@ make_path($bin);
 print STDERR "make build ...\n";
 PA36::run_or_die('make', '-C', $root, 'build');
 my $seed = "$bin/seed-$a{label}";
-copy("$root/dev/cppgm++", $seed) or die "copy: $!\n";
+copy("$root/dev/cppgm", $seed) or die "copy: $!\n";
 chmod 0755, $seed;
 my $work = "$PA36::PA36/obj/build/self-$a{label}";
 remove_tree($work);

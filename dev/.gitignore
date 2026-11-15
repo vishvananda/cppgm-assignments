@@ -15,8 +15,8 @@
 /cppeh
 /cpplink
 /tmplsolve
-/cppgm++
-/cppgm++-telemetry-off
+/cppgm
+/cppgm-telemetry-off
 /cpptoolchain
 /cpphostinterop
 /cpphostcompat

@@ -1,5 +1,5 @@
 // Output for differential programs: the PA25 no-host helper's
-// cppgm_test_write_stdout (host-compiled), the same under g++ and cppgm++.
+// cppgm_test_write_stdout (host-compiled), the same under g++ and cppgm.
 extern "C" long cppgm_test_write_stdout(const char* buf, unsigned long count);
 
 static void out_text(const char* text)
