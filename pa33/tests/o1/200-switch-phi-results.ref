@@ -1,5 +1,6 @@
 global @effects : i64 = 0
-global @__switch_results_0 : obj<8x1> [storage=readonly, binding=internal] = {
+global @__switch_results_0 : obj<9x1> [storage=readonly, binding=internal] = {
+  i8 3
   i8 17
   i8 8
   i8 0
@@ -20,7 +21,8 @@ global @__switch_results_1 : obj<9x1> [storage=readonly, binding=internal] = {
   i8 0
   i8 120
 }
-global @__switch_results_2 : obj<8x1> [storage=readonly, binding=internal] = {
+global @__switch_results_2 : obj<9x1> [storage=readonly, binding=internal] = {
+  i8 0
   i8 1
   i8 2
   i8 3
@@ -33,7 +35,7 @@ global @__switch_results_2 : obj<8x1> [storage=readonly, binding=internal] = {
 
 function @lookup(%n : i64, %seed : i64) -> i64 [no_inline=yes] {
   block ^entry:
-    switch %n, ^otherwise, 0:^merge, 1:^switch_case_4, 2:^switch_case_4, 3:^case3, 4:^switch_case_4, 5:^switch_case_4, 6:^switch_case_4, 7:^switch_case_4, 8:^switch_case_4
+    switch %n, ^otherwise, 0:^switch_case_4, 1:^switch_case_4, 2:^switch_case_4, 3:^case3, 4:^switch_case_4, 5:^switch_case_4, 6:^switch_case_4, 7:^switch_case_4, 8:^switch_case_4
 
   block ^case3:
     %old = load volatile i64 @effects
@@ -47,14 +49,13 @@ function @lookup(%n : i64, %seed : i64) -> i64 [no_inline=yes] {
     jump ^merge
 
   block ^merge:
-    %result = phi i64 [^case3: %choice, ^otherwise: %fallback, ^entry: 3, ^switch_case_4: %t9]
+    %result = phi i64 [^case3: %choice, ^otherwise: %fallback, ^switch_case_4: %t8]
     return i64 %result
 
   block ^switch_case_4:
-    %t6 = binary sub i64 %n, 1
-    %t7 = index i8 @__switch_results_0, %t6
-    %t8 = load i8 %t7
-    %t9 = convert sext i64 i8 %t8
+    %t6 = index i8 @__switch_results_0, %n
+    %t7 = load i8 %t6
+    %t8 = convert sext i64 i8 %t7
     jump ^merge
 }
 function @holes(%n : i64, %seed : i64) -> i64 [no_inline=yes] {
@@ -77,18 +78,15 @@ function @holes(%n : i64, %seed : i64) -> i64 [no_inline=yes] {
 }
 function @powers(%n : i64) -> i64 [binding=strong, no_inline=yes] {
   block ^entry:
-    switch %n, ^otherwise, 0:^merge, 1:^switch_case_3, 2:^switch_case_3, 3:^switch_case_3, 4:^switch_case_3, 5:^switch_case_3, 6:^switch_case_3, 7:^switch_case_3, 8:^switch_case_3
-
-  block ^otherwise:
-    jump ^merge
+    %t1 = cmp ult i64 %n, 9
+    branch %t1, ^switch_case_2, ^merge
 
   block ^merge:
-    %result = phi i64 [^otherwise: 512, ^entry: 1, ^switch_case_3: %t6]
+    %result = phi i64 [^switch_case_2: %t6, ^entry: 512]
     return i64 %result
 
-  block ^switch_case_3:
-    %t2 = binary sub i64 %n, 1
-    %t3 = index i8 @__switch_results_2, %t2
+  block ^switch_case_2:
+    %t3 = index i8 @__switch_results_2, %n
     %t4 = load i8 %t3
     %t5 = convert sext i64 i8 %t4
     %t6 = binary shl i64 1, %t5
