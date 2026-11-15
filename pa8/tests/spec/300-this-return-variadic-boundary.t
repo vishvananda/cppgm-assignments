@@ -1,0 +1,2 @@
+target wasm32 1
+declare function @initialize(%self : ptr) -> void [arity=variadic, this_return=yes]

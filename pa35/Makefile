@@ -293,6 +293,13 @@ inception_existing_link_inputs = $(filter-out $(call inception_missing_link_inpu
 inception_stage_binary = $(call inception_self_binary_path,$(INCEPTION_CHECKPOINT_FOR_$(1)))
 INCEPTION_INCEPTION_CXX ?= $(call inception_self_binary_path,cppgm)
 
+# The checkpoints compile their shared sources into one object directory, each
+# through its own object build. A goal that names every checkpoint builds them
+# one at a time; each object build keeps its own parallel jobs.
+ifneq ($(filter all ladder inception compare-inception bitcmp,$(or $(MAKECMDGOALS),all)),)
+.NOTPARALLEL:
+endif
+
 all: $(TARGETS)
 
 test: $(PA_TEST_TARGETS)
