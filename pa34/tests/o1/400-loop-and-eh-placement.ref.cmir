@@ -77,11 +77,9 @@ function @walk_guarded
     epilogues duplicated
 
   block ^entry
+    mov rax, 0
     cmp.i64 rsi, 0
     je ^entry~exit
-
-  block ^entry~loop
-    mov rax, 0
 
   block ^loop
     cmp.ptr rdi, 0
