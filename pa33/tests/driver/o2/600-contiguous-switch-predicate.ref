@@ -1808,93 +1808,90 @@ function @effect_dispatch(%code : i64, %count : u32, %data : ptr, %divisor : u32
     branch %t11, ^land_rhs_3, ^inline_cont_7
 
   block ^land_rhs_3:
-    %t12 = load typed u32 @calls
-    %t13 = binary and u32 %flags, 8
-    branch %t13, ^cond_end_5, ^cond_else_4
+    %t12 = binary and u32 %flags, 8
+    branch %t12, ^cond_end_5, ^cond_else_4
 
   block ^cond_else_4:
-    %t14 = cmp eq u32 %t12, 1
-    branch %t14, ^if_then_6, ^inline_cont_7
+    %t13 = cmp eq u32 %t6, 0
+    branch %t13, ^if_then_6, ^inline_cont_7
 
   block ^cond_end_5:
-    %t15 = cmp eq u32 %t12, 2
-    branch %t15, ^if_then_6, ^inline_cont_7
+    %t14 = cmp eq u32 %t6, 1
+    branch %t14, ^if_then_6, ^inline_cont_7
 
   block ^if_then_6:
-    %t16 = call ptr @__external_runtime____cxa_allocate_exception(4)
-    store typed i32 71, %t16
-    %t17 = addr @__external_rtti__int
-    call void @__external_runtime____cxa_throw(%t16, %t17, 0)
+    %t15 = call ptr @__external_runtime____cxa_allocate_exception(4)
+    store typed i32 71, %t15
+    %t16 = addr @__external_rtti__int
+    call void @__external_runtime____cxa_throw(%t15, %t16, 0)
     unreachable
 
   block ^inline_cont_7:
-    %t18 = binary add u32 %count, %t10
+    %t17 = binary add u32 %count, %t10
     eh_end
     jump ^if_end_9
 
   block ^cleanup_action_8:
-    %t19 = load typed u32 @closed
-    %t20 = binary add u32 %t19, 1
-    store typed u32 %t20, @closed
+    %t18 = load typed u32 @closed
+    %t19 = binary add u32 %t18, 1
+    store typed u32 %t19, @closed
     resume
 
   block ^if_end_9:
-    %t21 = phi u32 [^switch_case_1: %count, ^inline_cont_7: %t18]
-    %t22 = load typed u32 %data
-    %t23 = binary udiv u32 13, %divisor
-    %t24 = binary add u32 %t22, %t23
-    %t25 = binary xor u32 %t24, %t21
-    %t26 = binary and u32 %flags, 2
-    branch %t26, ^if_then_10, ^if_end_16
+    %t20 = phi u32 [^switch_case_1: %count, ^inline_cont_7: %t17]
+    %t21 = load typed u32 %data
+    %t22 = binary udiv u32 13, %divisor
+    %t23 = binary add u32 %t21, %t22
+    %t24 = binary xor u32 %t23, %t20
+    %t25 = binary and u32 %flags, 2
+    branch %t25, ^if_then_10, ^if_end_16
 
   block ^if_then_10:
     eh_try ^cleanup_action_8
-    %t27 = load typed u32 @calls
-    %t28 = binary add u32 %t27, 1
-    store typed u32 %t28, @calls
-    %t29 = load typed u32 %data
-    %t30 = binary mul u32 %t29, 33
-    %t31 = binary xor u32 %flags, %t30
-    store typed u32 %t31, %data
-    %t32 = binary and u32 %flags, 4
-    branch %t32, ^land_rhs_11, ^inline_cont_15
+    %t26 = load typed u32 @calls
+    %t27 = binary add u32 %t26, 1
+    store typed u32 %t27, @calls
+    %t28 = binary mul u32 %t21, 33
+    %t29 = binary xor u32 %flags, %t28
+    store typed u32 %t29, %data
+    %t30 = binary and u32 %flags, 4
+    branch %t30, ^land_rhs_11, ^inline_cont_15
 
   block ^land_rhs_11:
-    %t33 = load typed u32 @calls
-    %t34 = binary and u32 %flags, 8
-    branch %t34, ^cond_end_13, ^cond_else_12
+    %t31 = binary and u32 %flags, 8
+    branch %t31, ^cond_end_13, ^cond_else_12
 
   block ^cond_else_12:
-    %t35 = cmp eq u32 %t33, 1
-    branch %t35, ^if_then_14, ^inline_cont_15
+    %t32 = cmp eq u32 %t26, 0
+    branch %t32, ^if_then_14, ^inline_cont_15
 
   block ^cond_end_13:
-    %t36 = cmp eq u32 %t33, 2
-    branch %t36, ^if_then_14, ^inline_cont_15
+    %t33 = cmp eq u32 %t26, 1
+    branch %t33, ^if_then_14, ^inline_cont_15
 
   block ^if_then_14:
-    %t37 = call ptr @__external_runtime____cxa_allocate_exception(4)
-    store typed i32 71, %t37
-    %t38 = addr @__external_rtti__int
-    call void @__external_runtime____cxa_throw(%t37, %t38, 0)
+    %t34 = call ptr @__external_runtime____cxa_allocate_exception(4)
+    store typed i32 71, %t34
+    %t35 = addr @__external_rtti__int
+    call void @__external_runtime____cxa_throw(%t34, %t35, 0)
     unreachable
 
   block ^inline_cont_15:
-    %t39 = binary add u32 %t25, %t31
+    %t36 = binary add u32 %t24, %t29
     eh_end
     jump ^if_end_16
 
   block ^if_end_16:
-    %t40 = phi u32 [^if_end_9: %t25, ^inline_cont_15: %t39]
-    %t41 = binary add u32 %t40, 1
+    %t37 = phi u32 [^if_end_9: %t24, ^inline_cont_15: %t36]
+    %t38 = binary add u32 %t37, 1
     jump ^switch_end_17
 
   block ^switch_end_17:
-    %t42 = phi u32 [^entry: %count, ^if_end_16: %t41]
-    %t43 = load typed u32 @closed
-    %t44 = binary add u32 %t43, 1
-    store typed u32 %t44, @closed
-    return u32 %t42
+    %t39 = phi u32 [^entry: %count, ^if_end_16: %t38]
+    %t40 = load typed u32 @closed
+    %t41 = binary add u32 %t40, 1
+    store typed u32 %t41, @closed
+    return u32 %t39
 }
 function @observe(%data : ptr, %flags : u32) -> u32 [linkage=c, binding=strong] {
   block ^entry:
@@ -1909,23 +1906,22 @@ function @observe(%data : ptr, %flags : u32) -> u32 [linkage=c, binding=strong] 
     branch %t6, ^land_rhs_1, ^if_else_5
 
   block ^land_rhs_1:
-    %t7 = load typed u32 @calls
-    %t8 = binary and u32 %flags, 8
-    branch %t8, ^cond_end_3, ^cond_else_2
+    %t7 = binary and u32 %flags, 8
+    branch %t7, ^cond_end_3, ^cond_else_2
 
   block ^cond_else_2:
-    %t9 = cmp eq u32 %t7, 1
-    branch %t9, ^if_then_4, ^if_else_5
+    %t8 = cmp eq u32 %t1, 0
+    branch %t8, ^if_then_4, ^if_else_5
 
   block ^cond_end_3:
-    %t10 = cmp eq u32 %t7, 2
-    branch %t10, ^if_then_4, ^if_else_5
+    %t9 = cmp eq u32 %t1, 1
+    branch %t9, ^if_then_4, ^if_else_5
 
   block ^if_then_4:
-    %t11 = call ptr @__external_runtime____cxa_allocate_exception(4)
-    store typed i32 71, %t11
-    %t12 = addr @__external_rtti__int
-    call void @__external_runtime____cxa_throw(%t11, %t12, 0)
+    %t10 = call ptr @__external_runtime____cxa_allocate_exception(4)
+    store typed i32 71, %t10
+    %t11 = addr @__external_rtti__int
+    call void @__external_runtime____cxa_throw(%t10, %t11, 0)
     unreachable
 
   block ^if_else_5:
@@ -1960,103 +1956,100 @@ function @reference(%code : i64, %count : u32, %data : ptr, %divisor : u32, %fla
     branch %t11, ^land_rhs_4, ^if_else_8
 
   block ^land_rhs_4:
-    %t12 = load typed u32 @calls
-    %t13 = binary and u32 %flags, 8
-    branch %t13, ^cond_end_6, ^cond_else_5
+    %t12 = binary and u32 %flags, 8
+    branch %t12, ^cond_end_6, ^cond_else_5
 
   block ^cond_else_5:
-    %t14 = cmp eq u32 %t12, 1
-    branch %t14, ^if_then_7, ^if_else_8
+    %t13 = cmp eq u32 %t6, 0
+    branch %t13, ^if_then_7, ^if_else_8
 
   block ^cond_end_6:
-    %t15 = cmp eq u32 %t12, 2
-    branch %t15, ^if_then_7, ^if_else_8
+    %t14 = cmp eq u32 %t6, 1
+    branch %t14, ^if_then_7, ^if_else_8
 
   block ^if_then_7:
-    %t16 = call ptr @__external_runtime____cxa_allocate_exception(4)
-    store typed i32 71, %t16
-    %t17 = addr @__external_rtti__int
-    call void @__external_runtime____cxa_throw(%t16, %t17, 0)
+    %t15 = call ptr @__external_runtime____cxa_allocate_exception(4)
+    store typed i32 71, %t15
+    %t16 = addr @__external_rtti__int
+    call void @__external_runtime____cxa_throw(%t15, %t16, 0)
     unreachable
 
   block ^if_else_8:
-    %t18 = binary add u32 %count, %t10
+    %t17 = binary add u32 %count, %t10
     jump ^if_end_10
 
   block ^split_9:
-    %t19 = load typed u32 %data
+    %t18 = load typed u32 %data
     jump ^if_end_10
 
   block ^if_end_10:
-    %t20 = phi u32 [^split_9: %t19, ^if_else_8: %t10]
-    %t21 = phi u32 [^if_else_8: %t18, ^split_9: %count]
-    %t22 = binary udiv u32 13, %divisor
-    %t23 = binary add u32 %t20, %t22
-    %t24 = binary xor u32 %t23, %t21
-    %t25 = binary and u32 %flags, 2
-    branch %t25, ^inline_entry_11, ^if_end_17
+    %t19 = phi u32 [^split_9: %t18, ^if_else_8: %t10]
+    %t20 = phi u32 [^if_else_8: %t17, ^split_9: %count]
+    %t21 = binary udiv u32 13, %divisor
+    %t22 = binary add u32 %t19, %t21
+    %t23 = binary xor u32 %t22, %t20
+    %t24 = binary and u32 %flags, 2
+    branch %t24, ^inline_entry_11, ^if_end_17
 
   block ^inline_entry_11:
-    %t26 = load typed u32 @calls
-    %t27 = binary add u32 %t26, 1
-    store typed u32 %t27, @calls
-    %t28 = load typed u32 %data
-    %t29 = binary mul u32 %t28, 33
-    %t30 = binary xor u32 %flags, %t29
-    store typed u32 %t30, %data
-    %t31 = binary and u32 %flags, 4
-    branch %t31, ^land_rhs_12, ^if_else_16
+    %t25 = load typed u32 @calls
+    %t26 = binary add u32 %t25, 1
+    store typed u32 %t26, @calls
+    %t27 = binary mul u32 %t19, 33
+    %t28 = binary xor u32 %flags, %t27
+    store typed u32 %t28, %data
+    %t29 = binary and u32 %flags, 4
+    branch %t29, ^land_rhs_12, ^if_else_16
 
   block ^land_rhs_12:
-    %t32 = load typed u32 @calls
-    %t33 = binary and u32 %flags, 8
-    branch %t33, ^cond_end_14, ^cond_else_13
+    %t30 = binary and u32 %flags, 8
+    branch %t30, ^cond_end_14, ^cond_else_13
 
   block ^cond_else_13:
-    %t34 = cmp eq u32 %t32, 1
-    branch %t34, ^if_then_15, ^if_else_16
+    %t31 = cmp eq u32 %t25, 0
+    branch %t31, ^if_then_15, ^if_else_16
 
   block ^cond_end_14:
-    %t35 = cmp eq u32 %t32, 2
-    branch %t35, ^if_then_15, ^if_else_16
+    %t32 = cmp eq u32 %t25, 1
+    branch %t32, ^if_then_15, ^if_else_16
 
   block ^if_then_15:
-    %t36 = call ptr @__external_runtime____cxa_allocate_exception(4)
-    store typed i32 71, %t36
-    %t37 = addr @__external_rtti__int
-    call void @__external_runtime____cxa_throw(%t36, %t37, 0)
+    %t33 = call ptr @__external_runtime____cxa_allocate_exception(4)
+    store typed i32 71, %t33
+    %t34 = addr @__external_rtti__int
+    call void @__external_runtime____cxa_throw(%t33, %t34, 0)
     unreachable
 
   block ^if_else_16:
-    %t38 = binary add u32 %t24, %t30
+    %t35 = binary add u32 %t23, %t28
     jump ^if_end_17
 
   block ^if_end_17:
-    %t39 = phi u32 [^if_else_16: %t38, ^if_end_10: %t24]
-    %t40 = binary add u32 %t39, 1
+    %t36 = phi u32 [^if_else_16: %t35, ^if_end_10: %t23]
+    %t37 = binary add u32 %t36, 1
     jump ^if_end_18
 
   block ^if_end_18:
-    %t41 = phi u32 [^if_end_17: %t40, ^entry: %count, ^land_rhs_1: %count]
+    %t38 = phi u32 [^if_end_17: %t37, ^entry: %count, ^land_rhs_1: %count]
     eh_end
-    %t42 = load typed u32 @closed
-    %t43 = binary add u32 %t42, 1
-    store typed u32 %t43, @closed
-    return u32 %t41
+    %t39 = load typed u32 @closed
+    %t40 = binary add u32 %t39, 1
+    store typed u32 %t40, @closed
+    return u32 %t38
 
   block ^catch_dispatch_19:
     eh_catch_all, 1
-    %t44 = exception ptr
-    %t45 = exception_selector i32
-    %t46 = cmp eq i32 %t45, 1
-    branch %t46, ^catch_body_20, ^catch_next_22
+    %t41 = exception ptr
+    %t42 = exception_selector i32
+    %t43 = cmp eq i32 %t42, 1
+    branch %t43, ^catch_body_20, ^catch_next_22
 
   block ^catch_body_20:
-    %t47 = call ptr @__external_runtime____cxa_begin_catch(%t44)
+    %t44 = call ptr @__external_runtime____cxa_begin_catch(%t41)
     eh_cleanup ^catch_cleanup_21
-    %t48 = load typed u32 @closed
-    %t49 = binary add u32 %t48, 1
-    store typed u32 %t49, @closed
+    %t45 = load typed u32 @closed
+    %t46 = binary add u32 %t45, 1
+    store typed u32 %t46, @closed
     call void @__external_runtime____cxa_rethrow()
     unreachable
 
