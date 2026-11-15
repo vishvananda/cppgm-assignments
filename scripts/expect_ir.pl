@@ -39,6 +39,11 @@
 #                       function's `preserve` line names, in its abi or
 #                       frame section (per function; the largest in scope)
 #   /regex/             instruction lines matching a Perl regex
+#
+# A pattern that can match nothing is an error, not a bound that holds: more
+# than two words outside a regex, or, for LowIR, an operator alone (`ushr`
+# for `binary ushr`, `trunc` for `convert trunc`).  A machine-IR file, which
+# begins with `machine_ir`, spells those words as mnemonics.
 use strict;
 use warnings;
 
@@ -62,12 +67,14 @@ my @records;
 my %functions;
 my %stack_size;
 my %preserve;
+my $machine = 0;
 {
 	my $function = '';
 	my $block = '';
 	my $section = '';
 	for my $line (read_lines($ir_path))
 	{
+		$machine = 1 if $line =~ /^machine_ir\b/;
 		if ($line =~ /^function\s+\@([^\s(]+)/)
 		{
 			$function = $1;
@@ -222,6 +229,25 @@ sub count_pattern
 	return scalar(grep { $_->{kind} eq $pattern || $_->{mnemonic} eq $pattern } @scoped);
 }
 
+# The LowIR operators, each under the instruction kind that carries it.
+my %operator_kind;
+$operator_kind{$_} = 'unary' for qw(neg not bitnot bswap ctz clz sqrt popcount);
+$operator_kind{$_} = 'binary' for qw(add sub mul div mod udiv umod and or xor shl shr ushr);
+$operator_kind{$_} = 'cmp' for qw(eq ne lt le gt ge ult ule ugt uge);
+$operator_kind{$_} = 'convert' for qw(sext zext trunc sitofp uitofp fptosi fptoui fpext fptrunc);
+
+# Why a pattern can match nothing, or undef.
+sub unmatchable
+{
+	my ($pattern) = @_;
+	return undef if $pattern =~ m{^/.*/$};
+	my @words = split(/\s+/, $pattern);
+	return 'a pattern has at most two words; write a /regex/ for more' if @words > 2;
+	return "`$pattern` is an operator of `$operator_kind{$pattern}`; write `$operator_kind{$pattern} $pattern`"
+		if !$machine && @words == 1 && exists($operator_kind{$pattern});
+	return undef;
+}
+
 sub parse_scope
 {
 	my ($text) = @_;
@@ -294,6 +320,11 @@ for my $raw (read_lines($expect_path))
 	if (!defined($scope))
 	{
 		print "ERROR: $expect_path:$line_number: bad scope in: $raw\n";
+		exit(2);
+	}
+	if (defined(my $why = unmatchable($pattern)))
+	{
+		print "ERROR: $expect_path:$line_number: $why: $raw\n";
 		exit(2);
 	}
 	# A function the output does not define has no instructions: every

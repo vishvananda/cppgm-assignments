@@ -1,3 +1,5 @@
+// Two adjacent field copies into the returned object are one object copy or one integer;
+// volatile reads stay two.
 struct Pair { unsigned begin, end; };
 struct Four { unsigned a,b,c,d; };
 extern "C" __attribute__((noinline)) Pair adjacent(const unsigned* p) {

@@ -1,3 +1,7 @@
+# A mask whose cleared bits a following shift discards has no effect and may
+# go. A mask that changes a bit the shift keeps (@keep_sign_mask,
+# @keep_middle_bit) and a mask with another reader (@shared_mask) stay. The
+# input already meets every bound; the entry checks the values.
 function @top32(%x : i32) -> i32 [no_inline=yes, unwind=no] {
   block ^entry:
     %masked = binary and i32 %x, -16777216

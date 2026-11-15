@@ -1,3 +1,5 @@
+// Two integer conversions in a row are one conversion, or a copy when only the signedness changes;
+// a float round trip is not.
 extern "C" {
 __attribute__((noinline)) unsigned char narrow(unsigned x) {
   return static_cast<unsigned long>(x);

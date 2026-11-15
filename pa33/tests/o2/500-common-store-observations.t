@@ -1,3 +1,7 @@
+# Controls for merging two conditional stores into one: a read or a call
+# after one of the stores, a guarded volatile access, a guarded division, two
+# destinations and two writes on one path. Each keeps its effects in order.
+# No function here has a size requirement.
 global @observed : i32 = 0
 
 function @observe(%pointer : ptr) -> void [no_inline=yes] {

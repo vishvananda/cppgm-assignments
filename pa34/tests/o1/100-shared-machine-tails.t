@@ -1,3 +1,6 @@
+# Switch arms with identical instructions and successors are emitted once, and the jump table names
+# the shared block. Arms that differ stay separate, and each volatile store executes once for each
+# call.
 global @storage : obj<512x8> = zero
 function @shared_cases(%p : ptr, %kind : i64) -> ptr [no_inline=yes] {
   block ^entry:

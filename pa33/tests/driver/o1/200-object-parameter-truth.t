@@ -1,3 +1,5 @@
+// A pointer with object_bytes (this, a reference) is not null, so tests of it are constant;
+// a plain pointer parameter is not.
 struct Node {
   long value;
   __attribute__((noinline)) int has_this() const { return this != nullptr; }

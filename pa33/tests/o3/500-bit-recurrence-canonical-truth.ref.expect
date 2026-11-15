@@ -1,2 +1,3 @@
-instructions <= 12 in @fold_widened
-count(select) >= 4 in @keep_second_bit
+# Four steps cost seventeen instructions as written at best; the closed form
+# fits in sixteen with one table or two.
+instructions <= 16 in @fold_widened

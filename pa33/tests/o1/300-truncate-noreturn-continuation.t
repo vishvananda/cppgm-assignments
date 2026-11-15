@@ -1,3 +1,5 @@
+# Nothing runs after a call that does not return: @select's merge loses that edge and its phi.
+# In @keeps_reachable_tail both arms are live and both values stay.
 declare function @fail(%code : i64) -> void [return=noreturn]
 
 function @select(%value : i64) -> i64 {

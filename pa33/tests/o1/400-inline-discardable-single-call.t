@@ -1,3 +1,5 @@
+# Repeated ordinary stores of one value to @sink leave only the last. Each callee is then one store
+# and goes inline at every direct call. @addressed stays defined for the indirect call.
 global @sink : i64 = 0
 
 function @single(%value : i64) -> i64 [binding=weak, unwind=no] {

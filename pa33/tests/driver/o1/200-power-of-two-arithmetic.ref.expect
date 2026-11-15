@@ -3,5 +3,6 @@
 # Remove dynamic division when typed alternatives prove a power of two.
 none(binary udiv) in @div32
 none(binary umod) in @mod32
-# An equivalent rounding expression fits this envelope without a prescribed sequence.
-instructions <= 6 in @roundfixed
+# The rounding needs no division either: a shift pair or one mask both fit.
+none(binary udiv) in @roundfixed
+instructions <= 8 in @roundfixed

@@ -1,3 +1,6 @@
+# Switches whose cases form runs of equal targets, with a gap, negative keys and three key widths.
+# A range test for each run, a jump table or a compare tree all fit; the entry checks the values on
+# both sides of every boundary.
 function @signed_prefix(%value : i32) -> i64 [binding=strong] {
   block ^entry:
     switch %value, ^default, 0:^case_0, 1:^case_0, 2:^case_0, 3:^case_0, 4:^case_1, 5:^case_1, 6:^case_1, 7:^case_1, 8:^case_2, 9:^case_2, 10:^case_2, 11:^case_2, 12:^case_2, 13:^case_2, 14:^case_2, 15:^case_2

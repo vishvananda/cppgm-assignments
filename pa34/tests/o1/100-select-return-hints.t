@@ -1,3 +1,6 @@
+# A select that is returned is computed in the result register, with no copy before or inside the
+# return. An address calculation between the compare and the select keeps the flags; a store or a
+# call between them keeps its place.
 function @adjust(%p : ptr) -> ptr {
   block ^entry:
     %adjusted = index i8 %p, -8

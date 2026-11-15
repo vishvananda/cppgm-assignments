@@ -1,4 +1,7 @@
 # explicit-outcomes
 
-# Defined shifts need no separate count bound to simplify alignment.
-instructions <= 7 in @round_up
+# The alignment is one shifted left, a power of two: the division and the
+# multiplication go (shifts by the count, or one mask).
+none(binary udiv) in @round_up
+none(binary mul) in @round_up
+instructions <= 8 in @round_up

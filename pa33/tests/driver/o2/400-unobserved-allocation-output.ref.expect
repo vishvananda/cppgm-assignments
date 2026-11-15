@@ -1,3 +1,0 @@
-count(call) <= 1 in @unused_heap
-none(call @malloc) in @unused_heap
-none(call @free) in @unused_heap

@@ -1,5 +1,5 @@
-# Each loop costs more than an ordinary callee may and less than a hinted one:
-# the shared loop stays a call, the hinted and the single-use loops go inline.
+# A single-use internal loop goes inline. Whether the hinted loop is copied to its two callers is
+# the optimizer's choice.
 global @sink : i64 = 0
 
 function @shared_loop(%limit : i64) -> i64 [binding=strong] {

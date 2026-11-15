@@ -1,3 +1,7 @@
+# A private object is copied through an object-value load, object-value
+# copies, a copyobj and an object-value store. No copy is observable, and the
+# store of 99 comes after the snapshot: the slots and every transfer go, and
+# the sum reads the three parameters.
 function @object_forms(%a : f64, %b : f64, %c : f64) -> f64 [no_inline=yes] {
   slot $source : obj<24x8>
   slot $target : obj<24x8>

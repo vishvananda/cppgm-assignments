@@ -31,6 +31,7 @@ Discarded heap output can be dead even when a helper's return value is live.
 Prove that its destination is neither read nor captured, preserve its other
 effects and keep any specialized copies bounded and reusable. A payload
 benchmark should consume the produced bytes so it measures useful work.
+No course fixture requires this.
 
 ## Start with proofs and small examples
 
@@ -74,6 +75,16 @@ and phis. Dominance permits reusing a pure value where its definition always
 runs first. A branch can supply facts to the blocks its taken edge dominates;
 those facts do not automatically hold at a merge reached another way. Repair
 phi inputs whenever edges are removed, redirected or split.
+
+When every edge into a merge computes the same pure expression of values
+that dominate the merge, one computation at the merge (or before the branch)
+replaces the phi and its inputs.
+
+A difference of two addresses derived from one base is the difference of
+their offsets. Dividing it by the element size cancels the scale only when
+the scaled offsets cannot wrap, for example when both counts are
+zero-extended 32-bit values. An unbounded 64-bit count keeps its multiply
+and shift.
 
 Promoting scalar storage to SSA removes loads and stores, but requires proving
 that all its accesses are understood. Splitting an aggregate may expose more

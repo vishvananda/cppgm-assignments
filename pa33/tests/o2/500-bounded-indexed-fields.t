@@ -1,3 +1,9 @@
+# A private object holds scalar fields and bytes read and written at a bounded
+# index. The index cannot reach the scalar fields, so they stay in registers
+# across the loop of @disjoint_state. The other functions are controls that
+# the entry checks: an index that can reach a field (@overlap_chain,
+# @unknown_index), a whole-object write after the field's store (@whole_zero)
+# and a volatile field (@volatile_field).
 function @disjoint_state(%index : u8, %other : u8, %count : u32) -> u32 [no_inline=yes, unwind=no] {
   slot $state : obj<264x8>
   block ^entry:

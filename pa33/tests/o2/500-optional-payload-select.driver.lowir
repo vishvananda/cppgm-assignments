@@ -1,0 +1,19 @@
+function @main() -> i32 [role=entry] {
+  block ^entry:
+    %a = call u32 @select(41, 1)
+    %b = call u32 @select(41, 0)
+    %c = call u32 @select(0, 1)
+    %d = call u32 @select(0, 0)
+    %e = call u32 @select(4294967295, 1)
+    %d1 = binary xor u32 %a, 41
+    %d2 = binary xor u32 %b, 3
+    %d3 = binary xor u32 %d, 3
+    %d4 = binary xor u32 %e, 4294967295
+    %x = binary or u32 %c, %d1
+    %y = binary or u32 %d2, %d3
+    %xy = binary or u32 %x, %y
+    %all = binary or u32 %xy, %d4
+    %bad = cmp ne u32 %all, 0
+    %out = convert zext i32 i1 %bad
+    return i32 %out
+}

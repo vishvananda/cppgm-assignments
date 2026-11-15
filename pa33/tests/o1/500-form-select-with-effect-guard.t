@@ -1,4 +1,4 @@
-# The pure diamond may become a select at O1. A conditional volatile read
+# The pure diamond becomes a select at O1. A conditional volatile read
 # must remain conditional, including when its pointer is null on the other arm.
 function @choose(%condition : i1, %a : i64, %b : i64) -> i64 [no_inline=yes] {
   block ^entry:

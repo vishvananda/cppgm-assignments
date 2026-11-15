@@ -105,6 +105,18 @@ function @main
     slot $data -> [rbp-<off0>] : i64
     temp %z1 -> [rbp-<off1>] : i32
     temp %z2 -> [rbp-<off2>] : i32
+    temp %z3 -> [rbp-<off3>] : i32
+    temp %c0 -> [rbp-<off4>] : i64
+    temp %word_bit63 -> [rbp-<off5>] : i32
+    temp %high_bit55 -> [rbp-<off6>] : i32
+    temp %c1 -> [rbp-<off7>] : i64
+    temp %c2 -> [rbp-<off8>] : i64
+    temp %interior_bit48 -> [rbp-<off9>] : i32
+    temp %interior_bit39 -> [rbp-<off10>] : i32
+    temp %word_bit39 -> [rbp-<off11>] : i32
+    temp %c3 -> [rbp-<off12>] : i64
+    temp %holes_bit8 -> [rbp-<off13>] : i32
+    temp %c4 -> [rbp-<off14>] : i64
 
   block ^entry
     store.i64 [rbp-<off0>], -1
@@ -142,6 +154,74 @@ function @main
     store.i32 [rbp-<off2>], <gpr5>
     lea rdi, [rbp-<off0>]
     call @word_high [args=(rdi)]
+    zext.i32 <gpr5>, rax
+    store.i32 [rbp-<off3>], <gpr5>
+    store.i64 [rbp-<off0>], -9223372036854775808
+    lea rdi, [rbp-<off0>]
+    call @high [args=(rdi)]
+    cmp.i32 rax, 1
+    setne <gpr5>
+    movzx <gpr5>, <gpr5>
+    store.i64 [rbp-<off4>], <gpr5>
+    lea rdi, [rbp-<off0>]
+    call @word_high [args=(rdi)]
+    zext.i32 <gpr5>, rax
+    store.i32 [rbp-<off5>], <gpr5>
+    store.i64 [rbp-<off0>], 36028797018963968
+    lea rdi, [rbp-<off0>]
+    call @high [args=(rdi)]
+    zext.i32 <gpr5>, rax
+    store.i32 [rbp-<off6>], <gpr5>
+    store.i64 [rbp-<off0>], 1099511627776
+    lea rdi, [rbp-<off0>]
+    call @interior [args=(rdi)]
+    cmp.i32 rax, 1
+    setne <gpr5>
+    movzx <gpr5>, <gpr5>
+    store.i64 [rbp-<off7>], <gpr5>
+    store.i64 [rbp-<off0>], 140737488355328
+    lea rdi, [rbp-<off0>]
+    call @interior [args=(rdi)]
+    cmp.i32 rax, 1
+    setne <gpr5>
+    movzx <gpr5>, <gpr5>
+    store.i64 [rbp-<off8>], <gpr5>
+    store.i64 [rbp-<off0>], 281474976710656
+    lea rdi, [rbp-<off0>]
+    call @interior [args=(rdi)]
+    zext.i32 <gpr5>, rax
+    store.i32 [rbp-<off9>], <gpr5>
+    store.i64 [rbp-<off0>], 549755813888
+    lea rdi, [rbp-<off0>]
+    call @interior [args=(rdi)]
+    zext.i32 <gpr5>, rax
+    store.i32 [rbp-<off10>], <gpr5>
+    lea rdi, [rbp-<off0>]
+    call @word_high [args=(rdi)]
+    zext.i32 <gpr5>, rax
+    store.i32 [rbp-<off11>], <gpr5>
+    store.i64 [rbp-<off0>], 65536
+    lea rdi, [rbp-<off0>]
+    call @wide_holes [args=(rdi)]
+    cmp.i32 rax, 1
+    setne <gpr5>
+    movzx <gpr5>, <gpr5>
+    store.i64 [rbp-<off12>], <gpr5>
+    store.i64 [rbp-<off0>], 256
+    lea rdi, [rbp-<off0>]
+    call @wide_holes [args=(rdi)]
+    zext.i32 <gpr5>, rax
+    store.i32 [rbp-<off13>], <gpr5>
+    store.i64 [rbp-<off0>], 2147483648
+    lea rdi, [rbp-<off0>]
+    call @word_high [args=(rdi)]
+    cmp.i32 rax, 1
+    setne <gpr5>
+    movzx <gpr5>, <gpr5>
+    store.i64 [rbp-<off14>], <gpr5>
+    store.i64 [rbp-<off0>], 8388608
+    lea rdi, [rbp-<off0>]
+    call @word_high [args=(rdi)]
     sext.i32 rax
     or.u32 <gpr0>, <gpr3>
     or.u32 <gpr0>, <gpr4>
@@ -149,6 +229,23 @@ function @main
     or.u32 <gpr0>, <gpr1>
     or.i32 <gpr0>, [rbp-<off1>]
     or.i32 <gpr0>, [rbp-<off2>]
+    or.i32 <gpr0>, [rbp-<off3>]
+    load.u32 <gpr6>, [rbp-<off4>]
+    or.u32 <gpr0>, <gpr6>
+    load.u32 <gpr6>, [rbp-<off7>]
+    or.u32 <gpr0>, <gpr6>
+    load.u32 <gpr6>, [rbp-<off8>]
+    or.u32 <gpr0>, <gpr6>
+    load.u32 <gpr6>, [rbp-<off12>]
+    or.u32 <gpr0>, <gpr6>
+    load.u32 <gpr6>, [rbp-<off14>]
+    or.u32 <gpr0>, <gpr6>
+    or.i32 <gpr0>, [rbp-<off5>]
+    or.i32 <gpr0>, [rbp-<off6>]
+    or.i32 <gpr0>, [rbp-<off9>]
+    or.i32 <gpr0>, [rbp-<off10>]
+    or.i32 <gpr0>, [rbp-<off11>]
+    or.i32 <gpr0>, [rbp-<off13>]
     sext.i32 <gpr0>
     or rax, <gpr0>
     ret rax

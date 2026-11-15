@@ -1,3 +1,5 @@
+# Inlining moves the call into new blocks: the caller's merge must name the new predecessor.
+# Both two-way merges of constants then need no phi (a select, or one return for each arm).
 function @choose(%condition : i64) -> i64 {
   block ^entry:
     branch %condition, ^left, ^right

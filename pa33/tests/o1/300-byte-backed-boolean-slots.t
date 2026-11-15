@@ -1,3 +1,5 @@
+# A private byte slot written only by one-bit stores holds 0 or 1: reading it needs no memory.
+# An arbitrary byte write, an escaped slot and a volatile access keep their memory operations.
 function @boolean_bytes(%x : i32) -> i32 [no_inline=yes] {
   slot $a : i1
   slot $b : i1

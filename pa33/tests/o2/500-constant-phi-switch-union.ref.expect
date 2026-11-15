@@ -1,13 +1,11 @@
-# budget from 500-constant-phi-switch-union.ref: the course solution's count, widened by 10% and rounded up, plus one, and at least three more than the count
-instructions <= 9
-blocks <= 4
-count(call) <= 3
-count(load) <= 3
-count(store) <= 3
-count(phi) <= 3
-instructions <= 9 in @select
+# explicit-outcomes
 
-# outcomes from 500-constant-phi-switch-union.ref: what the course solution removed stays removed (a call inlined, memory promoted, a definition pruned)
+# Each predecessor knows its tag, so the dispatch, the union slot and its
+# typed reads disappear. How the two results merge (a phi, a select, one
+# shared computation) is free.
+none(switch)
 none(load)
 none(store)
-none(phi)
+count(phi) <= 1
+instructions <= 9
+blocks <= 4

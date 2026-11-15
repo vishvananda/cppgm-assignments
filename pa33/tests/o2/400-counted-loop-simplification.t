@@ -1,3 +1,7 @@
+# @strength_reduce runs exactly four times, so the value its last pass stores
+# is known where the loop ends: no load may remain. Rotating the loop so that
+# the body dominates the exit, or evaluating the four passes, both meet this.
+# The empty loops with a known trip count go; @keep_unproven_loop stays a loop.
 global @result : i64 = 0
 
 function @strength_reduce() -> i64 [no_inline=yes] {

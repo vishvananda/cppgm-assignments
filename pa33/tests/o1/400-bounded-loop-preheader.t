@@ -1,3 +1,5 @@
+# The loop is entered from a conditional edge. Work moved out of the loop goes on that edge only,
+# never on the bypass path.
 global @sink : i64 = 0
 
 function @split_entry_edge(%choose : i64, %left : i64,

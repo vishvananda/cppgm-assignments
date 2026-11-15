@@ -217,6 +217,32 @@ the output's size: `instructions <= N`, `blocks <= N`, `count(call)`,
 for alternative implementations. The adjacent `x.ref` is an informational example; matching its
 instruction sequence is not required.
 
+A fixture's header comment names the outcome its sidecar asks for. A
+function that the header calls a control is checked by execution and by
+upper bounds only.
+
+An outcome line without a scope counts the whole file. `none(phi)` there
+means that every merge of values in every function is gone: a two-way merge
+of pure values became a `select`
+(`tests/o1/500-form-select-with-effect-guard.t`), or the merge block was
+duplicated into its predecessors.
+
+A line scoped to a block (`in @f ^body`) counts the block of that name in
+your output. When a pass duplicates or unrolls a block, give the copies new
+names and leave the original name on the block that still runs one pass at a
+time.
+
+A scope names a function by its LowIR name. Most driver-lane sidecars name
+`extern "C"` functions. The others name a C++ function that is not
+overloaded, as the supplied references spell it; `../pa8/lowir.md` does not
+fix that spelling, so with a front end that spells the name differently the
+bound has no effect.
+
+Some sidecars hold only a loose envelope that the unoptimized input already
+meets (`600-uniform-local-fill`, `500-conditional-vector-reductions`,
+`500-lane-planning`, `600-packed-loop-invariants`). They check behavior and
+guard against growth; no transformation is required.
+
 A source fixture in a driver lane is also run: the emitted LowIR is built
 into a program through the object path and compared with the source built
 at the lane's level (`CPPGM_BEHAVIOR_CHECK_APP`, set by `make test`); both
@@ -233,15 +259,136 @@ $ perl ../scripts/expect_ir.pl tests/o1/x.my tests/o1/x.ref.expect
 disjoint field updates, narrow arithmetic, state crossing a cold call and
 conditionally updated floating state, plus adjacent updates with an invariant
 factor.
+They use one host-built scalar oracle and driver, and compare startup-subtracted
+Cachegrind instruction counts against the host GCC run at the level in the
+`.quality` file (`-std=c++11 -O<level> -g0 -fno-lto`). Each `.quality` file
+publishes its limit; the supplied frontend and unoptimized backend isolate
+your LowIR work. A scalar solution meets every limit: no kernel needs vector
+instructions. The ordinary course suite includes these checks. See
+[improvements.md](improvements.md) for their edge cases and measurement method.
 
 Library-call rewrites must preserve side effects and use an ABI provided by
 the target runtime. Keeping independent calls is valid; tests judge behavior
 and linkability rather than requiring a combined helper call.
-They use one host-built scalar oracle and driver, and compare startup-subtracted
-Cachegrind instruction counts against GCC. Each `.quality` file publishes its
-limit; the supplied frontend and unoptimized backend isolate your LowIR work.
-The ordinary course suite includes these checks. See
-[improvements.md](improvements.md) for their edge cases and measurement method.
+
+#### Fixture families
+
+The paragraphs below say what groups of course fixtures require. The exact
+bounds are in each fixture's sidecar.
+
+The `tests/driver` fixtures use facts that the C++ lowering of earlier
+assignments states (`../pa8/lowir.md`, "Facts The C++ Lowering States").
+`alias=exclusive_result` on a result parameter (PA12): a store into the
+result's first `object_bytes` bytes changes nothing that another name can
+read, so loads and `repeatable` calls on other storage stay valid, and field
+copies into the result can combine. `repeatable=yes` (PA28): an equal call
+may be reused while the memory it reads is unchanged. `return=nonnull` and
+`noalias_result=yes` (PA28): a null test of the result is constant, and a
+store through the result leaves earlier loads valid. `object_bytes=N` with
+`N` greater than zero ("Instruction Facts"): the pointer is not null, and
+`copy nonnull` keeps that fact after inlining. If your `tests/driver/o0`
+output lacks one of these facts, the fixtures that use it fail for that
+reason.
+
+An object of at most 16 bytes whose eightbytes are all INTEGER may cross a
+function boundary as one integer value: `i64` up to 8 bytes, `i128` from 9
+to 16 bytes (`../pa8/lowir.md`, "Object ABI Conventions").
+`400-scalar-aggregate-copies` allows no `copyobj` and
+`500-packed-floating-bits` allows no store in `@floats`; this form reaches
+both. `600-source-returned-object-copy` accepts this form or one `copyobj`.
+
+No course fixture requires a particular admission cap or pass order. The
+fixtures about inlining state outcomes that a range of policies reach. A
+small leaf goes inline on an ordinary path, and a single-use internal
+function goes into its caller. A callee is measured after it is simplified:
+the inline fixtures with long runs of identical stores are not size tests,
+because the stores are removable. A callee that has grown by inlining is
+judged at its current size (`500-final-callee-inline-cost` bounds the
+caller). A large `binding=weak` helper is shared with other translation
+units, and `400-weak-worker-growth` bounds its caller. An upper bound on a
+function removed by optimization still holds.
+
+A call of a `cold=yes` function marks its block as rare, like a block that
+reaches a `return=noreturn` call; a `likely` or `unlikely` prediction marks
+one target of its branch as rare. A call on a rare path may stay a call or
+go inline: the bounds of `400-cold-call-sites` and
+`500-predicted-cold-call-inlining` leave room for one copy of each callee.
+An ordinary caller still inlines a small callee.
+
+A `select` or `switch` whose condition is a join of constants is already
+decided on each incoming edge. The tagged-value fixtures
+(`500-constant-phi-*`, `500-optional-payload-select`) expect the tag, the
+dispatch and the storage the tag guarded to disappear. Volatile reads, an
+edge where the tag is not a constant and values computed after the join keep
+their place. Take each constant at the tag's width before testing it.
+
+A switch whose arms only return constants, or one base address plus constant
+offsets, can read its result from read-only data after one range test (see
+"Result tables for switches" in the [design notes](design-notes.md)). A
+short chain of selects meets the same bounds of `400-return-switch-tables`.
+Add no data read where every case returns one value, and keep a default
+path's effects.
+
+The O3 bit-recurrence fixtures bound repeated shift/XOR work across several
+word widths and constants. `k` steps with one constant are linear over bits
+(see "Library math and representation" in the design notes): the result is
+`x >> k` combined by XOR with a function of the low `k` bits alone, and that
+function fits in read-only data indexed by those bits. The size bounds leave
+room for one table or for two smaller ones; a form that still spends four
+instructions on each step does not fit. The bounds are static instruction
+counts: in `500-source-bit-recurrences` a table read meets them, and so do a
+loop left rolled and the four unrolled steps of `update_nibble`; eight
+unrolled steps for each byte of `update_word` do not. The behavior drivers
+exercise every byte input, wider seeds and cases that invalidate a shortcut.
+
+An object returned by value is a read of its storage, not an escape of its
+address. Preserve actual address captures, pointer returns, volatile reads
+and physical frame observations when combining field copies.
+
+The object-transfer fixtures use equivalent value-copy and whole-object
+memory forms. Preserve when each snapshot is taken while meeting their size
+bounds. Boolean-storage fixtures also read through byte types: preserve
+arbitrary byte writes, escaped storage and volatile accesses. Counter fixtures
+include nonnegative loops, negative starts and wrapping counters; any arithmetic
+simplification must preserve all of them.
+
+Coupled loop values can also bound each other. Meet the bounded-search and
+averaging fixtures' arithmetic bounds while preserving signed rounding,
+overflow, every entry seed and computations observed before a guard.
+
+Boolean conditions may pass through selected zero/one values and integer
+retypes. Meet their quality bounds while preserving actual narrowing of
+arbitrary integers; a nonzero value can become zero when narrowed.
+
+Meet the conditional-store fixtures' branch and store bounds while preserving
+the selected values, cursor updates and empty-input behavior. Keep alias reads,
+callbacks, volatile accesses and potentially trapping work correctly ordered
+and conditional.
+
+Large-object fixtures combine indexed payloads, recurrent scalar fields and
+whole-object snapshots. Meet their bounds while preserving every copied byte
+and the time each snapshot is taken. Keep volatile accesses and overlapping
+field views observable.
+
+Private-allocation fixtures include pointers loaded from older objects,
+published addresses and opaque callees. Remove repeated reads only when their
+memory cannot change; an allocation's freshness alone does not establish that
+its address stays private.
+
+Recursive-dispatch fixtures bound redundant call layers around loop work.
+Preserve recursive exits, argument effects, unwinding and the stated code-size
+bounds; the tests do not prescribe a particular call-graph algorithm.
+
+Private fields accessed through signed and unsigned views of one width should
+remain eligible for scalar replacement. Preserve bit patterns, each reader's
+interpretation, Boolean conversions, true overlaps and observable accesses.
+
+Whole-vector values stored in private aggregates can remain whole through
+copies and zero initialization. Use typed access and escape facts to avoid
+scalar memory round trips; preserve observable writes and volatile accesses.
+Packed shifts whose count becomes constant may use immediate operations,
+with oversized logical counts producing zero and arithmetic counts retaining
+sign fill. Equivalent implementations satisfy the same behavior and bounds.
 
 ### Design Notes (Non-Normative)
 
@@ -291,12 +438,11 @@ pass:
   that never inspects its unnamed arguments can be substituted like a fixed
   argument function, preserving every argument's evaluation and cleanup.
   `va_start` and `va_arg` require a separate proof about the argument area.
-- Treat a call of a `cold=yes` function as GCC treats one: the block that
-  makes it is rare, like a block that reaches a `return=noreturn` call. A
-  rare block keeps its calls unless a copy is no larger than the call. A cold
-  function takes copies of trivial callees only and no loop copies. A small
-  cold callee may still go inline; keep its path rare afterwards, for
-  example with an `unlikely` prediction on the branch into the block.
+- A block that calls a `cold=yes` function is rare, like a block that reaches
+  a `return=noreturn` call. A cold callee larger than its call is usually
+  better left a call, and a cold function gains little from copies of its
+  callees. A small cold callee may go inline; keep its path rare afterwards,
+  for example with an `unlikely` prediction on the branch into the block.
 - A function that only forwards a call and returns its result may not need a
   separate call at each use. Preserve argument order, conversions, object
   materialization and cleanup when composing such boundaries.
@@ -323,58 +469,8 @@ pass:
   at `-O3` with this optimizer; [the design notes](design-notes.md) describe
   how to avoid repeating work.
 
-No course fixture requires a particular admission cap or pass order. The
-sidecars state observable outcomes and output-size limits; an upper bound on a
-function removed by optimization still holds. Consult the
+The sidecars state observable outcomes and output-size limits. Consult the
 [design notes](design-notes.md) for the reasoning behind possible approaches.
-
-The O3 bit-recurrence fixtures bound repeated shift/XOR work across several
-word widths and constants. Their behavior drivers exercise every byte input,
-wider seeds and cases that invalidate a shortcut. Any equivalent arithmetic
-or data-based solution meeting the size bounds is acceptable.
-
-An object returned by value is a read of its storage, not an escape of its
-address. Preserve actual address captures, pointer returns, volatile reads
-and physical frame observations when combining field copies.
-
-The object-transfer fixtures use equivalent value-copy and whole-object
-memory forms. Preserve when each snapshot is taken while meeting their size
-bounds. Boolean-storage fixtures also read through byte types: preserve
-arbitrary byte writes, escaped storage and volatile accesses. Counter fixtures
-include nonnegative loops, negative starts and wrapping counters; any arithmetic
-simplification must preserve all of them.
-
-Coupled loop values can also bound each other. Meet the bounded-search and
-averaging fixtures' arithmetic bounds while preserving signed rounding,
-overflow, every entry seed and computations observed before a guard.
-
-Boolean conditions may pass through selected zero/one values and integer
-retypes. Meet their quality bounds while preserving actual narrowing of
-arbitrary integers; a nonzero value can become zero when narrowed.
-
-Meet the conditional-store fixtures' branch and store bounds while preserving
-the selected values, cursor updates and empty-input behavior. Keep alias reads,
-callbacks, volatile accesses and potentially trapping work correctly ordered
-and conditional.
-
-Large-object fixtures combine indexed payloads, recurrent scalar fields and
-whole-object snapshots. Meet their bounds while preserving every copied byte
-and the time each snapshot is taken. Keep volatile accesses and overlapping
-field views observable.
-
-Private-allocation fixtures include pointers loaded from older objects,
-published addresses and opaque callees. Remove repeated reads only when their
-memory cannot change; an allocation's freshness alone does not establish that
-its address stays private.
-
-Heap-output fixtures discard some produced bytes while retaining a helper's
-return value or other effects. Meet the stated quality bounds while preserving
-observed contents, pointer escapes, volatile accesses and allocation-error
-observations such as `errno`. No particular specialization strategy is required.
-
-Recursive-dispatch fixtures bound redundant call layers around loop work.
-Preserve recursive exits, argument effects, unwinding and the stated code-size
-bounds; the tests do not prescribe a particular call-graph algorithm.
 
 ### Further improvements
 
@@ -412,17 +508,6 @@ an entry function, the execution check through the reference backend.
 Source-driver cases also compare execution before and after LowIR
 serialization. Failed cases are checked by exit status. See Quality Bar
 for the sidecar syntax.
-
-Private fields accessed through signed and unsigned views of one width should
-remain eligible for scalar replacement. Preserve bit patterns, each reader's
-interpretation, Boolean conversions, true overlaps and observable accesses.
-
-Whole-vector values stored in private aggregates can remain whole through
-copies and zero initialization. Use typed access and escape facts to avoid
-scalar memory round trips; preserve observable writes and volatile accesses.
-Packed shifts whose count becomes constant may use immediate operations,
-with oversized logical counts producing zero and arithmetic counts retaining
-sign fill. Equivalent implementations satisfy the same behavior and bounds.
 
 ### Testing
 
@@ -478,7 +563,7 @@ source-language clauses.
   and preserve it through LowIR serialization.
   An adjacent `.flags` file may select additional driver options, including
   the disabled-strict-aliasing case's `-O2 -fno-strict-aliasing`.
-- `tests/kernels` supplies the five required dynamic quality checks described
+- `tests/kernels` supplies the six required dynamic quality checks described
   above. `make test-kernels` runs these independently.
 - `tests/improvements` supplies optional vector, memory traversal and scheduling
   experiments. `make test-improvements` checks their behavior and reports work

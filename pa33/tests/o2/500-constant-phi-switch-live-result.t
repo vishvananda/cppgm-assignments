@@ -1,3 +1,6 @@
+# The tag is 7 on one edge and %input on the other. The known edge goes
+# straight to its case; the other edge still dispatches. %computed is defined
+# after the join and is used by the cases: it stays correct on both paths.
 function @select(%condition : u8, %input : u8) -> i64 {
   block ^entry:
     branch %condition, ^known, ^unknown

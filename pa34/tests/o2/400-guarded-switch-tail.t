@@ -1,3 +1,5 @@
+# A dense switch behind a range test, reached from two paths that merge a value. The default is
+# unreachable. Any dispatch and block layout are accepted; the entry checks every case on each path.
 function @dispatch(%selector : i64, %guard : i64, %seed : i64) -> i64 {
   block ^entry:
     %skip = cmp eq i64 %guard, 0

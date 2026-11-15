@@ -1,3 +1,5 @@
+# The loop only steps %p to %new_last and has no effect: it may go. The exit merge then takes
+# %new_last from the edge that replaces the loop, and may become a select.
 function @choose(%buffer : ptr, %new_last : ptr, %take : i64) -> ptr {
   block ^entry:
     %end = load ptr %buffer

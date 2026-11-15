@@ -1,3 +1,5 @@
+// An inlined member call keeps the promise that its object is not null; the caller's own null test
+// on the other path stays.
 extern "C" long late_value(const long*);
 struct Node {
   long value;

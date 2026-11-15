@@ -1,3 +1,4 @@
+// A pointer from a noalias_result function is fresh: a store through it leaves earlier loads valid.
 extern "C" __attribute__((malloc)) int* fresh(unsigned long);
 extern "C" int* ordinary(unsigned long);
 extern "C" {

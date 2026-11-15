@@ -1,4 +1,9 @@
+# A comparison result is 0 or 1: narrowing it to a byte and widening it again
+# changes nothing.
 count(convert) <= 0 in @integer_truth
 count(convert) <= 0 in @floating_truth
-count(convert) >= 1 in @unsigned_byte
-count(convert) >= 1 in @signed_byte
+
+# An arbitrary integer loses bits when narrowed: that work stays, in any
+# spelling.
+instructions >= 2 in @unsigned_byte
+instructions >= 2 in @signed_byte

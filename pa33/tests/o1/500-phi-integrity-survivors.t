@@ -1,3 +1,6 @@
+# Three merges that must stay correct after edits: a branch folded through a 0/1 phi, an inlined
+# callee with a dead predecessor, and a promoted slot stored on both arms. Each remaining two-way
+# merge of values may become a select.
 declare function @observe(%value : i64) -> void
 
 function @repair_fold_target_phi(%choose : i64) -> i64 [no_inline=yes] {

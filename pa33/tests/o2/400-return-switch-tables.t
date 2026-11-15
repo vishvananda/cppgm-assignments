@@ -1,3 +1,10 @@
+# Each switch below only chooses a returned constant (in @pointer, a constant
+# offset from %p). No switch may remain in @small, @high, @medium, @large and
+# @pointer: a range test with a read-only table of results, or a short chain
+# of selects, both meet the bounds. @uniform returns one value for its whole
+# range and must not gain a load. @holes has an effect on its default path and
+# may stay a switch. The global named like a generated table checks that a new
+# table takes a fresh name.
 global @__switch_results_0 : i64 = 77
 global @events : i64 = 0
 

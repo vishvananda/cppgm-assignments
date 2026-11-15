@@ -1,3 +1,6 @@
+# A repeatable read-only call gives the same value across a store that goes through an exclusive
+# result pointer. The controls: no promise, a store past the promised bytes, a pointer loaded from
+# the result, and a published result address.
 global @published : ptr = zero
 function @peek(%p : ptr) -> i64 [effects=readonly, repeatable=yes, no_inline=yes] {
   block ^entry:

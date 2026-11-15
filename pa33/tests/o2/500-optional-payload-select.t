@@ -1,3 +1,7 @@
+# An optional value: a u32 payload and a one-byte tag in one slot. The tag is 1
+# on one edge and 0 on the other, so the select after the join is decided on
+# each edge. The read of the empty payload, the slot and the tag are then
+# dead, and one select of %x or 3 on %present remains.
 function @select(%x : u32, %present : u8) -> u32 {
   slot $retobj__1 : obj<8x4>
 

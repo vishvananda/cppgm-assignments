@@ -1,3 +1,5 @@
+# Inlining a callee that copies its by-value object parameter forwards the caller's stored value
+# through that copy: @main returns the constant. The kept definition of @read_object is not bounded.
 function @read_object(%value : obj<8x8>) -> i64 {
   slot $local : obj<8x8>
 

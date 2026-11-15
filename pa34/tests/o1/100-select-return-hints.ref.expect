@@ -1,7 +1,8 @@
 # Address calculation, predicate, selection and return; no extra result copy.
+# `ret <reg>` of a register other than rax stands for a copy to rax and a return.
 instructions <= 4 in @adjust
-none(/^ret (?!rax$)/) in @adjust
+none(/^ret\s+(?!rax\b)\S/) in @adjust
 instructions <= 4 in @adjust_predicate_first
-none(/^ret (?!rax$)/) in @adjust_predicate_first
+none(/^ret\s+(?!rax\b)\S/) in @adjust_predicate_first
 has(store) in @before_store
 has(call @change) in @before_call

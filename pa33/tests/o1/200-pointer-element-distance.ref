@@ -22,10 +22,13 @@ function @main() -> i64 [role=entry] {
     %a = call i64 @distance(%p, 5, 2)
     %b = call i64 @distance(%p, 2, 5)
     %c = call i64 @unbounded(%p, -4)
+    %d = call i64 @unbounded(%p, 2305843009213693952)
     %ab = cmp ne i64 %a, 3
     %bb = cmp ne i64 %b, -3
     %cb = cmp ne i64 %c, -4
+    %db = cmp ne i64 %d, 0
     %r = binary or i64 %ab, %bb
-    %bad = binary or i64 %cb, %r
+    %s = binary or i64 %cb, %r
+    %bad = binary or i64 %db, %s
     return i64 %bad
 }

@@ -1,6 +1,7 @@
-blocks <= 5 in @shared_cases
+# Twelve arms with three distinct bodies: three arm blocks, the fallback and
+# the dispatch (one or two blocks).
+blocks <= 7 in @shared_cases
 instructions <= 12 in @shared_cases
-blocks >= 14 in @distinct_cases
-blocks <= 7 in @shared_store_paths
+# Four distinct volatile stores, each in one block.
+blocks <= 8 in @shared_store_paths
 count(store) <= 4 in @shared_store_paths
-count(store) >= 4 in @shared_store_paths

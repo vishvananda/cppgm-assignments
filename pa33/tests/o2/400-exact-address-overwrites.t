@@ -1,3 +1,8 @@
+# A store that a later store through the same address value replaces, with no
+# read and no call between, is dead. The address may be a dynamic index or a
+# literal. A read between (@observed, @volatile_read), a narrower later write
+# (@partial_write), a later write on one path only (@cross_block) and volatile
+# stores (@volatile_writes) keep the first store.
 function @overwrite_word(%base : ptr, %i : i64, %seed : i64) -> i64 [binding=strong, no_inline=yes] {
   block ^entry:
     %p = index i64 %base, %i

@@ -1,14 +1,12 @@
-# budget from 500-predicted-cold-call-inlining.ref: the course solution's count, widened by 10% and rounded up, plus one, and at least three more than the count
-instructions <= 37
-blocks <= 13
-count(call) <= 5
-count(load) <= 3
-count(store) <= 3
-count(phi) <= 3
-instructions <= 12 in @mix
-instructions <= 9 in @unlikely_call
-instructions <= 8 in @likely_call
-instructions <= 15 in @ordinary_call
+# explicit-outcomes
 
-# outcomes from 500-predicted-cold-call-inlining.ref: what the course solution removed stays removed (a call inlined, memory promoted, a definition pruned)
+# A small leaf called on an ordinary path goes inline.
 none(call @mix) in @ordinary_call
+instructions <= 15 in @ordinary_call
+# A call on a predicted-rare path may stay or go inline: predictions are
+# advisory, and each bound leaves room for one copy.
+instructions <= 16 in @unlikely_call
+instructions <= 15 in @likely_call
+instructions <= 12 in @mix
+instructions <= 50
+blocks <= 13

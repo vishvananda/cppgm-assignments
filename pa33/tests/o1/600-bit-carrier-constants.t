@@ -1,3 +1,5 @@
+# Bit copies between floating and integer constants fold exactly: -0.0, a NaN payload and 1.5f
+# keep their bits.
 function @payload() -> f64 [no_inline=yes] {
   block ^entry:
     %bits = copy i64 0x7ff8000000000012

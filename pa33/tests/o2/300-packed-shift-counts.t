@@ -1,3 +1,7 @@
+# A packed shift whose count vector is built from a constant takes the constant
+# as an immediate count. A count of the lane width or more keeps its meaning:
+# zero for a logical shift, the sign fill for an arithmetic one. @variable
+# keeps its count operand.
 function @logical(%value : v128) -> v128 {
   block ^entry:
     %count = vector fromi32 4

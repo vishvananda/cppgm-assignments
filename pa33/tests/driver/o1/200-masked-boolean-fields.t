@@ -1,3 +1,4 @@
+// A one-bit value tested against zero is the value itself; a wider field still needs the comparison.
 struct Flags {
   unsigned low : 1;
   unsigned middle : 3;

@@ -1,11 +1,8 @@
-# The dynamic global-table sum shares the load's address operand.
-count(add) == 0 in @walk
-count(load.i8) == 1 in @walk
-count(load.ptr) == 1 in @walk
+# The dynamic global-table sum shares the load's address operand: two
+# loads of the walk, the mask, the table address, the field load, the return.
+instructions <= 6 in @walk
 # Masks confined below both sign bits reuse the logical flags.
-count(cmp) == 0 in @masked16
-count(test) == 0 in @masked16
-count(cmp) == 0 in @masked8
-count(test) == 0 in @masked8
+instructions <= 5 in @masked16
+instructions <= 5 in @masked8
 # A computed address escaping the load must remain available.
 instructions <= 10 in @live_address

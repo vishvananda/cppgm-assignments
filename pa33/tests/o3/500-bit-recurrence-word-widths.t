@@ -1,3 +1,10 @@
+# Four to eight steps of "shift right by one, XOR a constant when the low bit
+# was set" at four word widths and both signs. Each closed form is `x >> k`
+# XORed with a function of the low k bits (see "Library math and
+# representation" in design-notes.md). The functions after @fold_sixteen have
+# no size requirement: a constant that varies, a shift by two, an arithmetic
+# shift, values used outside the chain and one more 64-bit chain. The driver
+# checks their values.
 global @observed : i64 = 0
 
 function @fold_u8(%x : u8) -> u8 [no_inline=yes] {

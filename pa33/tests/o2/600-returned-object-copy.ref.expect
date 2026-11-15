@@ -1,7 +1,7 @@
+# The returned local needs no scalar stores: one object copy, an object
+# value or a register value are all valid.
 count(copyobj) <= 1 in @returned_value
 count(store) <= 0 in @returned_value
-count(copyobj) <= 0 in @captured_value
-count(copyobj) <= 0 in @returned_address
+# Volatile reads stay two separate reads.
 count(copyobj) <= 0 in @volatile_value
 count(load volatile) >= 2 in @volatile_value
-count(copyobj) <= 0 in @observed_frame

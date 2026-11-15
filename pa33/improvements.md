@@ -27,17 +27,22 @@ The driver checks zero work, short runs, bounds around loop widths, and longer
 runs against an independent scalar oracle. Cachegrind then counts a measured
 run and a zero-work run. The difference removes startup cost. Each core scenario
 must stay within the published ratio to GCC; the check never grades elapsed
-time, register names or a mnemonic. Counts and all command observations remain
-under `obj/quality/`.
+time, register names or a mnemonic. GCC is the host compiler at the level in
+the `.quality` file (`-std=c++11 -O<level> -g0 -fno-lto`). Counts and all
+command observations remain under `obj/quality/`.
 
 The floating-state kernel updates selected lanes over nested iterations.
 Inactive lanes and early exits preserve their previous values. It measures
 the cost of carrying many conditional values through merges without requiring
-either scalar replacement or a particular register allocation.
+either scalar replacement or a particular register allocation. A scalar
+solution meets both limits: against GCC 15.2 the course solution's scalar
+form measures 2.34 in PA33 and 1.22 in PA34.
 
 The adjacent-update kernel checks reuse of an invariant factor while updating
 two adjacent values. It checks zero rounds and observations through aliases.
-Scalar and packed solutions are both acceptable within its published bounds.
+Scalar and packed solutions are both acceptable within its published bounds:
+against GCC 15.2 the course solution's scalar form measures 1.80 in PA33 and
+1.40 in PA34, and its packed form 1.50 and 1.10.
 
 ## Optional experiments
 

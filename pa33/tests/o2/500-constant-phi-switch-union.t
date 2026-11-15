@@ -1,3 +1,7 @@
+# A union slot written as u32 on one edge and as i64 on the other, then read
+# back through a switch on a tag that is a constant on each edge. Each edge
+# reaches exactly one read, of the type it stored: the switch, the slot and
+# its typed reads go.
 function @select(%value : u32, %wide : u8) -> i64 {
   slot $payload : obj<8x8>
 

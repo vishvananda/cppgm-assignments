@@ -1,3 +1,6 @@
+# A private object that holds one whole v128 value is promoted like a scalar
+# slot: the copy between two private slots goes. In @escaped_fields the
+# destination is the caller's memory and is still written.
 function @copy_fields(%value : v128) -> v128 {
   slot $source : obj<16x16>
   slot $target : obj<16x16>

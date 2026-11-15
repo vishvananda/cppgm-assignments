@@ -1,0 +1,26 @@
+function @main() -> i32 [role=entry] {
+  block ^entry:
+    %m = call u32 @mix(5)
+    %u0 = call u32 @unlikely_call(0, 5)
+    %u1 = call u32 @unlikely_call(1, 5)
+    %l0 = call u32 @likely_call(0, 5)
+    %l1 = call u32 @likely_call(1, 5)
+    %o0 = call u32 @ordinary_call(0, 5)
+    %o1 = call u32 @ordinary_call(1, 5)
+    %d1 = binary xor u32 %u0, %m
+    %d2 = binary xor u32 %u1, 6
+    %d3 = binary xor u32 %l0, %m
+    %d4 = binary xor u32 %l1, 6
+    %d5 = binary xor u32 %o0, %m
+    %d6 = binary xor u32 %o1, 6
+    %d7 = binary xor u32 %m, 3535349196
+    %a = binary or u32 %d1, %d2
+    %b = binary or u32 %d3, %d4
+    %c = binary or u32 %d5, %d6
+    %ab = binary or u32 %a, %b
+    %abc = binary or u32 %ab, %c
+    %all = binary or u32 %abc, %d7
+    %bad = cmp ne u32 %all, 0
+    %out = convert zext i32 i1 %bad
+    return i32 %out
+}

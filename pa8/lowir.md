@@ -1114,6 +1114,11 @@ No other class combination is valid on a scalar type. The scalar carrier does no
 enlarge the original object's storage: accesses through its address must stay within
 the original extent.
 
+An optimizer may likewise represent an INTEGER-class object of at most 8 bytes, as a
+direct parameter or result, as an `i64` value that states no classes. The value uses
+the INTEGER register the object used, so the boundary does not change, and accesses to
+the object's storage stay within its original extent.
+
 `memory`, valid only on a parameter, instead says the object is passed in memory: an object
 with a misaligned member, or with an x87 (`long double`) or 16-byte vector member. A result
 with a misaligned member is returned through a `pass=indirect_result` parameter instead of a
@@ -1175,6 +1180,8 @@ The PA8 subset uses:
 
 A slot used as a scalar value reads its contents at that instruction. Storage
 operands name the slot's storage instead.
+A read of a slot that nothing has written since the function was entered
+yields an unspecified value of the slot's type; an optimizer may choose it.
 A call argument reads the slot's value for ordinary direct passing, and names
 its storage for `by_address` or `indirect_result` passing. A `phi` incoming
 value must be a temporary, literal or global address; load a slot on its
@@ -2247,6 +2254,12 @@ destination and source and on a copy or move constructor's `this` and source
 entry of the constructor and every call signature that copies its boundary.
 A constructor template, a converting constructor, an assignment operator,
 `__builtin_memmove` and `__restrict` state none.
+
+`alias=exclusive_result`: the `pass=indirect_result` parameter of a class
+result returned in memory states it together with `object_bytes`, on the
+function's declarations and definition and in every call signature that
+copies the boundary. The psABI requires the caller to provide a result
+buffer that nothing else names.
 
 `shape` and `result_shape` on wasm32 object boundaries: derive the scalar
 composition from completed semantic layout as specified in Aggregate Layout

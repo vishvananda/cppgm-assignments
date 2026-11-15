@@ -1,3 +1,9 @@
+# @first and @far each store to a bounded part of their pointer parameter (see
+# "Bounded writes across calls" in design-notes.md), and an exclusive result
+# cannot overlap the input. A load of bytes that the call in the loop cannot
+# write is done once, outside the loop; the call stays a call. In
+# @ordinary_loop and @outside_loop the call may write the loaded bytes, and
+# the load stays in the loop.
 function @first(%p : ptr, %v : i64) -> void [no_inline=yes] {
   block ^entry:
     store i64 %v, %p

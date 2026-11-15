@@ -1,3 +1,5 @@
+# A constant added to a masked index joins the load's displacement, and the loaded value may take
+# the index register. The control keeps the index live after the load.
 global @cells = {
   ptr 11
   ptr 37

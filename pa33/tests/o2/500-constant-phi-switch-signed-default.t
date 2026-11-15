@@ -1,3 +1,6 @@
+# The tag is a u8 constant on each edge and the selector sign-extends it: 255
+# selects the case -1, and 12 matches no case and takes the default. The
+# switch is decided on each edge.
 function @select(%condition : u8) -> i64 {
   block ^entry:
     branch %condition, ^negative, ^other

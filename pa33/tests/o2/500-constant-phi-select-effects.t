@@ -1,3 +1,8 @@
+# The tag is a constant on each incoming edge, so each edge already knows
+# which operand the select takes. @select: both volatile reads stay; the tag
+# and the select go. @unknown: the tag is not a constant on one edge.
+# @late_value: the chosen value is computed after the join. @truncated: the
+# tag constants are u8 values, so 256 is zero and 255 is not.
 function @select(%condition : u8, %port : ptr) -> u32 {
   block ^entry:
     branch %condition, ^yes, ^no

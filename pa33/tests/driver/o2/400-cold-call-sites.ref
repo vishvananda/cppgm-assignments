@@ -6,7 +6,7 @@ global @__constexpr_template__1 [storage=readonly, binding=internal] = {
   i32 4
 }
 
-function @report(%code : i32, %value : i32) -> void [binding=strong, object=_Z6reportii, cold=yes] {
+function @report(%code : i32, %value : i32) -> void [linkage=c, binding=strong, cold=yes] {
   block ^entry:
     store volatile i32 %code, @sink
     store volatile i32 %value, @sink
@@ -20,12 +20,12 @@ function @report(%code : i32, %value : i32) -> void [binding=strong, object=_Z6r
     store volatile i32 %t4, @sink
     return void
 }
-function @note(%code : i32) -> void [binding=strong, object=_Z4notei, cold=yes] {
+function @note(%code : i32) -> void [linkage=c, binding=strong, cold=yes] {
   block ^entry:
     store volatile i32 %code, @sink
     return void
 }
-function @helper(%x : i32) -> i32 [binding=strong, object=_Z6helperi] {
+function @helper(%x : i32) -> i32 [linkage=c, binding=strong] {
   block ^entry:
     %t1 = binary mul nowrap i32 %x, 3
     %t2 = binary shr i32 %x, 2
@@ -37,7 +37,7 @@ function @helper(%x : i32) -> i32 [binding=strong, object=_Z6helperi] {
     %t8 = binary add nowrap i32 %t5, %t7
     return i32 %t8
 }
-function @slow_path(%x : i32) -> i32 [binding=strong, object=_Z9slow_pathi, cold=yes] {
+function @slow_path(%x : i32) -> i32 [linkage=c, binding=strong, cold=yes] {
   block ^entry:
     %t1 = call i32 @helper(%x)
     %t2 = binary add nowrap i32 %x, 1
@@ -45,7 +45,7 @@ function @slow_path(%x : i32) -> i32 [binding=strong, object=_Z9slow_pathi, cold
     %t4 = binary add nowrap i32 %t1, %t3
     return i32 %t4
 }
-function @fast_path(%x : i32) -> i32 [binding=strong, object=_Z9fast_pathi] {
+function @fast_path(%x : i32) -> i32 [linkage=c, binding=strong] {
   block ^entry:
     %t1 = binary mul nowrap i32 %x, 3
     %t2 = binary shr i32 %x, 2
@@ -67,7 +67,7 @@ function @fast_path(%x : i32) -> i32 [binding=strong, object=_Z9fast_pathi] {
     %t18 = binary add nowrap i32 %t8, %t17
     return i32 %t18
 }
-function @checked_sum(%values : ptr, %count : i32) -> i32 [binding=strong, object=_Z11checked_sumPKii] {
+function @checked_sum(%values : ptr, %count : i32) -> i32 [linkage=c, binding=strong] {
   block ^entry:
     jump ^for_cond_1
 
@@ -102,7 +102,7 @@ function @checked_sum(%values : ptr, %count : i32) -> i32 [binding=strong, objec
   block ^for_end_5:
     return i32 %t2
 }
-function @noted(%value : i32) -> i32 [binding=strong, object=_Z5notedi] {
+function @noted(%value : i32) -> i32 [linkage=c, binding=strong] {
   block ^entry:
     %t1 = cmp lt i32 %value, 0
     branch unlikely %t1, ^if_then_1, ^if_end_2

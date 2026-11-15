@@ -1,3 +1,6 @@
+# @mix is a small leaf. On an ordinary path its call goes inline. On a path
+# that a branch prediction calls rare, the call may stay (the copy is larger
+# than the call) or go inline: predictions are advisory.
 function @mix(%x : u32) -> u32 [binding=strong, object=_Z3mixj] {
   block ^entry:
     %t1 = binary ushr u32 %x, 13

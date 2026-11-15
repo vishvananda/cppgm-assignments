@@ -97,7 +97,7 @@ function @main
   abi
     return i64 -> rax
   frame
-    stack_size 64
+    stack_size 160
     scratch_bytes 0
     frame_pointer keep
     epilogues duplicated
@@ -105,6 +105,18 @@ function @main
     slot $data -> [rbp-8] : i64
     temp %z1 -> [rbp-16] : i32
     temp %z2 -> [rbp-24] : i32
+    temp %z3 -> [rbp-32] : i32
+    temp %c0 -> [rbp-40] : i64
+    temp %word_bit63 -> [rbp-48] : i32
+    temp %high_bit55 -> [rbp-56] : i32
+    temp %c1 -> [rbp-64] : i64
+    temp %c2 -> [rbp-72] : i64
+    temp %interior_bit48 -> [rbp-80] : i32
+    temp %interior_bit39 -> [rbp-88] : i32
+    temp %word_bit39 -> [rbp-96] : i32
+    temp %c3 -> [rbp-104] : i64
+    temp %holes_bit8 -> [rbp-112] : i32
+    temp %c4 -> [rbp-120] : i64
 
   block ^entry
     store.i64 [rbp-8], -1
@@ -142,6 +154,74 @@ function @main
     store.i32 [rbp-24], r10
     lea rdi, [rbp-8]
     call @word_high [args=(rdi)]
+    zext.i32 r10, rax
+    store.i32 [rbp-32], r10
+    store.i64 [rbp-8], -9223372036854775808
+    lea rdi, [rbp-8]
+    call @high [args=(rdi)]
+    cmp.i32 rax, 1
+    setne r10
+    movzx r10, r10
+    store.i64 [rbp-40], r10
+    lea rdi, [rbp-8]
+    call @word_high [args=(rdi)]
+    zext.i32 r10, rax
+    store.i32 [rbp-48], r10
+    store.i64 [rbp-8], 36028797018963968
+    lea rdi, [rbp-8]
+    call @high [args=(rdi)]
+    zext.i32 r10, rax
+    store.i32 [rbp-56], r10
+    store.i64 [rbp-8], 1099511627776
+    lea rdi, [rbp-8]
+    call @interior [args=(rdi)]
+    cmp.i32 rax, 1
+    setne r10
+    movzx r10, r10
+    store.i64 [rbp-64], r10
+    store.i64 [rbp-8], 140737488355328
+    lea rdi, [rbp-8]
+    call @interior [args=(rdi)]
+    cmp.i32 rax, 1
+    setne r10
+    movzx r10, r10
+    store.i64 [rbp-72], r10
+    store.i64 [rbp-8], 281474976710656
+    lea rdi, [rbp-8]
+    call @interior [args=(rdi)]
+    zext.i32 r10, rax
+    store.i32 [rbp-80], r10
+    store.i64 [rbp-8], 549755813888
+    lea rdi, [rbp-8]
+    call @interior [args=(rdi)]
+    zext.i32 r10, rax
+    store.i32 [rbp-88], r10
+    lea rdi, [rbp-8]
+    call @word_high [args=(rdi)]
+    zext.i32 r10, rax
+    store.i32 [rbp-96], r10
+    store.i64 [rbp-8], 65536
+    lea rdi, [rbp-8]
+    call @wide_holes [args=(rdi)]
+    cmp.i32 rax, 1
+    setne r10
+    movzx r10, r10
+    store.i64 [rbp-104], r10
+    store.i64 [rbp-8], 256
+    lea rdi, [rbp-8]
+    call @wide_holes [args=(rdi)]
+    zext.i32 r10, rax
+    store.i32 [rbp-112], r10
+    store.i64 [rbp-8], 2147483648
+    lea rdi, [rbp-8]
+    call @word_high [args=(rdi)]
+    cmp.i32 rax, 1
+    setne r10
+    movzx r10, r10
+    store.i64 [rbp-120], r10
+    store.i64 [rbp-8], 8388608
+    lea rdi, [rbp-8]
+    call @word_high [args=(rdi)]
     sext.i32 rax
     or.u32 rbx, r14
     or.u32 rbx, r15
@@ -149,6 +229,23 @@ function @main
     or.u32 rbx, r12
     or.i32 rbx, [rbp-16]
     or.i32 rbx, [rbp-24]
+    or.i32 rbx, [rbp-32]
+    load.u32 r11, [rbp-40]
+    or.u32 rbx, r11
+    load.u32 r11, [rbp-64]
+    or.u32 rbx, r11
+    load.u32 r11, [rbp-72]
+    or.u32 rbx, r11
+    load.u32 r11, [rbp-104]
+    or.u32 rbx, r11
+    load.u32 r11, [rbp-120]
+    or.u32 rbx, r11
+    or.i32 rbx, [rbp-48]
+    or.i32 rbx, [rbp-56]
+    or.i32 rbx, [rbp-80]
+    or.i32 rbx, [rbp-88]
+    or.i32 rbx, [rbp-96]
+    or.i32 rbx, [rbp-112]
     sext.i32 rbx
     or rax, rbx
     ret rax

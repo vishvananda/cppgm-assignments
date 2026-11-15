@@ -61,6 +61,39 @@ function @observed_frame(%source : ptr) -> i64 [no_inline=yes] {
     return i64 %t8
 }
 function @main() -> i32 [role=entry] {
+  slot $source : obj<8x4>
+
   block ^entry:
-    return i32 0
+    %s = addr $source
+    store u32 17, %s
+    %s1 = index u32 %s, 1
+    store u32 29, %s1
+    %v1 = call i64 @returned_value(%s)
+    %a1 = convert trunc u32 i64 %v1
+    %t5 = binary ushr i64 %v1, 32
+    %b1 = convert trunc u32 i64 %t5
+    %v2 = call i64 @captured_value(%s)
+    %a2 = convert trunc u32 i64 %v2
+    %t9 = binary ushr i64 %v2, 32
+    %b2 = convert trunc u32 i64 %t9
+    %v3 = call i64 @volatile_value(%s)
+    %a3 = convert trunc u32 i64 %v3
+    %t13 = binary ushr i64 %v3, 32
+    %b3 = convert trunc u32 i64 %t13
+    %v4 = call i64 @observed_frame(%s)
+    %a4 = convert trunc u32 i64 %v4
+    %t17 = binary ushr i64 %v4, 32
+    %b4 = convert trunc u32 i64 %t17
+    %a12 = binary add u32 %a1, %a2
+    %a34 = binary add u32 %a3, %a4
+    %as = binary add u32 %a12, %a34
+    %b12 = binary add u32 %b1, %b2
+    %b34 = binary add u32 %b3, %b4
+    %bs = binary add u32 %b12, %b34
+    %da = binary xor u32 %as, 68
+    %db = binary xor u32 %bs, 116
+    %all = binary or u32 %da, %db
+    %bad = cmp ne u32 %all, 0
+    %out = convert zext i32 i1 %bad
+    return i32 %out
 }

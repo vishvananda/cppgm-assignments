@@ -1,7 +1,8 @@
 # One memory test, one setup copy, one conditional move and return.
+# `ret <reg>` of a register other than rax stands for a copy to rax and a return.
 instructions <= 4 in @masked_alias
-none(load) in @masked_alias
-has(test) in @masked_alias
+mem <= 1 in @masked_alias
+none(/^ret\s+(?!rax\b)\S/) in @masked_alias
 has(store) in @stored_after_mask
 has(load) in @shared_load
 has(load) in @volatile_mask

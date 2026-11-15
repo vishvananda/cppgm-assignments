@@ -1,3 +1,5 @@
+// A result of a return=nonnull function is not null: the test of it goes, the call stays.
+// Results without the fact keep their tests.
 extern "C" __attribute__((returns_nonnull)) int* required(int*);
 extern "C" int* optional(int*);
 template<class T> __attribute__((returns_nonnull)) T* templated(T*);

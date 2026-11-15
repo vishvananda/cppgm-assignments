@@ -1,3 +1,4 @@
+# %sum does not change in the loop. The loop runs four times, so the load after it reads %sum.
 global @left : i64 = 7
 global @right : i64 = 5
 global @result : i64 = 0

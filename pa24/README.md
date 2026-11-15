@@ -286,6 +286,11 @@ Machine operands use the following target-specific forms:
   `1`, `2`, `4`, or `8`; `*1` and a zero displacement are omitted
 - `[rbp+displacement]` for a frame location
 
+`ret` may name the register that holds the result at the return, as in
+`ret rax`. When the named register is not the ABI result register, native
+emission copies it there; that copy is not a MIR instruction. A debug
+location or another fact may follow the operand.
+
 A direct call names a symbol, while an indirect call prefixes its register or
 memory target with `*`.  A call may also carry bracketed machine facts:
 

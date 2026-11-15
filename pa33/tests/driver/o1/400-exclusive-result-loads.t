@@ -1,3 +1,5 @@
+// A store into the returned object (alias=exclusive_result) cannot change the input: read it once.
+// The ordinary function may alias.
 struct Input { unsigned long bits; };
 struct Result { unsigned long a, b, c, d; };
 extern "C" {

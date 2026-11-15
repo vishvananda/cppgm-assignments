@@ -1,3 +1,7 @@
+# One path stores to a field of a private zeroed object and the other does
+# not; the address is computed again after the join. The object is promoted:
+# the read takes 7 on one edge and the zero of the initialization on the
+# other.
 function @select(%condition : u8) -> u8 {
   slot $object : obj<8x4>
 

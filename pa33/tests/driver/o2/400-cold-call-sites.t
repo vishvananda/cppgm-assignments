@@ -1,8 +1,8 @@
-// GNU cold: a call of a cold function larger than its call stays a call, and
-// so does a call on the path to a cold call, also where a small cold function
-// goes inline; a cold function takes no copy of a callee larger than a call,
-// while an ordinary caller inlines the same callee.
+// GNU cold marks a rare path. A call of a cold function, and a call on the
+// path to one, may stay a call or go inline; a cold function may keep its
+// callees out of line. An ordinary caller still inlines a small callee.
 volatile int sink;
+extern "C" {
 __attribute__((cold)) void report(int code, int value)
 {
   sink = code;
@@ -38,6 +38,7 @@ int noted(int value)
     note(value);
   }
   return value + 1;
+}
 }
 
 int main()

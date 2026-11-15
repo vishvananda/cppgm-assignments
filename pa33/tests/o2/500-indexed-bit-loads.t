@@ -1,3 +1,8 @@
+# A branch on one bit of %raw chooses between two fields of one base. The
+# fields are a fixed distance apart, so the bit can form the address and one
+# load serves both paths. @volatile_fields and @uneven_fields have no size
+# requirement: each volatile read stays on its path, and fields 24 bytes apart
+# are not a shift of the tested bit.
 function @shifted(%raw : i64, %base : ptr) -> i64 [binding=strong, no_inline=yes] {
   block ^entry:
     %x = convert trunc u32 i64 %raw

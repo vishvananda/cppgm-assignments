@@ -1,4 +1,6 @@
 # Dense constant cases keep defined defaults, side effects and power facts.
+# A case with effects and a computed default stay control flow; the constant cases may come from
+# read-only data (see design-notes.md, Result tables for switches).
 global @effects : i64 = 0
 
 function @lookup(%n : i64, %seed : i64) -> i64 [no_inline=yes] {

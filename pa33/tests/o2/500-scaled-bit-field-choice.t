@@ -1,3 +1,7 @@
+# As 500-indexed-bit-loads, with fields a multiple of the element size apart
+# (@scaled), a field below the base (@negative) and a bias that is not a
+# multiple of the scale (@odd_bias). One read of the chosen field and no
+# branch remain.
 function @scaled(%tag : i64, %base : ptr) -> i64 [no_inline=yes] {
   block ^entry:
     %bit = binary and i64 %tag, 2

@@ -1,3 +1,5 @@
 # Bound repeated bit work without prescribing arithmetic or lookup operations.
+# Four unrolled steps of update_nibble fit; eight unrolled steps for each byte
+# of update_word do not.
 instructions <= 35 in @update_word
-instructions <= 15 in @update_nibble
+instructions <= 18 in @update_nibble

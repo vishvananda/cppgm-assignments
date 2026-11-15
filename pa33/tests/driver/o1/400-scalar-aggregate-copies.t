@@ -1,3 +1,5 @@
+// A 16-byte integer object can cross the boundary as one i128 value (pa8/lowir.md, "Object ABI
+// Conventions"): no object copy remains.
 using U = unsigned long long;
 struct Pair { U low, high; };
 

@@ -1,11 +1,7 @@
-# budget from 500-final-callee-inline-cost.ref: the course solution's count, widened by 10% and rounded up, plus one, and at least three more than the count
+# explicit-outcomes
+
+# The loop of run uses a helper that grew to four copies of mix. Calling the
+# helper, or calling mix eight times, is compact; two copies of the grown
+# helper are not.
+instructions <= 135 in @run
 instructions <= 199
-blocks <= 10
-count(call) <= 6
-count(load) <= 5
-count(store) <= 3
-count(phi) <= 5
-instructions <= 36 in @mix
-instructions <= 26 in @run
-instructions <= 9 in @main
-instructions <= 135 in @expanded

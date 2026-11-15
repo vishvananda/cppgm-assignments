@@ -12,6 +12,11 @@ function @ordinary(%p : ptr) -> ptr [no_inline=yes] {
   block ^entry:
     return ptr %p
 }
+function @reload() -> ptr [no_inline=yes] {
+  block ^entry:
+    %q = load ptr @published
+    return ptr %q
+}
 function @call_writes(%p : ptr) -> i64 [no_inline=yes] {
   block ^entry:
     %before = load i64 %p
@@ -50,12 +55,36 @@ function @published_alias(%p : ptr) -> i64 [no_inline=yes] {
     %q = call ptr @fresh(%p)
     store ptr %q, @published
     store i64 3, %q
-    %alias = call ptr @ordinary(%p)
+    %alias = call ptr @reload()
     store i64 9, %alias
     %after = load i64 %q
     return i64 %after
 }
 function @main() -> i32 [role=entry] {
+  slot $cell : i64
+
   block ^entry:
-    return i32 0
+    %p = addr $cell
+    store i64 5, %p
+    %a = call i64 @call_writes(%p)
+    store i64 5, %p
+    %b = call i64 @fresh_store(%p)
+    store i64 5, %p
+    %c = call i64 @indirect_fresh(@fresh, %p)
+    store i64 5, %p
+    %d = call i64 @ordinary_store(%p)
+    store i64 5, %p
+    %e = call i64 @published_alias(%p)
+    %da = binary xor i64 %a, 104
+    %db = binary xor i64 %b, 198
+    %dc = binary xor i64 %c, 198
+    %dd = binary xor i64 %d, 12
+    %de = binary xor i64 %e, 9
+    %ab = binary or i64 %da, %db
+    %cd = binary or i64 %dc, %dd
+    %abcd = binary or i64 %ab, %cd
+    %all = binary or i64 %de, %abcd
+    %bad = cmp ne i64 %all, 0
+    %out = convert zext i32 i1 %bad
+    return i32 %out
 }

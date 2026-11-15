@@ -1,3 +1,5 @@
+# Every edge into ^join computes the same pure expression of %value. One computation serves all
+# three, and the merge needs no phi.
 function @main(%value : i64, %choose : i64, %inner : i64) -> i64 [role=entry] {
   block ^entry:
     branch %choose, ^left, ^right

@@ -1,2 +1,4 @@
-count(copyobj) == 1 in @pack
-count(load) <= 0 in @pack
+# The result storage cannot overlap the input: four field copies need not be
+# four load/store pairs. One object copy, or two wide loads and stores, fit.
+instructions <= 8 in @pack
+count(load) <= 2 in @pack

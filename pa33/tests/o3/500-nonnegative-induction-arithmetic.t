@@ -1,3 +1,8 @@
+# @nonnegative counts up from zero, so its counter is never negative and the
+# signed remainder and quotient by a power of two need no sign adjustment (a
+# mask and a shift). @signed_range starts below zero and @wrapping_counter
+# wraps: the same rewrite is wrong there. The instruction bound leaves room
+# for a vectorized or unrolled loop; neither is required.
 function @nonnegative(%p : ptr, %bound : i64) -> i64 [no_inline=yes] {
   block ^entry:
     %enter = cmp gt i64 %bound, 0

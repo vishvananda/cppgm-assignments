@@ -1,10 +1,10 @@
-# Arithmetic leaves need only their computation and return, independent of
-# register names or whether the computation uses an add or address form.
+# A sum whose operands stay in their registers reaches rax in one
+# instruction (an address calculation) and returns: two instructions.
 instructions <= 2 in @sum64
 instructions <= 2 in @step64
 instructions <= 2 in @sum32
 
-# ret of another register would hide a third, ABI return-copy instruction.
-none(/^ret (?!rax$)/) in @sum64
-none(/^ret (?!rax$)/) in @step64
-none(/^ret (?!rax$)/) in @sum32
+# `ret <reg>` of a register other than rax stands for a copy to rax and a return.
+none(/^ret\s+(?!rax\b)\S/) in @sum64
+none(/^ret\s+(?!rax\b)\S/) in @step64
+none(/^ret\s+(?!rax\b)\S/) in @sum32

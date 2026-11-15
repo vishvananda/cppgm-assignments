@@ -1,3 +1,5 @@
+# A returned sum of two live registers, or of a register and a constant, is formed in the result
+# register by one address calculation: no copy before or inside the return.
 function @sum64(%a : i64, %b : i64) -> i64 {
   block ^entry:
     %sum = binary add i64 %a, %b

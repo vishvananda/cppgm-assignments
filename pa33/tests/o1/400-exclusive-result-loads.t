@@ -1,3 +1,6 @@
+# A store through an exclusive result pointer leaves *%input unchanged: the second load repeats the
+# first. No promise (@ordinary), a store past the promised bytes (@outside), a store to the loaded
+# address itself (@derived) and volatile loads (@observed) keep both loads.
 function @exclusive(%out : ptr [pass=indirect_result, alias=exclusive_result, object_bytes=32], %input : ptr) -> void [no_inline=yes] {
   block ^entry:
     %before = load typed i64 %input

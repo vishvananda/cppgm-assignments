@@ -1,3 +1,5 @@
+# An i128 assembled from two 64-bit words, or split into them, stays in registers: no frame slot
+# and no memory operand. An i128 passed on the stack is still read from memory.
 function @pair(%low : i64, %high : i64) -> i128 {
   block ^entry:
     %a = convert zext i128 i64 %low

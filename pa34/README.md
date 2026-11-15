@@ -9,8 +9,8 @@ its translation to machine instructions. Reuse this backend in both
 
 Complete PA24 and PA33 first. Continue working in `dev/lowir2native.cpp` and
 your shared backend under `dev/src/`. The assignment wrapper points there.
-The supplied `mir_model.h` and register definitions are the MIR vocabulary
-provide shared spellings; the MIR's containers are yours.
+The supplied `mir_model.h` and register definitions are the MIR vocabulary:
+they provide the shared spellings; the MIR's containers are yours.
 [Design notes](design-notes.md) suggest a starting approach.
 
 ### Required behavior
@@ -27,8 +27,19 @@ lowir2native -O1 --dump-machine-ir <mirfile> -o <program> <lowirfile>...
 `--target <target>` retains its PA24 meaning. Reuse the PA8 LowIR language,
 including entry-role and other explicit metadata.
 
-- **O1:** meet the bounds for local cleanup, such as redundant copies,
-  argument setup, address calculations and unnecessary jumps.
+- **O1:** meet the bounds for local cleanup (redundant copies, argument
+  setup, address calculations, unnecessary jumps) and for instruction
+  selection. The O1 fixtures leave no instruction for these, so they are
+  required: a load with one reader folded into that reader (`test`, `cmp`,
+  `imul` or an ALU instruction with a memory operand); a load, one operation
+  and a store of the same location as one memory-destination instruction,
+  written `add.i8 [rdi], 1` (one instruction, one memory operand); a mask
+  that keeps one byte, word or doubleword of a load as a narrower load or
+  test; a returned value computed in the result register, a sum by an
+  address calculation; a zero or sign test that reuses the flags of the
+  arithmetic before it; adjacent zero stores combined; an `i128` that is
+  only assembled from or split into 64-bit words kept in two registers;
+  identical switch arms emitted once.
 - **O2:** also meet the bounds for values live across blocks and calls,
   loop register use and frame size, in functions with and without
   exception regions.
@@ -54,6 +65,19 @@ object may place it in `.text.unlikely`, as GCC and Clang do.
 An `unreachable` continuation can justify removing switch arms or range checks
 that serve only impossible inputs. Preserve defined defaults and their effects,
 including a non-returning call before an unreachable terminator.
+
+When combining scaled arithmetic with an address calculation, preserve the
+operation width, wrapped bits, live intermediate values and any observed flags.
+Include both the base and index when considering reuse at a scalar load;
+values still needed after that load must remain available.
+
+Ordinary integer memory updates can use different signed views of the same
+width. Preserve the stored low bits, separately used old values, Boolean
+normalization and every volatile or intervening memory observation.
+
+An extension can be redundant when the next calculation reads only the narrow
+bits and writes the full result. Preserve extensions needed by wider readers,
+address operands or operations that can leave the destination unchanged.
 
 The MIR dump uses PA24's text format and describes the same instructions and
 ABI/frame facts that produce the executable. When both outputs are requested,
@@ -89,14 +113,24 @@ order or block layout. A missing expectation means execution alone is checked.
 The predicates count mnemonics as the PA24 dump spells them (`load.*` and
 `store.*` for memory accesses, `eh_push` and `eh_pop` for regions, an
 implicit prologue; see PA24's machine-IR text).
+Bounds count MIR lines. Three lines stand for more than one machine
+instruction and count as one: `jump_table` (the table load and the indirect
+jump), `zero_bytes` and `copy_bytes` (their moves or string operation), and
+`ret` of a register other than the result register (a copy, then the
+return). A sidecar that needs an integer or pointer result already in `rax`
+says `none(/^ret\s+(?!rax\b)\S/)`. `mem` counts every bracketed operand: the
+address of a `lea`, a call's `[args=...]` facts and a `jump_table` list as
+well as memory accesses.
 The `.ref.mir` and `.ref.cmir` files are examples, not optimized-output oracles.
 
 These bounds are a deterministic, lightweight code-quality bar; fewer static
 instructions do not always mean faster code. `make test-kernels` adds a
-dynamic bar: the four kernels in `../pa36/kernels/`, compiled by `cppgm++`
-at their levels and by GCC and linked against one GCC-built driver, each
-execute at most 1.50 times GCC's instructions, counted with Cachegrind
-(which this check requires). They exercise an accessor chain around a call
+dynamic bar: the four kernels built from `../pa36/kernels/`
+(`accessor-distinct` and `accessor-alias` at `-O2`, `lookup` and
+`exceptions` at `-O3`), compiled by `cppgm++` and by the host GCC at the
+kernel's level (`-std=c++11 -O<level> -g0`) and linked against one GCC-built
+driver, each execute at most 1.50 times GCC's instructions, counted with
+Cachegrind (which this check requires). They exercise an accessor chain around a call
 in a loop, a hash lookup, and loop state carried across calls and a `try`
 region, so the optimizer's inlining and the allocator's register use,
 inside exception regions included, are measured here rather than deferred.
@@ -109,8 +143,11 @@ narrow arithmetic, state crossing a cold call, conditionally updated
 floating state and adjacent updates with an invariant factor. They pass through
 the complete optimized compiler and use the same host-built driver and scalar
 oracle. Their `.quality` files publish the native instruction-ratio limits.
+A scalar solution meets each limit; no kernel needs vector instructions.
 The driver checks unspecified upper bits on a narrow incoming argument too.
-These checks require Python 3, GCC and Cachegrind on Linux x86-64.
+These checks require Python 3, GCC and Cachegrind on Linux x86-64. On another
+host both commands record a skip and exit successfully, and the dynamic bar
+is not checked.
 
 `make test-improvements` runs optional vector, memory traversal, floating
 reduction and scheduling experiments, checking results and reporting work
@@ -185,13 +222,6 @@ tradeoff, and measure scalar and vector spill costs separately.
 
 When combining scaled arithmetic with an address calculation, preserve the
 operation width, wrapped bits, live intermediate values and any observed flags.
-Include both the base and index when considering reuse at a scalar load;
-values still needed after that load must remain available.
-
-Ordinary integer memory updates can use different signed views of the same
-width. Preserve the stored low bits, separately used old values, Boolean
-normalization and every volatile or intervening memory observation.
-
 A scalar field may already be contained in an incoming object register.
 Compare extracting its bytes with materializing and reloading the object.
 Prove byte coverage, signedness and carrier lifetime; preserve observable
@@ -209,10 +239,6 @@ requires a particular instruction, register allocation or block order.
 Include data-dependent loops with several back edges in layout experiments.
 Check that padding and branch shortening preserve behavior after linking;
 compare runtime across changes to preceding code as well as instruction counts.
-
-An extension can be redundant when the next calculation reads only the narrow
-bits and writes the full result. Preserve extensions needed by wider readers,
-address operands or operations that can leave the destination unchanged.
 
 ### Scope
 

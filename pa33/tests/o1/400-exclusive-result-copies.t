@@ -1,3 +1,6 @@
+# Stores through an alias=exclusive_result pointer cannot change what %input reads, for the first
+# object_bytes bytes. There, adjacent field copies may become one copyobj. @ordinary has no such
+# promise. In @bounded the promise covers 16 of the 32 bytes copied.
 function @copy(%out : ptr [pass=indirect_result, alias=exclusive_result, object_bytes=32], %input : ptr) -> void [no_inline=yes] {
   block ^entry:
     %v0 = load typed i64 %input

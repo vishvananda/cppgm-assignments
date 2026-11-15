@@ -1,3 +1,5 @@
+// A store into the returned object cannot change *p, so a repeatable call on p is made once;
+// a call on the result's own field is repeated.
 struct Result { long a, b, c, d; };
 struct VolatileResult { volatile long a; long b, c, d; };
 extern "C" {

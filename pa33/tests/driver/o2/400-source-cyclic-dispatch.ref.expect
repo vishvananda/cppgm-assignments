@@ -1,4 +1,5 @@
-# Remove repeated forwarding layers; any equivalent dispatch is acceptable.
+# The walk does its loop work without the forwarding layers: it calls neither
+# relay nor route.
 none(call @relay) in @walk
 none(call @route) in @walk
 instructions <= 120 in @walk

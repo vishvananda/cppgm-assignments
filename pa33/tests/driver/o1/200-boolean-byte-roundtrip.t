@@ -1,3 +1,5 @@
+// A comparison result is 0 or 1: narrowing it to a byte and widening it again changes nothing.
+// An arbitrary integer loses bits when narrowed, and that work stays.
 extern "C" {
 __attribute__((noinline)) unsigned long integer_truth(int x) {
   return static_cast<unsigned char>(x != 0);

@@ -62,6 +62,10 @@ changes.
 A memory operand can save an instruction while making a branch slower.
 Compare load dependencies and compare/branch fusion on the target processors;
 preserve the access width and flags when separating a load from its predicate.
+Where the load has no other reader, the O1 fixtures `100-masked-memory-test`
+and `100-mask-test-windows` and the O2 fixture `100-select-mask-aliases`
+require the memory operand: their bounds leave no instruction for a separate
+load.
 
 Indirect dispatch can repeatedly enter blocks without a direct back edge.
 Consider their instruction alignment too, while bounding padding and accounting
@@ -114,6 +118,11 @@ may establish its own representation. Check the encoded width and all operand
 uses: addresses consume full-width values, and a shift with a possible zero
 count may leave the destination unchanged.
 
+An `i128` whose only operations are a widening of a 64-bit word, a shift by
+64, an `or` and a truncation is two 64-bit values. `100-wide-abi-words`
+allows no memory operand and no frame slot for it, although the vocabulary
+header files wide integers under memory.
+
 For scalar/vector transfers, track which bits each consumer reads. A shuffle
 that uses only supplied lanes may not need cleared upper lanes; a wider unpack
 or a second consumer can observe them. Test with nonzero prior register bits,
@@ -165,8 +174,9 @@ Adjacent ordinary field stores can offer another size improvement: combine
 their written bytes when fewer memory operations suffice. Preserve holes,
 nonzero fields and the separate effects of volatile or atomic accesses.
 Check both code size and runtime work; a shorter encoding alone is not a
-performance result. The adjacent-zero-fields fixture bounds memory work
-without prescribing a particular clearing instruction.
+performance result. The adjacent-zero-fields fixture allows five memory
+operands for eighty bytes: 16-byte stores, a `zero_bytes` instruction or
+wider stores all fit.
 
 Lay out the final frame after allocation. Preserve object alignment, reuse
 storage only when lifetimes do not overlap, and derive unwind information from
@@ -216,8 +226,10 @@ branches can have different outcome histories even when their instructions
 match; merging them can worsen prediction while saving bytes. In particular,
 sharing can undo a loop test deliberately copied into its back edge. Preserve
 that separation or choose a pass order that retains the intended loop shape.
-Compare predictable and mixed incoming paths across several layouts; no
-particular sharing or duplication strategy is required.
+Compare predictable and mixed incoming paths across several layouts. Two
+fixtures (`100-shared-machine-tails`, `400-shared-call-tails`) require that
+switch arms with identical instructions and successors are emitted once.
+Sharing of partial tails and any duplication strategy remain your choice.
 
 ## Validation and further experiments
 

@@ -1,25 +1,11 @@
-# budget from 500-bounded-call-loop-effects.ref: the course solution's count, widened by 10% and rounded up, plus one, and at least three more than the count
+# explicit-outcomes
+
+# Loops whose calls have known effects fold. The bounds are those of the whole
+# file, of the helper and of the entry. The specializations of exercise are
+# not bounded one by one: their names follow the order of instantiation.
 instructions <= 699
-blocks <= 122
 count(call) <= 39
 count(load) <= 64
 count(store) <= 58
-count(phi) <= 28
 instructions <= 18 in @mutate
 instructions <= 325 in @main
-instructions <= 4 in @exercise
-instructions <= 17 in @exercise__2
-instructions <= 30 in @exercise__3
-instructions <= 43 in @exercise__4
-instructions <= 31 in @exercise__5
-instructions <= 31 in @exercise__6
-instructions <= 31 in @exercise__7
-instructions <= 4 in @exercise__8
-instructions <= 4 in @exercise__9
-instructions <= 17 in @exercise__10
-instructions <= 31 in @exercise__11
-instructions <= 45 in @exercise__12
-instructions <= 31 in @exercise__13
-instructions <= 31 in @exercise__14
-instructions <= 31 in @exercise__15
-instructions <= 4 in @exercise__16

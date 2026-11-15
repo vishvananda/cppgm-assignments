@@ -1,3 +1,5 @@
+// The returned object (alias=exclusive_result) cannot overlap the input: the four field copies
+// may become one object copy or two wide ones.
 struct Result { unsigned long a, b, c, d; };
 extern "C" __attribute__((noinline)) Result pack(const Result& input) {
   Result out;

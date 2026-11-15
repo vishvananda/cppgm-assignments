@@ -1,3 +1,5 @@
+# The repeated stores are removable. Simplify a callee before measuring it for inlining: each of
+# these is one store after simplification.
 global @sink : i64 = 0
 
 function @first(%value : i64) -> void [binding=internal, unwind=no] {

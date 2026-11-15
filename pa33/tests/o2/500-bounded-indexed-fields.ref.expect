@@ -1,9 +1,10 @@
 # The indexed bytes remain memory; disjoint scalar state should not require
 # a memory load and store on every loop iteration. No SSA shape is required.
 # One pass of the loop reads one indexed byte and writes one; the function's
-# bounds leave room for a loop that also runs its passes in groups of four.
+# bounds leave room for a loop that also runs its passes in groups of up to
+# eight.
 count(load) <= 1 in @disjoint_state ^body
 count(store) <= 1 in @disjoint_state ^body
-count(load) <= 5 in @disjoint_state
-count(store) <= 6 in @disjoint_state
-instructions <= 60 in @disjoint_state
+count(load) <= 9 in @disjoint_state
+count(store) <= 10 in @disjoint_state
+instructions <= 96 in @disjoint_state

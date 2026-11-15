@@ -1,5 +1,8 @@
+# A store into the returned object cannot change *p: one call of peek serves.
 count(call @peek) <= 1 in @stored
 count(call @peek) <= 1 in @copied
 count(call @peek) <= 1 in @zeroed
+# A call on the result's own field is repeated after a store to that field.
 count(call @peek) >= 2 in @escaped
-count(call @peek) >= 2 in @observed
+# Both volatile stores stay, whatever the calls beside them become.
+count(store volatile) >= 2 in @observed

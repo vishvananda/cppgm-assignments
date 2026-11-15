@@ -1,5 +1,4 @@
-# outcomes from 500-retain-fast-wrapper.ref: what the course solution removed stays removed (a call inlined, memory promoted, a definition pruned)
-none(call @shared_work)
+# explicit-outcomes
 
 # The short return path stays a branch and a return. The other path may take
 # the hinted shared work inline or keep its call: the wrapper's bound leaves
@@ -8,5 +7,7 @@ instructions <= 1 in @wrapper ^quick
 instructions <= 95 in @wrapper
 blocks <= 6 in @wrapper
 
-# Repeated pure work in a loop does not need a calling boundary.
-count(call) <= 0 in @hot_loop
+# Repeated pure work in a loop does not need a calling boundary on every pass:
+# inline it, or call it once before the loop.
+none(call @shared_work) in @hot_loop ^loop
+count(call @shared_work) <= 1 in @hot_loop
