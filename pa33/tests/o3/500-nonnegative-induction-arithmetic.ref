@@ -1,3 +1,20 @@
+global @__vector_literal_00000000000000010000000000000000 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 0
+  i64 1
+}
+global @__vector_literal_00000000000000070000000000000007 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 7
+  i64 7
+}
+global @__vector_literal_00000000000000020000000000000002 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 2
+  i64 2
+}
+global @__vector_literal_00000000000000040000000000000004 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 4
+  i64 4
+}
+
 function @nonnegative(%p : ptr, %bound : i64) -> i64 [no_inline=yes] {
   block ^entry:
     %enter = cmp gt i64 %bound, 0
@@ -11,15 +28,15 @@ function @nonnegative(%p : ptr, %bound : i64) -> i64 [no_inline=yes] {
   block ^loop_preheader_2:
     %t4 = binary add i64 %bound, -4
     %t5 = vector pzero
-    %t6 = vector fromi64 1
-    %t7 = vector punpcklqdq %t5, %t6
+    %t6 = addr @__vector_literal_00000000000000010000000000000000
+    %t7 = load v128 %t6
     %t8 = vector paddq %t5, %t7
-    %t9 = vector fromi64 7
-    %t10 = vector pshufd %t9, 68
-    %t11 = vector fromi64 2
-    %t12 = vector pshufd %t11, 68
-    %t13 = vector fromi64 4
-    %t14 = vector pshufd %t13, 68
+    %t9 = addr @__vector_literal_00000000000000070000000000000007
+    %t10 = load v128 %t9
+    %t11 = addr @__vector_literal_00000000000000020000000000000002
+    %t12 = load v128 %t11
+    %t13 = addr @__vector_literal_00000000000000040000000000000004
+    %t14 = load v128 %t13
     jump ^wide_loop_3
 
   block ^wide_loop_3:

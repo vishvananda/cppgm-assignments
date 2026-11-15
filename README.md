@@ -53,7 +53,7 @@ collects the cited decisions and related papers, including later corrections.
 This is an independently maintained adaptation of the original C++ Grandmaster
 Certification course. The cppgm authors substantially edited,
 combined, renumbered and extended the inherited handouts, tests and starter
-code. Current PA numbers and reference tools belong to this 36-assignment
+code. Current PA numbers and reference tools belong to this 37-assignment
 version of the course.
 
 Copyright 2026 The cppgm Authors. Project-maintained code and materials

@@ -8,6 +8,30 @@ global @__constexpr_template__1 [storage=readonly, binding=internal] = {
   u32 2147483648
   u32 4294967295
 }
+global @__vector_literal_0000001d00000017000000110000000b : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 73014444043
+  i64 124554051607
+}
+global @__vector_literal_00000003000000020000000100000000 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 4294967296
+  i64 12884901890
+}
+global @__vector_literal_00000007000000070000000700000007 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 30064771079
+  i64 30064771079
+}
+global @__vector_literal_00000020000000200000002000000020 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 137438953504
+  i64 137438953504
+}
+global @__vector_literal_0000001f0000001f0000001f0000001f : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 133143986207
+  i64 133143986207
+}
+global @__vector_literal_00000004000000040000000400000004 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 17179869188
+  i64 17179869188
+}
 
 function @planned_transform(%seed : u32) -> u32 [linkage=c, binding=strong, no_inline=yes] {
   block ^entry:
@@ -15,402 +39,396 @@ function @planned_transform(%seed : u32) -> u32 [linkage=c, binding=strong, no_i
     %t2 = copy i32 %seed
     %t3 = vector fromi32 %t2
     %t4 = vector pshufd %t3, 0
-    %t5 = vector fromi32 11
-    %t6 = vector fromi32 17
-    %t7 = vector fromi32 23
-    %t8 = vector fromi32 29
-    %t9 = vector punpckldq %t5, %t6
-    %t10 = vector punpckldq %t7, %t8
-    %t11 = vector punpcklqdq %t9, %t10
+    %t5 = addr @__vector_literal_0000001d00000017000000110000000b
+    %t6 = load v128 %t5
     jump ^unrolled_1
 
   block ^unrolled_1:
-    %t12 = phi u32 [^unrolled_1: %t26, ^entry: 0]
-    %t13 = phi i64 [^unrolled_1: %t27, ^entry: 0]
-    %t14 = index inbounds u32 [projection=array_element] %t1, %t13
-    %t15 = load v128 %t14
-    %t16 = vector paddd %t4, %t15
-    %t17 = vector psrldi %t15, 5
-    %t18 = vector paddd %t17, %t11
-    %t19 = vector pxor %t16, %t18
-    %t20 = vector pshufd %t19, 78
-    %t21 = vector paddd %t19, %t20
-    %t22 = vector pshufd %t21, 177
-    %t23 = vector paddd %t21, %t22
-    %t24 = vector toi32 %t23
-    %t25 = copy u32 %t24
-    %t26 = binary add u32 %t12, %t25
-    %t27 = binary add nowrap i64 %t13, 4
-    %t28 = convert trunc exact u32 i64 %t27
-    %t29 = cmp ult u32 %t28, 64
-    branch %t29, ^unrolled_1, ^for_end_2
+    %t7 = phi u32 [^unrolled_1: %t21, ^entry: 0]
+    %t8 = phi i64 [^unrolled_1: %t22, ^entry: 0]
+    %t9 = index inbounds u32 [projection=array_element] %t1, %t8
+    %t10 = load v128 %t9
+    %t11 = vector paddd %t4, %t10
+    %t12 = vector psrldi %t10, 5
+    %t13 = vector paddd %t12, %t6
+    %t14 = vector pxor %t11, %t13
+    %t15 = vector pshufd %t14, 78
+    %t16 = vector paddd %t14, %t15
+    %t17 = vector pshufd %t16, 177
+    %t18 = vector paddd %t16, %t17
+    %t19 = vector toi32 %t18
+    %t20 = copy u32 %t19
+    %t21 = binary add u32 %t7, %t20
+    %t22 = binary add nowrap i64 %t8, 4
+    %t23 = convert trunc exact u32 i64 %t22
+    %t24 = cmp ult u32 %t23, 64
+    branch %t24, ^unrolled_1, ^for_end_2
 
   block ^for_end_2:
-    return u32 %t26
+    return u32 %t21
 }
 function @planned_matrix(%seed : u32) -> u32 [linkage=c, binding=strong, no_inline=yes] {
   block ^entry:
     %t1 = addr @planning_data
-    %t2 = vector fromi64 4294967296
-    %t3 = vector fromi64 12884901890
-    %t4 = vector punpcklqdq %t2, %t3
-    %t5 = vector pzero
-    %t6 = vector paddd %t5, %t4
-    %t7 = copy i32 %seed
-    %t8 = vector fromi32 %t7
-    %t9 = vector pshufd %t8, 0
-    %t10 = vector fromi32 7
-    %t11 = vector pshufd %t10, 0
-    %t12 = vector fromi32 32
-    %t13 = vector pshufd %t12, 0
-    %t14 = vector fromi32 31
-    %t15 = vector pshufd %t14, 0
-    %t16 = vector fromi32 4
-    %t17 = vector pshufd %t16, 0
+    %t2 = addr @__vector_literal_00000003000000020000000100000000
+    %t3 = load v128 %t2
+    %t4 = vector pzero
+    %t5 = vector paddd %t4, %t3
+    %t6 = copy i32 %seed
+    %t7 = vector fromi32 %t6
+    %t8 = vector pshufd %t7, 0
+    %t9 = addr @__vector_literal_00000007000000070000000700000007
+    %t10 = load v128 %t9
+    %t11 = addr @__vector_literal_00000020000000200000002000000020
+    %t12 = load v128 %t11
+    %t13 = addr @__vector_literal_0000001f0000001f0000001f0000001f
+    %t14 = load v128 %t13
+    %t15 = addr @__vector_literal_00000004000000040000000400000004
+    %t16 = load v128 %t15
     jump ^loop_preheader_1
 
   block ^loop_preheader_1:
-    %t18 = phi i32 [^loop_exit_3: %t345, ^entry: 0]
-    %t19 = phi u32 [^loop_exit_3: %t346, ^entry: 0]
-    %t20 = binary mul u32 %t19, 16
-    %t21 = index u32 [projection=array_element] %t1, %t20
-    %t22 = binary add u32 %t20, 1
-    %t23 = index u32 [projection=array_element] %t1, %t22
-    %t24 = binary add u32 %t20, 2
-    %t25 = index u32 [projection=array_element] %t1, %t24
-    %t26 = binary add u32 %t20, 3
-    %t27 = index u32 [projection=array_element] %t1, %t26
-    %t28 = binary add u32 %t20, 4
-    %t29 = index u32 [projection=array_element] %t1, %t28
-    %t30 = binary add u32 %t20, 5
-    %t31 = index u32 [projection=array_element] %t1, %t30
-    %t32 = binary add u32 %t20, 6
-    %t33 = index u32 [projection=array_element] %t1, %t32
-    %t34 = binary add u32 %t20, 7
-    %t35 = index u32 [projection=array_element] %t1, %t34
-    %t36 = binary add u32 %t20, 8
-    %t37 = index u32 [projection=array_element] %t1, %t36
-    %t38 = binary add u32 %t20, 9
-    %t39 = index u32 [projection=array_element] %t1, %t38
-    %t40 = binary add u32 %t20, 10
-    %t41 = index u32 [projection=array_element] %t1, %t40
-    %t42 = binary add u32 %t20, 11
-    %t43 = index u32 [projection=array_element] %t1, %t42
-    %t44 = binary add u32 %t20, 12
-    %t45 = index u32 [projection=array_element] %t1, %t44
-    %t46 = binary add u32 %t20, 13
-    %t47 = index u32 [projection=array_element] %t1, %t46
-    %t48 = binary add u32 %t20, 14
-    %t49 = index u32 [projection=array_element] %t1, %t48
-    %t50 = binary add u32 %t20, 15
-    %t51 = index u32 [projection=array_element] %t1, %t50
-    %t52 = load typed i32 %t21
-    %t53 = load typed i32 %t23
-    %t54 = load typed i32 %t25
-    %t55 = load typed i32 %t27
-    %t56 = load typed i32 %t29
-    %t57 = load typed i32 %t31
-    %t58 = load typed i32 %t33
-    %t59 = load typed i32 %t35
-    %t60 = load typed i32 %t37
-    %t61 = load typed i32 %t39
-    %t62 = load typed i32 %t41
-    %t63 = load typed i32 %t43
-    %t64 = load typed i32 %t45
-    %t65 = load typed i32 %t47
-    %t66 = load typed i32 %t49
-    %t67 = load typed i32 %t51
-    %t68 = vector fromi32 %t18
-    %t69 = vector fromi32 %t52
-    %t70 = vector pshufd %t69, 0
-    %t71 = vector fromi32 %t53
-    %t72 = vector pshufd %t71, 0
-    %t73 = vector fromi32 %t54
-    %t74 = vector pshufd %t73, 0
-    %t75 = vector fromi32 %t55
-    %t76 = vector pshufd %t75, 0
-    %t77 = vector fromi32 %t56
-    %t78 = vector pshufd %t77, 0
-    %t79 = vector fromi32 %t57
-    %t80 = vector pshufd %t79, 0
-    %t81 = vector fromi32 %t58
-    %t82 = vector pshufd %t81, 0
-    %t83 = vector fromi32 %t59
-    %t84 = vector pshufd %t83, 0
-    %t85 = vector fromi32 %t60
-    %t86 = vector pshufd %t85, 0
-    %t87 = vector fromi32 %t61
-    %t88 = vector pshufd %t87, 0
-    %t89 = vector fromi32 %t62
-    %t90 = vector pshufd %t89, 0
-    %t91 = vector fromi32 %t63
-    %t92 = vector pshufd %t91, 0
-    %t93 = vector fromi32 %t64
-    %t94 = vector pshufd %t93, 0
-    %t95 = vector fromi32 %t65
-    %t96 = vector pshufd %t95, 0
-    %t97 = vector fromi32 %t66
-    %t98 = vector pshufd %t97, 0
-    %t99 = vector fromi32 %t67
-    %t100 = vector pshufd %t99, 0
-    %t101 = copy i32 %t19
-    %t102 = vector fromi32 %t101
-    %t103 = vector pshufd %t102, 0
-    %t104 = vector psrlqi %t70, 32
-    %t105 = vector psrlqi %t72, 32
-    %t106 = vector psrlqi %t74, 32
-    %t107 = vector psrlqi %t76, 32
-    %t108 = vector psrlqi %t78, 32
-    %t109 = vector psrlqi %t80, 32
-    %t110 = vector psrlqi %t82, 32
-    %t111 = vector psrlqi %t84, 32
-    %t112 = vector psrlqi %t86, 32
-    %t113 = vector psrlqi %t88, 32
-    %t114 = vector psrlqi %t90, 32
-    %t115 = vector psrlqi %t92, 32
-    %t116 = vector psrlqi %t94, 32
-    %t117 = vector psrlqi %t96, 32
-    %t118 = vector psrlqi %t98, 32
-    %t119 = vector psrlqi %t100, 32
+    %t17 = phi i32 [^loop_exit_3: %t344, ^entry: 0]
+    %t18 = phi u32 [^loop_exit_3: %t345, ^entry: 0]
+    %t19 = binary mul u32 %t18, 16
+    %t20 = index u32 [projection=array_element] %t1, %t19
+    %t21 = binary add u32 %t19, 1
+    %t22 = index u32 [projection=array_element] %t1, %t21
+    %t23 = binary add u32 %t19, 2
+    %t24 = index u32 [projection=array_element] %t1, %t23
+    %t25 = binary add u32 %t19, 3
+    %t26 = index u32 [projection=array_element] %t1, %t25
+    %t27 = binary add u32 %t19, 4
+    %t28 = index u32 [projection=array_element] %t1, %t27
+    %t29 = binary add u32 %t19, 5
+    %t30 = index u32 [projection=array_element] %t1, %t29
+    %t31 = binary add u32 %t19, 6
+    %t32 = index u32 [projection=array_element] %t1, %t31
+    %t33 = binary add u32 %t19, 7
+    %t34 = index u32 [projection=array_element] %t1, %t33
+    %t35 = binary add u32 %t19, 8
+    %t36 = index u32 [projection=array_element] %t1, %t35
+    %t37 = binary add u32 %t19, 9
+    %t38 = index u32 [projection=array_element] %t1, %t37
+    %t39 = binary add u32 %t19, 10
+    %t40 = index u32 [projection=array_element] %t1, %t39
+    %t41 = binary add u32 %t19, 11
+    %t42 = index u32 [projection=array_element] %t1, %t41
+    %t43 = binary add u32 %t19, 12
+    %t44 = index u32 [projection=array_element] %t1, %t43
+    %t45 = binary add u32 %t19, 13
+    %t46 = index u32 [projection=array_element] %t1, %t45
+    %t47 = binary add u32 %t19, 14
+    %t48 = index u32 [projection=array_element] %t1, %t47
+    %t49 = binary add u32 %t19, 15
+    %t50 = index u32 [projection=array_element] %t1, %t49
+    %t51 = load typed i32 %t20
+    %t52 = load typed i32 %t22
+    %t53 = load typed i32 %t24
+    %t54 = load typed i32 %t26
+    %t55 = load typed i32 %t28
+    %t56 = load typed i32 %t30
+    %t57 = load typed i32 %t32
+    %t58 = load typed i32 %t34
+    %t59 = load typed i32 %t36
+    %t60 = load typed i32 %t38
+    %t61 = load typed i32 %t40
+    %t62 = load typed i32 %t42
+    %t63 = load typed i32 %t44
+    %t64 = load typed i32 %t46
+    %t65 = load typed i32 %t48
+    %t66 = load typed i32 %t50
+    %t67 = vector fromi32 %t17
+    %t68 = vector fromi32 %t51
+    %t69 = vector pshufd %t68, 0
+    %t70 = vector fromi32 %t52
+    %t71 = vector pshufd %t70, 0
+    %t72 = vector fromi32 %t53
+    %t73 = vector pshufd %t72, 0
+    %t74 = vector fromi32 %t54
+    %t75 = vector pshufd %t74, 0
+    %t76 = vector fromi32 %t55
+    %t77 = vector pshufd %t76, 0
+    %t78 = vector fromi32 %t56
+    %t79 = vector pshufd %t78, 0
+    %t80 = vector fromi32 %t57
+    %t81 = vector pshufd %t80, 0
+    %t82 = vector fromi32 %t58
+    %t83 = vector pshufd %t82, 0
+    %t84 = vector fromi32 %t59
+    %t85 = vector pshufd %t84, 0
+    %t86 = vector fromi32 %t60
+    %t87 = vector pshufd %t86, 0
+    %t88 = vector fromi32 %t61
+    %t89 = vector pshufd %t88, 0
+    %t90 = vector fromi32 %t62
+    %t91 = vector pshufd %t90, 0
+    %t92 = vector fromi32 %t63
+    %t93 = vector pshufd %t92, 0
+    %t94 = vector fromi32 %t64
+    %t95 = vector pshufd %t94, 0
+    %t96 = vector fromi32 %t65
+    %t97 = vector pshufd %t96, 0
+    %t98 = vector fromi32 %t66
+    %t99 = vector pshufd %t98, 0
+    %t100 = copy i32 %t18
+    %t101 = vector fromi32 %t100
+    %t102 = vector pshufd %t101, 0
+    %t103 = vector psrlqi %t69, 32
+    %t104 = vector psrlqi %t71, 32
+    %t105 = vector psrlqi %t73, 32
+    %t106 = vector psrlqi %t75, 32
+    %t107 = vector psrlqi %t77, 32
+    %t108 = vector psrlqi %t79, 32
+    %t109 = vector psrlqi %t81, 32
+    %t110 = vector psrlqi %t83, 32
+    %t111 = vector psrlqi %t85, 32
+    %t112 = vector psrlqi %t87, 32
+    %t113 = vector psrlqi %t89, 32
+    %t114 = vector psrlqi %t91, 32
+    %t115 = vector psrlqi %t93, 32
+    %t116 = vector psrlqi %t95, 32
+    %t117 = vector psrlqi %t97, 32
+    %t118 = vector psrlqi %t99, 32
     jump ^wide_loop_2
 
   block ^wide_loop_2:
-    %t120 = phi v128 [^loop_preheader_1: %t68, ^wide_loop_2: %t336]
-    %t121 = phi v128 [^loop_preheader_1: %t6, ^wide_loop_2: %t339]
-    %t122 = phi i64 [^loop_preheader_1: 0, ^wide_loop_2: %t337]
-    %t123 = index inbounds u32 [projection=array_element] %t1, %t122
-    %t124 = index inbounds u32 [projection=array_element] %t123, 256
-    %t125 = load v128 %t124
-    %t126 = vector pmuludq %t125, %t70
-    %t127 = vector psrlqi %t125, 32
-    %t128 = vector pmuludq %t127, %t104
-    %t129 = vector pshufd %t126, 8
-    %t130 = vector pshufd %t128, 8
-    %t131 = vector punpckldq %t129, %t130
-    %t132 = vector paddd %t9, %t131
-    %t133 = index inbounds u32 [projection=array_element] %t123, 272
-    %t134 = load v128 %t133
-    %t135 = vector pmuludq %t134, %t72
-    %t136 = vector psrlqi %t134, 32
-    %t137 = vector pmuludq %t136, %t105
-    %t138 = vector pshufd %t135, 8
-    %t139 = vector pshufd %t137, 8
-    %t140 = vector punpckldq %t138, %t139
-    %t141 = vector paddd %t132, %t140
-    %t142 = index inbounds u32 [projection=array_element] %t123, 288
-    %t143 = load v128 %t142
-    %t144 = vector pmuludq %t143, %t74
-    %t145 = vector psrlqi %t143, 32
-    %t146 = vector pmuludq %t145, %t106
-    %t147 = vector pshufd %t144, 8
-    %t148 = vector pshufd %t146, 8
-    %t149 = vector punpckldq %t147, %t148
-    %t150 = vector paddd %t141, %t149
-    %t151 = index inbounds u32 [projection=array_element] %t123, 304
-    %t152 = load v128 %t151
-    %t153 = vector pmuludq %t152, %t76
-    %t154 = vector psrlqi %t152, 32
-    %t155 = vector pmuludq %t154, %t107
-    %t156 = vector pshufd %t153, 8
-    %t157 = vector pshufd %t155, 8
-    %t158 = vector punpckldq %t156, %t157
-    %t159 = vector paddd %t150, %t158
-    %t160 = index inbounds u32 [projection=array_element] %t123, 320
-    %t161 = load v128 %t160
-    %t162 = vector pmuludq %t161, %t78
-    %t163 = vector psrlqi %t161, 32
-    %t164 = vector pmuludq %t163, %t108
-    %t165 = vector pshufd %t162, 8
-    %t166 = vector pshufd %t164, 8
-    %t167 = vector punpckldq %t165, %t166
-    %t168 = vector paddd %t159, %t167
-    %t169 = index inbounds u32 [projection=array_element] %t123, 336
-    %t170 = load v128 %t169
-    %t171 = vector pmuludq %t170, %t80
-    %t172 = vector psrlqi %t170, 32
-    %t173 = vector pmuludq %t172, %t109
-    %t174 = vector pshufd %t171, 8
-    %t175 = vector pshufd %t173, 8
-    %t176 = vector punpckldq %t174, %t175
-    %t177 = vector paddd %t168, %t176
-    %t178 = index inbounds u32 [projection=array_element] %t123, 352
-    %t179 = load v128 %t178
-    %t180 = vector pmuludq %t179, %t82
-    %t181 = vector psrlqi %t179, 32
-    %t182 = vector pmuludq %t181, %t110
-    %t183 = vector pshufd %t180, 8
-    %t184 = vector pshufd %t182, 8
-    %t185 = vector punpckldq %t183, %t184
-    %t186 = vector paddd %t177, %t185
-    %t187 = index inbounds u32 [projection=array_element] %t123, 368
-    %t188 = load v128 %t187
-    %t189 = vector pmuludq %t188, %t84
-    %t190 = vector psrlqi %t188, 32
-    %t191 = vector pmuludq %t190, %t111
-    %t192 = vector pshufd %t189, 8
-    %t193 = vector pshufd %t191, 8
-    %t194 = vector punpckldq %t192, %t193
-    %t195 = vector paddd %t186, %t194
-    %t196 = index inbounds u32 [projection=array_element] %t123, 384
-    %t197 = load v128 %t196
-    %t198 = vector pmuludq %t197, %t86
-    %t199 = vector psrlqi %t197, 32
-    %t200 = vector pmuludq %t199, %t112
-    %t201 = vector pshufd %t198, 8
-    %t202 = vector pshufd %t200, 8
-    %t203 = vector punpckldq %t201, %t202
-    %t204 = vector paddd %t195, %t203
-    %t205 = index inbounds u32 [projection=array_element] %t123, 400
-    %t206 = load v128 %t205
-    %t207 = vector pmuludq %t206, %t88
-    %t208 = vector psrlqi %t206, 32
-    %t209 = vector pmuludq %t208, %t113
-    %t210 = vector pshufd %t207, 8
-    %t211 = vector pshufd %t209, 8
-    %t212 = vector punpckldq %t210, %t211
-    %t213 = vector paddd %t204, %t212
-    %t214 = index inbounds u32 [projection=array_element] %t123, 416
-    %t215 = load v128 %t214
-    %t216 = vector pmuludq %t215, %t90
-    %t217 = vector psrlqi %t215, 32
-    %t218 = vector pmuludq %t217, %t114
-    %t219 = vector pshufd %t216, 8
-    %t220 = vector pshufd %t218, 8
-    %t221 = vector punpckldq %t219, %t220
-    %t222 = vector paddd %t213, %t221
-    %t223 = index inbounds u32 [projection=array_element] %t123, 432
-    %t224 = load v128 %t223
-    %t225 = vector pmuludq %t224, %t92
-    %t226 = vector psrlqi %t224, 32
-    %t227 = vector pmuludq %t226, %t115
-    %t228 = vector pshufd %t225, 8
-    %t229 = vector pshufd %t227, 8
-    %t230 = vector punpckldq %t228, %t229
-    %t231 = vector paddd %t222, %t230
-    %t232 = index inbounds u32 [projection=array_element] %t123, 448
-    %t233 = load v128 %t232
-    %t234 = vector pmuludq %t233, %t94
-    %t235 = vector psrlqi %t233, 32
-    %t236 = vector pmuludq %t235, %t116
-    %t237 = vector pshufd %t234, 8
-    %t238 = vector pshufd %t236, 8
-    %t239 = vector punpckldq %t237, %t238
-    %t240 = vector paddd %t231, %t239
-    %t241 = index inbounds u32 [projection=array_element] %t123, 464
-    %t242 = load v128 %t241
-    %t243 = vector pmuludq %t242, %t96
-    %t244 = vector psrlqi %t242, 32
-    %t245 = vector pmuludq %t244, %t117
-    %t246 = vector pshufd %t243, 8
-    %t247 = vector pshufd %t245, 8
-    %t248 = vector punpckldq %t246, %t247
-    %t249 = vector paddd %t240, %t248
-    %t250 = index inbounds u32 [projection=array_element] %t123, 480
-    %t251 = load v128 %t250
-    %t252 = vector pmuludq %t251, %t98
-    %t253 = vector psrlqi %t251, 32
-    %t254 = vector pmuludq %t253, %t118
-    %t255 = vector pshufd %t252, 8
-    %t256 = vector pshufd %t254, 8
-    %t257 = vector punpckldq %t255, %t256
-    %t258 = vector paddd %t249, %t257
-    %t259 = index inbounds u32 [projection=array_element] %t123, 496
-    %t260 = load v128 %t259
-    %t261 = vector pmuludq %t260, %t100
-    %t262 = vector psrlqi %t260, 32
-    %t263 = vector pmuludq %t262, %t119
-    %t264 = vector pshufd %t261, 8
-    %t265 = vector pshufd %t263, 8
-    %t266 = vector punpckldq %t264, %t265
-    %t267 = vector paddd %t258, %t266
-    %t268 = vector paddd %t121, %t103
-    %t269 = vector pand %t268, %t11
-    %t270 = vector toi32 %t267
-    %t271 = copy u32 %t270
-    %t272 = vector toi32 %t269
-    %t273 = copy u32 %t272
-    %t274 = binary shl u32 %t271, %t273
-    %t275 = copy i32 %t274
-    %t276 = vector fromi32 %t275
-    %t277 = vector pshufd %t267, 85
-    %t278 = vector toi32 %t277
-    %t279 = copy u32 %t278
-    %t280 = vector pshufd %t269, 85
-    %t281 = vector toi32 %t280
-    %t282 = copy u32 %t281
-    %t283 = binary shl u32 %t279, %t282
-    %t284 = copy i32 %t283
-    %t285 = vector fromi32 %t284
-    %t286 = vector pshufd %t267, 170
-    %t287 = vector toi32 %t286
-    %t288 = copy u32 %t287
-    %t289 = vector pshufd %t269, 170
-    %t290 = vector toi32 %t289
-    %t291 = copy u32 %t290
-    %t292 = binary shl u32 %t288, %t291
-    %t293 = copy i32 %t292
-    %t294 = vector fromi32 %t293
-    %t295 = vector pshufd %t267, 255
-    %t296 = vector toi32 %t295
-    %t297 = copy u32 %t296
-    %t298 = vector pshufd %t269, 255
-    %t299 = vector toi32 %t298
-    %t300 = copy u32 %t299
-    %t301 = binary shl u32 %t297, %t300
-    %t302 = copy i32 %t301
-    %t303 = vector fromi32 %t302
-    %t304 = vector punpckldq %t276, %t285
-    %t305 = vector punpckldq %t294, %t303
-    %t306 = vector punpcklqdq %t304, %t305
-    %t307 = vector psubd %t13, %t269
-    %t308 = vector pand %t307, %t15
-    %t309 = vector toi32 %t308
-    %t310 = copy u32 %t309
-    %t311 = binary ushr u32 %t271, %t310
-    %t312 = copy i32 %t311
-    %t313 = vector fromi32 %t312
-    %t314 = vector pshufd %t308, 85
-    %t315 = vector toi32 %t314
-    %t316 = copy u32 %t315
-    %t317 = binary ushr u32 %t279, %t316
-    %t318 = copy i32 %t317
-    %t319 = vector fromi32 %t318
-    %t320 = vector pshufd %t308, 170
-    %t321 = vector toi32 %t320
-    %t322 = copy u32 %t321
-    %t323 = binary ushr u32 %t288, %t322
-    %t324 = copy i32 %t323
-    %t325 = vector fromi32 %t324
-    %t326 = vector pshufd %t308, 255
-    %t327 = vector toi32 %t326
-    %t328 = copy u32 %t327
-    %t329 = binary ushr u32 %t297, %t328
-    %t330 = copy i32 %t329
-    %t331 = vector fromi32 %t330
-    %t332 = vector punpckldq %t313, %t319
-    %t333 = vector punpckldq %t325, %t331
-    %t334 = vector punpcklqdq %t332, %t333
-    %t335 = vector por %t306, %t334
-    %t336 = vector pxor %t120, %t335
-    %t337 = binary add nowrap i64 %t122, 4
-    %t338 = convert trunc exact u32 i64 %t337
-    %t339 = vector paddd %t121, %t17
-    %t340 = cmp ule u32 %t338, 12
-    branch %t340, ^wide_loop_2, ^loop_exit_3
+    %t119 = phi v128 [^loop_preheader_1: %t67, ^wide_loop_2: %t335]
+    %t120 = phi v128 [^loop_preheader_1: %t5, ^wide_loop_2: %t338]
+    %t121 = phi i64 [^loop_preheader_1: 0, ^wide_loop_2: %t336]
+    %t122 = index inbounds u32 [projection=array_element] %t1, %t121
+    %t123 = index inbounds u32 [projection=array_element] %t122, 256
+    %t124 = load v128 %t123
+    %t125 = vector pmuludq %t124, %t69
+    %t126 = vector psrlqi %t124, 32
+    %t127 = vector pmuludq %t126, %t103
+    %t128 = vector pshufd %t125, 8
+    %t129 = vector pshufd %t127, 8
+    %t130 = vector punpckldq %t128, %t129
+    %t131 = vector paddd %t8, %t130
+    %t132 = index inbounds u32 [projection=array_element] %t122, 272
+    %t133 = load v128 %t132
+    %t134 = vector pmuludq %t133, %t71
+    %t135 = vector psrlqi %t133, 32
+    %t136 = vector pmuludq %t135, %t104
+    %t137 = vector pshufd %t134, 8
+    %t138 = vector pshufd %t136, 8
+    %t139 = vector punpckldq %t137, %t138
+    %t140 = vector paddd %t131, %t139
+    %t141 = index inbounds u32 [projection=array_element] %t122, 288
+    %t142 = load v128 %t141
+    %t143 = vector pmuludq %t142, %t73
+    %t144 = vector psrlqi %t142, 32
+    %t145 = vector pmuludq %t144, %t105
+    %t146 = vector pshufd %t143, 8
+    %t147 = vector pshufd %t145, 8
+    %t148 = vector punpckldq %t146, %t147
+    %t149 = vector paddd %t140, %t148
+    %t150 = index inbounds u32 [projection=array_element] %t122, 304
+    %t151 = load v128 %t150
+    %t152 = vector pmuludq %t151, %t75
+    %t153 = vector psrlqi %t151, 32
+    %t154 = vector pmuludq %t153, %t106
+    %t155 = vector pshufd %t152, 8
+    %t156 = vector pshufd %t154, 8
+    %t157 = vector punpckldq %t155, %t156
+    %t158 = vector paddd %t149, %t157
+    %t159 = index inbounds u32 [projection=array_element] %t122, 320
+    %t160 = load v128 %t159
+    %t161 = vector pmuludq %t160, %t77
+    %t162 = vector psrlqi %t160, 32
+    %t163 = vector pmuludq %t162, %t107
+    %t164 = vector pshufd %t161, 8
+    %t165 = vector pshufd %t163, 8
+    %t166 = vector punpckldq %t164, %t165
+    %t167 = vector paddd %t158, %t166
+    %t168 = index inbounds u32 [projection=array_element] %t122, 336
+    %t169 = load v128 %t168
+    %t170 = vector pmuludq %t169, %t79
+    %t171 = vector psrlqi %t169, 32
+    %t172 = vector pmuludq %t171, %t108
+    %t173 = vector pshufd %t170, 8
+    %t174 = vector pshufd %t172, 8
+    %t175 = vector punpckldq %t173, %t174
+    %t176 = vector paddd %t167, %t175
+    %t177 = index inbounds u32 [projection=array_element] %t122, 352
+    %t178 = load v128 %t177
+    %t179 = vector pmuludq %t178, %t81
+    %t180 = vector psrlqi %t178, 32
+    %t181 = vector pmuludq %t180, %t109
+    %t182 = vector pshufd %t179, 8
+    %t183 = vector pshufd %t181, 8
+    %t184 = vector punpckldq %t182, %t183
+    %t185 = vector paddd %t176, %t184
+    %t186 = index inbounds u32 [projection=array_element] %t122, 368
+    %t187 = load v128 %t186
+    %t188 = vector pmuludq %t187, %t83
+    %t189 = vector psrlqi %t187, 32
+    %t190 = vector pmuludq %t189, %t110
+    %t191 = vector pshufd %t188, 8
+    %t192 = vector pshufd %t190, 8
+    %t193 = vector punpckldq %t191, %t192
+    %t194 = vector paddd %t185, %t193
+    %t195 = index inbounds u32 [projection=array_element] %t122, 384
+    %t196 = load v128 %t195
+    %t197 = vector pmuludq %t196, %t85
+    %t198 = vector psrlqi %t196, 32
+    %t199 = vector pmuludq %t198, %t111
+    %t200 = vector pshufd %t197, 8
+    %t201 = vector pshufd %t199, 8
+    %t202 = vector punpckldq %t200, %t201
+    %t203 = vector paddd %t194, %t202
+    %t204 = index inbounds u32 [projection=array_element] %t122, 400
+    %t205 = load v128 %t204
+    %t206 = vector pmuludq %t205, %t87
+    %t207 = vector psrlqi %t205, 32
+    %t208 = vector pmuludq %t207, %t112
+    %t209 = vector pshufd %t206, 8
+    %t210 = vector pshufd %t208, 8
+    %t211 = vector punpckldq %t209, %t210
+    %t212 = vector paddd %t203, %t211
+    %t213 = index inbounds u32 [projection=array_element] %t122, 416
+    %t214 = load v128 %t213
+    %t215 = vector pmuludq %t214, %t89
+    %t216 = vector psrlqi %t214, 32
+    %t217 = vector pmuludq %t216, %t113
+    %t218 = vector pshufd %t215, 8
+    %t219 = vector pshufd %t217, 8
+    %t220 = vector punpckldq %t218, %t219
+    %t221 = vector paddd %t212, %t220
+    %t222 = index inbounds u32 [projection=array_element] %t122, 432
+    %t223 = load v128 %t222
+    %t224 = vector pmuludq %t223, %t91
+    %t225 = vector psrlqi %t223, 32
+    %t226 = vector pmuludq %t225, %t114
+    %t227 = vector pshufd %t224, 8
+    %t228 = vector pshufd %t226, 8
+    %t229 = vector punpckldq %t227, %t228
+    %t230 = vector paddd %t221, %t229
+    %t231 = index inbounds u32 [projection=array_element] %t122, 448
+    %t232 = load v128 %t231
+    %t233 = vector pmuludq %t232, %t93
+    %t234 = vector psrlqi %t232, 32
+    %t235 = vector pmuludq %t234, %t115
+    %t236 = vector pshufd %t233, 8
+    %t237 = vector pshufd %t235, 8
+    %t238 = vector punpckldq %t236, %t237
+    %t239 = vector paddd %t230, %t238
+    %t240 = index inbounds u32 [projection=array_element] %t122, 464
+    %t241 = load v128 %t240
+    %t242 = vector pmuludq %t241, %t95
+    %t243 = vector psrlqi %t241, 32
+    %t244 = vector pmuludq %t243, %t116
+    %t245 = vector pshufd %t242, 8
+    %t246 = vector pshufd %t244, 8
+    %t247 = vector punpckldq %t245, %t246
+    %t248 = vector paddd %t239, %t247
+    %t249 = index inbounds u32 [projection=array_element] %t122, 480
+    %t250 = load v128 %t249
+    %t251 = vector pmuludq %t250, %t97
+    %t252 = vector psrlqi %t250, 32
+    %t253 = vector pmuludq %t252, %t117
+    %t254 = vector pshufd %t251, 8
+    %t255 = vector pshufd %t253, 8
+    %t256 = vector punpckldq %t254, %t255
+    %t257 = vector paddd %t248, %t256
+    %t258 = index inbounds u32 [projection=array_element] %t122, 496
+    %t259 = load v128 %t258
+    %t260 = vector pmuludq %t259, %t99
+    %t261 = vector psrlqi %t259, 32
+    %t262 = vector pmuludq %t261, %t118
+    %t263 = vector pshufd %t260, 8
+    %t264 = vector pshufd %t262, 8
+    %t265 = vector punpckldq %t263, %t264
+    %t266 = vector paddd %t257, %t265
+    %t267 = vector paddd %t120, %t102
+    %t268 = vector pand %t267, %t10
+    %t269 = vector toi32 %t266
+    %t270 = copy u32 %t269
+    %t271 = vector toi32 %t268
+    %t272 = copy u32 %t271
+    %t273 = binary shl u32 %t270, %t272
+    %t274 = copy i32 %t273
+    %t275 = vector fromi32 %t274
+    %t276 = vector pshufd %t266, 85
+    %t277 = vector toi32 %t276
+    %t278 = copy u32 %t277
+    %t279 = vector pshufd %t268, 85
+    %t280 = vector toi32 %t279
+    %t281 = copy u32 %t280
+    %t282 = binary shl u32 %t278, %t281
+    %t283 = copy i32 %t282
+    %t284 = vector fromi32 %t283
+    %t285 = vector pshufd %t266, 170
+    %t286 = vector toi32 %t285
+    %t287 = copy u32 %t286
+    %t288 = vector pshufd %t268, 170
+    %t289 = vector toi32 %t288
+    %t290 = copy u32 %t289
+    %t291 = binary shl u32 %t287, %t290
+    %t292 = copy i32 %t291
+    %t293 = vector fromi32 %t292
+    %t294 = vector pshufd %t266, 255
+    %t295 = vector toi32 %t294
+    %t296 = copy u32 %t295
+    %t297 = vector pshufd %t268, 255
+    %t298 = vector toi32 %t297
+    %t299 = copy u32 %t298
+    %t300 = binary shl u32 %t296, %t299
+    %t301 = copy i32 %t300
+    %t302 = vector fromi32 %t301
+    %t303 = vector punpckldq %t275, %t284
+    %t304 = vector punpckldq %t293, %t302
+    %t305 = vector punpcklqdq %t303, %t304
+    %t306 = vector psubd %t12, %t268
+    %t307 = vector pand %t306, %t14
+    %t308 = vector toi32 %t307
+    %t309 = copy u32 %t308
+    %t310 = binary ushr u32 %t270, %t309
+    %t311 = copy i32 %t310
+    %t312 = vector fromi32 %t311
+    %t313 = vector pshufd %t307, 85
+    %t314 = vector toi32 %t313
+    %t315 = copy u32 %t314
+    %t316 = binary ushr u32 %t278, %t315
+    %t317 = copy i32 %t316
+    %t318 = vector fromi32 %t317
+    %t319 = vector pshufd %t307, 170
+    %t320 = vector toi32 %t319
+    %t321 = copy u32 %t320
+    %t322 = binary ushr u32 %t287, %t321
+    %t323 = copy i32 %t322
+    %t324 = vector fromi32 %t323
+    %t325 = vector pshufd %t307, 255
+    %t326 = vector toi32 %t325
+    %t327 = copy u32 %t326
+    %t328 = binary ushr u32 %t296, %t327
+    %t329 = copy i32 %t328
+    %t330 = vector fromi32 %t329
+    %t331 = vector punpckldq %t312, %t318
+    %t332 = vector punpckldq %t324, %t330
+    %t333 = vector punpcklqdq %t331, %t332
+    %t334 = vector por %t305, %t333
+    %t335 = vector pxor %t119, %t334
+    %t336 = binary add nowrap i64 %t121, 4
+    %t337 = convert trunc exact u32 i64 %t336
+    %t338 = vector paddd %t120, %t16
+    %t339 = cmp ule u32 %t337, 12
+    branch %t339, ^wide_loop_2, ^loop_exit_3
 
   block ^loop_exit_3:
-    %t341 = vector pshufd %t336, 78
-    %t342 = vector pxor %t336, %t341
-    %t343 = vector pshufd %t342, 177
-    %t344 = vector pxor %t342, %t343
-    %t345 = vector toi32 %t344
-    %t346 = binary add u32 %t19, 1
-    %t347 = cmp ult u32 %t346, 16
-    branch %t347, ^loop_preheader_1, ^for_end_4
+    %t340 = vector pshufd %t335, 78
+    %t341 = vector pxor %t335, %t340
+    %t342 = vector pshufd %t341, 177
+    %t343 = vector pxor %t341, %t342
+    %t344 = vector toi32 %t343
+    %t345 = binary add u32 %t18, 1
+    %t346 = cmp ult u32 %t345, 16
+    branch %t346, ^loop_preheader_1, ^for_end_4
 
   block ^for_end_4:
-    %t348 = copy u32 %t345
-    return u32 %t348
+    %t347 = copy u32 %t344
+    return u32 %t347
 }
 function @shift_only() -> u32 [linkage=c, binding=strong, no_inline=yes] {
   block ^entry:

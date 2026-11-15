@@ -1,3 +1,8 @@
+global @__vector_literal_3ff80000000000003ff8000000000000 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 4609434218613702656
+  i64 4609434218613702656
+}
+
 function @pick(%a : v128, %b : v128, %which : i32) -> v128 {
   block ^entry:
     branch %which, ^done, ^right
@@ -12,8 +17,8 @@ function @pick(%a : v128, %b : v128, %which : i32) -> v128 {
 function @sum_of_lanes(%count : i32) -> f64 {
   block ^entry:
     %start = vector pzero
-    %one = vector fromf64 1.5
-    %step = vector unpcklpd %one, %one
+    %t2 = addr @__vector_literal_3ff80000000000003ff8000000000000
+    %step = load v128 %t2
     %t4 = binary and i32 %count, -8
     %t5 = cmp gt i32 %t4, 0
     branch %t5, ^unrolled_1, ^wide_tail_2
@@ -58,8 +63,8 @@ function @sum_of_lanes(%count : i32) -> f64 {
 function @main() -> i32 [role=entry] {
   block ^entry:
     %start_1 = vector pzero
-    %one_2 = vector fromf64 1.5
-    %step_3 = vector unpcklpd %one_2, %one_2
+    %t2 = addr @__vector_literal_3ff80000000000003ff8000000000000
+    %step_3 = load v128 %t2
     %t4 = vector addpd %start_1, %step_3
     %t5 = vector addpd %t4, %step_3
     %t6 = vector addpd %t5, %step_3

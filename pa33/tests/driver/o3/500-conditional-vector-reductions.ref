@@ -1,6 +1,30 @@
 global @data : obj<332x4> [binding=internal, object=_ZL4data] = {
   zero 332
 }
+global @__vector_literal_00000007000000070000000700000007 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 30064771079
+  i64 30064771079
+}
+global @__vector_literal_80000000800000008000000080000000 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 -9223372034707292160
+  i64 -9223372034707292160
+}
+global @__vector_literal_0000001f0000001f0000001f0000001f : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 133143986207
+  i64 133143986207
+}
+global @__vector_literal_00000011000000110000001100000011 : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 73014444049
+  i64 73014444049
+}
+global @__vector_literal_ffffffffffffffffffffffffffffffff : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 -1
+  i64 -1
+}
+global @__vector_literal_000000ff000000ff000000ff000000ff : obj<16x16> [storage=readonly, binding=internal] = {
+  i64 1095216660735
+  i64 1095216660735
+}
 
 function @packed_sum(%p : ptr, %seed : u32) -> u32 [linkage=c, binding=strong, no_inline=yes] {
   block ^entry:
@@ -33,13 +57,13 @@ function @sum_less(%n : u32, %threshold : u32) -> u32 [linkage=c, binding=strong
   block ^loop_preheader_2:
     %t4 = binary add i64 %t2, -4
     %t5 = vector fromi32 9
-    %t6 = vector fromi32 7
-    %t7 = vector pshufd %t6, 0
+    %t6 = addr @__vector_literal_00000007000000070000000700000007
+    %t7 = load v128 %t6
     %t8 = copy i32 %threshold
     %t9 = vector fromi32 %t8
     %t10 = vector pshufd %t9, 0
-    %t11 = vector fromi32 -2147483648
-    %t12 = vector pshufd %t11, 0
+    %t11 = addr @__vector_literal_80000000800000008000000080000000
+    %t12 = load v128 %t11
     %t13 = vector psrlqi %t7, 32
     %t14 = vector pxor %t10, %t12
     jump ^wide_loop_3
@@ -108,13 +132,13 @@ function @sum_le(%n : u32, %threshold : u32) -> u32 [linkage=c, binding=strong, 
   block ^loop_preheader_2:
     %t4 = binary add i64 %t2, -4
     %t5 = vector fromi32 9
-    %t6 = vector fromi32 31
-    %t7 = vector pshufd %t6, 0
+    %t6 = addr @__vector_literal_0000001f0000001f0000001f0000001f
+    %t7 = load v128 %t6
     %t8 = copy i32 %threshold
     %t9 = vector fromi32 %t8
     %t10 = vector pshufd %t9, 0
-    %t11 = vector fromi32 -2147483648
-    %t12 = vector pshufd %t11, 0
+    %t11 = addr @__vector_literal_80000000800000008000000080000000
+    %t12 = load v128 %t11
     %t13 = vector pxor %t10, %t12
     jump ^wide_loop_3
 
@@ -177,13 +201,13 @@ function @sum_greater(%n : u32, %threshold : u32) -> u32 [linkage=c, binding=str
   block ^loop_preheader_2:
     %t4 = binary add i64 %t2, -4
     %t5 = vector fromi32 305419896
-    %t6 = vector fromi32 17
-    %t7 = vector pshufd %t6, 0
+    %t6 = addr @__vector_literal_00000011000000110000001100000011
+    %t7 = load v128 %t6
     %t8 = copy i32 %threshold
     %t9 = vector fromi32 %t8
     %t10 = vector pshufd %t9, 0
-    %t11 = vector fromi32 -2147483648
-    %t12 = vector pshufd %t11, 0
+    %t11 = addr @__vector_literal_80000000800000008000000080000000
+    %t12 = load v128 %t11
     %t13 = vector pxor %t10, %t12
     jump ^wide_loop_3
 
@@ -245,15 +269,15 @@ function @sum_ge(%n : u32, %threshold : u32) -> u32 [linkage=c, binding=strong, 
 
   block ^loop_preheader_2:
     %t4 = binary add i64 %t2, -4
-    %t5 = vector fromi32 -1
-    %t6 = vector pshufd %t5, 0
-    %t7 = vector fromi32 255
-    %t8 = vector pshufd %t7, 0
+    %t5 = addr @__vector_literal_ffffffffffffffffffffffffffffffff
+    %t6 = load v128 %t5
+    %t7 = addr @__vector_literal_000000ff000000ff000000ff000000ff
+    %t8 = load v128 %t7
     %t9 = copy i32 %threshold
     %t10 = vector fromi32 %t9
     %t11 = vector pshufd %t10, 0
-    %t12 = vector fromi32 -2147483648
-    %t13 = vector pshufd %t12, 0
+    %t12 = addr @__vector_literal_80000000800000008000000080000000
+    %t13 = load v128 %t12
     %t14 = vector pxor %t11, %t13
     jump ^wide_loop_3
 
