@@ -31,7 +31,7 @@ function @next_used(%n : i64) -> i64 [no_inline=yes] {
 
   block ^latch:
     %next = binary add i64 %i, 1
-    %first = binary add i64 %next, %sum
+    %first = binary add i64 %sum, %next
     %total = binary add i64 %i, %first
     jump ^header
 

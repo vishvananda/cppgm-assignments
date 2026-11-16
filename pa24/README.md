@@ -375,6 +375,11 @@ PA10-PA23, including:
   eightbyte in a GPR or an XMM register (or nowhere) as the parameter's
   `classes` or the function's `result_classes` metadata states, and the whole
   object on the stack for `classes=memory` or when its registers run out
+- the host object classes (`../pa8/lowir.md`, Object ABI Conventions):
+  `sse_sseup` as one XMM register, an `x87` result in `st0`, a `complex_x87`
+  result in `st0` and `st1`, a `memory` result through the hidden destination,
+  `x87` and `complex_x87` arguments on the stack, and the classes a call states
+  for an object passed to `...` and a `va_arg` for the object it reads
 - `select`, as a conditional move or branches (an `f32` or `f64` result keeps
   the bits of the chosen value), the `ctz` and `clz` bit scans and `sqrt`
 - supported variadic calls and `va_start` register-save state for GPR and XMM

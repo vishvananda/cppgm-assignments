@@ -72,6 +72,8 @@ my $validator = $ENV{CPPGM_WASM_TOOLS} // 'wasm-tools';
 my $runtime = $ENV{CPPGM_WASMTIME} // 'wasmtime';
 my $source_compiler = $ENV{CPPGM_WASM_CPPGM} // File::Spec->catfile(dirname($compiler),
     $compiler =~ /-ref\z/ ? 'cppgm-ref' : 'cppgm');
+my $lowiropt = $ENV{CPPGM_WASM_LOWIROPT} // File::Spec->catfile(dirname($source_compiler),
+    'lowiropt' . ($source_compiler =~ /(-ref|-self)\z/ ? $1 : ''));
 my $command_sequence = 0;
 my $checked = CppgmWasmCheckCache->new(validator => $validator, runtime => $runtime);
 my %lowered_source;
@@ -130,10 +132,8 @@ for my $name (sort keys %{$expect->{hosts} // {}}) {
 
 sub standalone_optimizer {
     my ($level, $lowir) = @_;
-    my $suffix = $source_compiler =~ /(-ref|-self)\z/ ? $1 : '';
-    my $optimizer = $ENV{CPPGM_WASM_LOWIROPT} // File::Spec->catfile(dirname($source_compiler), "lowiropt$suffix");
     my $optimized = "$directory/optimized-$level.lowir";
-    my ($status, $stdout, $stderr) = command('standalone-optimize', $optimizer,
+    my ($status, $stdout, $stderr) = command('standalone-optimize', $lowiropt,
         "-O$level", '--validate', '--verify-passes', $lowir, '-o', $optimized);
     die "$test: standalone optimizer failed: $stdout$stderr\n" if $status;
     my $object = "$directory/optimized-$level.o";
@@ -232,6 +232,64 @@ for my $index (0 .. $#{$expect->{reference_assembly} // []}) {
     push @assembly_objects, $output;
 }
 
+# The object compiled from an input's LowIR text, after lowiropt -O0 has
+# read and written it, is the direct object byte for byte. A source's text
+# is the object compile's LowIR (a stated debug level: -g0, the direct
+# compile's default), lowered at O0 and preprocessed as the direct compile
+# is: an O1+ compile defines __OPTIMIZE__. Each text is lowered and
+# rewritten once.
+my %rewritten_text;
+sub check_text_object {
+    my ($index, $level, $input, $direct) = @_;
+    my $target = $expect->{target} // 'wasm32-unknown-unknown';
+    my $key = $expect->{source} ? "$input\0" . ($level ? 'optimize' : 'O0') : $input;
+    my ($status, $stdout, $stderr);
+    if (!$rewritten_text{$key}) {
+        my $text = $input;
+        my $name = "text-$index-" . ($level ? 'optimize' : 'O0');
+        if ($expect->{source}) {
+            $text = "$directory/$name.lowir";
+            ($status, $stdout, $stderr) = command("$name-lowir", $source_compiler, '--target', $target,
+                @target_flags, @{$expect->{flags} // []}, '-g0', '--emit-lowir', '-O0',
+                ($level ? ('-D__OPTIMIZE__=1') : ()), $input, '-o', $text);
+            die "$test: LowIR text lowering failed: $stdout$stderr\n" if $status;
+        }
+        my $rewritten = "$directory/$name.rewritten.lowir";
+        ($status, $stdout, $stderr) = command("$name-rewrite", $lowiropt, '-O0', '-o', $rewritten, $text);
+        die "$test: lowiropt -O0 rejected the LowIR text: $stdout$stderr\n" if $status;
+        $rewritten_text{$key} = $rewritten;
+    }
+    my $object = "$directory/text-$index-$level.o";
+    ($status, $stdout, $stderr) = command("text-object-$index-$level", $source_compiler, '--target', $target,
+        @target_flags, @{$expect->{flags} // []}, '-g0', "-O$level", '-c', $rewritten_text{$key}, '-o', $object);
+    die "$test: object compile from LowIR text failed: $stdout$stderr\n" if $status;
+    die "$test: the object compiled from its LowIR text differs from the direct one at O$level\n"
+        if read_file($object) ne read_file($direct);
+}
+
+# CPPGM_WASM_OPTIMIZED_TEXT (this solution's lane, outside the course
+# contract): the program -c compiles after the LowIR optimizer
+# (-S -emit-lowir), read and written by lowiropt -O0, compiles without the
+# optimizer (-fno-lowir-passes) to the direct object as well.
+my $optimized_text = $ENV{CPPGM_WASM_OPTIMIZED_TEXT};
+sub check_optimized_text_object {
+    my ($index, $level, $input, $direct) = @_;
+    my @compile = ($source_compiler, '--target', $expect->{target} // 'wasm32-unknown-unknown',
+        @target_flags, @{$expect->{flags} // []}, "-O$level");
+    my $name = "optimized-$index-$level";
+    my ($status, $stdout, $stderr) = command("$name-lowir", @compile, '-S', '-emit-lowir', $input,
+        '-o', "$directory/$name.lowir");
+    die "$test: -S -emit-lowir failed: $stdout$stderr\n" if $status;
+    ($status, $stdout, $stderr) = command("$name-rewrite", $lowiropt, '-O0', '-o',
+        "$directory/$name.rewritten.lowir", "$directory/$name.lowir");
+    die "$test: lowiropt -O0 rejected the optimized LowIR: $stdout$stderr\n" if $status;
+    ($status, $stdout, $stderr) = command("$name-object", @compile, '-c', '-fno-lowir-passes',
+        "$directory/$name.rewritten.lowir", '-o', "$directory/$name.o");
+    die "$test: object compile from the optimized LowIR failed: $stdout$stderr\n" if $status;
+    die "$test: the object compiled from its optimized LowIR differs from the direct one at O$level\n"
+        if read_file("$directory/$name.o") ne read_file($direct);
+}
+
 for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
     my ($status, $stdout, $stderr);
     my @provided_objects = @assembly_objects;
@@ -315,6 +373,9 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
         die "$test: object compile failed: $stdout$stderr\n" if $status;
         ($status, $stdout, $stderr) = command("object-validate-$index-$level", $validator, 'validate', $object);
         die "$test: invalid relocatable object: $stdout$stderr\n" if $status;
+        check_text_object($index, $level, $inputs[$index], $object) if !$expect->{assembly};
+        check_optimized_text_object($index, $level, $inputs[$index], $object)
+            if $optimized_text && !$expect->{assembly};
         push @objects, $object;
         if ($expect->{source} && !$expect->{assembly} && @units) {
             my $lowir = $lowered_source{$inputs[$index]} // "$directory/unit-$index.lowir";

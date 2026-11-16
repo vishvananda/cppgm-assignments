@@ -21,11 +21,20 @@ sub detect_jobs {
 }
 
 sub usage {
-  die "usage: run_object_lowir_roundtrip_tests.pl [--debuginfo] --app APP (--test-root DIR | --test FILE)...\n";
+  die "usage: run_object_lowir_roundtrip_tests.pl [--debuginfo] [--target TARGET] [--optimized-text] --app APP [--lowiropt APP] (--test-root DIR | --test FILE)...\n";
 }
 
 my $app = "../dev/cppgm";
+my $lowiropt;
+# The target both compiles name (`--target`), or the driver default.
+my @target_flags;
 my $debuginfo = 0;
+# --optimized-text, or CPPGM_OBJECT_ROUNDTRIP_OPTIMIZED_TEXT (this solution's
+# lane, outside the course contract): the program -c compiles after the
+# LowIR optimizer (-S -emit-lowir), read and written by lowiropt -O0,
+# compiles without the optimizer (-fno-lowir-passes) to the direct object
+# as well.
+my $optimized_text = $ENV{CPPGM_OBJECT_ROUNDTRIP_OPTIMIZED_TEXT} ? 1 : 0;
 my @roots;
 my @tests;
 my $repo_root = abs_path("$Bin/../..");
@@ -36,6 +45,12 @@ while(@ARGV) {
   if($arg eq "--app") {
     usage() unless @ARGV;
     $app = shift @ARGV;
+  } elsif($arg eq "--target") {
+    usage() unless @ARGV;
+    @target_flags = ("--target", shift @ARGV);
+  } elsif($arg eq "--lowiropt") {
+    usage() unless @ARGV;
+    $lowiropt = shift @ARGV;
   } elsif($arg eq "--test-root") {
     usage() unless @ARGV;
     push @roots, shift @ARGV;
@@ -44,11 +59,17 @@ while(@ARGV) {
     push @tests, shift @ARGV;
   } elsif($arg eq "--debuginfo") {
     $debuginfo = 1;
+  } elsif($arg eq "--optimized-text") {
+    $optimized_text = 1;
   } elsif($arg eq "-h" || $arg eq "--help") {
     usage();
   } else {
     die "unknown argument: $arg\n";
   }
+}
+# lowiropt beside the driver unless named.
+if(!defined $lowiropt) {
+  ($lowiropt = $app) =~ s{[^/]*\z}{lowiropt};
 }
 
 sub collect_tests {
@@ -209,7 +230,7 @@ sub check_mode {
 
   my @debug_flags = defined($debug_flag) ? ($debug_flag) : ("-g0");
   my @optimization_flags = defined($opt) ? ($opt) : ();
-  my @direct_cmd = ($app, "-c", @debug_flags, @optimization_flags);
+  my @direct_cmd = ($app, @target_flags, "-c", @debug_flags, @optimization_flags);
   my $direct_error = run_command(@direct_cmd, "-o", $direct, $source);
   return $direct_error if defined $direct_error;
   # The O0 emission must preprocess exactly like the direct compile. An
@@ -217,6 +238,7 @@ sub check_mode {
   my @preprocess_flags =
     (defined($opt) && $opt ne "-O0") ? ("-D__OPTIMIZE__=1") : ();
   my $emit_error = run_command($app,
+                               @target_flags,
                                "--emit-lowir",
                                @debug_flags,
                                "-O0",
@@ -234,13 +256,19 @@ sub check_mode {
     return "serialized LowIR lost section=cppgmsec: $source $level_name\n"
       unless $metadata =~ /(?:^|,\s*)section=cppgmsec(?:,|$)/;
   }
+  # The object comes from the text after lowiropt -O0 has read and written
+  # it, so lowiropt reads every fact the object half states and keeps it.
+  my $rewritten = "$base.rewritten.lowir";
+  my $rewrite_error = run_command($lowiropt, "-O0", "-o", $rewritten, $lowir);
+  return $rewrite_error if defined $rewrite_error;
   my $from_lowir_error = run_command($app,
+                                     @target_flags,
                                      "-c",
                                      @debug_flags,
                                      @optimization_flags,
                                      "-o",
                                      $from_lowir,
-                                     $lowir);
+                                     $rewritten);
   return $from_lowir_error if defined $from_lowir_error;
 
   if($source =~ /gnu-section-attribute/) {
@@ -258,14 +286,33 @@ sub check_mode {
   my $direct_bytes = read_bytes($direct);
   my $from_lowir_bytes = read_bytes($from_lowir);
   if($direct_bytes eq $from_lowir_bytes) {
-    return undef;
+    return $optimized_text ? check_optimized_text($source, $mode, $base, $direct_bytes) : undef;
   }
 
-  return "object differs after compiling serialized LowIR: $source $debug_label $level_name\n"
+  return "object differs after compiling serialized LowIR rewritten by lowiropt: $source $debug_label $level_name\n"
     . "direct bytes: " . length($direct_bytes) . "\n"
     . "from-lowir bytes: " . length($from_lowir_bytes) . "\n"
     . "direct symbols:\n" . object_summary($direct)
     . "from-lowir symbols:\n" . object_summary($from_lowir);
+}
+
+sub check_optimized_text {
+  my ($source, $mode, $base, $direct_bytes) = @_;
+  my ($debug_flag, $opt, $level_name) = @$mode;
+  my @debug_flags = defined($debug_flag) ? ($debug_flag) : ("-g0");
+  my @optimization_flags = defined($opt) ? ($opt) : ();
+  my $text = "$base.optimized.lowir";
+  my $rewritten = "$base.optimized.rewritten.lowir";
+  my $object = "$base.from-optimized.o";
+  my $error = run_command($app, @target_flags, "-S", "-emit-lowir", @debug_flags, @optimization_flags,
+                          "-o", $text, $source)
+    // run_command($lowiropt, "-O0", "-o", $rewritten, $text)
+    // run_command($app, @target_flags, "-c", "-fno-lowir-passes", @debug_flags, @optimization_flags,
+                   "-o", $object, $rewritten);
+  return $error if defined $error;
+  my $debug_label = defined($debug_flag) ? $debug_flag : "nodebug";
+  return undef if read_bytes($object) eq $direct_bytes;
+  return "object differs after compiling the optimized LowIR without the LowIR optimizer: $source $debug_label $level_name\n";
 }
 
 sub append_keep_going_summary {

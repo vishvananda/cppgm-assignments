@@ -1107,19 +1107,35 @@ function @scale(%p : obj<16x8> [classes=sse_integer], %k : f64) -> obj<16x8> [re
 ```
 
 The value names one class for each eightbyte, the first eightbyte first, joined by `_`:
-`integer`, `sse`, or `none` for an eightbyte that holds no member (padding, an empty class).
-For a direct `obj<NxA>` parameter or result of at most 16 bytes, classes name
+`integer`, `sse`, `none` for an eightbyte that holds no member (padding, an empty class), or
+`sseup` for the upper half of a 16-byte SSE value, valid only as `sse_sseup`. For a direct
+`obj<NxA>` parameter or result of at most 16 bytes, classes name
 exactly its eightbytes. Without them every eightbyte is INTEGER, so the C++ lowering states
 them exactly when some eightbyte is SSE or `none`, or the object is `memory`; a larger direct
-object is always passed in memory. Arguments past a variadic function's fixed parameters
-state no classes.
+object is always passed in memory.
+
+An object passed past a variadic function's fixed parameters has no parameter to state its
+classes, so the call states them as `classes=<index>:<classes>` call metadata, the index
+counting from zero across the complete argument list. A `va_arg` that reads an object states
+the same classes as `[classes=<classes>]`. Eightbyte classes there name two eightbytes for
+any object, `none` for a missing second one, and both facts place the object as a parameter
+with those classes would be placed (psABI 3.5.7):
+
+```text
+call void @log(2, %pair, %small) [classes=1:sse_integer, classes=2:sse_none]
+%pair = va_arg obj<16x8> %list [classes=sse_integer]
+```
+
+These facts are valid only on an object, `i128` or `v128` value passed to an unnamed
+argument, or read by `va_arg`, and follow the rules for that type below.
 
 An optimizer may represent an INTEGER-class object of 9–16 bytes and alignment at most
 8 as an `i128` value. Such a parameter states `classes=integer_integer`, and such a
 result may state `result_classes=integer_integer`. This preserves the object's
 eight-byte stack alignment; an ordinary `i128` parameter without classes has
 sixteen-byte stack alignment. Both forms use two INTEGER registers when available.
-No other class combination is valid on a scalar type. The scalar carrier does not
+A `v128` value may state `classes=sse_sseup` or `result_classes=sse_sseup`, the classes it
+has without them. No other class combination is valid on a scalar type. The scalar carrier does not
 enlarge the original object's storage: accesses through its address must stay within
 the original extent.
 
@@ -1128,18 +1144,27 @@ direct parameter or result, as an `i64` value that states no classes. The value 
 the INTEGER register the object used, so the boundary does not change, and accesses to
 the object's storage stay within its original extent.
 
-`memory`, valid only on a parameter, instead says the object is passed in memory: an object
-with a misaligned member, or with an x87 (`long double`) or 16-byte vector member. A result
-with a misaligned member is returned through a `pass=indirect_result` parameter instead of a
-direct result. The psABI returns an x87 or 16-byte vector member in `st0` or in a whole XMM
-register, which these classes do not describe, so such a result states no classes.
+Three words describe a whole object instead of its eightbytes:
+
+- `memory` says the object is passed in memory: an object with a misaligned member, or with
+  an x87 (`long double`) or 16-byte vector member. On a result it says the object is
+  returned through the hidden destination the caller passes, as for a direct result of more
+  than 16 bytes. The C++ lowering may instead return a result with a misaligned member
+  through a `pass=indirect_result` parameter.
+- `x87`, valid only on a 16-byte object, says the object is one `long double`: passed in
+  memory and returned in `st0`.
+- `complex_x87`, valid only on a 32-byte object, says the object is one `_Complex long
+  double`: passed in memory and returned in `st0` (real part) and `st1` (imaginary part).
+
+An object of more than 16 bytes states only `memory` or `complex_x87`.
 
 The native backend places an INTEGER eightbyte in the next argument GPR (rax then rdx for a
-result), an SSE eightbyte in the next XMM register (xmm0 then xmm1 for a result), and nothing
-for a `none` eightbyte. An object whose eightbytes do not all fit in the remaining registers,
-or whose classes are `memory`, goes on the stack whole. The placement is the same in course
-objects, link mode and `lowir2native` as in host objects, and objects passed this way
-interoperate with GCC- and Clang-compiled code.
+result), an SSE eightbyte in the next XMM register (xmm0 then xmm1 for a result), an SSEUP
+eightbyte in the same XMM register as the SSE eightbyte before it, and nothing for a `none`
+eightbyte. An object whose eightbytes do not all fit in the remaining registers, or whose
+classes are `memory`, `x87` or `complex_x87`, goes on the stack whole. The placement is the
+same in course objects, link mode and `lowir2native` as in host objects, and objects passed
+this way interoperate with GCC- and Clang-compiled code.
 
 PA8's reader/writer preserves the object-boundary forms exercised by its
 fixtures. Later C++ lowering creates these boundaries, and the native
@@ -1751,7 +1776,9 @@ va_start <list>
 
 `va_start` prepares the argument list object `<list>` in a function declared
 `[arity=variadic]`, and `va_arg` reads the next argument from it as `<type>` and advances
-it. These are the stable LowIR lowerings for `__builtin_va_start` and
+it. `<type>` is an integer type of 8 to 128 bits, `f64`, `f80`, `ptr` or an object; an
+object may state its classes (see [Object ABI Conventions](#object-abi-conventions)).
+These are the stable LowIR lowerings for `__builtin_va_start` and
 `__builtin_va_arg`; neither is a callable external symbol. PA8 only has to carry both
 forms through the text form, since the argument list layout is part of the calling
 convention that PA24 fixes.
@@ -2294,6 +2321,14 @@ when some eightbyte is SSE or `none` or (a parameter only) the object is
   `pass=indirect_result`, and an x87 or 16-byte vector result states no
   classes.
 - An argument past a variadic function's fixed parameters states none.
+
+The lowering for a host object (`cppgm -c`, and `cppgm --emit-lowir` to a
+`.lowir` file at `-g0` or `-gline-tables-only`) states the classes the psABI
+gives instead: `x87`, `complex_x87`, `sse_sseup` and `memory` results,
+`sse_sseup` parameters, and the classes of objects passed past a variadic
+function's fixed parameters and read by `va_arg`. PA33's object roundtrip
+checks that text: `cppgm -c` compiles it, after `lowiropt -O0` has read and
+written it, to the object it compiles from the source.
 
 `elision=copy`: a direct call of a copy or move constructor that is not
 trivial states it when the call copy-initializes an object from a

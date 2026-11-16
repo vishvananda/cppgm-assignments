@@ -133,7 +133,9 @@ The required representation includes the forms exercised by `tests/spec/`:
 - the symbol, parameter, function, storage, projection and debug metadata used
   by those fixtures, including the required placement and value constraints,
   among them the object ABI facts `classes`, `result_classes` and
-  `replaceable`.
+  `replaceable`. Classes include the host object forms: `x87`,
+  `complex_x87`, `sse_sseup`, `memory` on a result, and the classes of an
+  object passed to `...` or read by `va_arg`.
 
 Use `lowir.md` for each field's type and meaning, and `pa8.gram` for syntax.
 Optimized LowIR uses this same boundary: `unary sqrt` computes without

@@ -29,6 +29,13 @@ lowir2native --target=wasm32-wasip1 -O2 \
   --dump-machine-ir program.mir -o program.wasm source.lowir
 ```
 
+The object that `-c` compiles from a source's object LowIR is byte-identical
+to the object that `-c` compiles from the source at the same level. This also
+holds after `lowiropt -O0` reads and writes that text. The object LowIR is
+`--emit-lowir -g0 -O0`, with `-D__OPTIMIZE__=1` for an O1+ level. The checker
+compares the two objects at each level, as PA33's object round trip does for
+the native targets.
+
 The additional `wasm32-unknown-emscripten` SDK profile carries Emscripten's
 layout and allocation alignment. Use explicit SDK runtime archives and import
 declarations for links; it does not generate JS glue. The

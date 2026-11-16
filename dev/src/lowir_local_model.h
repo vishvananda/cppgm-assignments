@@ -228,6 +228,10 @@ enum class BlockKind : uint8_t
 	WideTail,
 	Unrolled,
 	Dead,
+	// The header of a loop the runtime unroller made, printed as Unrolled
+	// is. (Unrolled itself is also what a full unroll's copy of a Plain
+	// block has, so it does not tell that loop apart.)
+	UnrolledGroup,
 	Count
 };
 

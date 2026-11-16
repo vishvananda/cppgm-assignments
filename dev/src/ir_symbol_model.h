@@ -245,9 +245,9 @@ const unsigned kIndexProjectionKindCount = IPK_FIELD + 1;
 // passes one directly may state its x86-64 psABI classification (3.2.3) in
 // one byte: 0 states none (each eightbyte is INTEGER); otherwise
 // OC_STATED with the classes of eightbytes 0 and 1 in bits 0-1 and 2-3
-// (EightbyteClass), or OC_STATED with OC_MEMORY.  OC_X87, OC_COMPLEX_X87
-// and EB_SSEUP occur only in host-object LowIR (the object dialect
-// `cppgm -c` reads), never in course LowIR.
+// (EightbyteClass), or OC_STATED with OC_MEMORY, OC_X87 (a long double)
+// or OC_COMPLEX_X87 (a complex long double).  EB_SSEUP is the upper half
+// of a 16-byte SSE value.
 
 enum EightbyteClass : std::uint8_t
 {
@@ -601,9 +601,9 @@ inline const char* legacy_role_symbol(SymbolRole role)
 // Object class words
 
 // Appends the `classes=` word of `classes` for an object of `bytes` bytes
-// (0: unknown): `memory`, or the class of each eightbyte joined by `_`
-// (two when the size is unknown); in host objects also `x87` and
-// `complex_x87`, and any other value as its number.
+// (0: unknown): `memory`, `x87`, `complex_x87`, or the class of each
+// eightbyte joined by `_` (two when the size is unknown); any other value
+// (no LowIR spells it) as its number.
 inline void append_object_classes(std::string& out, std::uint8_t classes, std::uint64_t bytes)
 {
 	if (classes == (OC_STATED | OC_MEMORY))
@@ -635,8 +635,9 @@ inline void append_object_classes(std::string& out, std::uint8_t classes, std::u
 }
 
 // The value of a `classes=` word naming exactly the eightbytes of `bytes`
-// (two if 0); the host-object words (`x87`, `complex_x87`, `sseup`) only
-// with `extensions`.  0 if the word is not one.
+// (two if 0); `x87`, `complex_x87` and `sseup` only with `extensions`
+// (LowIR reads them; a reader of the other words alone passes false).  0
+// if the word is not one.
 inline std::uint8_t object_classes_from_spelling(
 	const char* text, std::size_t length, std::uint64_t bytes, bool extensions)
 {

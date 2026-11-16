@@ -569,10 +569,11 @@ source-language clauses.
   experiments. `make test-improvements` checks their behavior and reports work
   without a speed threshold; see [improvements.md](improvements.md).
 - `tests/object-roundtrip` compares direct `cppgm -c` output against an
-  object produced by `cppgm --emit-lowir -O0` followed by `cppgm -c` on
-  the generated LowIR file. This checks that object emission can be
-  reconstructed from serialized LowIR instead of from hidden frontend side
-  data. These tests may be standalone `.cpp` files or symlinks to existing
+  object produced by `cppgm --emit-lowir -O0`, then `lowiropt -O0`, then
+  `cppgm -c` on the rewritten LowIR file. This checks that object emission
+  can be reconstructed from serialized LowIR instead of from hidden frontend
+  side data, and that `lowiropt` reads and writes every fact a host object's
+  LowIR states. These tests may be standalone `.cpp` files or symlinks to existing
   `.t` harness cases; a selected `.t` test expands to its numbered `.t.1`,
   `.t.2`, ... source files when those sidecars exist. The harness checks
   no-debug objects at `-O0`, `-O1`, `-O2`, and `-O3`. A

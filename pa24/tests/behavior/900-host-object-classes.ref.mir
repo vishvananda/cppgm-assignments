@@ -1,0 +1,551 @@
+machine_ir x86_64 linux
+
+startup
+    call @main [args=()]
+    mov rdi, rax
+    exit
+
+global @low
+  storage scalar f64
+  init f64 0.0
+
+global @wide
+  storage data
+  item i64 1
+  item i64 2
+  item i64 3
+  item i64 4
+  item i64 5
+  item i64 6
+
+function @x87_result
+  abi
+    param %v -> [rbp+16] : f80
+    return obj<16x16> -> rax
+  frame
+    stack_size 16
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $home -> [rbp-16] : obj<16x16>
+
+  block ^entry
+    fmov.f80 [rbp-16], [rbp+16]
+    fret.f80 [rbp-16]
+
+function @f80_result
+  abi
+    return f80 -> st0
+  frame
+    stack_size 0
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+
+  block ^entry
+    fret.f80 2.25L
+
+function @complex_result
+  abi
+    param %re -> [rbp+16] : f80
+    param %im -> [rbp+32] : f80
+    return obj<32x16> -> [rax]
+  frame
+    stack_size 32
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $home -> [rbp-32] : obj<32x16>
+
+  block ^entry
+    fmov.f80 [rbp-32], [rbp+16]
+    fmov.f80 [rbp-16], [rbp+32]
+    fret.f80 [rbp-32], [rbp-16]
+
+function @memory_result
+  abi
+    param %a -> rsi : i64
+    param %b -> rdx : i64
+    return obj<16x8> -> rax
+  frame
+    stack_size 32
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $home -> [rbp-16] : obj<16x8>
+
+  block ^entry
+    store.ptr [rbp-24], rdi
+    store.i64 [rbp-16], rsi
+    store.i64 [rbp-8], rdx
+    load.ptr rax, [rbp-24]
+    copy_bytes 16x8, rax, [rbp-16]
+    ret rax
+
+function @sseup_argument
+  abi
+    param %x -> xmm0 : obj<16x16>
+    param %y -> xmm1 : f64
+    return f64 -> xmm0
+  frame
+    stack_size 32
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $home -> [rbp-16] : obj<16x16>
+    param-slot %x -> [rbp-16] : obj<16x16>
+    param-slot %y -> [rbp-24] : f64
+
+  block ^entry
+    fmov.i128 [rbp-16], xmm0
+    fmov.f64 [rbp-24], xmm1
+    fmov.f64 xmm0, [rbp-16]
+    fmov.f64 @low, xmm0
+    fmov.f64 xmm0, [rbp-24]
+    ret xmm0
+
+function @sseup_result
+  abi
+    param %a -> rdi : i64
+    param %b -> rsi : i64
+    return obj<16x16> -> rax
+  frame
+    stack_size 16
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $home -> [rbp-16] : obj<16x16>
+
+  block ^entry
+    store.i64 [rbp-16], rdi
+    store.i64 [rbp-8], rsi
+    fmov.i128 xmm0, [rbp-16]
+    ret
+
+function @read_scalars
+  abi
+    param %n -> rdi : i32
+    return i32 -> rax
+  frame
+    stack_size 208
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $list -> [rbp-24] : obj<24x8>
+    temp %va-register-save -> [rbp-208] : obj<176x16>
+
+  block ^entry
+    store.i64 [rbp-208], rdi
+    store.i64 [rbp-200], rsi
+    store.i64 [rbp-192], rdx
+    store.i64 [rbp-184], rcx
+    store.i64 [rbp-176], r8
+    store.i64 [rbp-168], r9
+    fmov.i128 [rbp-160], xmm0
+    fmov.i128 [rbp-144], xmm1
+    fmov.i128 [rbp-128], xmm2
+    fmov.i128 [rbp-112], xmm3
+    fmov.i128 [rbp-96], xmm4
+    fmov.i128 [rbp-80], xmm5
+    fmov.i128 [rbp-64], xmm6
+    fmov.i128 [rbp-48], xmm7
+    va_start [rbp-24], [rbp-208]
+    va_arg.f64 xmm0, [rbp-24]
+    va_arg.i64 r8, [rbp-24]
+    feq.f64 r9, xmm0, 0.5
+    cmp.i64 r8, 7
+    sete r8
+    movzx r8, r8
+    and r9, r8
+    ret r9
+
+function @read_pair
+  abi
+    param %n -> rdi : i32
+    return i32 -> rax
+  frame
+    stack_size 240
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $list -> [rbp-24] : obj<24x8>
+    slot $home -> [rbp-40] : obj<16x8>
+    temp %va-register-save -> [rbp-224] : obj<176x16>
+    temp %pair -> [rbp-240] : obj<16x8>
+
+  block ^entry
+    store.i64 [rbp-224], rdi
+    store.i64 [rbp-216], rsi
+    store.i64 [rbp-208], rdx
+    store.i64 [rbp-200], rcx
+    store.i64 [rbp-192], r8
+    store.i64 [rbp-184], r9
+    fmov.i128 [rbp-176], xmm0
+    fmov.i128 [rbp-160], xmm1
+    fmov.i128 [rbp-144], xmm2
+    fmov.i128 [rbp-128], xmm3
+    fmov.i128 [rbp-112], xmm4
+    fmov.i128 [rbp-96], xmm5
+    fmov.i128 [rbp-80], xmm6
+    fmov.i128 [rbp-64], xmm7
+    va_start [rbp-24], [rbp-224]
+    va_arg.obj [rbp-240], [rbp-24]
+    copy_bytes 16x8, [rbp-40], [rbp-240]
+    fmov.f64 xmm0, [rbp-40]
+    load.i64 r8, [rbp-32]
+    feq.f64 r9, xmm0, 0.5
+    cmp.i64 r8, 7
+    sete r8
+    movzx r8, r8
+    and r9, r8
+    ret r9
+
+function @read_f80
+  abi
+    param %n -> rdi : i32
+    return i32 -> rax
+  frame
+    stack_size 224
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $list -> [rbp-24] : obj<24x8>
+    temp %va-register-save -> [rbp-208] : obj<176x16>
+    temp %v -> [rbp-224] : f80
+
+  block ^entry
+    store.i64 [rbp-208], rdi
+    store.i64 [rbp-200], rsi
+    store.i64 [rbp-192], rdx
+    store.i64 [rbp-184], rcx
+    store.i64 [rbp-176], r8
+    store.i64 [rbp-168], r9
+    fmov.i128 [rbp-160], xmm0
+    fmov.i128 [rbp-144], xmm1
+    fmov.i128 [rbp-128], xmm2
+    fmov.i128 [rbp-112], xmm3
+    fmov.i128 [rbp-96], xmm4
+    fmov.i128 [rbp-80], xmm5
+    fmov.i128 [rbp-64], xmm6
+    fmov.i128 [rbp-48], xmm7
+    va_start [rbp-24], [rbp-208]
+    va_arg.obj [rbp-224], [rbp-24]
+    feq.f80 rax, [rbp-224], 1.25L
+    ret rax
+
+function @read_x87
+  abi
+    param %n -> rdi : i32
+    return i32 -> rax
+  frame
+    stack_size 256
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $list -> [rbp-24] : obj<24x8>
+    slot $home -> [rbp-48] : obj<16x16>
+    temp %va-register-save -> [rbp-224] : obj<176x16>
+    temp %object -> [rbp-240] : obj<16x16>
+    temp %v -> [rbp-256] : f80
+
+  block ^entry
+    store.i64 [rbp-224], rdi
+    store.i64 [rbp-216], rsi
+    store.i64 [rbp-208], rdx
+    store.i64 [rbp-200], rcx
+    store.i64 [rbp-192], r8
+    store.i64 [rbp-184], r9
+    fmov.i128 [rbp-176], xmm0
+    fmov.i128 [rbp-160], xmm1
+    fmov.i128 [rbp-144], xmm2
+    fmov.i128 [rbp-128], xmm3
+    fmov.i128 [rbp-112], xmm4
+    fmov.i128 [rbp-96], xmm5
+    fmov.i128 [rbp-80], xmm6
+    fmov.i128 [rbp-64], xmm7
+    va_start [rbp-24], [rbp-224]
+    va_arg.obj [rbp-240], [rbp-24]
+    copy_bytes 16x16, [rbp-48], [rbp-240]
+    fmov.f80 [rbp-256], [rbp-48]
+    feq.f80 rax, [rbp-256], 1.25L
+    ret rax
+
+function @read_memory
+  abi
+    param %n -> rdi : i32
+    return i64 -> rax
+  frame
+    stack_size 304
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $list -> [rbp-24] : obj<24x8>
+    slot $home -> [rbp-72] : obj<48x8>
+    temp %va-register-save -> [rbp-256] : obj<176x16>
+    temp %object -> [rbp-304] : obj<48x8>
+
+  block ^entry
+    store.i64 [rbp-256], rdi
+    store.i64 [rbp-248], rsi
+    store.i64 [rbp-240], rdx
+    store.i64 [rbp-232], rcx
+    store.i64 [rbp-224], r8
+    store.i64 [rbp-216], r9
+    fmov.i128 [rbp-208], xmm0
+    fmov.i128 [rbp-192], xmm1
+    fmov.i128 [rbp-176], xmm2
+    fmov.i128 [rbp-160], xmm3
+    fmov.i128 [rbp-144], xmm4
+    fmov.i128 [rbp-128], xmm5
+    fmov.i128 [rbp-112], xmm6
+    fmov.i128 [rbp-96], xmm7
+    va_start [rbp-24], [rbp-256]
+    va_arg.obj [rbp-304], [rbp-24]
+    copy_bytes 48x8, [rbp-72], [rbp-304]
+    load.i64 r8, [rbp-72]
+    load.i64 r9, [rbp-64]
+    load.i64 rdi, [rbp-32]
+    add r8, r9
+    add r8, rdi
+    ret r8
+
+function @read_i128
+  abi
+    param %n -> rdi : i32
+    return i128 -> rax
+  frame
+    stack_size 224
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    slot $list -> [rbp-24] : obj<24x8>
+    temp %va-register-save -> [rbp-208] : obj<176x16>
+    temp %v -> [rbp-224] : i128
+
+  block ^entry
+    store.i64 [rbp-208], rdi
+    store.i64 [rbp-200], rsi
+    store.i64 [rbp-192], rdx
+    store.i64 [rbp-184], rcx
+    store.i64 [rbp-176], r8
+    store.i64 [rbp-168], r9
+    fmov.i128 [rbp-160], xmm0
+    fmov.i128 [rbp-144], xmm1
+    fmov.i128 [rbp-128], xmm2
+    fmov.i128 [rbp-112], xmm3
+    fmov.i128 [rbp-96], xmm4
+    fmov.i128 [rbp-80], xmm5
+    fmov.i128 [rbp-64], xmm6
+    fmov.i128 [rbp-48], xmm7
+    va_start [rbp-24], [rbp-208]
+    va_arg.obj [rbp-224], [rbp-24]
+    load.i64 rax, [rbp-224]
+    load.i64 rdx, [rbp-216]
+    ret
+
+function @main
+  abi
+    return i32 -> rax
+  frame
+    stack_size 432
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    preserve rbx r12 r13 r14 r15
+    slot $out -> [rbp-16] : obj<16x16>
+    slot $complex -> [rbp-48] : obj<32x16>
+    slot $pair -> [rbp-64] : obj<16x8>
+    slot $quad -> [rbp-80] : obj<16x16>
+    slot $extended -> [rbp-96] : obj<16x16>
+    temp %r0 -> [rbp-112] : f80
+    temp %r1 -> [rbp-128] : obj<16x16>
+    temp %v1 -> [rbp-144] : f80
+    temp %r2 -> [rbp-176] : obj<32x16>
+    temp %re -> [rbp-192] : f80
+    temp %im -> [rbp-208] : f80
+    temp %e4 -> [rbp-216] : i32
+    temp %r5 -> [rbp-240] : obj<16x16>
+    temp %e5 -> [rbp-248] : i32
+    temp %pv -> [rbp-264] : obj<16x8>
+    temp %e7 -> [rbp-272] : i32
+    temp %xv -> [rbp-288] : obj<16x16>
+    temp %e8 -> [rbp-296] : i32
+    temp %e9 -> [rbp-304] : i32
+    temp %wv -> [rbp-352] : obj<48x8>
+    temp %e10 -> [rbp-360] : i32
+    temp %r11 -> [rbp-384] : i128
+
+  block ^entry
+    mov r8, @x87_result
+    sub rsp, 16
+    fmov.f80 [rsp], 1.5L
+    call *r8 [args=(), stack=16]
+    add rsp, 16
+    fstp.f80 [rbp-112]
+    feq.f80 r8, [rbp-112], 1.5L
+    test.u8 r8, r8
+    sete rbx
+    movzx rbx, rbx
+    mov r8, @f80_result
+    call *r8 [args=()]
+    fstp.f80 [rbp-128]
+    copy_bytes 16x16, [rbp-16], [rbp-128]
+    fmov.f80 [rbp-144], [rbp-16]
+    feq.f80 r8, [rbp-144], 2.25L
+    test.u8 r8, r8
+    sete r12
+    movzx r12, r12
+    sub rsp, 32
+    fmov.f80 [rsp], 0.5L
+    fmov.f80 [rsp+16], 4.0L
+    call @complex_result [args=(), stack=32]
+    add rsp, 32
+    fstp.f80 [rbp-176]
+    fstp.f80 [rbp-160]
+    copy_bytes 32x16, [rbp-48], [rbp-176]
+    fmov.f80 [rbp-192], [rbp-48]
+    fmov.f80 [rbp-208], [rbp-32]
+    feq.f80 r8, [rbp-192], 0.5L
+    feq.f80 r9, [rbp-208], 4.0L
+    and r8, r9
+    test.u8 r8, r8
+    sete r13
+    movzx r13, r13
+    mov r8, @memory_result
+    lea r14, [rbp-64]
+    mov rdi, r14
+    mov rsi, 11
+    mov rdx, 12
+    call *r8 [args=(rdx,rsi,rdi)]
+    load.i64 r8, [r14]
+    load.i64 r9, [r14+8]
+    cmp.i64 r8, 11
+    sete r8
+    movzx r8, r8
+    cmp.i64 r9, 12
+    sete r9
+    movzx r9, r9
+    and r8, r9
+    test.u8 r8, r8
+    sete r15
+    movzx r15, r15
+    mov r8, @sseup_argument
+    fmov.f64 xmm0, 1.5
+    fmov.f64 xmm1, 2.5
+    call *r8 [args=(xmm0,xmm1)]
+    fmov.f64 xmm1, @low
+    feq.f64 r8, xmm0, 2.5
+    feq.f64 r9, xmm1, 1.5
+    and r8, r9
+    test.u8 r8, r8
+    sete r10
+    movzx r10, r10
+    store.i32 [rbp-216], r10
+    mov rdi, 21
+    mov rsi, 22
+    call @sseup_result [args=(rsi,rdi)]
+    fmov.i128 [rbp-240], xmm0
+    copy_bytes 16x16, [rbp-80], [rbp-240]
+    load.i64 r8, [rbp-80]
+    load.i64 r9, [rbp-72]
+    cmp.i64 r8, 21
+    sete r8
+    movzx r8, r8
+    cmp.i64 r9, 22
+    sete r9
+    movzx r9, r9
+    and r8, r9
+    test.u8 r8, r8
+    sete r10
+    movzx r10, r10
+    store.i32 [rbp-248], r10
+    fmov.f64 [r14], 0.5
+    store.i64 [r14+8], 7
+    copy_bytes 16x8, [rbp-264], [r14]
+    mov rdi, 1
+    load.i64 rsi, [rbp-256]
+    fmov.f64 xmm0, [rbp-264]
+    mov rax, 1
+    call @read_scalars [args=(rax,rsi,rdi,xmm0), variadic]
+    sext.i32 rax
+    cmp.i32 rax, 1
+    setne r14
+    movzx r14, r14
+    mov rdi, 1
+    mov rsi, 7
+    fmov.f64 xmm0, 0.5
+    mov rax, 1
+    call @read_pair [args=(rax,rsi,rdi,xmm0), variadic]
+    sext.i32 rax
+    cmp.i32 rax, 1
+    setne r10
+    movzx r10, r10
+    store.i32 [rbp-272], r10
+    fmov.f80 [rbp-96], 1.25L
+    copy_bytes 16x16, [rbp-288], [rbp-96]
+    sub rsp, 16
+    copy_bytes 16x8, [rsp], [rbp-288]
+    mov rdi, 1
+    mov rax, 0
+    call @read_f80 [args=(rax,rdi), stack=16, variadic]
+    add rsp, 16
+    sext.i32 rax
+    cmp.i32 rax, 1
+    setne r10
+    movzx r10, r10
+    store.i32 [rbp-296], r10
+    sub rsp, 16
+    fmov.f80 [rsp], 1.25L
+    mov rdi, 1
+    mov rax, 0
+    call @read_x87 [args=(rax,rdi), stack=16, variadic]
+    add rsp, 16
+    sext.i32 rax
+    cmp.i32 rax, 1
+    setne r10
+    movzx r10, r10
+    store.i32 [rbp-304], r10
+    copy_bytes 48x8, [rbp-352], @wide
+    sub rsp, 48
+    copy_bytes 48x8, [rsp], [rbp-352]
+    mov rdi, 1
+    mov rax, 0
+    call @read_memory [args=(rax,rdi), stack=48, variadic]
+    add rsp, 48
+    cmp.i64 rax, 9
+    setne r10
+    movzx r10, r10
+    store.i32 [rbp-360], r10
+    mov rdi, 1
+    mov rsi, 5
+    mov rdx, 6
+    mov rax, 0
+    call @read_i128 [args=(rax,rdx,rsi,rdi), variadic]
+    store.i64 [rbp-384], rax
+    store.i64 [rbp-376], rdx
+    set.eq.i128 r8, [rbp-384], 0x00000000000000060000000000000005
+    test.u8 r8, r8
+    sete r8
+    movzx r8, r8
+    add.i32 rbx, r12
+    sext.i32 rbx
+    add.i32 rbx, r13
+    sext.i32 rbx
+    add.i32 rbx, r15
+    sext.i32 rbx
+    add.i32 rbx, [rbp-216]
+    sext.i32 rbx
+    add.i32 rbx, [rbp-248]
+    sext.i32 rbx
+    add.i32 rbx, r14
+    sext.i32 rbx
+    add.i32 rbx, [rbp-272]
+    sext.i32 rbx
+    add.i32 rbx, [rbp-296]
+    sext.i32 rbx
+    add.i32 rbx, [rbp-304]
+    sext.i32 rbx
+    add.i32 rbx, [rbp-360]
+    sext.i32 rbx
+    add.i32 rbx, r8
+    ret rbx

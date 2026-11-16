@@ -111,7 +111,7 @@ endef
 
 define run_object_roundtrip_bucket
 	@if [ -d "$(1)" ] && find "$(1)" \( -type f -o -type l \) \( -name '*.cpp' -o -name '*.t' \) | grep -q .; then \
-		scripts/run_object_lowir_roundtrip_tests.pl $(2) --app "$(CPPGM_DRIVER_APP)" --test-root "$(1)"; \
+		scripts/run_object_lowir_roundtrip_tests.pl $(2) --app "$(CPPGM_DRIVER_APP)" --lowiropt "$(LOWIROPT_APP)" --test-root "$(1)"; \
 	else \
 		if [ "$(REPORT_EMPTY_OPTIONAL_TEST_ROOTS)" = "1" ]; then echo "$(TARGET) $(1): no tests"; fi; \
 	fi
@@ -206,7 +206,7 @@ esac
 CHECK_RUN = perl ../scripts/run_routed_test_spec.pl "$(TEST)" \
 		'$(HOST_O1_TEST_ROOT)/*::CPPGM_APP_ARGS="-O1" perl ../scripts/run_cpphostinterop_tests_worker.pl $(CPPGM_DRIVER_APP) check {tests}' \
 		'$(HOST_O2_TEST_ROOT)/*::CPPGM_APP_ARGS="-O2" perl ../scripts/run_cpphostinterop_tests_worker.pl $(CPPGM_DRIVER_APP) check {tests}' \
-		'$(OBJECT_ROUNDTRIP_TEST_ROOT)/*::scripts/run_object_lowir_roundtrip_tests.pl --app $(CPPGM_DRIVER_APP) --test {tests}' \
+		'$(OBJECT_ROUNDTRIP_TEST_ROOT)/*::scripts/run_object_lowir_roundtrip_tests.pl --app $(CPPGM_DRIVER_APP) --lowiropt $(LOWIROPT_APP) --test {tests}' \
 		'$(O0_TEST_ROOT)/*::CPPGM_APP_ARGS=-O0 scripts/run_all_tests.pl $(LOWIROPT_APP) check {tests}' \
 		'$(O1_TEST_ROOT)/*|$(DEBUGINFO_O1_TEST_ROOT)/*::CPPGM_APP_ARGS=-O1 scripts/run_all_tests.pl $(LOWIROPT_APP) check {tests}' \
 		'$(O2_TEST_ROOT)/*|$(DEBUGINFO_O2_TEST_ROOT)/*::CPPGM_APP_ARGS=-O2 scripts/run_all_tests.pl $(LOWIROPT_APP) check {tests}' \

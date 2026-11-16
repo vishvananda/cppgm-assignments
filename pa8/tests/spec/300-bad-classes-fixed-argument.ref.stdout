@@ -1,0 +1,1 @@
+ERROR: argument classes require an unnamed variadic argument's value in function @pass at tests/spec/300-bad-classes-fixed-argument.t:4

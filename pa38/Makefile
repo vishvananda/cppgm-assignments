@@ -15,7 +15,7 @@ CONTROL_TEST_ROOT ?= tests/controls
 all: dev-shared-target
 
 dev-shared-target:
-	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" != "1" ]; then $(MAKE) -C ../dev $(TARGET) lowir2native CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)"; fi
+	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" != "1" ]; then $(MAKE) -C ../dev $(TARGET) lowir2native lowiropt CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)"; fi
 
 CONTROLS_RUN = CPPGM_CONTROL_NATIVE_APP="$(NATIVE_REFERENCE_APP)" \
 	perl ../scripts/run_all_tests_common.pl control_t $(CPPGM_TEST_APP) my "$(CONTROL_TEST_ROOT)" && \
