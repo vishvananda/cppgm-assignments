@@ -1,0 +1,7 @@
+{
+  "source": true,
+  "runtime": true,
+  "link_exports": [],
+  "link_flags": ["-Wl,--export=forwarded_export"],
+  "calls": [{"export": "forwarded_export", "result": "37"}]
+}

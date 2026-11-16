@@ -1,0 +1,24 @@
+{
+  "source": true,
+  "runtime": true,
+  "libraries": ["c++abi", "c++", "unwind"],
+  "wasi": true,
+  "target": "wasm32-wasip1",
+  "link_flags": ["-nostartfiles"],
+  "reference_flags": ["-fexceptions", "-fwasm-exceptions", "-mllvm", "-wasm-use-legacy-eh=false"],
+  "reference_link_flags": ["-fwasm-exceptions", "-Wl,--no-entry"],
+  "reference_initialize": "__wasm_call_ctors",
+  "llvm_interop": true,
+  "exports": ["eh_cases"],
+  "calls": [
+    {"export": "observe", "args": ["0", "0"], "result": "17"},
+    {"export": "observe", "args": ["1", "0"], "result": "17"},
+    {"export": "observe", "args": ["2", "0"], "result": "17"},
+    {"export": "observe", "args": ["3", "0"], "result": "17"},
+    {"export": "observe", "args": ["8", "4"], "result": "17"},
+    {"export": "observe", "args": ["11", "19"], "result": "17"},
+    {"export": "observe", "args": ["15", "7"], "result": "17"},
+    {"export": "observe", "args": ["-1", "-1"], "result": "17"}
+  ],
+  "quality": {"levels": [1, 2, 3], "functions": {"eh_cases": {"locals": 80}}}
+}
