@@ -72,7 +72,7 @@ function @D__D(%this : ptr [object_bytes=16]) -> void [binding=weak, object=_ZN1
     store typed ptr %t7, %t5
     return void
 }
-function @V__V__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN1VC2Ev, object_root=yes, inline_hint=yes] {
+function @V__V__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN1VC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -82,7 +82,7 @@ function @V__V__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, 
     store typed i32 42, %t2
     return void
 }
-function @A__A__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN1AC2Ev, object_root=yes, inline_hint=yes] {
+function @A__A__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN1AC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

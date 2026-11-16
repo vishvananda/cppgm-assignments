@@ -64,7 +64,7 @@ function @Own_int___Own(%this : ptr [object_bytes=4]) -> void [binding=weak, obj
     store typed i32 3, %t2
     return void
 }
-function @Interval__Interval__base_entry(%this : ptr [object_bytes=4], %x : i32) -> void [binding=weak, object=_ZN8IntervalC2Ei, object_root=yes, inline_hint=yes] {
+function @Interval__Interval__base_entry(%this : ptr [object_bytes=4], %x : i32) -> void [binding=weak, object=_ZN8IntervalC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $x : i32
 
@@ -77,7 +77,7 @@ function @Interval__Interval__base_entry(%this : ptr [object_bytes=4], %x : i32)
     call void @Domain_1_int___Domain__base_entry(%t2, %t3)
     return void
 }
-function @Domain_1_int___Domain__base_entry(%this : ptr [object_bytes=4], %v : i32) -> void [binding=weak, object=_ZN6DomainILi1EiEC2Ei, object_root=yes, inline_hint=yes] {
+function @Domain_1_int___Domain__base_entry(%this : ptr [object_bytes=4], %v : i32) -> void [binding=weak, object=_ZN6DomainILi1EiEC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $v : i32
 

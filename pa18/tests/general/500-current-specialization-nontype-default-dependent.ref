@@ -29,7 +29,7 @@ function @bitset_64___operator__(%this : ptr [object_bytes=4], %rhs : ptr [pass=
     %t1 = load typed ptr $this
     return ptr %t1
 }
-function @bitset_base_1_64___bitset_base__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN11bitset_baseILm1ELm64EEC2Ev, object_root=yes] {
+function @bitset_base_1_64___bitset_base__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN11bitset_baseILm1ELm64EEC2Ev] {
   slot $this : ptr
 
   block ^entry:

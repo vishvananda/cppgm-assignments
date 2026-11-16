@@ -48,7 +48,7 @@ function @object__run(%this : ptr [object_bytes=12]) -> i32 [binding=weak, objec
     %t3 = call i32 @holder_object___read(%t2)
     return i32 %t3
 }
-function @pad__pad__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN3padC2Ev, object_root=yes, inline_hint=yes] {
+function @pad__pad__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN3padC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -58,7 +58,7 @@ function @pad__pad__base_entry(%this : ptr [object_bytes=4]) -> void [binding=we
     store typed i32 7, %t2
     return void
 }
-function @holder_object___holder__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6holderI6objectEC2Ev, object_root=yes, inline_hint=yes] {
+function @holder_object___holder__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6holderI6objectEC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

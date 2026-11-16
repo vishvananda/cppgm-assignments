@@ -133,7 +133,7 @@ function @boost__tuples__cons___cppgm_class_template_identity_1___null_type___co
     store typed ptr %t1, %t3
     return void
 }
-function @boost__tuples__cons___cppgm_class_template_identity_1_____cppgm_class_template_identity_2___cons__base_entry(%this : ptr [object_bytes=16], %h : ptr [pass=by_address, object_bytes=8], %t : ptr [pass=by_address, object_bytes=8]) -> void [binding=weak, object=_ZN5boost6tuples4consIRPSt4pairImmENS1_IS5_NS0_9null_typeEEEEC2ES5_RKS7_, object_root=yes, inline_hint=yes] {
+function @boost__tuples__cons___cppgm_class_template_identity_1_____cppgm_class_template_identity_2___cons__base_entry(%this : ptr [object_bytes=16], %h : ptr [pass=by_address, object_bytes=8], %t : ptr [pass=by_address, object_bytes=8]) -> void [binding=weak, object=_ZN5boost6tuples4consIRPSt4pairImmENS1_IS5_NS0_9null_typeEEEEC2ES5_RKS7_, inline_hint=yes] {
   slot $this : ptr
   slot $h : ptr
   slot $t : ptr

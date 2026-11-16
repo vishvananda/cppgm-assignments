@@ -101,7 +101,7 @@ function @Derived__Derived(%this : ptr [object_bytes=8]) -> void [unwind=no, bin
     eh_end
     resume
 }
-function @Derived___Derived__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD2Ev, object_root=yes, inline_hint=yes] {
+function @Derived___Derived__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -194,7 +194,7 @@ function @Derived___Derived(%this : ptr [object_bytes=8]) -> void [unwind=no, bi
   block ^destructor_end_2:
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -212,7 +212,7 @@ function @Derived__f(%this : ptr [object_bytes=8]) -> i32 [unwind=no, binding=we
     store typed ptr %this, $this
     return i32 2
 }
-function @Base___Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, object_root=yes, inline_hint=yes] {
+function @Base___Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

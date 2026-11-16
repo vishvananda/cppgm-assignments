@@ -171,7 +171,7 @@ function @Same__Same(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=w
     store typed ptr %t5, %t3
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -190,7 +190,7 @@ function @Self_int___self(%this : ptr [object_bytes=8]) -> ptr [binding=weak, ob
     %t1 = load typed ptr $this
     return ptr %t1
 }
-function @Interface__Interface__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN9InterfaceC2Ev, object_root=yes, inline_hint=yes] {
+function @Interface__Interface__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN9InterfaceC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

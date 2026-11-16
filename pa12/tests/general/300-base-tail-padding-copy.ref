@@ -244,7 +244,7 @@ function @Extended__Extended(%this : ptr [object_bytes=8]) -> void [binding=weak
     call void @Pair__Pair__base_entry(%t2)
     return void
 }
-function @Pair__Pair__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN4PairC2Ev, object_root=yes, inline_hint=yes] {
+function @Pair__Pair__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN4PairC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -257,7 +257,7 @@ function @Pair__Pair__base_entry(%this : ptr [object_bytes=8]) -> void [binding=
     store i8 2, %t4
     return void
 }
-function @Bits__Bits__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN4BitsC2Ev, object_root=yes, inline_hint=yes] {
+function @Bits__Bits__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN4BitsC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

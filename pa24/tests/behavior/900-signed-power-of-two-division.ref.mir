@@ -16,11 +16,11 @@ function @div2
     epilogues shared
 
   block ^entry
-    mov r11, 2
-    mov rax, rdi
-    cqo
-    idiv r11
-    ret rax
+    mov r11, rdi
+    shr r11, 63
+    add rdi, r11
+    sar rdi, 1
+    ret rdi
 
 function @mod8
   abi
@@ -33,11 +33,13 @@ function @mod8
     epilogues shared
 
   block ^entry
-    mov r11, 8
-    mov rax, rdi
-    cqo
-    idiv r11
-    ret rdx
+    mov r11, rdi
+    sar r11, 63
+    shr r11, 61
+    add r11, rdi
+    and r11, -8
+    sub rdi, r11
+    ret rdi
 
 function @main
   abi
@@ -52,7 +54,6 @@ function @main
     temp %bad_r4_positive -> [rbp-16] : i64
     temp %bad_q4_zero -> [rbp-24] : i64
     temp %bad_q7 -> [rbp-32] : i64
-    temp %bad_r7 -> [rbp-40] : i64
 
   block ^entry
     mov r11, 1
@@ -79,102 +80,139 @@ function @main
     cmp.i64 rax, -7
     setne r8
     movzx r8, r8
-    mov r11, 4611686018427387904
-    mov rax, -9223372036854775808
-    cqo
-    idiv r11
-    cmp.i64 rax, -2
+    mov r10, -9223372036854775808
+    mov r9, r10
+    sar r9, 63
+    shr r9, 2
+    add r9, r10
+    sar r9, 62
+    cmp.i64 r9, -2
     setne r9
     movzx r9, r9
-    mov r11, 4611686018427387904
-    mov rax, 9223372036854775807
-    cqo
-    idiv r11
-    cmp.i64 rdx, 4611686018427387903
+    mov r10, 9223372036854775807
+    mov rdi, r10
+    sar rdi, 63
+    shr rdi, 2
+    add rdi, r10
+    sar rdi, 62
+    shl rdi, 62
+    neg rdi
+    add rdi, r10
+    cmp.i64 rdi, 4611686018427387903
     setne rdi
     movzx rdi, rdi
-    mov r11, 4
-    mov rax, -7
-    cqo
-    idiv r11
-    sext.i8 rax
-    zext.i8 rax
-    cmp.i64 rax, 255
+    mov r10, -7
+    mov rsi, r10
+    sar rsi, 63
+    shr rsi, 62
+    add rsi, r10
+    sar rsi, 2
+    zext.i8 rsi
+    cmp.i64 rsi, 255
     setne rsi
     movzx rsi, rsi
-    mov r11, 4
-    mov rax, -7
-    cqo
-    idiv r11
+    mov r10, -7
+    mov rdx, r10
+    sar rdx, 63
+    shr rdx, 62
+    add rdx, r10
+    and rdx, -4
+    neg rdx
+    add rdx, r10
     zext.i8 rdx
     cmp.i64 rdx, 253
     setne rcx
     movzx rcx, rcx
-    mov r11, 256
-    mov rax, -32768
-    cqo
-    idiv r11
-    sext.i16 rax
-    zext.i16 rax
-    cmp.i64 rax, 65408
+    mov r10, -32768
+    mov rdx, r10
+    sar rdx, 63
+    shr rdx, 56
+    add rdx, r10
+    sar rdx, 8
+    zext.i16 rdx
+    cmp.i64 rdx, 65408
     setne r14
     movzx r14, r14
-    mov r11, 65536
-    mov rax, -2147483647
-    cqo.i32
-    idiv.i32 r11
-    sext.i32 rdx
+    mov r10, -2147483647
+    mov rdx, r10
+    sar rdx, 63
+    shr rdx, 48
+    add rdx, r10
+    and rdx, -65536
+    neg rdx
+    add rdx, r10
     zext.i32 rdx
     cmp.i64 rdx, 4294901761
     setne r15
     movzx r15, r15
-    mov r11, 4
-    mov rax, 7
-    cqo
-    idiv r11
-    cmp.i64 rax, 1
+    mov r10, 7
+    mov rdx, r10
+    sar rdx, 63
+    shr rdx, 62
+    add rdx, r10
+    sar rdx, 2
+    cmp.i64 rdx, 1
     setne r10
     movzx r10, r10
     store.i64 [rbp-8], r10
-    mov r11, 4
-    mov rax, 7
-    cqo
-    idiv r11
+    mov r10, 7
+    mov rdx, r10
+    sar rdx, 63
+    shr rdx, 62
+    add rdx, r10
+    and rdx, -4
+    neg rdx
+    add rdx, r10
     cmp.i64 rdx, 3
     setne r10
     movzx r10, r10
     store.i64 [rbp-16], r10
-    mov r11, 4
-    mov rax, 0
-    cqo
-    idiv r11
-    cmp.i64 rax, 0
+    mov r10, 0
+    mov rdx, r10
+    sar rdx, 63
+    shr rdx, 62
+    add rdx, r10
+    sar rdx, 2
+    cmp.i64 rdx, 0
     setne r10
     movzx r10, r10
     store.i64 [rbp-24], r10
-    mov r11, 7
-    mov rax, -100
-    cqo
-    idiv r11
-    cmp.i64 rax, -14
+    mov r10, -100
+    mov rax, r10
+    mov r11, 5270498306774157605
+    imul r11
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    cmp.i64 rdx, -14
     setne r10
     movzx r10, r10
     store.i64 [rbp-32], r10
-    mov r11, 7
-    mov rax, -100
-    cqo
-    idiv r11
-    cmp.i64 rdx, -2
-    setne r10
-    movzx r10, r10
-    store.i64 [rbp-40], r10
-    mov r11, -4
-    mov rax, -100
-    cqo
-    idiv r11
-    cmp.i64 rax, 25
+    mov r10, -100
+    mov rax, r10
+    mov r11, 5270498306774157605
+    imul r11
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    imul rdx, 7
+    mov rax, r10
+    sub rax, rdx
+    cmp.i64 rax, -2
     setne rax
     movzx rax, rax
+    mov r10, -100
+    mov rdx, r10
+    sar rdx, 63
+    shr rdx, 62
+    add rdx, r10
+    sar rdx, 2
+    neg rdx
+    cmp.i64 rdx, 25
+    setne rdx
+    movzx rdx, rdx
     or rbx, r12
     or r13, r8
     or r9, rdi
@@ -184,7 +222,7 @@ function @main
     or r8, [rbp-16]
     load.i64 rdi, [rbp-24]
     or rdi, [rbp-32]
-    or rax, [rbp-40]
+    or rax, rdx
     or rbx, r13
     or r9, rsi
     or r14, r8

@@ -54,7 +54,7 @@ function @derived_int___derived(%this : ptr [object_bytes=4], %__param1 : ptr [p
     call void @base_int___base__base_entry(%t2, %t3)
     return void
 }
-function @base_int___base__base_entry(%this : ptr [object_bytes=4], %u : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN4baseIiEC2I3argEEOT_, object_root=yes, inline_hint=yes] {
+function @base_int___base__base_entry(%this : ptr [object_bytes=4], %u : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN4baseIiEC2I3argEEOT_, inline_hint=yes] {
   slot $this : ptr
   slot $u : ptr
 

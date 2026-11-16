@@ -53,7 +53,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t14 = load typed i32 $cond__1
     return i32 %t14
 }
-function @counter__counter__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN7counterC2Ev, object_root=yes, inline_hint=yes] {
+function @counter__counter__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN7counterC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

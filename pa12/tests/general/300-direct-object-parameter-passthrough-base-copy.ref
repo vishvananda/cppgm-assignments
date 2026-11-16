@@ -101,7 +101,7 @@ function @Pair__Pair(%this : ptr [object_bytes=16], %first : ptr, %second : ptr)
     call void @Base__Base__base_entry(%t2, %t3, %t4)
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=16], %first : ptr, %second : ptr) -> void [binding=weak, object=_ZN4BaseC2EPvS0_, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=16], %first : ptr, %second : ptr) -> void [binding=weak, object=_ZN4BaseC2EPvS0_, inline_hint=yes] {
   slot $this : ptr
   slot $first : ptr
   slot $second : ptr

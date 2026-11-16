@@ -253,7 +253,7 @@ function @V__probe(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_
     store typed ptr %this, $this
     return void
 }
-function @V__V__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1VC2Ev, object_root=yes, inline_hint=yes] {
+function @V__V__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1VC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -291,7 +291,7 @@ function @D__D(%this : ptr [object_bytes=24]) -> void [binding=weak, object=_ZN1
     store typed ptr %t15, %t13
     return void
 }
-function @Holder__Holder__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN6HolderC2Ev, object_root=yes, inline_hint=yes] {
+function @Holder__Holder__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN6HolderC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

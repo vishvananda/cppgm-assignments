@@ -74,7 +74,7 @@ function @BetterConversion__BetterConversion__ov2(%this : ptr [object_bytes=4], 
     call void @Base__Base__base_entry(%t2, %t3)
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=4], %n : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=4], %n : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $n : i32
 

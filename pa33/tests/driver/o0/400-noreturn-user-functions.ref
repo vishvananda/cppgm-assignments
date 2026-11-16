@@ -263,7 +263,7 @@ function @Guard__Guard(%this : ptr [object_bytes=8]) -> void [unwind=no, binding
     store typed ptr %t3, %t1
     return void
 }
-function @Guard___Guard__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5GuardD2Ev, object_root=yes, inline_hint=yes] {
+function @Guard___Guard__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5GuardD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

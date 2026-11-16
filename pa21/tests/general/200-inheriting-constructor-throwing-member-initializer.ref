@@ -652,7 +652,7 @@ function @First___First(%this : ptr [object_bytes=4]) -> void [unwind=no, bindin
   block ^destructor_end_2:
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=1], %k : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=1], %k : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $k : i32
 

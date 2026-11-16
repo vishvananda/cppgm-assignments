@@ -6,5 +6,3 @@ count(load) <= 6
 count(store) <= 6
 count(phi) <= 3
 instructions <= 4 in @use_leaf
-instructions <= 5 in @Base__Base__base_entry
-instructions <= 14 in @Middle__Middle__base_entry

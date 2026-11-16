@@ -165,7 +165,7 @@ function @Second__second(%this : ptr [object_bytes=16]) -> i64 [binding=weak, ob
     store typed ptr %this, $this
     return i64 2
 }
-function @Second___Second__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN6SecondD2Ev, object_root=yes, inline_hint=yes] {
+function @Second___Second__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN6SecondD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -239,7 +239,7 @@ function @Joined__Joined(%this : ptr [object_bytes=40]) -> void [unwind=no, bind
     call void @Second___Second__base_entry(%t15)
     jump ^constructor_cleanup_1
 }
-function @First__First__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5FirstC2Ev, object_root=yes, inline_hint=yes] {
+function @First__First__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5FirstC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -250,7 +250,7 @@ function @First__First__base_entry(%this : ptr [object_bytes=16]) -> void [unwin
     store typed ptr %t3, %t1
     return void
 }
-function @Second__Second__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN6SecondC2Ev, object_root=yes, inline_hint=yes] {
+function @Second__Second__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN6SecondC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -390,7 +390,7 @@ function @Joined__second(%this : ptr [object_bytes=40]) -> i64 [binding=weak, ob
     store typed ptr %this, $this
     return i64 3
 }
-function @First___First__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5FirstD2Ev, object_root=yes, inline_hint=yes] {
+function @First___First__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5FirstD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

@@ -314,7 +314,7 @@ function @array_reference_cv_lazy_impl_array_reference_cv_lazy_char_4__constchar
     %t14 = call ptr @array_reference_cv_detail__operator__(%t8, %t9)
     return ptr %t14
 }
-function @array_reference_cv_lazy___array_reference_cv_lazy__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN23array_reference_cv_lazyD2Ev, object_root=yes, inline_hint=yes] {
+function @array_reference_cv_lazy___array_reference_cv_lazy__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN23array_reference_cv_lazyD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -325,7 +325,7 @@ function @array_reference_cv_lazy___array_reference_cv_lazy__base_entry(%this : 
     store typed ptr %t3, %t1
     return void
 }
-function @array_reference_cv_lazy__array_reference_cv_lazy__base_entry(%this : ptr [object_bytes=8], %__param1 : u8) -> void [binding=weak, object=_ZN23array_reference_cv_lazyC2Eb, object_root=yes, inline_hint=yes] {
+function @array_reference_cv_lazy__array_reference_cv_lazy__base_entry(%this : ptr [object_bytes=8], %__param1 : u8) -> void [binding=weak, object=_ZN23array_reference_cv_lazyC2Eb, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : u8
 

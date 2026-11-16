@@ -28,7 +28,7 @@ function @ns__helper(%object : ptr [pass=by_address, object_bytes=4]) -> ptr [bi
     %t2 = index inbounds i8 [projection=field] %t1, 0
     return ptr %t2
 }
-function @ns__impl_0_int__int___impl__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN2ns4implILm0EJPiiEEC2Ev, object_root=yes, inline_hint=yes] {
+function @ns__impl_0_int__int___impl__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN2ns4implILm0EJPiiEEC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -41,7 +41,7 @@ function @ns__impl_0_int__int___impl__base_entry(%this : ptr [object_bytes=16]) 
     store typed ptr 0, %t4
     return void
 }
-function @ns__impl_1_int___impl__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN2ns4implILm1EJiEEC2Ev, object_root=yes, inline_hint=yes] {
+function @ns__impl_1_int___impl__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN2ns4implILm1EJiEEC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

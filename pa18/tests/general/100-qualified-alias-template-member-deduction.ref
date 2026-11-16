@@ -47,7 +47,7 @@ function @unsafe_get(%v : ptr [pass=by_address, object_bytes=4]) -> ptr [binding
     %t4 = call ptr @detail__base_impl_false_int___get(%t2, $argobj__1)
     return ptr %t4
 }
-function @detail__relay_int___relay__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6detail5relayIJiEEC2Ev, object_root=yes, inline_hint=yes] {
+function @detail__relay_int___relay__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6detail5relayIJiEEC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -67,7 +67,7 @@ function @detail__base_impl_false_int___get(%this : ptr [object_bytes=4], %__par
     %t2 = index inbounds i8 [projection=field] %t1, 0
     return ptr %t2
 }
-function @detail__base_impl_false_int___base_impl__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6detail9base_implILb0EJiEEC2Ev, object_root=yes, inline_hint=yes] {
+function @detail__base_impl_false_int___base_impl__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6detail9base_implILb0EJiEEC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

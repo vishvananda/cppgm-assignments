@@ -38,7 +38,7 @@ function @key_first_second_third___key(%this : ptr [object_bytes=1], %__param1 :
     call void @tuple_like_first_second_third___tuple_like__base_entry(%t2, %t3, %t4, %t5)
     return void
 }
-function @tuple_like_first_second_third___tuple_like__base_entry(%this : ptr [object_bytes=1], %args : ptr [pass=by_address, object_bytes=1], %args__pack2 : ptr [pass=by_address, object_bytes=1], %args__pack3 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN10tuple_likeIJ5first6second5thirdEEC2IJRS0_RS1_RS2_ETnN9enable_ifIXsr7acceptsIDpOT_EE5valueEiE4typeELi0EEESB_, object_root=yes, inline_hint=yes] {
+function @tuple_like_first_second_third___tuple_like__base_entry(%this : ptr [object_bytes=1], %args : ptr [pass=by_address, object_bytes=1], %args__pack2 : ptr [pass=by_address, object_bytes=1], %args__pack3 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN10tuple_likeIJ5first6second5thirdEEC2IJRS0_RS1_RS2_ETnN9enable_ifIXsr7acceptsIDpOT_EE5valueEiE4typeELi0EEESB_, inline_hint=yes] {
   slot $this : ptr
   slot $args : ptr
   slot $args__pack2 : ptr
@@ -59,7 +59,7 @@ function @tuple_like_first_second_third___tuple_like__base_entry(%this : ptr [ob
     call void @tuple_like_first_second_third___tuple_like__base_entry__2(%t1, $argobj__1, %t3, %t4, %t5)
     return void
 }
-function @tuple_like_first_second_third___tuple_like__base_entry__2(%this : ptr [object_bytes=1], %__param1 : obj<1x1> [classes=none], %__param2 : ptr [pass=by_address, object_bytes=1], %__param3 : ptr [pass=by_address, object_bytes=1], %__param4 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN10tuple_likeIJ5first6second5thirdEEC2ENS3_3tagERKS0_RKS1_RKS2_, object_root=yes, inline_hint=yes] {
+function @tuple_like_first_second_third___tuple_like__base_entry__2(%this : ptr [object_bytes=1], %__param1 : obj<1x1> [classes=none], %__param2 : ptr [pass=by_address, object_bytes=1], %__param3 : ptr [pass=by_address, object_bytes=1], %__param4 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN10tuple_likeIJ5first6second5thirdEEC2ENS3_3tagERKS0_RKS1_RKS2_, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : obj<1x1>
   slot $__param2 : ptr

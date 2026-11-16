@@ -112,7 +112,7 @@ function @Derived__Derived(%this : ptr [object_bytes=16]) -> void [unwind=no, bi
     store typed ptr %t5, %t3
     return void
 }
-function @Interface__Interface__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN9InterfaceC2Ev, object_root=yes, inline_hint=yes] {
+function @Interface__Interface__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN9InterfaceC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

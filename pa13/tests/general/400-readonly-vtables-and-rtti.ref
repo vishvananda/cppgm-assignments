@@ -139,7 +139,7 @@ function @Square__Square(%this : ptr [object_bytes=8]) -> void [unwind=no, bindi
     eh_end
     resume
 }
-function @Shape__Shape__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5ShapeC2Ev, object_root=yes, inline_hint=yes] {
+function @Shape__Shape__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5ShapeC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -150,7 +150,7 @@ function @Shape__Shape__base_entry(%this : ptr [object_bytes=8]) -> void [unwind
     store typed ptr %t3, %t1
     return void
 }
-function @Square___Square__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN6SquareD2Ev, object_root=yes, inline_hint=yes] {
+function @Square___Square__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN6SquareD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -243,7 +243,7 @@ function @Square___Square(%this : ptr [object_bytes=8]) -> void [unwind=no, bind
   block ^destructor_end_2:
     return void
 }
-function @Shape___Shape__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5ShapeD2Ev, object_root=yes, inline_hint=yes] {
+function @Shape___Shape__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5ShapeD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

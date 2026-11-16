@@ -171,7 +171,7 @@ function @local__local__2(%this : ptr [object_bytes=8]) -> void [unwind=no, bind
     store typed ptr %t5, %t3
     return void
 }
-function @base__base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4baseC2Ev, object_root=yes, inline_hint=yes] {
+function @base__base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4baseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

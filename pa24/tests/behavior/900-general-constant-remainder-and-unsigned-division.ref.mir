@@ -16,11 +16,16 @@ function @smod3
     epilogues shared
 
   block ^entry
-    mov r11, 3
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rdx
+    mov r11, 6148914691236517206
+    imul r11
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    imul rdx, 3
+    mov rax, rdi
+    sub rax, rdx
+    ret rax
 
 function @smod_negative5
   abi
@@ -33,11 +38,17 @@ function @smod_negative5
     epilogues shared
 
   block ^entry
-    mov r11, -5
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rdx
+    mov r11, -7378697629483820647
+    imul r11
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    imul rdx, -5
+    mov rax, rdi
+    sub rax, rdx
+    ret rax
 
 function @smod_narrow3
   abi
@@ -50,10 +61,14 @@ function @smod_narrow3
     epilogues shared
 
   block ^entry
-    mov r11, 3
-    mov rax, rdi
-    cqo
-    idiv r11
+    imul rax, rdi, 1431655766
+    sar rax, 32
+    mov rdx, rdi
+    sar rdx, 63
+    sub rax, rdx
+    imul rax, 3
+    mov rdx, rdi
+    sub rdx, rax
     ret rdx
 
 function @sdiv_i16_7
@@ -67,10 +82,13 @@ function @sdiv_i16_7
     epilogues shared
 
   block ^entry
-    mov r11, 7
+    mov r11, 2454267027
     mov rax, rdi
-    cqo
-    idiv r11
+    imul rax, r11
+    sar rax, 34
+    mov rdx, rdi
+    sar rdx, 63
+    sub rax, rdx
     ret rax
 
 function @smod_i16_7
@@ -84,10 +102,16 @@ function @smod_i16_7
     epilogues shared
 
   block ^entry
-    mov r11, 7
+    mov r11, 2454267027
     mov rax, rdi
-    cqo
-    idiv r11
+    imul rax, r11
+    sar rax, 34
+    mov rdx, rdi
+    sar rdx, 63
+    sub rax, rdx
+    imul rax, 7
+    mov rdx, rdi
+    sub rdx, rax
     ret rdx
 
 function @sdiv_i32_negative31
@@ -101,11 +125,14 @@ function @sdiv_i32_negative31
     epilogues shared
 
   block ^entry
-    mov r11, -31
+    mov r11, 2216757315
     mov rax, rdi
-    cqo.i32
-    idiv.i32 r11
-    ret rax
+    imul rax, r11
+    sar rax, 36
+    mov rdx, rdi
+    sar rdx, 63
+    sub rdx, rax
+    ret rdx
 
 function @smod_i32_negative31
   abi
@@ -118,11 +145,17 @@ function @smod_i32_negative31
     epilogues shared
 
   block ^entry
-    mov r11, -31
+    mov r11, 2216757315
     mov rax, rdi
-    cqo.i32
-    idiv.i32 r11
-    ret rdx
+    imul rax, r11
+    sar rax, 36
+    mov rdx, rdi
+    sar rdx, 63
+    sub rdx, rax
+    imul rdx, -31
+    mov rax, rdi
+    sub rax, rdx
+    ret rax
 
 function @udiv3
   abi
@@ -135,11 +168,11 @@ function @udiv3
     epilogues shared
 
   block ^entry
-    mov r11, 3
     mov rax, rdi
-    mov rdx, 0
-    div r11
-    ret rax
+    mov r11, -6148914691236517205
+    mul r11
+    shr rdx, 1
+    ret rdx
 
 function @udiv7
   abi
@@ -152,10 +185,14 @@ function @udiv7
     epilogues shared
 
   block ^entry
-    mov r11, 7
     mov rax, rdi
-    mov rdx, 0
-    div r11
+    mov r11, 2635249153387078803
+    mul r11
+    mov rax, rdi
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 2
     ret rax
 
 function @umod7
@@ -169,10 +206,17 @@ function @umod7
     epilogues shared
 
   block ^entry
-    mov r11, 7
     mov rax, rdi
-    mov rdx, 0
-    div r11
+    mov r11, 2635249153387078803
+    mul r11
+    mov rax, rdi
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 2
+    imul rax, 7
+    mov rdx, rdi
+    sub rdx, rax
     ret rdx
 
 function @udiv_high
@@ -186,10 +230,14 @@ function @udiv_high
     epilogues shared
 
   block ^entry
-    mov r11, -9223372036854775807
     mov rax, rdi
-    mov rdx, 0
-    div r11
+    mov r11, -3
+    mul r11
+    mov rax, rdi
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 63
     ret rax
 
 function @umod_max
@@ -203,11 +251,14 @@ function @umod_max
     epilogues shared
 
   block ^entry
-    mov r11, -1
     mov rax, rdi
-    mov rdx, 0
-    div r11
-    ret rdx
+    mov r11, -9223372036854775807
+    mul r11
+    shr rdx, 63
+    imul rdx, -1
+    mov rax, rdi
+    sub rax, rdx
+    ret rax
 
 function @udiv_u8_7
   abi
@@ -220,10 +271,14 @@ function @udiv_u8_7
     epilogues shared
 
   block ^entry
-    mov r11, 7
     mov rax, rdi
-    mov rdx, 0
-    div r11
+    mov r11, 2635249153387078803
+    mul r11
+    mov rax, rdi
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 2
     ret rax
 
 function @umod_u8_7
@@ -237,10 +292,17 @@ function @umod_u8_7
     epilogues shared
 
   block ^entry
-    mov r11, 7
     mov rax, rdi
-    mov rdx, 0
-    div r11
+    mov r11, 2635249153387078803
+    mul r11
+    mov rax, rdi
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 2
+    imul rax, 7
+    mov rdx, rdi
+    sub rdx, rax
     ret rdx
 
 function @udiv_u16_1000
@@ -254,10 +316,8 @@ function @udiv_u16_1000
     epilogues shared
 
   block ^entry
-    mov r11, 1000
-    mov rax, rdi
-    mov rdx, 0
-    div r11
+    imul rax, rdi, 274877907
+    shr rax, 38
     ret rax
 
 function @umod_u16_1000
@@ -271,10 +331,11 @@ function @umod_u16_1000
     epilogues shared
 
   block ^entry
-    mov r11, 1000
-    mov rax, rdi
-    mov rdx, 0
-    div r11
+    imul rax, rdi, 274877907
+    shr rax, 38
+    imul rax, 1000
+    mov rdx, rdi
+    sub rdx, rax
     ret rdx
 
 function @udiv_u32_31
@@ -288,10 +349,14 @@ function @udiv_u32_31
     epilogues shared
 
   block ^entry
-    mov r11, 31
     mov rax, rdi
-    mov rdx, 0
-    div.i32 r11
+    mov r11, 595056260442243601
+    mul r11
+    mov rax, rdi
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 4
     ret rax
 
 function @umod_u32_31
@@ -305,10 +370,17 @@ function @umod_u32_31
     epilogues shared
 
   block ^entry
-    mov r11, 31
     mov rax, rdi
-    mov rdx, 0
-    div.i32 r11
+    mov r11, 595056260442243601
+    mul r11
+    mov rax, rdi
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 4
+    imul rax, 31
+    mov rdx, rdi
+    sub rdx, rax
     ret rdx
 
 function @main

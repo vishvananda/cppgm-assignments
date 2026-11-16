@@ -78,11 +78,14 @@ function @probe
   block ^for_cond
     load.ptr rdi, [r13]
     sub rdi, [r12]
-    mov r11, 48
     mov rax, rdi
-    cqo
-    idiv r11
-    cmp.i64 rax, [rbp-8]
+    mov r11, 3074457345618258603
+    imul r11
+    sar rdx, 3
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    cmp.i64 rdx, [rbp-8]
     ja ^for_body
     jmp ^for_end
 

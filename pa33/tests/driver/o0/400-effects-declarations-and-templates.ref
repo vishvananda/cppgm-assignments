@@ -187,7 +187,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     call void @Shape___Shape(%t45)
     return i32 %t44
 }
-function @Shape___Shape__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5ShapeD2Ev, object_root=yes, inline_hint=yes] {
+function @Shape___Shape__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5ShapeD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

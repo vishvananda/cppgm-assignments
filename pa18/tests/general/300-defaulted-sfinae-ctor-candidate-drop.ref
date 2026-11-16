@@ -35,14 +35,14 @@ function @derived__derived__ov2(%this : ptr [alias=noalias, object_bytes=1], %x 
     call void @base_int___base__ov2__base_entry(%t2, %t4)
     return void
 }
-function @base_int___base__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN4baseIiEC2Ev, object_root=yes, inline_hint=yes] {
+function @base_int___base__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN4baseIiEC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
     store typed ptr %this, $this
     return void
 }
-function @base_int___base__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=1], %__param1 : ptr [pass=by_address, alias=noalias, object_bytes=1]) -> void [binding=weak, object=_ZN4baseIiEC2ERKS0_, object_root=yes, inline_hint=yes] {
+function @base_int___base__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=1], %__param1 : ptr [pass=by_address, alias=noalias, object_bytes=1]) -> void [binding=weak, object=_ZN4baseIiEC2ERKS0_, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : ptr
 

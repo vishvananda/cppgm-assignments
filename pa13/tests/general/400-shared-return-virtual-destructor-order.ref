@@ -86,7 +86,7 @@ function @Base__Base(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=w
     store typed ptr %t3, %t1
     return void
 }
-function @Base___Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, object_root=yes, inline_hint=yes] {
+function @Base___Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

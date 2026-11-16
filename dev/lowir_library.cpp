@@ -139,4 +139,10 @@ int cppgm_lowir_debug_local(
 	return 0;
 }
 
+// The addition of ABI version 4. The course client does not call it.
+CppgmType cppgm_lowir_record(CppgmLowir*, uint64_t, uint32_t, const CppgmField*, uint32_t)
+{
+	return 0;
+}
+
 } // extern "C"

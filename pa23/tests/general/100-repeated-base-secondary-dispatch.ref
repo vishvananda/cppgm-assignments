@@ -193,7 +193,7 @@ function @Repeated__Repeated(%this : ptr [object_bytes=40]) -> void [binding=wea
     store typed ptr %t17, %t15
     return void
 }
-function @First__First__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5FirstC2Ev, object_root=yes, inline_hint=yes] {
+function @First__First__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5FirstC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -204,7 +204,7 @@ function @First__First__base_entry(%this : ptr [object_bytes=8]) -> void [unwind
     store typed ptr %t3, %t1
     return void
 }
-function @Left__Left__base_entry(%this : ptr [object_bytes=16]) -> void [binding=weak, object=_ZN4LeftC2Ev, object_root=yes, inline_hint=yes] {
+function @Left__Left__base_entry(%this : ptr [object_bytes=16]) -> void [binding=weak, object=_ZN4LeftC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -222,7 +222,7 @@ function @Left__Left__base_entry(%this : ptr [object_bytes=16]) -> void [binding
     store typed i32 10, %t8
     return void
 }
-function @Right__Right__base_entry(%this : ptr [object_bytes=16]) -> void [binding=weak, object=_ZN5RightC2Ev, object_root=yes, inline_hint=yes] {
+function @Right__Right__base_entry(%this : ptr [object_bytes=16]) -> void [binding=weak, object=_ZN5RightC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -257,7 +257,7 @@ function @Tagged__g(%this : ptr [object_bytes=16]) -> i32 [binding=weak, object=
     %t3 = load typed i32 %t2
     return i32 %t3
 }
-function @Tagged__Tagged__base_entry(%this : ptr [object_bytes=16]) -> void [binding=weak, object=_ZN6TaggedC2Ev, object_root=yes, inline_hint=yes] {
+function @Tagged__Tagged__base_entry(%this : ptr [object_bytes=16]) -> void [binding=weak, object=_ZN6TaggedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

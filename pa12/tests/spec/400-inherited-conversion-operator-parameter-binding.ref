@@ -42,7 +42,7 @@ function @PropertyBase__operatorconstFunction_(%this : ptr [object_bytes=4]) -> 
     %t2 = index inbounds i8 [projection=field] %t1, 0
     return ptr %t2
 }
-function @PropertyBase__PropertyBase__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN12PropertyBaseC2Ev, object_root=yes, inline_hint=yes] {
+function @PropertyBase__PropertyBase__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN12PropertyBaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

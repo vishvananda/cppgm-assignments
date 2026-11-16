@@ -134,7 +134,7 @@ function @virtual_base__function(%this : ptr [object_bytes=8]) -> void [binding=
     store typed i32 1, @called
     return void
 }
-function @virtual_base__virtual_base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN12virtual_baseC2Ev, object_root=yes, inline_hint=yes] {
+function @virtual_base__virtual_base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN12virtual_baseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

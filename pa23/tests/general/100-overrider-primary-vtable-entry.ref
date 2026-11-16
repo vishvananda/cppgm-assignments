@@ -358,7 +358,7 @@ function @Right__y(%this : ptr [object_bytes=16]) -> i32 [binding=weak, object=_
     store typed ptr %this, $this
     return i32 2
 }
-function @Pair__Pair__base_entry(%this : ptr [object_bytes=32]) -> void [unwind=no, binding=weak, object=_ZN4PairC2Ev, object_root=yes, inline_hint=yes] {
+function @Pair__Pair__base_entry(%this : ptr [object_bytes=32]) -> void [unwind=no, binding=weak, object=_ZN4PairC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -380,7 +380,7 @@ function @Pair__Pair__base_entry(%this : ptr [object_bytes=32]) -> void [unwind=
     store typed ptr %t11, %t9
     return void
 }
-function @Front__Front__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5FrontC2Ev, object_root=yes, inline_hint=yes] {
+function @Front__Front__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5FrontC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -391,7 +391,7 @@ function @Front__Front__base_entry(%this : ptr [object_bytes=16]) -> void [unwin
     store typed ptr %t3, %t1
     return void
 }
-function @Left__Left__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4LeftC2Ev, object_root=yes, inline_hint=yes] {
+function @Left__Left__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4LeftC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -402,7 +402,7 @@ function @Left__Left__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=
     store typed ptr %t3, %t1
     return void
 }
-function @Right__Right__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5RightC2Ev, object_root=yes, inline_hint=yes] {
+function @Right__Right__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5RightC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

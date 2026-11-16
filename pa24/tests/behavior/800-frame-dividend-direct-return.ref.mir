@@ -62,11 +62,14 @@ function @divide_frame_value
     eh_push ^cleanup, 0
     call @may_unwind [args=()]
     eh_pop
-    mov r11, 5
     mov rax, rbx
-    cqo
-    idiv r11
-    ret rax
+    mov r11, 7378697629483820647
+    imul r11
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    ret rdx
 
   block ^cleanup
     resume

@@ -35,7 +35,7 @@ function @Derived__Derived__ov2(%this : ptr [alias=noalias, object_bytes=1], %ot
     call void @Base_char___cppgm_class_template_identity_1___Base__ov2__base_entry(%t2, %t4)
     return void
 }
-function @Base_char___cppgm_class_template_identity_1___Base__base_entry(%this : ptr [object_bytes=1], %__param1 : i32) -> void [binding=weak, object=_ZN4BaseIc3DefIcEEC2Ei, object_root=yes, inline_hint=yes] {
+function @Base_char___cppgm_class_template_identity_1___Base__base_entry(%this : ptr [object_bytes=1], %__param1 : i32) -> void [binding=weak, object=_ZN4BaseIc3DefIcEEC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : i32
 
@@ -44,7 +44,7 @@ function @Base_char___cppgm_class_template_identity_1___Base__base_entry(%this :
     store typed i32 %__param1, $__param1
     return void
 }
-function @Base_char___cppgm_class_template_identity_1___Base__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=1], %__param1 : ptr [pass=by_address, alias=noalias, object_bytes=1]) -> void [binding=weak, object=_ZN4BaseIc3DefIcEEC2EOS2_, object_root=yes, inline_hint=yes] {
+function @Base_char___cppgm_class_template_identity_1___Base__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=1], %__param1 : ptr [pass=by_address, alias=noalias, object_bytes=1]) -> void [binding=weak, object=_ZN4BaseIc3DefIcEEC2EOS2_, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : ptr
 

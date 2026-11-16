@@ -104,7 +104,7 @@ function @YB__f(%this : ptr [object_bytes=8]) -> i32 [binding=weak, object=_ZN2Y
     store typed ptr %this, $this
     return i32 1
 }
-function @YB___YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBD2Ev, object_root=yes, inline_hint=yes] {
+function @YB___YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

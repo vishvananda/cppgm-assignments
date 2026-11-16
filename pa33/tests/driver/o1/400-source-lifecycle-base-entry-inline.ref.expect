@@ -7,5 +7,4 @@ count(store) <= 4
 count(phi) <= 3
 instructions <= 7 in @use_derived
 instructions <= 4 in @Derived___Derived__base_entry
-instructions <= 5 in @VirtualBase__VirtualBase__base_entry
 instructions <= 4 in @Derived___Derived

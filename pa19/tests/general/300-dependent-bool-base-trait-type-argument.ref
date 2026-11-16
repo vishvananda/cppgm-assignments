@@ -18,7 +18,7 @@ function @Uses_int___Uses(%this : ptr [object_bytes=1]) -> void [binding=weak, o
     call void @std___Hashtable_int_int_int_int____Hashtable__base_entry(%t2)
     return void
 }
-function @std___Hashtable_int_int_int_int____Hashtable__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZNSt10_HashtableIiiiiEC2Ev, object_root=yes, inline_hint=yes] {
+function @std___Hashtable_int_int_int_int____Hashtable__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZNSt10_HashtableIiiiiEC2Ev, inline_hint=yes] {
   slot $this : ptr
   slot $argobj__1 : obj<1x1>
 
@@ -31,7 +31,7 @@ function @std___Hashtable_int_int_int_int____Hashtable__base_entry(%this : ptr [
     call void @std___Enable_default_constructor_true__Hash_node_base____Enable_default_constructor__ov2__base_entry(%t2, $argobj__1)
     return void
 }
-function @std___Enable_default_constructor_true__Hash_node_base____Enable_default_constructor__ov2__base_entry(%this : ptr [object_bytes=1], %__param1 : obj<1x1> [classes=none]) -> void [binding=weak, object=_ZNSt27_Enable_default_constructorILb1ENSt8__detail15_Hash_node_baseEEC2ESt31_Enable_default_constructor_tag, object_root=yes, inline_hint=yes] {
+function @std___Enable_default_constructor_true__Hash_node_base____Enable_default_constructor__ov2__base_entry(%this : ptr [object_bytes=1], %__param1 : obj<1x1> [classes=none]) -> void [binding=weak, object=_ZNSt27_Enable_default_constructorILb1ENSt8__detail15_Hash_node_baseEEC2ESt31_Enable_default_constructor_tag, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : obj<1x1>
 

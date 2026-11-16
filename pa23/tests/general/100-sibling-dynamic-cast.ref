@@ -577,7 +577,7 @@ function @Ambiguous__Ambiguous__2(%this : ptr [alias=noalias, object_bytes=24], 
     store typed ptr %t23, %t21
     return void
 }
-function @YA__YA__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YAC2Ev, object_root=yes, inline_hint=yes] {
+function @YA__YA__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YAC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -588,7 +588,7 @@ function @YA__YA__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, b
     store typed ptr %t3, %t1
     return void
 }
-function @YB__YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBC2Ev, object_root=yes, inline_hint=yes] {
+function @YB__YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -599,7 +599,7 @@ function @YB__YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, b
     store typed ptr %t3, %t1
     return void
 }
-function @Left__Left__base_entry(%this : ptr [object_bytes=8], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN4LeftC2Ev, object_root=yes, inline_hint=yes] {
+function @Left__Left__base_entry(%this : ptr [object_bytes=8], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN4LeftC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -616,7 +616,7 @@ function @Left__Left__base_entry(%this : ptr [object_bytes=8], %__vtt : ptr) -> 
     store typed ptr %t8, %t6
     return void
 }
-function @Right__Right__base_entry(%this : ptr [object_bytes=8], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN5RightC2Ev, object_root=yes, inline_hint=yes] {
+function @Right__Right__base_entry(%this : ptr [object_bytes=8], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN5RightC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -633,7 +633,7 @@ function @Right__Right__base_entry(%this : ptr [object_bytes=8], %__vtt : ptr) -
     store typed ptr %t8, %t6
     return void
 }
-function @RepeatedLeft__RepeatedLeft__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN12RepeatedLeftC2Ev, object_root=yes, inline_hint=yes] {
+function @RepeatedLeft__RepeatedLeft__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN12RepeatedLeftC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -647,7 +647,7 @@ function @RepeatedLeft__RepeatedLeft__base_entry(%this : ptr [object_bytes=8]) -
     store typed ptr %t5, %t3
     return void
 }
-function @RepeatedRight__RepeatedRight__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN13RepeatedRightC2Ev, object_root=yes, inline_hint=yes] {
+function @RepeatedRight__RepeatedRight__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN13RepeatedRightC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -661,7 +661,7 @@ function @RepeatedRight__RepeatedRight__base_entry(%this : ptr [object_bytes=8])
     store typed ptr %t5, %t3
     return void
 }
-function @YA__YA__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YAC2ERKS_, object_root=yes, inline_hint=yes] {
+function @YA__YA__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YAC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 
@@ -674,7 +674,7 @@ function @YA__YA__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %ot
     store typed ptr %t3, %t1
     return void
 }
-function @RepeatedLeft__RepeatedLeft__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN12RepeatedLeftC2ERKS_, object_root=yes, inline_hint=yes] {
+function @RepeatedLeft__RepeatedLeft__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN12RepeatedLeftC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 
@@ -692,7 +692,7 @@ function @RepeatedLeft__RepeatedLeft__base_entry__2(%this : ptr [alias=noalias, 
     store typed ptr %t7, %t5
     return void
 }
-function @RepeatedRight__RepeatedRight__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN13RepeatedRightC2ERKS_, object_root=yes, inline_hint=yes] {
+function @RepeatedRight__RepeatedRight__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN13RepeatedRightC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 
@@ -710,7 +710,7 @@ function @RepeatedRight__RepeatedRight__base_entry__2(%this : ptr [alias=noalias
     store typed ptr %t7, %t5
     return void
 }
-function @YB__YB__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBC2ERKS_, object_root=yes, inline_hint=yes] {
+function @YB__YB__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

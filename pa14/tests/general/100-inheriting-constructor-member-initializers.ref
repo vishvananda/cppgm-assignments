@@ -784,7 +784,7 @@ function @Templated_Base____Templated(%this : ptr [object_bytes=16]) -> void [un
   block ^destructor_end_2:
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=4], %__param1 : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=4], %__param1 : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : i32
 
@@ -853,7 +853,7 @@ function @Pair___Pair(%this : ptr [object_bytes=12]) -> void [unwind=no, binding
   block ^destructor_end_2:
     return void
 }
-function @Defaults__Defaults__base_entry(%this : ptr [object_bytes=4], %__param1 : i32, %b : i32) -> void [binding=weak, object=_ZN8DefaultsC2Eii, object_root=yes, inline_hint=yes] {
+function @Defaults__Defaults__base_entry(%this : ptr [object_bytes=4], %__param1 : i32, %b : i32) -> void [binding=weak, object=_ZN8DefaultsC2Eii, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : i32
   slot $b : i32

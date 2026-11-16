@@ -154,7 +154,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t29 = load typed i32 $cond__1
     return i32 %t29
 }
-function @Derived__Derived__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7DerivedC2Ev, object_root=yes, inline_hint=yes] {
+function @Derived__Derived__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7DerivedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -177,7 +177,7 @@ function @Derived__Derived__base_entry(%this : ptr [object_bytes=8]) -> void [un
     eh_end
     resume
 }
-function @Base___Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, object_root=yes, inline_hint=yes] {
+function @Base___Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -215,7 +215,7 @@ function @Further__Further(%this : ptr [object_bytes=8]) -> void [unwind=no, bin
     eh_end
     resume
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -226,7 +226,7 @@ function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=n
     store typed ptr %t3, %t1
     return void
 }
-function @Derived___Derived__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD2Ev, object_root=yes, inline_hint=yes] {
+function @Derived___Derived__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

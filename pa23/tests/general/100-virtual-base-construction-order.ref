@@ -358,7 +358,7 @@ function @Explicit__Explicit(%this : ptr [object_bytes=16]) -> void [binding=wea
     call void @Side___Side(%t19)
     jump ^constructor_cleanup_2
 }
-function @Explicit___Explicit__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8ExplicitD2Ev, object_root=yes, inline_hint=yes] {
+function @Explicit___Explicit__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8ExplicitD2Ev, inline_hint=yes] {
   slot $this : ptr
   slot $function_exception__1 : ptr
 
@@ -551,7 +551,7 @@ function @Implicit__Implicit__2(%this : ptr [alias=noalias, object_bytes=16], %o
     store typed ptr %t19, %t17
     return void
 }
-function @Implicit___Implicit__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8ImplicitD2Ev, object_root=yes, inline_hint=yes] {
+function @Implicit___Implicit__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8ImplicitD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -602,7 +602,7 @@ function @Implicit___Implicit(%this : ptr [object_bytes=16]) -> void [unwind=no,
   block ^destructor_end_2:
     return void
 }
-function @Root__Root__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN4RootC2Ev, object_root=yes, inline_hint=yes] {
+function @Root__Root__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN4RootC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -613,7 +613,7 @@ function @Root__Root__base_entry(%this : ptr [object_bytes=4]) -> void [binding=
     call void @mark(1)
     return void
 }
-function @Middle__Middle__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN6MiddleC2Ev, object_root=yes, inline_hint=yes] {
+function @Middle__Middle__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN6MiddleC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -624,7 +624,7 @@ function @Middle__Middle__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr
     call void @mark(2)
     return void
 }
-function @Side__Side__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN4SideC2Ev, object_root=yes, inline_hint=yes] {
+function @Side__Side__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN4SideC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -632,7 +632,7 @@ function @Side__Side__base_entry(%this : ptr [object_bytes=1]) -> void [binding=
     call void @mark(3)
     return void
 }
-function @Root___Root__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN4RootD2Ev, object_root=yes, inline_hint=yes] {
+function @Root___Root__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN4RootD2Ev, inline_hint=yes] {
   slot $this : ptr
   slot $function_exception__1 : ptr
 
@@ -655,7 +655,7 @@ function @Root___Root__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=
     call void @cppgm_call_terminate(%t3)
     return void
 }
-function @Middle___Middle__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN6MiddleD2Ev, object_root=yes, inline_hint=yes] {
+function @Middle___Middle__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN6MiddleD2Ev, inline_hint=yes] {
   slot $this : ptr
   slot $function_exception__1 : ptr
 
@@ -678,7 +678,7 @@ function @Middle___Middle__base_entry(%this : ptr [object_bytes=16], %__vtt : pt
     call void @cppgm_call_terminate(%t3)
     return void
 }
-function @Side___Side__base_entry(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN4SideD2Ev, object_root=yes, inline_hint=yes] {
+function @Side___Side__base_entry(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN4SideD2Ev, inline_hint=yes] {
   slot $this : ptr
   slot $function_exception__1 : ptr
 
@@ -747,7 +747,7 @@ function @Root___Root(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=
     call void @cppgm_call_terminate(%t3)
     return void
 }
-function @Root__Root__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=4], %other : ptr [pass=by_address, alias=noalias, object_bytes=4]) -> void [binding=weak, object=_ZN4RootC2ERKS_, object_root=yes, inline_hint=yes] {
+function @Root__Root__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=4], %other : ptr [pass=by_address, alias=noalias, object_bytes=4]) -> void [binding=weak, object=_ZN4RootC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 
@@ -763,7 +763,7 @@ function @Root__Root__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=4
     call void @mark(11)
     return void
 }
-function @Middle__Middle__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=16], %__vtt : ptr, %other : ptr [pass=by_address, alias=noalias, object_bytes=16]) -> void [binding=weak, object=_ZN6MiddleC2ERKS_, object_root=yes, inline_hint=yes] {
+function @Middle__Middle__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=16], %__vtt : ptr, %other : ptr [pass=by_address, alias=noalias, object_bytes=16]) -> void [binding=weak, object=_ZN6MiddleC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

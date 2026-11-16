@@ -48,14 +48,14 @@ function @Impl__Impl__ov2(%this : ptr [alias=noalias, object_bytes=24], %other :
     call void @Data__Data__ov2__base_entry(%t6, %t8)
     return void
 }
-function @Empty__Empty__base_entry(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN5EmptyC2Ev, object_root=yes, inline_hint=yes] {
+function @Empty__Empty__base_entry(%this : ptr [object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN5EmptyC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
     store typed ptr %this, $this
     return void
 }
-function @Data__Data__base_entry(%this : ptr [object_bytes=24]) -> void [binding=weak, object=_ZN4DataC2Ev, object_root=yes, inline_hint=yes] {
+function @Data__Data__base_entry(%this : ptr [object_bytes=24]) -> void [binding=weak, object=_ZN4DataC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -71,7 +71,7 @@ function @Data__Data__base_entry(%this : ptr [object_bytes=24]) -> void [binding
     store typed ptr 0, %t6
     return void
 }
-function @Empty__Empty__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=1], %__param1 : ptr [pass=by_address, alias=noalias, object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN5EmptyC2ERKS_, object_root=yes, inline_hint=yes] {
+function @Empty__Empty__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=1], %__param1 : ptr [pass=by_address, alias=noalias, object_bytes=1]) -> void [unwind=no, binding=weak, object=_ZN5EmptyC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : ptr
 
@@ -80,7 +80,7 @@ function @Empty__Empty__ov2__base_entry(%this : ptr [alias=noalias, object_bytes
     store typed ptr %__param1, $__param1
     return void
 }
-function @Data__Data__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=24], %other : ptr [pass=by_address, alias=noalias, object_bytes=24]) -> void [unwind=no, binding=weak, object=_ZN4DataC2EOS_, object_root=yes, inline_hint=yes] {
+function @Data__Data__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=24], %other : ptr [pass=by_address, alias=noalias, object_bytes=24]) -> void [unwind=no, binding=weak, object=_ZN4DataC2EOS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

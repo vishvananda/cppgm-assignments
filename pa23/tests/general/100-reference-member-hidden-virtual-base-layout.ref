@@ -171,7 +171,7 @@ function @Holder__f(%this : ptr [object_bytes=8]) -> i32 [binding=weak, object=_
     %t10 = load typed i32 %t9
     return i32 %t10
 }
-function @B__B__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN1BC2Ev, object_root=yes, inline_hint=yes] {
+function @B__B__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN1BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -181,7 +181,7 @@ function @B__B__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void 
     store typed ptr %t2, %t1
     return void
 }
-function @C__C__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN1CC2Ev, object_root=yes, inline_hint=yes] {
+function @C__C__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN1CC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

@@ -170,7 +170,7 @@ function @Pair__Pair(%this : ptr [object_bytes=32]) -> void [unwind=no, binding=
     store typed ptr %t15, %t13
     return void
 }
-function @Shell__Shell__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5ShellC2Ev, object_root=yes, inline_hint=yes] {
+function @Shell__Shell__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5ShellC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -184,7 +184,7 @@ function @Shell__Shell__base_entry(%this : ptr [object_bytes=16]) -> void [unwin
     store typed ptr %t5, %t3
     return void
 }
-function @Lane__Lane__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4LaneC2Ev, object_root=yes, inline_hint=yes] {
+function @Lane__Lane__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4LaneC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -220,7 +220,7 @@ function @Shell__get(%this : ptr [object_bytes=16]) -> i32 [binding=weak, object
     %t5 = binary add nowrap i32 %t4, 100
     return i32 %t5
 }
-function @Value__Value__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5ValueC2Ev, object_root=yes, inline_hint=yes] {
+function @Value__Value__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN5ValueC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

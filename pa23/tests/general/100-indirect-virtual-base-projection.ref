@@ -676,7 +676,7 @@ function @F__F(%this : ptr [object_bytes=40]) -> void [binding=weak, object=_ZN1
     store typed ptr %t21, %t19
     return void
 }
-function @E__E__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN1EC2Ev, object_root=yes, inline_hint=yes] {
+function @E__E__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN1EC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -693,7 +693,7 @@ function @E__E__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void 
     store typed ptr %t8, %t6
     return void
 }
-function @BasicIOS__BasicIOS__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8BasicIOSC2Ev, object_root=yes, inline_hint=yes] {
+function @BasicIOS__BasicIOS__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8BasicIOSC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -703,24 +703,7 @@ function @BasicIOS__BasicIOS__base_entry(%this : ptr [object_bytes=16], %__vtt :
     store typed ptr %t2, %t1
     return void
 }
-function @IStream__IStream__base_entry(%this : ptr [object_bytes=24], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7IStreamC2Ev, object_root=yes, inline_hint=yes] {
-  slot $this : ptr
-
-  block ^entry:
-    store typed ptr %this, $this
-    %t1 = load typed ptr $this
-    %t2 = load typed ptr %__vtt
-    store typed ptr %t2, %t1
-    %t3 = load typed ptr $this
-    %t4 = index i8 %t2, -24
-    %t5 = load typed i64 %t4
-    %t6 = index i8 %t3, %t5
-    %t7 = index i8 %__vtt, 8
-    %t8 = load typed ptr %t7
-    store typed ptr %t8, %t6
-    return void
-}
-function @OStream__OStream__base_entry(%this : ptr [object_bytes=24], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7OStreamC2Ev, object_root=yes, inline_hint=yes] {
+function @IStream__IStream__base_entry(%this : ptr [object_bytes=24], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7IStreamC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -737,7 +720,24 @@ function @OStream__OStream__base_entry(%this : ptr [object_bytes=24], %__vtt : p
     store typed ptr %t8, %t6
     return void
 }
-function @Other__Other__base_entry(%this : ptr [object_bytes=32], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN5OtherC2Ev, object_root=yes, inline_hint=yes] {
+function @OStream__OStream__base_entry(%this : ptr [object_bytes=24], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7OStreamC2Ev, inline_hint=yes] {
+  slot $this : ptr
+
+  block ^entry:
+    store typed ptr %this, $this
+    %t1 = load typed ptr $this
+    %t2 = load typed ptr %__vtt
+    store typed ptr %t2, %t1
+    %t3 = load typed ptr $this
+    %t4 = index i8 %t2, -24
+    %t5 = load typed i64 %t4
+    %t6 = index i8 %t3, %t5
+    %t7 = index i8 %__vtt, 8
+    %t8 = load typed ptr %t7
+    store typed ptr %t8, %t6
+    return void
+}
+function @Other__Other__base_entry(%this : ptr [object_bytes=32], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN5OtherC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -747,7 +747,7 @@ function @Other__Other__base_entry(%this : ptr [object_bytes=32], %__vtt : ptr) 
     store typed ptr %t2, %t1
     return void
 }
-function @B__B__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN1BC2Ev, object_root=yes, inline_hint=yes] {
+function @B__B__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN1BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -757,7 +757,7 @@ function @B__B__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, 
     store typed i32 7, %t2
     return void
 }
-function @H__H__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN1HC2Ev, object_root=yes, inline_hint=yes] {
+function @H__H__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN1HC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -767,7 +767,7 @@ function @H__H__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void 
     store typed ptr %t2, %t1
     return void
 }
-function @Z__Z__base_entry(%this : ptr [object_bytes=32], %__vtt : ptr) -> void [binding=weak, object=_ZN1ZC2Ev, object_root=yes, inline_hint=yes] {
+function @Z__Z__base_entry(%this : ptr [object_bytes=32], %__vtt : ptr) -> void [binding=weak, object=_ZN1ZC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

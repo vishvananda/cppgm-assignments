@@ -45,7 +45,7 @@ function @Chain_char___cppgm_class_template_identity_1_void___Chain__ov3(%this :
     store typed i32 %t4, %t6
     return void
 }
-function @Chain_int_Empty_void___Chain__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=4], %other : ptr [pass=by_address, alias=noalias, object_bytes=4]) -> void [binding=weak, object=_ZN5ChainIi5EmptyvEC2ERKS1_, object_root=yes, inline_hint=yes] {
+function @Chain_int_Empty_void___Chain__ov2__base_entry(%this : ptr [alias=noalias, object_bytes=4], %other : ptr [pass=by_address, alias=noalias, object_bytes=4]) -> void [binding=weak, object=_ZN5ChainIi5EmptyvEC2ERKS1_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

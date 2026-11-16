@@ -16,11 +16,13 @@ function @div3
     epilogues shared
 
   block ^entry
-    mov r11, 3
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rax
+    mov r11, 6148914691236517206
+    imul r11
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    ret rdx
 
 function @div7
   abi
@@ -33,11 +35,14 @@ function @div7
     epilogues shared
 
   block ^entry
-    mov r11, 7
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rax
+    mov r11, 5270498306774157605
+    imul r11
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    ret rdx
 
 function @div_large
   abi
@@ -50,11 +55,15 @@ function @div_large
     epilogues shared
 
   block ^entry
-    mov r11, 2147483647
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rax
+    mov r11, -9223372032559808509
+    imul r11
+    add rdx, rdi
+    sar rdx, 30
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    ret rdx
 
 function @div_negative3
   abi
@@ -67,11 +76,15 @@ function @div_negative3
     epilogues shared
 
   block ^entry
-    mov r11, -3
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rax
+    mov r11, 6148914691236517205
+    imul r11
+    sub rdx, rdi
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    ret rdx
 
 function @div_negative5
   abi
@@ -84,11 +97,14 @@ function @div_negative5
     epilogues shared
 
   block ^entry
-    mov r11, -5
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rax
+    mov r11, -7378697629483820647
+    imul r11
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    ret rdx
 
 function @div_narrow3
   abi
@@ -101,10 +117,11 @@ function @div_narrow3
     epilogues shared
 
   block ^entry
-    mov r11, 3
-    mov rax, rdi
-    cqo
-    idiv r11
+    imul rax, rdi, 1431655766
+    sar rax, 32
+    mov rdx, rdi
+    sar rdx, 63
+    sub rax, rdx
     ret rax
 
 function @div_narrow_negative3
@@ -118,11 +135,12 @@ function @div_narrow_negative3
     epilogues shared
 
   block ^entry
-    mov r11, -3
-    mov rax, rdi
-    cqo
-    idiv r11
-    ret rax
+    imul rax, rdi, 1431655766
+    sar rax, 32
+    mov rdx, rdi
+    sar rdx, 63
+    sub rdx, rax
+    ret rdx
 
 function @main
   abi

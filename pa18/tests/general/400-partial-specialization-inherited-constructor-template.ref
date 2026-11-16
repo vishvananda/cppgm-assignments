@@ -48,7 +48,7 @@ function @op_impl_work_handler_void_int____run(%this : ptr [object_bytes=3]) -> 
     call void @impl__operator__(%t3, %t4)
     return void
 }
-function @op_impl_work_handler____op__base_entry(%this : ptr [object_bytes=3], %impl : ptr [pass=by_address, object_bytes=1], %work : ptr [pass=by_address, object_bytes=1], %handler : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN2opI4impl4work7handlerJEEC2IS0_S1_S2_EEOT_OT0_OT1_, object_root=yes, inline_hint=yes] {
+function @op_impl_work_handler____op__base_entry(%this : ptr [object_bytes=3], %impl : ptr [pass=by_address, object_bytes=1], %work : ptr [pass=by_address, object_bytes=1], %handler : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN2opI4impl4work7handlerJEEC2IS0_S1_S2_EEOT_OT0_OT1_, inline_hint=yes] {
   slot $this : ptr
   slot $impl : ptr
   slot $work : ptr

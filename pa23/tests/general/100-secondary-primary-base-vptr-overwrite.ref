@@ -123,7 +123,7 @@ function @Derived__Derived(%this : ptr [object_bytes=16]) -> void [unwind=no, bi
     store typed ptr %t5, %t3
     return void
 }
-function @Mid__Mid__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN3MidC2Ev, object_root=yes, inline_hint=yes] {
+function @Mid__Mid__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN3MidC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -151,7 +151,7 @@ function @Derived__g(%this : ptr [object_bytes=16]) -> i32 [binding=weak, object
     store typed ptr %this, $this
     return i32 7
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

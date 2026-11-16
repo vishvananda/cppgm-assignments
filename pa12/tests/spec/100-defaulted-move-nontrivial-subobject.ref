@@ -139,7 +139,7 @@ function @MemberHolder__MemberHolder__ov2(%this : ptr [alias=noalias, object_byt
     call void @Stateful__Stateful__ov3(%t2, %t4)
     return void
 }
-function @Stateful__Stateful__base_entry(%this : ptr [object_bytes=4], %state_value : i32) -> void [binding=weak, object=_ZN8StatefulC2Ei, object_root=yes, inline_hint=yes] {
+function @Stateful__Stateful__base_entry(%this : ptr [object_bytes=4], %state_value : i32) -> void [binding=weak, object=_ZN8StatefulC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $state_value : i32
 
@@ -152,7 +152,7 @@ function @Stateful__Stateful__base_entry(%this : ptr [object_bytes=4], %state_va
     store typed i32 %t1, %t3
     return void
 }
-function @Stateful__Stateful__ov3__base_entry(%this : ptr [alias=noalias, object_bytes=4], %other : ptr [pass=by_address, alias=noalias, object_bytes=4]) -> void [binding=weak, object=_ZN8StatefulC2EOS_, object_root=yes, inline_hint=yes] {
+function @Stateful__Stateful__ov3__base_entry(%this : ptr [alias=noalias, object_bytes=4], %other : ptr [pass=by_address, alias=noalias, object_bytes=4]) -> void [binding=weak, object=_ZN8StatefulC2EOS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

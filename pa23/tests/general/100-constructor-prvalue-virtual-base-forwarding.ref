@@ -335,7 +335,7 @@ function @make_wrap(%ret : ptr [pass=indirect_result, alias=exclusive_result, ob
     call void @W_D___W(%ret, %t1, %t2)
     return void
 }
-function @A__A__base_entry(%this : ptr [object_bytes=4], %value : i32) -> void [binding=weak, object=_ZN1AC2Ei, object_root=yes, inline_hint=yes] {
+function @A__A__base_entry(%this : ptr [object_bytes=4], %value : i32) -> void [binding=weak, object=_ZN1AC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $value : i32
 
@@ -348,7 +348,7 @@ function @A__A__base_entry(%this : ptr [object_bytes=4], %value : i32) -> void [
     store typed i32 %t1, %t3
     return void
 }
-function @B__B__base_entry(%this : ptr [object_bytes=4], %value : i32) -> void [binding=weak, object=_ZN1BC2Ei, object_root=yes, inline_hint=yes] {
+function @B__B__base_entry(%this : ptr [object_bytes=4], %value : i32) -> void [binding=weak, object=_ZN1BC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $value : i32
 
@@ -361,7 +361,7 @@ function @B__B__base_entry(%this : ptr [object_bytes=4], %value : i32) -> void [
     store typed i32 %t1, %t3
     return void
 }
-function @C__C__base_entry(%this : ptr [object_bytes=4], %value : i32) -> void [binding=weak, object=_ZN1CC2Ei, object_root=yes, inline_hint=yes] {
+function @C__C__base_entry(%this : ptr [object_bytes=4], %value : i32) -> void [binding=weak, object=_ZN1CC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $value : i32
 
@@ -422,7 +422,7 @@ function @W_D___W(%this : ptr [object_bytes=24], %e : ptr [pass=by_address, obje
     store typed ptr %t32, %t30
     return void
 }
-function @D__D__base_entry(%this : ptr [alias=noalias, object_bytes=24], %__vtt : ptr, %other : ptr [pass=by_address, alias=noalias, object_bytes=24]) -> void [unwind=no, binding=weak, object=_ZN1DC2ERKS_, object_root=yes, inline_hint=yes] {
+function @D__D__base_entry(%this : ptr [alias=noalias, object_bytes=24], %__vtt : ptr, %other : ptr [pass=by_address, alias=noalias, object_bytes=24]) -> void [unwind=no, binding=weak, object=_ZN1DC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

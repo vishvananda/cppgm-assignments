@@ -928,7 +928,7 @@ function @case9__D__D(%this : ptr [object_bytes=4]) -> void [binding=weak, objec
     call void @case9__A__A__base_entry(%t2, 3)
     return void
 }
-function @case9__A__A__base_entry(%this : ptr [object_bytes=4], %n : i32) -> void [binding=weak, object=_ZN5case91AC2Ei, object_root=yes, inline_hint=yes] {
+function @case9__A__A__base_entry(%this : ptr [object_bytes=4], %n : i32) -> void [binding=weak, object=_ZN5case91AC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $n : i32
 

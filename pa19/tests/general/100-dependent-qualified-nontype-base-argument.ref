@@ -18,7 +18,7 @@ function @Table_Traits___Table(%this : ptr [object_bytes=1], %__param1 : i32) ->
     call void @AllocBox___cppgm_class_template_identity_1___AllocBox__base_entry(%t2)
     return void
 }
-function @AllocBox___cppgm_class_template_identity_1___AllocBox__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN8AllocBoxI6RebindIi4NodeIiLb0EEEEC2Ev, object_root=yes, inline_hint=yes] {
+function @AllocBox___cppgm_class_template_identity_1___AllocBox__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN8AllocBoxI6RebindIi4NodeIiLb0EEEEC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

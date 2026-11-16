@@ -147,7 +147,7 @@ function @CountedBucket__CountedBucket(%this : ptr [object_bytes=8]) -> void [bi
     call void @Counted__Counted__base_entry(%t2)
     return void
 }
-function @Counted__Counted__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN7CountedC2Ev, object_root=yes, inline_hint=yes] {
+function @Counted__Counted__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN7CountedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

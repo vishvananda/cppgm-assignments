@@ -138,7 +138,7 @@ function @D__D(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, o
     eh_end
     resume
 }
-function @D___D__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1DD2Ev, object_root=yes, inline_hint=yes] {
+function @D___D__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1DD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -249,7 +249,7 @@ function @D__D__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pas
     store typed ptr %t7, %t5
     return void
 }
-function @B__B__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1BC2Ev, object_root=yes, inline_hint=yes] {
+function @B__B__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -260,7 +260,7 @@ function @B__B__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, bin
     store typed ptr %t3, %t1
     return void
 }
-function @B___B__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1BD2Ev, object_root=yes, inline_hint=yes] {
+function @B___B__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1BD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -271,7 +271,7 @@ function @B___B__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, bi
     store typed ptr %t3, %t1
     return void
 }
-function @B__B__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1BC2ERKS_, object_root=yes, inline_hint=yes] {
+function @B__B__base_entry__2(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1BC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

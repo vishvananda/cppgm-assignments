@@ -2046,7 +2046,7 @@ function @case_2__G___G(%this : ptr [object_bytes=8]) -> void [binding=weak, obj
   block ^if_end_7:
     return void
 }
-function @case_3__B__B__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN6case_31BC2Ev, object_root=yes, inline_hint=yes] {
+function @case_3__B__B__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN6case_31BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -2136,7 +2136,7 @@ function @case_3__G___G(%this : ptr [object_bytes=8]) -> void [binding=weak, obj
   block ^if_end_7:
     return void
 }
-function @case_4__B__B__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN6case_41BC2Ev, object_root=yes, inline_hint=yes] {
+function @case_4__B__B__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN6case_41BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -2226,7 +2226,7 @@ function @case_4__G___G(%this : ptr [object_bytes=8]) -> void [binding=weak, obj
   block ^if_end_7:
     return void
 }
-function @case_5__B__B__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN6case_51BC2Ev, object_root=yes, inline_hint=yes] {
+function @case_5__B__B__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN6case_51BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -2316,7 +2316,7 @@ function @case_5__G___G(%this : ptr [object_bytes=8]) -> void [binding=weak, obj
   block ^if_end_7:
     return void
 }
-function @case_6__B__B__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN6case_61BC2Ev, object_root=yes, inline_hint=yes] {
+function @case_6__B__B__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN6case_61BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

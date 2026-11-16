@@ -124,7 +124,7 @@ function @add(%left : ptr [pass=by_address, object_bytes=16], %right : ptr [pass
     %t17 = binary add nowrap i32 %t8, %t16
     return i32 %t17
 }
-function @B__B__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN1BC2Ev, object_root=yes, inline_hint=yes] {
+function @B__B__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN1BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

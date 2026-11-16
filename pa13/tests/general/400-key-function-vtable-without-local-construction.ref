@@ -145,7 +145,7 @@ function @KeyFunctionDerived___KeyFunctionDerived(%this : ptr [object_bytes=8]) 
   block ^destructor_end_2:
     return void
 }
-function @KeyFunctionBase___KeyFunctionBase__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN15KeyFunctionBaseD2Ev, object_root=yes, inline_hint=yes] {
+function @KeyFunctionBase___KeyFunctionBase__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN15KeyFunctionBaseD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

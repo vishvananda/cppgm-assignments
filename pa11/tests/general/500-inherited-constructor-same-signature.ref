@@ -22,7 +22,7 @@ function @Derived__Derived(%this : ptr [object_bytes=4], %input : i32) -> void [
     call void @Base__Base__base_entry(%t2, 7)
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=4], %input : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=4], %input : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $input : i32
 

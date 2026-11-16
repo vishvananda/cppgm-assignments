@@ -20,10 +20,18 @@ function @main
     cmp.i64 r8, 9223372036854775807
     sete r8
     movzx r8, r8
-    mov r11, 7
-    mov rax, -1
-    mov rdx, 0
-    div r11
+    mov r10, -1
+    mov rax, r10
+    mov r11, 2635249153387078803
+    mul r11
+    mov rax, r10
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 2
+    imul rax, 7
+    mov rdx, r10
+    sub rdx, rax
     cmp.i64 rdx, 1
     sete rdx
     movzx rdx, rdx

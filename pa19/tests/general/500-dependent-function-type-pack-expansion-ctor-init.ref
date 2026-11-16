@@ -23,7 +23,7 @@ function @async_result___cppgm_class_template_identity_1_void___cppgm_class_temp
     call void @promise_async_result_void___cppgm_class_template_identity_2__allocator___promise_async_result__base_entry(%t2, %t3)
     return void
 }
-function @promise_async_result_void___cppgm_class_template_identity_2__allocator___promise_async_result__base_entry(%this : ptr [object_bytes=1], %__param1 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN20promise_async_resultIFv5tupleIJ10error_codeEEE9allocatorEC2ER15promise_handlerIS3_S4_E, object_root=yes, inline_hint=yes] {
+function @promise_async_result_void___cppgm_class_template_identity_2__allocator___promise_async_result__base_entry(%this : ptr [object_bytes=1], %__param1 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN20promise_async_resultIFv5tupleIJ10error_codeEEE9allocatorEC2ER15promise_handlerIS3_S4_E, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : ptr
 

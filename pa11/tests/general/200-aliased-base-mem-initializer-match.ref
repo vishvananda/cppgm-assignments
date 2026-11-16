@@ -51,7 +51,7 @@ function @Base__ok(%this : ptr [object_bytes=8], %field : ptr) -> i32 [binding=w
     %t6 = convert trunc i32 i64 %t5
     return i32 %t6
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=8], %field : ptr) -> void [binding=weak, object=_ZN4BaseC2EP9BaseField, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=8], %field : ptr) -> void [binding=weak, object=_ZN4BaseC2EP9BaseField, inline_hint=yes] {
   slot $this : ptr
   slot $field : ptr
 

@@ -115,7 +115,7 @@ function @Iter__Iter(%this : ptr [object_bytes=4], %s : ptr [pass=by_address, ob
     store typed i32 %t8, %t10
     return void
 }
-function @IOS__IOS__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN3IOSC2Ev, object_root=yes, inline_hint=yes] {
+function @IOS__IOS__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN3IOSC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

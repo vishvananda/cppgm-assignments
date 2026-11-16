@@ -28,7 +28,7 @@ function @Holder__Holder(%this : ptr [object_bytes=4]) -> void [binding=weak, ob
     call void @EmptyBase__EmptyBase__base_entry(%t2)
     return void
 }
-function @EmptyBase__EmptyBase__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN9EmptyBaseC2Ev, object_root=yes, inline_hint=yes] {
+function @EmptyBase__EmptyBase__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN9EmptyBaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

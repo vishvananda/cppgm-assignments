@@ -96,10 +96,15 @@ function @f
     mov r9, 6
     call @clobber [args=(rcx,rdx,rsi,rdi,r8,r9)]
     store.i64 [rbp-80], rax
-    mov r11, -3
-    load.i64 rax, [rbp-32]
-    cqo
-    idiv r11
+    load.i64 r10, [rbp-32]
+    mov rax, r10
+    mov r11, 6148914691236517205
+    imul r11
+    sub rdx, r10
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
     add rbx, r12
     add rbx, r13
     add rbx, r14
@@ -109,7 +114,7 @@ function @f
     add rbx, [rbp-56]
     add rbx, [rbp-64]
     add rbx, [rbp-72]
-    add rbx, rax
+    add rbx, rdx
     add rbx, [rbp-80]
     ret rbx
 

@@ -193,7 +193,7 @@ function @W__W(%this : ptr [object_bytes=16], %e : ptr [pass=by_address, object_
     call void @W__copy_from__ov2(%t15, %t21)
     return void
 }
-function @B__B__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN1BC2Ev, object_root=yes, inline_hint=yes] {
+function @B__B__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN1BC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -203,7 +203,7 @@ function @B__B__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, 
     store typed i32 7, %t2
     return void
 }
-function @H__H__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN1HC2Ev, object_root=yes, inline_hint=yes] {
+function @H__H__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN1HC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -213,7 +213,7 @@ function @H__H__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void 
     store typed ptr %t2, %t1
     return void
 }
-function @E__E__base_entry(%this : ptr [alias=noalias, object_bytes=16], %__vtt : ptr, %other : ptr [pass=by_address, alias=noalias, object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN1EC2ERKS_, object_root=yes, inline_hint=yes] {
+function @E__E__base_entry(%this : ptr [alias=noalias, object_bytes=16], %__vtt : ptr, %other : ptr [pass=by_address, alias=noalias, object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN1EC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

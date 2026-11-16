@@ -85,7 +85,8 @@ across valid student implementations. No timing threshold is graded.
 
 This extension covers native C-linkage scalar functions, globals and plain
 slots. The header also declares the additions of ABI version 3: boundary and
-symbol metadata, argument facts, assembly templates and debug information. The
-starter file has failing functions for them and the supplied client does not
-call them, so they are outside this optional lane, as Wasm objects are. Their
+symbol metadata, argument facts, assembly templates and debug information, and
+version 4 adds record types. The starter file has failing functions for them
+and the supplied client does not call them, so they are outside this optional
+lane, as Wasm objects are. Their
 ordinary compiler lanes continue to exercise the full LowIR model.

@@ -80,7 +80,7 @@ function @C__C(%this : ptr [alias=noalias, object_bytes=16], %other : ptr [pass=
     store typed ptr %t15, %t13
     return void
 }
-function @A__A__base_entry(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1AC2ERKS_, object_root=yes, inline_hint=yes] {
+function @A__A__base_entry(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1AC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 
@@ -93,7 +93,7 @@ function @A__A__base_entry(%this : ptr [alias=noalias, object_bytes=8], %other :
     store typed ptr %t3, %t1
     return void
 }
-function @B__B__base_entry(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1BC2ERKS_, object_root=yes, inline_hint=yes] {
+function @B__B__base_entry(%this : ptr [alias=noalias, object_bytes=8], %other : ptr [pass=by_address, alias=noalias, object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN1BC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 

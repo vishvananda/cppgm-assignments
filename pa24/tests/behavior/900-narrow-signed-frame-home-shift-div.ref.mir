@@ -64,18 +64,19 @@ function @fold
     store.i32 [rbp-8], r9
     call @side_effect [args=()]
     sar rbx, 1
-    mov r11, 2
-    mov rax, r12
-    cqo.i32
-    idiv.i32 r11
-    mov r8, rax
-    sext.i32 r8
-    mov r11, 3
-    mov rax, r13
-    cqo.i32
-    idiv.i32 r11
-    sext.i32 rdx
-    add.i32 rbx, r8
+    mov r11, r12
+    shr r11, 63
+    add r12, r11
+    sar r12, 1
+    imul rax, r13, 1431655766
+    sar rax, 32
+    mov rdx, r13
+    sar rdx, 63
+    sub rax, rdx
+    imul rax, 3
+    mov rdx, r13
+    sub rdx, rax
+    add.i32 rbx, r12
     sext.i32 rbx
     add.i32 rbx, rdx
     sext.i32 rbx

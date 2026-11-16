@@ -57,11 +57,6 @@ function @Derived___Derived__base_entry(%this : ptr [object_bytes=16], %__vtt : 
   block ^entry:
     return void
 }
-function @VirtualBase__VirtualBase__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN11VirtualBaseC2Ev, object_root=yes, inline_hint=yes] {
-  block ^entry:
-    store typed i32 7, %this
-    return void
-}
 function @Derived___Derived(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD1Ev, object_root=yes, inline_hint=yes] {
   block ^entry:
     return void

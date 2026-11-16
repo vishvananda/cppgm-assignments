@@ -57,7 +57,7 @@ function @YDerived_YTraits___YDerived(%this : ptr [object_bytes=1], %__param1 : 
     call void @YBase_YTraits___YBase__base_entry(%t2, %t3)
     return void
 }
-function @IntBase__IntBase__base_entry(%this : ptr [object_bytes=4], %n : i32) -> void [binding=weak, object=_ZN7IntBaseC2Ei, object_root=yes, inline_hint=yes] {
+function @IntBase__IntBase__base_entry(%this : ptr [object_bytes=4], %n : i32) -> void [binding=weak, object=_ZN7IntBaseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $n : i32
 
@@ -70,7 +70,7 @@ function @IntBase__IntBase__base_entry(%this : ptr [object_bytes=4], %n : i32) -
     store typed i32 %t1, %t3
     return void
 }
-function @YBase_YTraits___YBase__base_entry(%this : ptr [object_bytes=1], %__param1 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN5YBaseI7YTraitsEC2ERKS0_, object_root=yes, inline_hint=yes] {
+function @YBase_YTraits___YBase__base_entry(%this : ptr [object_bytes=1], %__param1 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN5YBaseI7YTraitsEC2ERKS0_, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : ptr
 

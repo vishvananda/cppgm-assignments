@@ -162,7 +162,7 @@ function @Holder__Holder(%this : ptr [object_bytes=16]) -> void [binding=weak, o
     store typed ptr %t9, %t7
     return void
 }
-function @Tail__Tail__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN4TailC2Ev, object_root=yes, inline_hint=yes] {
+function @Tail__Tail__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN4TailC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

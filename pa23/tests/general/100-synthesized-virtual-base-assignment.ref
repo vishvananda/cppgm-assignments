@@ -261,7 +261,7 @@ function @Outer__Outer(%this : ptr [object_bytes=48]) -> void [binding=weak, obj
     store typed i32 3, %t13
     return void
 }
-function @Mid__Mid__base_entry__2(%this : ptr [alias=noalias, object_bytes=16], %__vtt : ptr, %other : ptr [pass=by_address, alias=noalias, object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN3MidC2ERKS_, object_root=yes, inline_hint=yes] {
+function @Mid__Mid__base_entry__2(%this : ptr [alias=noalias, object_bytes=16], %__vtt : ptr, %other : ptr [pass=by_address, alias=noalias, object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN3MidC2ERKS_, inline_hint=yes] {
   slot $this : ptr
   slot $other : ptr
 
@@ -318,7 +318,7 @@ function @Outer__Outer__2(%this : ptr [alias=noalias, object_bytes=48], %other :
     store typed ptr %t25, %t23
     return void
 }
-function @Shared__Shared__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6SharedC2Ev, object_root=yes, inline_hint=yes] {
+function @Shared__Shared__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6SharedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -328,7 +328,7 @@ function @Shared__Shared__base_entry(%this : ptr [object_bytes=4]) -> void [bind
     store typed i32 1, %t2
     return void
 }
-function @Pad__Pad__base_entry(%this : ptr [object_bytes=28]) -> void [binding=weak, object=_ZN3PadC2Ev, object_root=yes, inline_hint=yes] {
+function @Pad__Pad__base_entry(%this : ptr [object_bytes=28]) -> void [binding=weak, object=_ZN3PadC2Ev, inline_hint=yes] {
   slot $this : ptr
   slot $i : i32
 
@@ -359,7 +359,7 @@ function @Pad__Pad__base_entry(%this : ptr [object_bytes=28]) -> void [binding=w
   block ^for_end_4:
     return void
 }
-function @Mid__Mid__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN3MidC2Ev, object_root=yes, inline_hint=yes] {
+function @Mid__Mid__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN3MidC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

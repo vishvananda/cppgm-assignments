@@ -92,7 +92,7 @@ function @convertible_to_arg2___cppgm_class_template_identity_1___operatorconstT
     %t2 = index inbounds i8 [projection=field] %t1, 4
     return ptr %t2
 }
-function @convertible_to_arg1_empty_base___convertible_to__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN14convertible_toI4arg110empty_baseEC2Ev, object_root=yes, inline_hint=yes] {
+function @convertible_to_arg1_empty_base___convertible_to__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN14convertible_toI4arg110empty_baseEC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

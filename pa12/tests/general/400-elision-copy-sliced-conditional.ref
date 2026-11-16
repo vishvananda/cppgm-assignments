@@ -76,7 +76,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t15 = load typed i32 $cond__2
     return i32 %t15
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=4], %x : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=4], %x : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $x : i32
 

@@ -374,7 +374,7 @@ function @StringStream__StringStream(%this : ptr [object_bytes=24]) -> void [bin
     store typed i32 7, %t22
     return void
 }
-function @BasicIOS__BasicIOS__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8BasicIOSC2Ev, object_root=yes, inline_hint=yes] {
+function @BasicIOS__BasicIOS__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8BasicIOSC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -384,7 +384,7 @@ function @BasicIOS__BasicIOS__base_entry(%this : ptr [object_bytes=16], %__vtt :
     store typed ptr %t2, %t1
     return void
 }
-function @IOStream__IOStream__base_entry(%this : ptr [object_bytes=24], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8IOStreamC2Ev, object_root=yes, inline_hint=yes] {
+function @IOStream__IOStream__base_entry(%this : ptr [object_bytes=24], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN8IOStreamC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -414,7 +414,7 @@ function @IOStream__IOStream__base_entry(%this : ptr [object_bytes=24], %__vtt :
     store typed ptr %t18, %t16
     return void
 }
-function @IStream__IStream__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7IStreamC2Ev, object_root=yes, inline_hint=yes] {
+function @IStream__IStream__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7IStreamC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -431,7 +431,7 @@ function @IStream__IStream__base_entry(%this : ptr [object_bytes=16], %__vtt : p
     store typed ptr %t8, %t6
     return void
 }
-function @OStream__OStream__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7OStreamC2Ev, object_root=yes, inline_hint=yes] {
+function @OStream__OStream__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7OStreamC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

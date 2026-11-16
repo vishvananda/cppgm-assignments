@@ -231,7 +231,7 @@ function @Plain__Plain(%this : ptr [object_bytes=4], %__param1 : i32) -> void [b
     call void @Base__Base__base_entry(%t2, %t3)
     return void
 }
-function @Members__Members__base_entry(%this : ptr [object_bytes=16], %__param1 : i32) -> void [binding=weak, object=_ZN7MembersC2Ei, object_root=yes, inline_hint=yes] {
+function @Members__Members__base_entry(%this : ptr [object_bytes=16], %__param1 : i32) -> void [binding=weak, object=_ZN7MembersC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : i32
 

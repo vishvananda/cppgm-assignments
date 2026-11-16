@@ -131,7 +131,7 @@ function @D__D(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, 
     call void @B2___B2__base_entry(%t15)
     jump ^constructor_cleanup_1
 }
-function @D___D__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN1DD2Ev, object_root=yes, inline_hint=yes] {
+function @D___D__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN1DD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -295,7 +295,7 @@ function @D___D(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak,
   block ^destructor_end_2:
     return void
 }
-function @B1__B1__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B1C2Ev, object_root=yes, inline_hint=yes] {
+function @B1__B1__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B1C2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -318,7 +318,7 @@ function @B1__B1__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, b
     eh_end
     resume
 }
-function @B2__B2__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B2C2Ev, object_root=yes, inline_hint=yes] {
+function @B2__B2__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B2C2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -341,7 +341,7 @@ function @B2__B2__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, b
     eh_end
     resume
 }
-function @B1___B1__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B1D2Ev, object_root=yes, inline_hint=yes] {
+function @B1___B1__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B1D2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -408,7 +408,7 @@ function @B1___B1__deleting_entry(%this : ptr [object_bytes=8]) -> void [unwind=
   block ^destructor_end_2:
     return void
 }
-function @B2___B2__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B2D2Ev, object_root=yes, inline_hint=yes] {
+function @B2___B2__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B2D2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -527,7 +527,7 @@ function @B2___B2(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak
   block ^destructor_end_2:
     return void
 }
-function @B0__B0__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B0C2Ev, object_root=yes, inline_hint=yes] {
+function @B0__B0__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B0C2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -538,7 +538,7 @@ function @B0__B0__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, b
     store typed ptr %t3, %t1
     return void
 }
-function @B0___B0__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B0D2Ev, object_root=yes, inline_hint=yes] {
+function @B0___B0__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2B0D2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

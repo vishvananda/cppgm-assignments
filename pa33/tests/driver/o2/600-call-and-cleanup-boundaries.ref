@@ -338,20 +338,6 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   block ^if_end_18:
     jump ^return_cleanup_action_4
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, object_root=yes, inline_hint=yes] {
-  block ^entry:
-    %t1 = addr @Base__vtable
-    %t2 = index i8 %t1, 16
-    store typed ptr %t2, %this
-    return void
-}
-function @Base___Base__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, object_root=yes, inline_hint=yes] {
-  block ^entry:
-    %t1 = addr @Base__vtable
-    %t2 = index i8 %t1, 16
-    store typed ptr %t2, %this
-    return void
-}
 function @Base___Base__deleting_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD0Ev, inline_hint=yes] {
   block ^entry:
     %t1 = addr @Base__vtable
@@ -361,13 +347,6 @@ function @Base___Base__deleting_entry(%this : ptr [object_bytes=8]) -> void [unw
     return void
 }
 function @Base___Base(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4BaseD1Ev, inline_hint=yes] {
-  block ^entry:
-    %t1 = addr @Base__vtable
-    %t2 = index i8 %t1, 16
-    store typed ptr %t2, %this
-    return void
-}
-function @Derived___Derived__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD2Ev, object_root=yes, inline_hint=yes] {
   block ^entry:
     %t1 = addr @Base__vtable
     %t2 = index i8 %t1, 16
@@ -399,4 +378,4 @@ function @Derived__value(%this : ptr [object_bytes=8], %x : i32) -> i32 [binding
     %t1 = binary add nowrap i32 %x, 7
     return i32 %t1
 }
-equivalent_entry @Base___Base = @Base___Base__base_entry
+alias object _ZN4BaseD2Ev = @Base___Base

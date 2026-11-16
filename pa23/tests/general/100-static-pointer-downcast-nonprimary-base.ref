@@ -129,7 +129,7 @@ function @leaf__leaf(%this : ptr [object_bytes=16]) -> void [binding=weak, objec
     store typed i32 11, %t7
     return void
 }
-function @leaf___leaf__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4leafD2Ev, object_root=yes, inline_hint=yes] {
+function @leaf___leaf__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4leafD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -175,7 +175,7 @@ function @leaf___leaf(%this : ptr [object_bytes=16]) -> void [unwind=no, binding
     store typed ptr %t3, %t1
     return void
 }
-function @base__base__base_entry(%this : ptr [object_bytes=4], %v : i32) -> void [binding=weak, object=_ZN4baseC2Ei, object_root=yes, inline_hint=yes] {
+function @base__base__base_entry(%this : ptr [object_bytes=4], %v : i32) -> void [binding=weak, object=_ZN4baseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $v : i32
 

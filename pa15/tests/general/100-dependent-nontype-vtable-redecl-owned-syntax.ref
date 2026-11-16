@@ -72,7 +72,7 @@ function @Control_int_7___Control(%this : ptr [object_bytes=8]) -> void [unwind=
     store typed ptr %t3, %t1
     return void
 }
-function @Control_int_7____Control__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7ControlIiLi7EED2Ev, object_root=yes, inline_hint=yes] {
+function @Control_int_7____Control__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7ControlIiLi7EED2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

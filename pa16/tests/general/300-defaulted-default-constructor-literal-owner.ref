@@ -69,7 +69,7 @@ function @Scalar__Scalar(%this : ptr [object_bytes=16]) -> void [unwind=no, bind
     store typed i32 0, %t5
     return void
 }
-function @Nested__Nested__base_entry(%this : ptr [object_bytes=24]) -> void [unwind=no, binding=weak, object=_ZN6NestedC2Ev, object_root=yes, inline_hint=yes] {
+function @Nested__Nested__base_entry(%this : ptr [object_bytes=24]) -> void [unwind=no, binding=weak, object=_ZN6NestedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

@@ -168,7 +168,7 @@ function @boost__exception_detail__impl__impl(%this : ptr [object_bytes=8]) -> v
     store typed ptr %t5, %t3
     return void
 }
-function @boost__exception_detail__error_info_container__error_info_container__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5boost16exception_detail20error_info_containerC2Ev, object_root=yes, inline_hint=yes] {
+function @boost__exception_detail__error_info_container__error_info_container__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5boost16exception_detail20error_info_containerC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

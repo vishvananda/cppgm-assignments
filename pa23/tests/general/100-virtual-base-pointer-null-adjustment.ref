@@ -378,7 +378,7 @@ function @Object__Object(%this : ptr [object_bytes=32]) -> void [unwind=no, bind
     eh_end
     resume
 }
-function @Object___Object__base_entry(%this : ptr [object_bytes=32], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN6ObjectD2Ev, object_root=yes, inline_hint=yes] {
+function @Object___Object__base_entry(%this : ptr [object_bytes=32], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN6ObjectD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -452,7 +452,7 @@ function @Object___Object(%this : ptr [object_bytes=32]) -> void [unwind=no, bin
   block ^destructor_end_2:
     return void
 }
-function @Virtual__Virtual__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN7VirtualC2Ev, object_root=yes, inline_hint=yes] {
+function @Virtual__Virtual__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN7VirtualC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -463,7 +463,7 @@ function @Virtual__Virtual__base_entry(%this : ptr [object_bytes=16]) -> void [u
     store typed ptr %t3, %t1
     return void
 }
-function @Virtual___Virtual__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN7VirtualD2Ev, object_root=yes, inline_hint=yes] {
+function @Virtual___Virtual__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN7VirtualD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

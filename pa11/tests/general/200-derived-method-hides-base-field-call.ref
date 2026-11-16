@@ -37,7 +37,7 @@ function @YDerived__matches(%this : ptr [object_bytes=4]) -> i32 [binding=weak, 
   block ^if_end_3:
     return i32 3
 }
-function @YBase__YBase__base_entry(%this : ptr [object_bytes=4], %op : i32) -> void [binding=weak, object=_ZN5YBaseC2E3YOp, object_root=yes, inline_hint=yes] {
+function @YBase__YBase__base_entry(%this : ptr [object_bytes=4], %op : i32) -> void [binding=weak, object=_ZN5YBaseC2E3YOp, inline_hint=yes] {
   slot $this : ptr
   slot $op : i32
 

@@ -27,7 +27,7 @@ function @YB__YB(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN
     store typed i32 2, %t4
     return void
 }
-function @YA__YA__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN2YAC2Ev, object_root=yes, inline_hint=yes] {
+function @YA__YA__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN2YAC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

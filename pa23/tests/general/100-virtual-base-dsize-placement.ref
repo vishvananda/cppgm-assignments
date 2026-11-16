@@ -373,7 +373,7 @@ function @Zeroed__Zeroed(%this : ptr [object_bytes=16]) -> void [binding=weak, o
     store typed ptr %t7, %t5
     return void
 }
-function @Mark__Mark__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN4MarkC2Ev, object_root=yes, inline_hint=yes] {
+function @Mark__Mark__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN4MarkC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -383,7 +383,7 @@ function @Mark__Mark__base_entry(%this : ptr [object_bytes=1]) -> void [binding=
     store i8 5, %t2
     return void
 }
-function @Tail__Tail__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN4TailC2Ev, object_root=yes, inline_hint=yes] {
+function @Tail__Tail__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN4TailC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

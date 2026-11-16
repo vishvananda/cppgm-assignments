@@ -138,7 +138,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t7 = load typed i32 $cond__1
     return i32 %t7
 }
-function @HeaderVtableBase__HeaderVtableBase__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN16HeaderVtableBaseC2Ev, object_root=yes, inline_hint=yes] {
+function @HeaderVtableBase__HeaderVtableBase__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN16HeaderVtableBaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

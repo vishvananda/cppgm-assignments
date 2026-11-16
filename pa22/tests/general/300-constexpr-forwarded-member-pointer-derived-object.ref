@@ -11,7 +11,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     call void @Y__Y(%t2)
     return i32 0
 }
-function @X__X__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN1XC2Ev, object_root=yes, inline_hint=yes] {
+function @X__X__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN1XC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

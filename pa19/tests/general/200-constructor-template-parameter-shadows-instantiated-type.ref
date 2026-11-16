@@ -33,7 +33,7 @@ function @std__forward(%value : ptr [pass=by_address, object_bytes=4]) -> ptr [b
     %t1 = load typed ptr $value
     return ptr %t1
 }
-function @A_int___A__base_entry(%this : ptr [object_bytes=1], %__param1 : i32) -> void [binding=weak, object=_ZN1AIiEC2Ei, object_root=yes, inline_hint=yes] {
+function @A_int___A__base_entry(%this : ptr [object_bytes=1], %__param1 : i32) -> void [binding=weak, object=_ZN1AIiEC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : i32
 

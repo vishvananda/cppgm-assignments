@@ -99,7 +99,7 @@ function @Derived__Derived(%this : ptr [object_bytes=16]) -> void [unwind=no, bi
     store typed ptr %t11, %t9
     return void
 }
-function @Left__Left__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4LeftC2Ev, object_root=yes, inline_hint=yes] {
+function @Left__Left__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN4LeftC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -110,7 +110,7 @@ function @Left__Left__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=n
     store typed ptr %t3, %t1
     return void
 }
-function @Right__Right__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5RightC2Ev, object_root=yes, inline_hint=yes] {
+function @Right__Right__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN5RightC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

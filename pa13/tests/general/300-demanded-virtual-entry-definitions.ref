@@ -154,7 +154,7 @@ function @Derived__Derived(%this : ptr [object_bytes=16]) -> void [binding=weak,
     eh_end
     resume
 }
-function @Derived___Derived__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD2Ev, object_root=yes, inline_hint=yes] {
+function @Derived___Derived__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN7DerivedD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -247,7 +247,7 @@ function @Derived___Derived(%this : ptr [object_bytes=16]) -> void [unwind=no, b
   block ^destructor_end_2:
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=16], %n : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=16], %n : i32) -> void [binding=weak, object=_ZN4BaseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $n : i32
 
@@ -278,7 +278,7 @@ function @Derived__value(%this : ptr [object_bytes=16]) -> i32 [binding=weak, ob
     %t4 = binary add nowrap i32 %t3, 1
     return i32 %t4
 }
-function @Base___Base__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, object_root=yes, inline_hint=yes] {
+function @Base___Base__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4BaseD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

@@ -97,7 +97,7 @@ function @Holder__ref(%this : ptr [object_bytes=8]) -> ptr [binding=weak, object
     %t3 = load typed ptr %t2
     return ptr %t3
 }
-function @IOS__IOS__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN3IOSC2Ev, object_root=yes, inline_hint=yes] {
+function @IOS__IOS__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN3IOSC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

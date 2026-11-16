@@ -741,7 +741,7 @@ function @Destructible___Destructible(%this : ptr [object_bytes=8]) -> void [unw
     store typed i32 %t2, @destroyed
     return void
 }
-function @Padded__Padded__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN6PaddedC2Ev, object_root=yes, inline_hint=yes] {
+function @Padded__Padded__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN6PaddedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -751,7 +751,7 @@ function @Padded__Padded__base_entry(%this : ptr [object_bytes=8]) -> void [bind
     store i8 0, %t2
     return void
 }
-function @Bits__Bits__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN4BitsC2Ev, object_root=yes, inline_hint=yes] {
+function @Bits__Bits__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN4BitsC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

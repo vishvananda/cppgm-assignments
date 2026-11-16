@@ -50,7 +50,7 @@ function @Value__Value(%this : ptr [object_bytes=1]) -> void [binding=weak, obje
     store typed i32 %t2, @live
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=1], %__param1 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN4BaseC2ERK5Value, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=1], %__param1 : ptr [pass=by_address, object_bytes=1]) -> void [binding=weak, object=_ZN4BaseC2ERK5Value, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : ptr
 

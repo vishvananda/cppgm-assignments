@@ -364,7 +364,7 @@ function @Low__self(%this : ptr [object_bytes=8]) -> ptr [binding=weak, object=_
     %t1 = load typed ptr $this
     return ptr %t1
 }
-function @Low__Low__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN3LowC2Ev, object_root=yes, inline_hint=yes] {
+function @Low__Low__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN3LowC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -375,7 +375,7 @@ function @Low__Low__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no,
     store typed ptr %t3, %t1
     return void
 }
-function @Right__Right__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN5RightC2Ev, object_root=yes, inline_hint=yes] {
+function @Right__Right__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN5RightC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -392,7 +392,7 @@ function @Right__Right__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) 
     store typed ptr %t8, %t6
     return void
 }
-function @Left__Left__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN4LeftC2Ev, object_root=yes, inline_hint=yes] {
+function @Left__Left__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN4LeftC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

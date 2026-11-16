@@ -38,7 +38,7 @@ function @vector_int_shortint_longint___vector(%this : ptr [object_bytes=16], %u
     call void @vector_detail__vector_data___cppgm_class_template_identity_1_int_shortint_longint___vector_data__base_entry(%t2, $argobj__1, %t4, %t5, %t6)
     return void
 }
-function @vector_detail__vector_data___cppgm_class_template_identity_1_int_shortint_longint___vector_data__base_entry(%this : ptr [object_bytes=16], %__param1 : obj<1x1> [classes=none], %u : ptr [pass=by_address, object_bytes=4], %u__pack2 : ptr [pass=by_address, object_bytes=4], %u__pack3 : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN13vector_detail11vector_dataIN6detail14index_sequenceIJLm0ELm1ELm2EEEEJislEEC2IJiiiEEENS_9each_elemEDpOT_, object_root=yes, inline_hint=yes] {
+function @vector_detail__vector_data___cppgm_class_template_identity_1_int_shortint_longint___vector_data__base_entry(%this : ptr [object_bytes=16], %__param1 : obj<1x1> [classes=none], %u : ptr [pass=by_address, object_bytes=4], %u__pack2 : ptr [pass=by_address, object_bytes=4], %u__pack3 : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN13vector_detail11vector_dataIN6detail14index_sequenceIJLm0ELm1ELm2EEEEJislEEC2IJiiiEEENS_9each_elemEDpOT_, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : obj<1x1>
   slot $u : ptr
@@ -64,7 +64,7 @@ function @vector_detail__vector_data___cppgm_class_template_identity_1_int_short
     call void @vector_detail__store_2_longint___store__base_entry(%t8, %t9)
     return void
 }
-function @vector_detail__store_0_int___store__base_entry(%this : ptr [object_bytes=4], %u : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN13vector_detail5storeILm0EiEC2IiEEOT_, object_root=yes, inline_hint=yes] {
+function @vector_detail__store_0_int___store__base_entry(%this : ptr [object_bytes=4], %u : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN13vector_detail5storeILm0EiEC2IiEEOT_, inline_hint=yes] {
   slot $this : ptr
   slot $u : ptr
 
@@ -78,7 +78,7 @@ function @vector_detail__store_0_int___store__base_entry(%this : ptr [object_byt
     store typed i32 %t2, %t4
     return void
 }
-function @vector_detail__store_1_shortint___store__base_entry(%this : ptr [object_bytes=2], %u : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN13vector_detail5storeILm1EsEC2IiEEOT_, object_root=yes, inline_hint=yes] {
+function @vector_detail__store_1_shortint___store__base_entry(%this : ptr [object_bytes=2], %u : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN13vector_detail5storeILm1EsEC2IiEEOT_, inline_hint=yes] {
   slot $this : ptr
   slot $u : ptr
 
@@ -93,7 +93,7 @@ function @vector_detail__store_1_shortint___store__base_entry(%this : ptr [objec
     store typed i16 %t3, %t5
     return void
 }
-function @vector_detail__store_2_longint___store__base_entry(%this : ptr [object_bytes=8], %u : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN13vector_detail5storeILm2ElEC2IiEEOT_, object_root=yes, inline_hint=yes] {
+function @vector_detail__store_2_longint___store__base_entry(%this : ptr [object_bytes=8], %u : ptr [pass=by_address, object_bytes=4]) -> void [binding=weak, object=_ZN13vector_detail5storeILm2ElEC2IiEEOT_, inline_hint=yes] {
   slot $this : ptr
   slot $u : ptr
 

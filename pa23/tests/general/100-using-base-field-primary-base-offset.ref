@@ -152,7 +152,7 @@ function @Base__read(%this : ptr [object_bytes=16]) -> i32 [binding=weak, object
     %t5 = load typed i32 %t4
     return i32 %t5
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -173,7 +173,7 @@ function @Primary__anchor(%this : ptr [object_bytes=8]) -> i32 [binding=weak, ob
     store typed ptr %this, $this
     return i32 0
 }
-function @Primary__Primary__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7PrimaryC2Ev, object_root=yes, inline_hint=yes] {
+function @Primary__Primary__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN7PrimaryC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

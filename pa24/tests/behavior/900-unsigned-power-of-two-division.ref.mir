@@ -30,17 +30,13 @@ function @main
     cmp.i64 rdi, 7
     setne rdi
     movzx rdi, rdi
-    mov r11, -9223372036854775808
-    mov rax, -1
-    mov rdx, 0
-    div r11
-    cmp.i64 rax, 1
+    mov rsi, -1
+    shr rsi, 63
+    cmp.i64 rsi, 1
     setne rsi
     movzx rsi, rsi
-    mov r11, -9223372036854775808
-    mov rax, -1
-    mov rdx, 0
-    div r11
+    mov rdx, -1
+    and rdx, 9223372036854775807
     cmp.i64 rdx, 9223372036854775807
     setne rcx
     movzx rcx, rcx
@@ -59,17 +55,30 @@ function @main
     cmp.u32 rdx, 65535
     setne r13
     movzx r13, r13
-    mov r11, 7
-    mov rax, 100
-    mov rdx, 0
-    div r11
+    mov r10, 100
+    mov rax, r10
+    mov r11, 2635249153387078803
+    mul r11
+    mov rax, r10
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 2
     cmp.i64 rax, 14
     setne r14
     movzx r14, r14
-    mov r11, 7
-    mov rax, 100
-    mov rdx, 0
-    div r11
+    mov r10, 100
+    mov rax, r10
+    mov r11, 2635249153387078803
+    mul r11
+    mov rax, r10
+    sub rax, rdx
+    shr rax, 1
+    add rax, rdx
+    shr rax, 2
+    imul rax, 7
+    mov rdx, r10
+    sub rdx, rax
     cmp.i64 rdx, 2
     setne rdx
     movzx rdx, rdx

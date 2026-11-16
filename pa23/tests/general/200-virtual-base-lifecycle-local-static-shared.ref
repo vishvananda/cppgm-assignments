@@ -163,7 +163,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t19 = load typed i32 $cond__2
     return i32 %t19
 }
-function @counted__counted__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN7countedC2Ev, object_root=yes, inline_hint=yes] {
+function @counted__counted__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [binding=weak, object=_ZN7countedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -210,7 +210,7 @@ function @derived__derived(%this : ptr [object_bytes=16]) -> void [binding=weak,
     eh_end
     resume
 }
-function @counted___counted__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7countedD2Ev, object_root=yes, inline_hint=yes] {
+function @counted___counted__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7countedD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -234,7 +234,7 @@ function @counted___counted(%this : ptr [object_bytes=16]) -> void [unwind=no, b
     store typed i32 %t3, @destroyed
     return void
 }
-function @derived___derived__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7derivedD2Ev, object_root=yes, inline_hint=yes] {
+function @derived___derived__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN7derivedD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -284,7 +284,7 @@ function @derived___derived(%this : ptr [object_bytes=16]) -> void [unwind=no, b
   block ^destructor_end_2:
     return void
 }
-function @shared__shared__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6sharedC2Ev, object_root=yes, inline_hint=yes] {
+function @shared__shared__base_entry(%this : ptr [object_bytes=4]) -> void [binding=weak, object=_ZN6sharedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

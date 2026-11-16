@@ -532,7 +532,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t125 = convert trunc i32 i64 %t124
     return i32 %t125
 }
-function @Box__Box__base_entry(%this : ptr [object_bytes=4], %input : i32) -> void [binding=weak, object=_ZN3BoxC2Ei, object_root=yes, inline_hint=yes] {
+function @Box__Box__base_entry(%this : ptr [object_bytes=4], %input : i32) -> void [binding=weak, object=_ZN3BoxC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $input : i32
 

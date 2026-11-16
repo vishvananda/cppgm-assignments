@@ -132,7 +132,7 @@ function @downcast_leaf__downcast_leaf(%this : ptr [object_bytes=16]) -> void [b
     store typed i32 11, %t7
     return void
 }
-function @downcast_leaf___downcast_leaf__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN13downcast_leafD2Ev, object_root=yes, inline_hint=yes] {
+function @downcast_leaf___downcast_leaf__base_entry(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak, object=_ZN13downcast_leafD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -178,7 +178,7 @@ function @downcast_leaf___downcast_leaf(%this : ptr [object_bytes=16]) -> void [
     store typed ptr %t3, %t1
     return void
 }
-function @downcast_root__downcast_root__base_entry(%this : ptr [object_bytes=4], %v : i32) -> void [binding=weak, object=_ZN13downcast_rootC2Ei, object_root=yes, inline_hint=yes] {
+function @downcast_root__downcast_root__base_entry(%this : ptr [object_bytes=4], %v : i32) -> void [binding=weak, object=_ZN13downcast_rootC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $v : i32
 

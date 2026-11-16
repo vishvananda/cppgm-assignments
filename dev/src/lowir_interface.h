@@ -17,6 +17,8 @@
  *
  * Types: kind in bits 0..7, alignment log2 in 8..15, size in 16..63.
  * Scalars have zero alignment/size; obj carries both. ptr size 0 means 8.
+ * A record type (since ABI version 4) is the value cppgm_lowir_record
+ * returns: kind CPPGM_TYPE_RECORD, the record's ID in 16..63.
  * Value: kind byte, floating TypeKind byte, zero reserved halfword; index is
  * a temporary, slot, symbol, block, or index into this body's literal pool.
  * op/sub/flags/order/immediate have the LowIR vocabulary's meanings. Convert
@@ -35,9 +37,10 @@
 #define CPPGM_LOWIR_API
 #endif
 
-/* Version 3 adds to version 2 and changes nothing in it: cppgm_lowir_create
- * accepts CPPGM_LOWIR_ABI_VERSION_MIN to CPPGM_LOWIR_ABI_VERSION. */
-#define CPPGM_LOWIR_ABI_VERSION 3u
+/* Versions 3 and 4 add to the version before and change nothing in it:
+ * cppgm_lowir_create accepts CPPGM_LOWIR_ABI_VERSION_MIN to
+ * CPPGM_LOWIR_ABI_VERSION. */
+#define CPPGM_LOWIR_ABI_VERSION 4u
 #define CPPGM_LOWIR_ABI_VERSION_MIN 2u
 #define CPPGM_NO_ID UINT32_MAX
 
@@ -95,7 +98,7 @@ typedef struct CppgmDataItem
 } CppgmDataItem;
 
 /* The ABI version of this library (its CPPGM_LOWIR_ABI_VERSION) and the
- * cppgm release it belongs to ("0.9.1"). A client that loads the library at
+ * cppgm release it belongs to ("0.9.2"). A client that loads the library at
  * run time compares the ABI version with the one it was written for. Both
  * need no module. (Since ABI version 3: a version 2 library has neither.) */
 CPPGM_LOWIR_API uint32_t cppgm_lowir_abi_version(void);
@@ -210,6 +213,34 @@ typedef struct CppgmArgumentFact
  * call replaces the facts of the first. */
 CPPGM_LOWIR_API int cppgm_lowir_body_argument_facts(
 	CppgmLowir* module, uint32_t symbol, const CppgmArgumentFact* facts, uint32_t count);
+
+/* ---- Record types (since ABI version 4) ---- */
+
+/* The kind of a record type, past the vocabulary's CPPGM_TYPE_* kinds. */
+#define CPPGM_TYPE_RECORD 255u
+
+/* A field of a record: `count` consecutive elements (0 is one) of `type`, a
+ * scalar type or an earlier record type of the module, from byte `offset`. */
+typedef struct CppgmField
+{
+	uint64_t offset;
+	CppgmType type;
+	uint64_t count;
+} CppgmField;
+
+/* A record type: an object of `bytes` bytes and `alignment` (a power of
+ * two) with these fields, which may overlap (a union) and need not be at
+ * their types' alignment (a packed record). Returns its type, or 0 on
+ * failure. A record type stands for obj of its size and alignment wherever
+ * a type is taken: in signatures, boundaries, globals, data items and the
+ * instruction and slot records of a body. An object of a record type is
+ * passed and returned directly as C passes and returns an object with the
+ * same fields (the System V psABI classes): as a parameter or result, as a
+ * call argument past a variadic boundary's fixed parameters, and as a
+ * va_arg result. Classes that a boundary parameter or an argument fact
+ * states are kept. */
+CPPGM_LOWIR_API CppgmType cppgm_lowir_record(
+	CppgmLowir* module, uint64_t bytes, uint32_t alignment, const CppgmField* fields, uint32_t count);
 
 /* ---- Source locations (since ABI version 3) ---- */
 

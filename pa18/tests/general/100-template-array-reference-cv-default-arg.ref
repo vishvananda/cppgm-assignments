@@ -67,7 +67,7 @@ function @array_reference_cv_lazy_impl_array_reference_cv_lazy_char_4__constchar
     %t11 = call ptr @array_reference_cv_detail__operator__(%t5, %t6)
     return ptr %t11
 }
-function @array_reference_cv_lazy__array_reference_cv_lazy__base_entry(%this : ptr [object_bytes=1], %__param1 : u8) -> void [binding=weak, object=_ZN23array_reference_cv_lazyC2Eb, object_root=yes, inline_hint=yes] {
+function @array_reference_cv_lazy__array_reference_cv_lazy__base_entry(%this : ptr [object_bytes=1], %__param1 : u8) -> void [binding=weak, object=_ZN23array_reference_cv_lazyC2Eb, inline_hint=yes] {
   slot $this : ptr
   slot $__param1 : u8
 

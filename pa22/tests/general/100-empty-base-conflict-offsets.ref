@@ -162,7 +162,7 @@ function @Shared__Shared(%this : ptr [object_bytes=8]) -> void [binding=weak, ob
     call void @Small__Small__base_entry(%t4)
     return void
 }
-function @Packed__Packed__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN6PackedC2Ev, object_root=yes, inline_hint=yes] {
+function @Packed__Packed__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN6PackedC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -175,7 +175,7 @@ function @Packed__Packed__base_entry(%this : ptr [object_bytes=8]) -> void [bind
     store i8 2, %t4
     return void
 }
-function @Small__Small__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN5SmallC2Ev, object_root=yes, inline_hint=yes] {
+function @Small__Small__base_entry(%this : ptr [object_bytes=1]) -> void [binding=weak, object=_ZN5SmallC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

@@ -707,7 +707,7 @@ function @D___D(%this : ptr [object_bytes=16]) -> void [unwind=no, binding=weak,
   block ^destructor_end_2:
     return void
 }
-function @Padding__Padding__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN7PaddingC2Ev, object_root=yes, inline_hint=yes] {
+function @Padding__Padding__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN7PaddingC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

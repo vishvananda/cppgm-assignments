@@ -91,7 +91,7 @@ function @Derived___Derived__base_entry(%this : ptr [object_bytes=16], %__vtt : 
     store typed ptr %this, $this
     return void
 }
-function @VirtualBase__VirtualBase__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN11VirtualBaseC2Ev, object_root=yes, inline_hint=yes] {
+function @VirtualBase__VirtualBase__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN11VirtualBaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

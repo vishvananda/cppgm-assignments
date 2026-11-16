@@ -118,11 +118,14 @@ function @return_quotient
     epilogues shared
 
   block ^entry
-    mov r11, 7
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rax
+    mov r11, 5270498306774157605
+    imul r11
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    ret rdx
 
 function @return_remainder
   abi
@@ -135,11 +138,17 @@ function @return_remainder
     epilogues shared
 
   block ^entry
-    mov r11, 7
     mov rax, rdi
-    cqo
-    idiv r11
-    ret rdx
+    mov r11, 5270498306774157605
+    imul r11
+    sar rdx, 1
+    mov rax, rdx
+    shr rax, 63
+    add rdx, rax
+    imul rdx, 7
+    mov rax, rdi
+    sub rax, rdx
+    ret rax
 
 function @main
   abi

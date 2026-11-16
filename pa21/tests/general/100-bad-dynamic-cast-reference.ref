@@ -111,7 +111,7 @@ function @YD__YD(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak,
     eh_end
     resume
 }
-function @YB___YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBD2Ev, object_root=yes, inline_hint=yes] {
+function @YB___YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -146,7 +146,7 @@ function @YB___YB__deleting_entry(%this : ptr [object_bytes=8]) -> void [unwind=
   block ^destructor_end_2:
     return void
 }
-function @YD___YD__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YDD2Ev, object_root=yes, inline_hint=yes] {
+function @YD___YD__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YDD2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:
@@ -239,7 +239,7 @@ function @YD___YD(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak
   block ^destructor_end_2:
     return void
 }
-function @YB__YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBC2Ev, object_root=yes, inline_hint=yes] {
+function @YB__YB__base_entry(%this : ptr [object_bytes=8]) -> void [unwind=no, binding=weak, object=_ZN2YBC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

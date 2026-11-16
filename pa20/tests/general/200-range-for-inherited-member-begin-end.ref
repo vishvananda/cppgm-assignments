@@ -142,7 +142,7 @@ function @Iter__operator____2(%this : ptr [object_bytes=8]) -> ptr [binding=weak
     %t6 = load typed ptr $this
     return ptr %t6
 }
-function @RangeBase__RangeBase__base_entry(%this : ptr [object_bytes=8], %data : ptr) -> void [binding=weak, object=_ZN9RangeBaseC2EPi, object_root=yes, inline_hint=yes] {
+function @RangeBase__RangeBase__base_entry(%this : ptr [object_bytes=8], %data : ptr) -> void [binding=weak, object=_ZN9RangeBaseC2EPi, inline_hint=yes] {
   slot $this : ptr
   slot $data : ptr
 

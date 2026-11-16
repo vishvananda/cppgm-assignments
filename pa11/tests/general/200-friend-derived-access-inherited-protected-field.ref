@@ -57,7 +57,7 @@ function @friend_inherited_reader__read(%this : ptr [object_bytes=1], %p : ptr [
     %t9 = load typed i32 %t8
     return i32 %t9
 }
-function @friend_inherited_base__friend_inherited_base__base_entry(%this : ptr [object_bytes=4], %v : i32) -> void [binding=weak, object=_ZN21friend_inherited_baseC2Ei, object_root=yes, inline_hint=yes] {
+function @friend_inherited_base__friend_inherited_base__base_entry(%this : ptr [object_bytes=4], %v : i32) -> void [binding=weak, object=_ZN21friend_inherited_baseC2Ei, inline_hint=yes] {
   slot $this : ptr
   slot $v : i32
 

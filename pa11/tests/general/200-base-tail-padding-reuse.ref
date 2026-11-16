@@ -166,7 +166,7 @@ function @Derived__Derived(%this : ptr [object_bytes=8]) -> void [binding=weak, 
     store typed i16 4, %t6
     return void
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN4BaseC2Ev, object_root=yes, inline_hint=yes] {
+function @Base__Base__base_entry(%this : ptr [object_bytes=8]) -> void [binding=weak, object=_ZN4BaseC2Ev, inline_hint=yes] {
   slot $this : ptr
 
   block ^entry:

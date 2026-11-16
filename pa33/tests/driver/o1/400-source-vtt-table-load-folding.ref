@@ -72,21 +72,3 @@ function @use_leaf() -> i32 [binding=strong, object=_Z8use_leafv] {
   block ^entry:
     return i32 15
 }
-function @Base__Base__base_entry(%this : ptr [object_bytes=4]) -> void [unwind=no, binding=weak, object=_ZN4BaseC2Ev, object_root=yes, inline_hint=yes] {
-  block ^entry:
-    store typed i32 7, %this
-    return void
-}
-function @Middle__Middle__base_entry(%this : ptr [object_bytes=16], %__vtt : ptr) -> void [unwind=no, binding=weak, object=_ZN6MiddleC2Ev, object_root=yes, inline_hint=yes] {
-  block ^entry:
-    %t1 = load typed ptr %__vtt
-    store typed ptr %t1, %this
-    %t2 = index i8 %t1, -24
-    %t3 = load typed i64 %t2
-    %t4 = index i8 %this, %t3
-    %t5 = load typed i32 %t4
-    %t6 = binary add nowrap i32 %t5, 1
-    %t7 = index inbounds i8 [projection=field] %this, 8
-    store typed i32 %t6, %t7
-    return void
-}
