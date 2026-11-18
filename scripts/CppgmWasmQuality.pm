@@ -22,7 +22,8 @@ sub function_metrics {
     my ($data) = @_;
     my $r = {data => $data, offset => 0};
     my %metrics = (code_bytes => length($data), locals => 0, instructions => 0,
-        memory_ops => 0, zero_offset_memory_ops => 0, bulk_memory_ops => 0, control_depth => 0);
+        memory_ops => 0, zero_offset_memory_ops => 0, bulk_memory_ops => 0, control_depth => 0,
+        try_tables => 0, local_ops => 0);
     for (1 .. number($r)) {
         $metrics{locals} += number($r);
         byte($r);
@@ -31,11 +32,13 @@ sub function_metrics {
     while ($r->{offset} < length($data)) {
         my $op = byte($r);
         ++$metrics{instructions};
+        ++$metrics{local_ops} if $op >= 0x20 && $op <= 0x22;
         if ($op == 2 || $op == 3 || $op == 4 || $op == 0x1f) {
             leb($r, 5);
             ++$depth;
             $metrics{control_depth} = $depth if $depth > $metrics{control_depth};
             if ($op == 0x1f) {
+                ++$metrics{try_tables};
                 for (1 .. number($r)) {
                     my $kind = byte($r);
                     number($r) if $kind < 2;
@@ -98,7 +101,7 @@ sub function_metrics {
 
 sub check_quality {
     my ($path, $quality, $level) = @_;
-    return unless grep { $_ == $level } @{$quality->{levels} // [1, 2, 3]};
+    return unless grep { $_ eq $level } @{$quality->{levels} // [1, 2, 3]};
     if ($quality->{module}) {
         my $actual = CppgmWasmModule::module_sizes($path);
         check_bounds($actual, $quality->{module}, "$path: O$level module");

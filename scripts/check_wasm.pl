@@ -242,16 +242,18 @@ my %rewritten_text;
 sub check_text_object {
     my ($index, $level, $input, $direct) = @_;
     my $target = $expect->{target} // 'wasm32-unknown-unknown';
-    my $key = $expect->{source} ? "$input\0" . ($level ? 'optimize' : 'O0') : $input;
+    my $profile = $level eq 'z' ? 'size' : $level ? 'optimize' : 'O0';
+    my $key = $expect->{source} ? "$input\0$profile" : $input;
     my ($status, $stdout, $stderr);
     if (!$rewritten_text{$key}) {
         my $text = $input;
-        my $name = "text-$index-" . ($level ? 'optimize' : 'O0');
+        my $name = "text-$index-$profile";
         if ($expect->{source}) {
             $text = "$directory/$name.lowir";
             ($status, $stdout, $stderr) = command("$name-lowir", $source_compiler, '--target', $target,
                 @target_flags, @{$expect->{flags} // []}, '-g0', '--emit-lowir', '-O0',
-                ($level ? ('-D__OPTIMIZE__=1') : ()), $input, '-o', $text);
+                ($level ? ('-D__OPTIMIZE__=1') : ()), ($level eq 'z' ? ('-D__OPTIMIZE_SIZE__=1') : ()),
+                $input, '-o', $text);
             die "$test: LowIR text lowering failed: $stdout$stderr\n" if $status;
         }
         my $rewritten = "$directory/$name.rewritten.lowir";
@@ -316,7 +318,8 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
     my $tool = $expect->{source} ? $source_compiler : $compiler;
     ($status, $stdout, $stderr) = command("compile-$level", $tool, "-O$level",
         '--target', ($expect->{target} // 'wasm32-unknown-unknown'),
-        @target_flags, ($expect->{assembly} ? ('-x', 'assembler-with-cpp') : ()), @{$expect->{flags} // []}, @{$expect->{link_flags} // []}, @exports, '-o', $module, $test, @units, @supplied_inputs);
+        @target_flags, ($expect->{assembly} ? ('-x', 'assembler-with-cpp') : ()), @{$expect->{flags} // []},
+        @{$expect->{source_link_flags} // []}, @{$expect->{link_flags} // []}, @exports, '-o', $module, $test, @units, @supplied_inputs);
     if ($expect->{reject} || $expect->{reject_link}) {
         die "$test: invalid input accepted at O$level\n" if $status == 0;
         die "$test: rejection was not a compiler diagnostic: $stdout$stderr\n"
