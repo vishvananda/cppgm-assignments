@@ -233,7 +233,8 @@ bool consume_search_option(const vector<string>& args, size_t& i)
 	{
 		return true;
 	}
-	if (consume_joined_or_separate_option(args, i, "-isystem", "path"))
+	if (consume_joined_or_separate_option(args, i, "-isystem", "path") ||
+		consume_joined_or_separate_option(args, i, "-iquote", "path"))
 	{
 		return true;
 	}

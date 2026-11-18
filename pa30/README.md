@@ -402,6 +402,10 @@ To complete PA30, implement hosted compatibility for:
   `section`, `vector_size`, `mode`, `gnu_inline`, `abi_tag`, `may_alias`, `using_if_exists` and
   `exclude_from_explicit_instantiation`, each also spelled `__name__`) and
   `0` for any other.
+  Directories added with `-iquote` are searched for quoted includes after
+  the including file's directory and before `-I`. Angle-bracket lookups
+  start at the ordinary include chain. `#include_next` continues from the
+  directory that found the current header.
   PA37 adds the Wasm-specific import/export binding attributes and probes;
   native profiles continue to report no support for those target attributes.
   GNU `alias("object-name")` declares another name for a function or global

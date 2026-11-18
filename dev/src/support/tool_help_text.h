@@ -45,6 +45,7 @@ inline const char* cppgm_help_text()
 		   "  -c                  compile only\n"
 		   "  -o <outfile>        explicit output path\n"
 		   "  -I <dir> / -I<dir>  user include search path\n"
+		   "  -iquote <dir>       quoted include search path\n"
 		   "  -isystem <dir>      system include search path\n"
 		   "  -nostdinc           no standard include search paths\n"
 		   "  --gcc-install-dir=<dir>  GCC installation that has the standard headers\n"

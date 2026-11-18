@@ -29,7 +29,9 @@ immediate object-pointer qualifiers and conditional character/string escapes
 such as `\%` (whose value is `%`), as hosted GNU C libraries require. This does
 not make differently qualified types compatible or allow unrelated pointer
 conversions, nested qualifier removal, or removal of atomic qualification.
-Strict `-std=c17` retains its qualifier and escape diagnostics. The input language and target
+Strict `-std=c17` retains its qualifier and escape diagnostics. The C input
+profile also accepts `-std=c99` and `-std=gnu99`, with the C99 value of
+`__STDC_VERSION__`. The input language and target
 are separate choices. `-x c++` continues to select C++; a language and standard
 that disagree must be diagnosed. The existing `.c` handling is unchanged unless
 C is selected explicitly.
@@ -71,7 +73,11 @@ The first fixture set covers these parts of the C17 input profile:
   reuse a tag spelling for an unrelated type; struct and enum tags, typedefs,
   aggregate initialization, C member and array
   designators, member access,
-  function parameters and results, C object linkage and tentative definitions.
+  function parameters and results, compatible record copy and assignment, C object
+  linkage and tentative definitions. A C inline definition with
+  external linkage supplies the external symbol if a file-scope declaration
+  uses `extern` or leaves out `inline`. GNU `gnu_inline` and `always_inline`
+  attributes can also occur after the return type's pointer operator.
 - C compound literals of scalar, pointer, record and array types, including
   array-bound deduction and designators. Each occurrence denotes an lvalue;
   block-scope objects survive the full expression and file-scope objects have
@@ -112,7 +118,7 @@ make ref-test
 ```
 
 `tests/general/*.t` inputs produce LowIR and are compared with the checked-in
-reference outputs. A `.c-standard` sidecar selects `c17` or `gnu17` for an
+reference outputs. A `.c-standard` sidecar selects `c99`, `gnu99`, `c17` or `gnu17` for an
 individual fixture; controls use the same convention. Rejected inputs have the usual failure-status reference.
 An adjacent `.t.1` adds another translation unit, as in the earlier source
 assignments. `tests/controls/*.t` state an expected program result and run the

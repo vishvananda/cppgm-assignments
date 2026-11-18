@@ -1,0 +1,1 @@
+#define CPPGM_QUOTE_ONLY 1

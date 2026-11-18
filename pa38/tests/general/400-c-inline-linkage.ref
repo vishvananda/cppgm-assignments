@@ -1,0 +1,126 @@
+function @declared_first(%n : i32) -> i32 [linkage=c, binding=strong, inline_hint=yes] {
+  slot $n : i32
+
+  block ^entry:
+    store typed i32 %n, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 3
+    return i32 %t2
+}
+function @declared_last(%n : i32) -> i32 [linkage=c, binding=strong, inline_hint=yes] {
+  slot $n : i32
+
+  block ^entry:
+    store typed i32 %n, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 5
+    return i32 %t2
+}
+function @declared_with_extern(%n : i32) -> i32 [linkage=c, binding=strong, inline_hint=yes] {
+  slot $n : i32
+
+  block ^entry:
+    store typed i32 %n, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 7
+    return i32 %t2
+}
+function @inline_only(%n : i32) -> i32 [linkage=c, binding=strong] {
+  slot $n : i32
+
+  block ^entry:
+    store typed i32 %n, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 9
+    return i32 %t2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $external_address : ptr
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+
+  block ^entry:
+    %t1 = addr @inline_only
+    store volatile ptr %t1, $external_address
+    %t2 = call i32 @declared_first(1)
+    %t3 = cmp ne i32 %t2, 4
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t5 = call i32 @declared_last(1)
+    %t6 = cmp ne i32 %t5, 6
+    %t7 = convert trunc i32 i64 %t6
+    %t8 = cmp ne i32 %t7, 0
+    store typed i64 %t8, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t9 = load typed i64 $lor__1
+    branch %t9, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t10 = call i32 @declared_with_extern(1)
+    %t11 = cmp ne i32 %t10, 8
+    %t12 = convert trunc i32 i64 %t11
+    %t13 = cmp ne i32 %t12, 0
+    store typed i64 %t13, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t14 = load typed i64 $lor__2
+    branch %t14, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t15 = load volatile ptr $external_address
+    %t16 = call i32 %t15(1) as (%arg0 : i32) -> i32
+    %t17 = cmp ne i32 %t16, 10
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp ne i32 %t18, 0
+    store typed i64 %t19, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t20 = load typed i64 $lor__3
+    branch %t20, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t21 = call i32 @local_inline(1)
+    %t22 = cmp ne i32 %t21, 12
+    %t23 = convert trunc i32 i64 %t22
+    %t24 = cmp ne i32 %t23, 0
+    store typed i64 %t24, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t25 = load typed i64 $lor__4
+    %t26 = convert trunc i32 i64 %t25
+    return i32 %t26
+}
+function @local_inline(%n : i32) -> i32 [linkage=c, binding=internal, inline_hint=yes] {
+  slot $n : i32
+
+  block ^entry:
+    store typed i32 %n, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 11
+    return i32 %t2
+}

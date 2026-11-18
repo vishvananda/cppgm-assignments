@@ -1,0 +1,14 @@
+int declared_first(int);
+int declared_last(int);
+int declared_with_extern(int);
+
+inline int inline_only(int n) { return n + 99; }
+static inline int local_inline(int n) { return n + 11; }
+
+int main(void)
+{
+  int (*volatile external_address)(int) = inline_only;
+  return declared_first(1) != 4 || declared_last(1) != 6 ||
+         declared_with_extern(1) != 8 || external_address(1) != 10 ||
+         local_inline(1) != 12;
+}

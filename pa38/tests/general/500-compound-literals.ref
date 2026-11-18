@@ -17,10 +17,7 @@ global @scalar_copy : i32 [linkage=c, binding=internal] = zero
 global @__cppgm_ref_temporary__scalar_copy_0 [binding=internal, object=_ZGR11scalar_copy_] = {
   i32 23
 }
-global @record_copy : obj<8x4> [linkage=c, binding=internal] = {
-  zero 8
-}
-global @__cppgm_ref_temporary__record_copy_0 [binding=internal, object=_ZGR11record_copy_] = {
+global @record_copy [linkage=c, binding=internal] = {
   i32 17
   i32 19
 }
@@ -419,8 +416,5 @@ function @__cppgm_init() -> void [role=init, binding=internal] {
   block ^entry:
     %t1 = load typed i32 @__cppgm_ref_temporary__scalar_copy_0
     store typed i32 %t1, @scalar_copy
-    %t2 = addr @record_copy
-    %t3 = addr @__cppgm_ref_temporary__record_copy_0
-    copyobj 8x4 %t3, %t2
     return void
 }

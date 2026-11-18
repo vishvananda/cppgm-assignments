@@ -446,7 +446,7 @@ sub standard_args_for
 	my $path = $files[0];
 	my $is_c = $path =~ /\.c-standard$/;
 	my @standards = read_word_list($path);
-	my $pattern = $is_c ? qr/\A(?:c|gnu)17\z/ : qr/\A(?:c|gnu)\+\+(?:11|14|17|20)\z/;
+	my $pattern = $is_c ? qr/\A(?:c|gnu)(?:99|17)\z/ : qr/\A(?:c|gnu)\+\+(?:11|14|17|20)\z/;
 	my $language = $is_c ? 'C' : 'C++';
 	die "Expected one $language standard in $path\n"
 		if @standards != 1 || $standards[0] !~ $pattern;

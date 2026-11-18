@@ -1,0 +1,1 @@
+#define CPPGM_FROM_ANGLE 37

@@ -128,7 +128,7 @@ for my $test (@tests)
 	@fixture_link = fixture_link_options($test);
 	my $profile = read_file(profile_path($test));
 	$profile =~ s/\s+\z//;
-	die "$test: unknown assembly profile '$profile'\n" if $profile !~ /\A(?:(?:lowir|gnu)(?:-reject)?|gnu-native|gnu-compile|lowir-native(?:-reject)?)\z/;
+	die "$test: unknown assembly profile '$profile'\n" if $profile !~ /\A(?:(?:lowir|gnu)(?:-reject)?|gnu-native|gnu-compile|native-source|lowir-native(?:-reject)?)\z/;
 	my $directory = File::Spec->rel2abs(tempdir('case-XXXXXX', DIR => $out, CLEANUP => 0));
 	if ($profile =~ /-reject\z/)
 	{
@@ -205,7 +205,8 @@ for my $test (@tests)
 			note_progress_state('compile', $test);
 			my $label = "input-$index-$level";
 			my $object = "$directory/$label.o";
-			command($directory, "$label.compile", $app, "-$level", '-c', $input, '-o', $object);
+			my @language = $profile eq 'native-source' ? ('-x', 'assembler-with-cpp') : ();
+			command($directory, "$label.compile", $app, "-$level", @language, '-c', $input, '-o', $object);
 			push @observations, observe($directory, $label, $object, $driver);
 			if ($profile =~ /\Agnu/)
 			{
