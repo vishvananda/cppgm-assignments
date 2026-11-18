@@ -1,0 +1,38 @@
+{
+  "source": true,
+  "units": [
+    "700-neon-arithmetic.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 61,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      1,
+      2,
+      3
+    ],
+    "functions": {
+      "mix": {
+        "memory_ops": 0,
+        "calls": 0,
+        "sp_uses": 0,
+        "instructions": 4
+      },
+      "transform": {
+        "instructions": 160,
+        "memory_ops": 12,
+        "stack_ops": 8
+      },
+      "scale": {
+        "instructions": 4,
+        "memory_ops": 0,
+        "calls": 0
+      }
+    }
+  }
+}

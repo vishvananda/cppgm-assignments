@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "400-variadic-banks.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 103,
+      "stdout": ""
+    }
+  ]
+}

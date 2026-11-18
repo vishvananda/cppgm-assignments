@@ -1,0 +1,88 @@
+struct Triple { unsigned char bytes[3]; };
+extern "C" Triple from_boundary(const Triple*);
+extern "C" Triple exchange(Triple);
+extern "C" int getpagesize();
+extern "C" void* mmap(void*, unsigned long, int, int, int, long);
+extern "C" int mprotect(void*, unsigned long, int);
+extern "C" int munmap(void*, unsigned long);
+extern "C" long write(int, const void*, unsigned long);
+template<int N> struct Bytes { unsigned char data[N]; };
+extern "C" void copy31(Bytes<31>*, const Bytes<31>*);
+extern "C" void copy33(Bytes<33>*, const Bytes<33>*);
+extern "C" void copy40(Bytes<40>*, const Bytes<40>*);
+extern "C" void copy49(Bytes<49>*, const Bytes<49>*);
+extern "C" void copy64(Bytes<64>*, const Bytes<64>*);
+extern "C" void copy65(Bytes<65>*, const Bytes<65>*);
+extern "C" void copy149(Bytes<149>*, const Bytes<149>*);
+extern "C" void clear149(Bytes<149>*);
+
+template<int N> bool boundary(unsigned char* end, void (*copy)(Bytes<N>*, const Bytes<N>*)) {
+    auto a = reinterpret_cast<Bytes<N>*>(end-N);
+    auto b = reinterpret_cast<Bytes<N>*>(end-2*N-1);
+    for (int i=0; i<N; ++i) a->data[i] = static_cast<unsigned char>(7*i+3);
+    end[-N-1] = 81;
+    copy(b, a);
+    copy(a, a);
+    copy(a, b);
+    for (int i=0; i<N; ++i)
+        if (a->data[i] != static_cast<unsigned char>(7*i+3) || a->data[i] != b->data[i]) return false;
+    return end[-N-1] == 81;
+}
+
+extern "C" void mark_words(const int*, int*, int);
+extern "C" int search_signed(const int*, const int*, int);
+extern "C" int search_unsigned(const int*, const int*, unsigned);
+int main(int argc, char** argv) {
+    unsigned long page = getpagesize();
+#ifdef __APPLE__
+    const int anonymous = 0x1000;
+#else
+    const int anonymous = 0x20;
+#endif
+    auto base = static_cast<unsigned char*>(mmap(nullptr, 2*page, 3, 2|anonymous, -1, 0));
+    if (base == reinterpret_cast<unsigned char*>(-1L) || mprotect(base+page,page,0)) return 1;
+    for (int count = 0; count <= 18; ++count) {
+        int* mask = reinterpret_cast<int*>(base + page) - count;
+        int output[19];
+        for (int i = 0; i < count; ++i) { mask[i] = i == 8 || i == 16; output[i] = -1; }
+        output[count] = 37;
+        mark_words(mask, output, count - 1);
+        for (int i = 0; i < count; ++i)
+            if (output[i] != (mask[i] ? 9 : -1)) return 7;
+        if (output[count] != 37) return 8;
+    }
+    int* edge = reinterpret_cast<int*>(base + page);
+    edge[-1] = 1;
+    if (!search_signed(edge-1, edge-1, 30) || !search_unsigned(edge-1, edge-1, 30)) return 10;
+    for (int count = 0; count <= 17; ++count) {
+        int* words = edge-count;
+        int other[17] = {};
+        for (int i = 0; i < count; ++i) words[i] = 0;
+        if (search_signed(words, edge, count) || search_unsigned(words, edge, count)) return 11;
+        for (int i = count-1; i >= 0; --i) {
+            words[i] = 1;
+            if (search_signed(words, other, count)) return 12;
+            other[i] = 1;
+            if (!search_unsigned(words, other, count)) return 13;
+            other[i] = 0;
+        }
+    }
+    auto v = reinterpret_cast<Triple*>(base+page-sizeof(Triple));
+    v->bytes[0]=17; v->bytes[1]=22; v->bytes[2]=39;
+    Triple a = from_boundary(v);
+    Triple b = exchange(*v);
+    int ok = a.bytes[0]==39 && a.bytes[1]==17 && a.bytes[2]==22 &&
+             b.bytes[0]==39 && b.bytes[1]==17 && b.bytes[2]==22;
+    if (!boundary(base+page, copy31)) return 31;
+    if (!boundary(base+page, copy33)) return 33;
+    if (!boundary(base+page, copy40)) return 40;
+    if (!boundary(base+page, copy49)) return 49;
+    if (!boundary(base+page, copy64)) return 64;
+    if (!boundary(base+page, copy65)) return 65;
+    if (!boundary(base+page, copy149)) return 149;
+    clear149(reinterpret_cast<Bytes<149>*>(base+page-149));
+    for (int i=1; i<=149; ++i) if (base[page-i]) return 5;
+    if (base[page-150]!=81) return 6;
+    if (argc==2 && argv[1][0]=='v' && write(1,"ok\n",3)!=3) return 3;
+    return munmap(base,2*page)==0 && ok ? 39 : 2;
+}

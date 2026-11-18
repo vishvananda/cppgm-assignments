@@ -14,7 +14,7 @@ use POSIX qw(uname);
 use Text::ParseWords qw(shellwords);
 use lib $FindBin::Bin;
 use CppgmBatchWorker qw(run_command_capture);
-use CppgmWasmBenchmark qw(oracle module_sizes summarize median);
+use CppgmWasmBenchmark qw(workload_names oracle_cases module_sizes summarize median);
 
 my $root = abs_path("$FindBin::Bin/..");
 my $repo_root = $root;
@@ -112,9 +112,8 @@ my $metadata = {revision => $revision, dirty => $dirty ? JSON::PP::true : JSON::
 $metadata->{host_cxx_version} = capture([shellwords($host_cxx), '--version']);
 save_json("$output/metadata.json", $metadata);
 save_json("$output/results.json", {schema => 2, status => 'partial', metadata => $metadata});
-my @names = qw(hash filter matrix transform sort graph json lzss);
-my @cases = map {my $kind = $_; map {my $seed = $_; map {
-    [$kind, $_, $seed, oracle($kind, $_, $seed)]} (1,3)} (17,42,0x80000000,0xffffffff)} (0..$#names);
+my @names = workload_names();
+my @cases = oracle_cases();
 my @warnings;
 my @configurations;
 

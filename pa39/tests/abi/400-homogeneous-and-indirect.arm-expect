@@ -1,0 +1,14 @@
+{
+  "source": true,
+  "units": [
+    "400-homogeneous-and-indirect.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 61,
+      "stdout": ""
+    }
+  ],
+  "relocation": "R_AARCH64_CALL26"
+}

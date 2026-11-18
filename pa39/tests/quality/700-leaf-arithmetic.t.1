@@ -1,0 +1,106 @@
+extern "C" long kernel(long, long);
+extern "C" int store_if_less(const int*, int*);
+extern "C" bool unsigned_limit(unsigned);
+extern "C" unsigned indexed(const unsigned*, int, unsigned);
+extern "C" void replace_half(unsigned short*, long, unsigned short);
+extern "C" unsigned long mix_bits(unsigned long, unsigned, unsigned long);
+extern "C" int signed_remainder(int, int);
+extern "C" unsigned long widen_choice(bool, unsigned);
+extern "C" unsigned byte_offset(const unsigned*, signed char, unsigned char);
+extern "C" bool signed_order(short, short);
+extern "C" unsigned adjacent(const unsigned*, long);
+extern "C" unsigned observed(const volatile unsigned*, unsigned*);
+extern "C" unsigned long widen_across_call(const unsigned*, unsigned char, bool);
+extern "C" unsigned long inspect_widened(unsigned long choice, unsigned long byte, unsigned word, unsigned long wide) {
+    if (wide != 0xf1234567UL || word != 0xf1234567u || byte != 0xfeUL) return 91;
+    return choice == wide ? 13 : choice == byte ? 17 : 99;
+}
+struct Arms { unsigned pad, left, right, tail; };
+extern "C" unsigned replace_fields(Arms*, unsigned, unsigned);
+extern "C" unsigned narrow_ops(unsigned char, unsigned char, unsigned short);
+extern "C" unsigned narrow_window(unsigned char);
+extern "C" int bit_call(unsigned long, int (*)(int));
+extern "C" void update_at(float* p, float v) { *p = v; }
+extern "C" float before_cursor(float*, bool);
+extern "C" unsigned field_across_branch(Arms*, unsigned, bool);
+static int plus_five(int x) { return x + 5; }
+extern "C" unsigned rotate_word(unsigned);
+extern "C" unsigned long rotate_mix(unsigned long, unsigned long);
+extern "C" unsigned different_shifts(unsigned);
+extern "C" unsigned projected_bytes(unsigned long*, unsigned char, unsigned char*, signed char);
+extern "C" unsigned shift_fields(unsigned long, int);
+extern "C" int shift_cmp(long, long);
+extern "C" bool shift_eq(unsigned, unsigned);
+extern "C" bool conditions_and(long, long, unsigned);
+extern "C" bool conditions_or(unsigned, unsigned, long);
+extern "C" unsigned short place_nibbles(unsigned long, unsigned long);
+extern "C" unsigned clear_low_word(unsigned long);
+extern "C" unsigned narrow_join(bool, unsigned long, unsigned long);
+extern "C" unsigned narrow_join_full(bool, unsigned long, unsigned long);
+int main() {
+    if (narrow_join(true, 0xa500000000000000UL, 0) != 0xa5a5 ||
+        narrow_join(false, 0, 0x1234UL) != 0x3434) return 32;
+    if (narrow_join_full(true, 0x8080000000000000UL, 0) != 0x0101 ||
+        narrow_join_full(false, 0, 0xfeabUL) != 0xabab) return 33;
+    if (place_nibbles(0xfedcba9876543215UL, ~2UL) != 0x50d0 || clear_low_word(~0UL) != 0) return 31;
+    for (int mask = 0; mask < 4; ++mask) {
+        long a = mask & 1 ? -5 : 9;
+        unsigned k = mask & 2 ? 0x80000000u : 18;
+        if (conditions_and(a, 0, k) != (mask == 3)) return 29;
+        if (conditions_or(k, 19, a == -5 ? 0 : -37) != (bool(mask & 1) || !(mask & 2))) return 30;
+    }
+    if (shift_fields(127UL << 41,-1) != 127 + 257*255 ||
+        shift_fields(163UL << 41,0x70000000) != 163 + 257*7) return 26;
+    if (shift_cmp(-6,-160) != 7 || shift_cmp(-5,-160) != -3 || shift_cmp(5,159) != -3) return 27;
+    if (!shift_eq(0x80000000u, 12) || shift_eq(1,8)) return 28;
+    unsigned long carrier = ~0UL;
+    unsigned char other = 0;
+    unsigned char* bytes = reinterpret_cast<unsigned char*>(&carrier);
+    if (projected_bytes(&carrier, 255, bytes+6, -2) != 255 + 3 * (255 + 257 * 91) + 65536u * 255 ||
+        carrier != ~1UL) return 23;
+    if (projected_bytes(&carrier, 7, bytes, 23) != 7 + 3 * 91 || carrier != 23) return 24;
+    if (projected_bytes(&carrier, 4, &other, -1) != 16 + 65536u * 255 || other != 91) return 25;
+    if (rotate_word(0xacde1234u) != 0xc246959bu ||
+        rotate_mix(0x8123456789abcdefUL, 0x34caffff2222f0f0UL) != 0xf45b5d4ce6f71607UL ||
+        different_shifts(0xacde1234u) != 0xc246ab37u) return 22;
+    float cursor[] = {3.0f, 1.0f};
+    if (before_cursor(cursor + 1, false) != 6.0f || before_cursor(cursor + 1, true) != 10.0f ||
+        cursor[0] != 7.0f || cursor[1] != 1.0f) return 20;
+    Arms rows[] = {{2, 3, 5, 7}, {11, 13, 17, 19}};
+    if (field_across_branch(rows, 1, false) != 34 || field_across_branch(rows, 1, true) != 37 ||
+        rows[0].right != 5 || rows[1].right != 20 || rows[1].tail != 19) return 21;
+    for (unsigned i = 0; i < 256; ++i) {
+        unsigned expected = i == 8 || i == 9 ? 1 : (i >= 250 || i < 3 ? 2 : 3);
+        if (narrow_window(i) != expected) return 18;
+    }
+    if (bit_call(0, plus_five) != 6 || bit_call(2, plus_five) != 8 ||
+        bit_call(1UL << 31, plus_five) != 12 || bit_call((1UL << 63) + 2, plus_five) != 14) return 19;
+    Arms fields = {123, 0xf0000001u, 0x10000003u, 456};
+    if (replace_fields(&fields, 11, 19) != 0x20000002u || fields.left != 11 || fields.right != 19 ||
+        fields.pad != 123 || fields.tail != 456) return 16;
+    if (narrow_ops(0xfe, 5, 1) != 0x0003ff02u || narrow_ops(0, 1, 0) != 0x0001ffffu) return 17;
+    unsigned word = 0xf1234567u;
+    if (widen_across_call(&word, 0xfe, true) != 13 + 2 * 0xf1234567UL) return 14;
+    if (widen_across_call(&word, 0xfe, false) != 17 + 0xfe + 0xf1234567UL) return 15;
+    unsigned pair[] = {0xf0000003u, 0x90000001u};
+    if (adjacent(pair + 1, -1) != 0x60000002u) return 12;
+    if (observed(pair, pair + 1) != 11 || pair[1] != 0xf0000008u) return 13;
+    unsigned table[270];
+    table[0]=7; table[260]=19;
+    if (byte_offset(table+8, -8, 252) != 26 || byte_offset(table+8, -1, 252) != 0) return 10;
+    if (!signed_order(-32768, 32767) || signed_order(-1, -1) || signed_order(1,-32768)) return 11;
+    if (mix_bits(0xab09876543215678UL, 27, 139) != 39) return 7;
+    if (signed_remainder(-123456789, 97) != -39) return 8;
+    if (widen_choice(false, 0) != 0xffffffffUL || widen_choice(true, 0x80000001u) != 0x80000001UL) return 9;
+    unsigned data[] = {3, 5, 8, 13, 21};
+    if (indexed(data + 1, -1, 3) != 24) return 5;
+    unsigned short halves[] = {7, 11, 17};
+    replace_half(halves + 1, -1, 65534);
+    if (halves[0] != 65534 || halves[1] != 11) return 6;
+    int a = -2147483647, b = 9;
+    if (store_if_less(&a, &b) != a || b != a) return 2;
+    a = 14;
+    if (store_if_less(&a, &b) != a || b != -2147483647) return 3;
+    if (!unsigned_limit(0x80000000u) || unsigned_limit(0xffffffffu)) return 4;
+    return kernel(4, 2);
+}

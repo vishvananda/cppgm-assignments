@@ -1,0 +1,18 @@
+{
+  "source": true,
+  "units": [
+    "600-thread-local-storage.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 39,
+      "stdout": ""
+    }
+  ],
+  "hosted": true,
+  "flags": [
+    "-fPIC"
+  ],
+  "relocation": "R_AARCH64_TLSIE_ADR_GOTTPREL_PAGE21"
+}

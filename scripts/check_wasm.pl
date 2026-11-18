@@ -9,7 +9,8 @@ use File::Temp qw(tempdir);
 use FindBin;
 use JSON::PP qw(decode_json);
 use lib $FindBin::Bin;
-use CppgmBatchWorker qw(collect_tests run_command_capture);
+use CppgmBatchWorker qw(run_command_capture);
+use CppgmBackendFixture qw(backend_tests backend_expectation fixture_units);
 use CppgmWasmModule qw(export_signatures export_tag_signatures export_global_types sequence_module redirect_wasi_exit);
 use CppgmWasmFixture qw(mutate_object);
 use CppgmWasmQuality qw(check_quality);
@@ -32,12 +33,6 @@ sub write_file {
     close($file) or die "Cannot close $path: $!\n";
 }
 
-sub expectation {
-    my ($test) = @_;
-    $test =~ s/\.t$/.wasm-expect/;
-    return $test;
-}
-
 # JSON names are Unicode strings; the module format, argv and file contents
 # use UTF-8 bytes. Normalize both values and interface-name keys once.
 sub fixture_strings {
@@ -58,15 +53,14 @@ sub fixture_strings {
 
 if (@ARGV && $ARGV[0] eq '--list') {
     shift @ARGV;
-    print "$_\n" for grep { -f expectation($_) }
-        map { collect_tests($_, qr/\.t$/) } @ARGV;
+    print "$_\n" for backend_tests('wasm', @ARGV);
     exit 0;
 }
 
 @ARGV == 2 or die "usage: check_wasm.pl <lowir2native> <fixture>\n";
 my ($compiler, $test) = @ARGV;
 $compiler = File::Spec->rel2abs($compiler);
-my $expect = fixture_strings(decode_json(read_file(expectation($test))));
+my $expect = fixture_strings(backend_expectation($test, 'wasm'));
 my $directory = tempdir('cppgm-wasm-XXXXXX', TMPDIR => 1, CLEANUP => 1);
 my $validator = $ENV{CPPGM_WASM_TOOLS} // 'wasm-tools';
 my $runtime = $ENV{CPPGM_WASMTIME} // 'wasmtime';
@@ -77,7 +71,7 @@ my $lowiropt = $ENV{CPPGM_WASM_LOWIROPT} // File::Spec->catfile(dirname($source_
 my $command_sequence = 0;
 my $checked = CppgmWasmCheckCache->new(validator => $validator, runtime => $runtime);
 my %lowered_source;
-my @units = map { File::Spec->catfile(dirname($test), $_) } @{$expect->{units} // []};
+my @units = fixture_units($test, $expect);
 
 if ($expect->{reference_limitations} || ($expect->{llvm_interop} && $expect->{interop_linkers} &&
     !grep { $_ eq 'llvm' } @{$expect->{interop_linkers}})) {

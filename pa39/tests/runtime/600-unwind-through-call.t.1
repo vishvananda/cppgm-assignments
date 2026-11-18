@@ -1,0 +1,23 @@
+extern "C" long relay(long, long);
+extern "C" void throw_remote(int n) { throw n; }
+extern "C" long retained(long*, bool);
+extern "C" void change_or_throw(long* p, bool fail) {
+    *p = 29;
+    if (fail) throw 17;
+}
+extern "C" double fp_relay(double, int);
+extern "C" __attribute__((noinline)) double catch_fp(double x) {
+    double before = x * 2.0;
+    try { return fp_relay(x, 7) + before; }
+    catch (int n) { return before + n; }
+}
+int main() {
+    if (catch_fp(5.25) != 17.5) return 4;
+    long data = 11;
+    if (retained(&data, false) != 6 || data != 29) return 2;
+    data = 13;
+    if (retained(&data, true) != 87 || data != 29) return 3;
+    try { relay(5, 3); }
+    catch (int n) { return n; }
+    return 1;
+}

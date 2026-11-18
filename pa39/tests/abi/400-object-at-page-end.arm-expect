@@ -1,0 +1,30 @@
+{
+  "source": true,
+  "units": [
+    "400-object-at-page-end.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 39,
+      "stdout": ""
+    },
+    {
+      "args": [
+        "verbose"
+      ],
+      "exit": 39,
+      "stdout": "ok\n"
+    }
+  ],
+  "hosted": true,
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "copy65": {
+        "instructions": 10,
+        "calls": 0
+      }
+    }
+  }
+}

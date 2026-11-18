@@ -1,0 +1,16 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "units": [
+    "400-quad-and-integer-helpers.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 53,
+      "stdout": ""
+    }
+  ],
+  "builtins": true,
+  "relocation": "R_AARCH64_CALL26"
+}

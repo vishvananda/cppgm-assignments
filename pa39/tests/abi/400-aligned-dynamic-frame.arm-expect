@@ -1,0 +1,14 @@
+{
+  "source": true,
+  "units": [
+    "400-aligned-dynamic-frame.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 39,
+      "stdout": ""
+    }
+  ],
+  "relocation": "R_AARCH64_CALL26"
+}

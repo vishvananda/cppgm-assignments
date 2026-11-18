@@ -1,0 +1,7 @@
+#include "600-source-lto.t.1"
+const char* volatile word = "arm";
+extern "C" unsigned long strlen(const char* first) {
+    const char* end = first;
+    while (*end) ++end;
+    return end - first;
+}

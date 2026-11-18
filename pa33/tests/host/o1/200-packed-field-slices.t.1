@@ -70,6 +70,18 @@ unsigned byte_mask(U high, U low)
   return result;
 }
 
+__attribute__((noinline)) U join_words(const unsigned* p)
+{
+  return (static_cast<U>(p[1]) << 32) | p[0];
+}
+
+__attribute__((noinline)) U join_with_store(unsigned* p, unsigned* write, unsigned value)
+{
+  U high = p[1];
+  *write = value;
+  return (high << 32) | p[0];
+}
+
 int main()
 {
   U state = 0x123456789abcdef0ull;
@@ -79,6 +91,10 @@ int main()
     if (test == 0) x = y = z = 0;
     if (test == 1) x = y = z = ~0ull;
     if (test == 2) { x = 1ull << 63; y = 1ull << 31; z = 1ull << 48; }
+    unsigned words[] = {static_cast<unsigned>(x), static_cast<unsigned>(y)};
+    if (join_words(words) != (static_cast<U>(words[1]) << 32) + words[0]) return 7;
+    U expected_words = (static_cast<U>(words[1]) << 32) + ((test & 1) ? 17u : words[0]);
+    if (join_with_store(words, words + ((test & 1) ? 0 : 1), 17u) != expected_words) return 8;
     volatile unsigned reads = 0;
     U expected = slice(x, 0, 16) + (slice(y, 0, 16) << 16);
     if (packed(x, y, z, &reads) != expected || reads != 3) return 1;

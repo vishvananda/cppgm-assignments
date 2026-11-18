@@ -371,3 +371,5 @@ Implementations may also support `--target macos` for Intel Mach-O objects and
 standalone executables. Linux remains the required course target. The separate
 `make test-macho` check exercises cross-unit code and data relocations; it runs
 the resulting programs when invoked on Intel macOS.
+
+PA39 extends this link-mode contract to AArch64 Linux and Apple Silicon. Its optional link milestone covers target relocations, archive selection, startup and signed Mach-O executables. [PA39 linking milestone](../pa39/README.md#required-linking-milestone)

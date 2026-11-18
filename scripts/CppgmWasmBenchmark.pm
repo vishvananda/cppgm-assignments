@@ -5,7 +5,7 @@ use warnings;
 use Exporter 'import';
 use CppgmWasmModule;
 use CppgmWasmApplications;
-our @EXPORT_OK = qw(oracle module_sizes summarize median);
+our @EXPORT_OK = qw(oracle workload_names oracle_cases module_sizes summarize median);
 
 sub mul32 {
     my ($a, $b) = @_;
@@ -59,6 +59,21 @@ sub oracle {
         $result = rotate($result, 5) ^ $value;
     }
     return $result;
+}
+
+sub workload_names { return qw(hash filter matrix transform sort graph json lzss); }
+
+sub oracle_cases {
+    my @names = workload_names();
+    my @cases;
+    for my $kind (0 .. $#names) {
+        for my $seed (17, 42, 0x80000000, 0xffffffff) {
+            for my $repeats (1, 3) {
+                push @cases, [$kind, $repeats, $seed, oracle($kind, $repeats, $seed)];
+            }
+        }
+    }
+    return @cases;
 }
 
 sub module_sizes {

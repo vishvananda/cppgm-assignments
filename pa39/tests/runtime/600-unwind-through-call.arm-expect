@@ -1,0 +1,15 @@
+{
+  "source": true,
+  "units": [
+    "600-unwind-through-call.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 28,
+      "stdout": ""
+    }
+  ],
+  "hosted": true,
+  "relocation": "R_AARCH64_PREL32"
+}

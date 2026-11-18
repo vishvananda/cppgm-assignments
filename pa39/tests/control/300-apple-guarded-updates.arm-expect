@@ -1,0 +1,15 @@
+{
+  "source": true,
+  "target": "arm64-apple-macos11",
+  "units": [
+    "300-guarded-updates.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 39,
+      "stdout": ""
+    }
+  ],
+  "relocation": "ARM64_RELOC_BRANCH26"
+}

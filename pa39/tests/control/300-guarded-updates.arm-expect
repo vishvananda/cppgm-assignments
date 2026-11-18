@@ -1,0 +1,14 @@
+{
+  "source": true,
+  "units": [
+    "300-guarded-updates.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 39,
+      "stdout": ""
+    }
+  ],
+  "relocation": "R_AARCH64_CALL26"
+}

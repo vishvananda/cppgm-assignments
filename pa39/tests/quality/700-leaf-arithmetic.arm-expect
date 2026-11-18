@@ -1,0 +1,53 @@
+{
+  "source": true,
+  "units": [
+    "700-leaf-arithmetic.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      1,
+      2,
+      3
+    ],
+    "functions": {
+      "kernel": {
+        "memory_ops": 0,
+        "calls": 0,
+        "sp_uses": 0
+      },
+      "store_if_less": {
+        "instructions": 8,
+        "memory_ops": 3,
+        "stack_ops": 0,
+        "calls": 0
+      },
+      "indexed": {
+        "instructions": 7,
+        "memory_ops": 2,
+        "stack_ops": 0
+      },
+      "replace_half": {
+        "instructions": 4,
+        "memory_ops": 1,
+        "stack_ops": 0
+      },
+      "conditions_and": {
+        "instructions": 7,
+        "memory_ops": 0,
+        "calls": 0
+      },
+      "conditions_or": {
+        "instructions": 8,
+        "memory_ops": 0,
+        "calls": 0
+      }
+    }
+  }
+}

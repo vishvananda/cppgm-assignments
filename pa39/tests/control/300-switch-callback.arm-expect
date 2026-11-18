@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "300-switch-callback.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 94,
+      "stdout": ""
+    }
+  ]
+}

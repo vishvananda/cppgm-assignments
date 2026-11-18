@@ -1,0 +1,10 @@
+{
+  "source": true,
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 17,
+      "stdout": ""
+    }
+  ]
+}

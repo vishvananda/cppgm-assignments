@@ -1,0 +1,19 @@
+{
+  "source": true,
+  "units": [
+    "600-pic-archive.t.1",
+    "600-pic-archive.t.2"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 31,
+      "stdout": ""
+    }
+  ],
+  "flags": [
+    "-fPIC"
+  ],
+  "relocation": "R_AARCH64_ADR_GOT_PAGE",
+  "archive_units": true
+}

@@ -1,0 +1,9 @@
+{
+  "source": true,
+  "units": ["600-source-lto.t.1"],
+  "levels": ["z"],
+  "flags": ["-std=c++17"],
+  "source_link_flags": ["-flto=full"],
+  "quality": {"levels": ["z"], "functions": {"sum_fixed": {"code_bytes": 48}}},
+  "commands": [{"exit": 41, "stdout": ""}]
+}

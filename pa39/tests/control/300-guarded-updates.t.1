@@ -1,0 +1,15 @@
+struct Cursor { int value, limit; };
+extern "C" int read_three(Cursor*);
+static int calls;
+extern "C" int refill(Cursor* c) {
+    ++calls;
+    c->limit = c->value + 1;
+    return c->value + 10;
+}
+int main() {
+    Cursor c = {0, 1};
+    if (read_three(nullptr) != -7 || calls) return 1;
+    if (read_three(&c) != 37 || calls != 1 || c.value != 3) return 2;
+    if (read_three(&c) != 88 || calls != 3 || c.value != 6) return 3;
+    return 39;
+}

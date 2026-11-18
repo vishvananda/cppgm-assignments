@@ -1,6 +1,7 @@
 package CppgmWasmQuality;
 
 use strict;
+use CppgmBackendFixture qw(check_bounds);
 use warnings;
 use Exporter 'import';
 use CppgmWasmModule;
@@ -104,7 +105,7 @@ sub check_quality {
     return unless grep { $_ eq $level } @{$quality->{levels} // [1, 2, 3]};
     if ($quality->{module}) {
         my $actual = CppgmWasmModule::module_sizes($path);
-        check_bounds($actual, $quality->{module}, "$path: O$level module");
+        check_bounds($actual, $quality->{module}, "$path: O$level module", "Wasm");
     }
     my (undef, undef, $module) = CppgmWasmModule::export_interfaces($path, 1);
     my @bodies;
@@ -119,18 +120,9 @@ sub check_quality {
         my $index = $module->{exports}{$name} - $imports;
         die "Quality export $name has no body\n" if $index < 0 || $index >= @bodies;
         my $actual = function_metrics($bodies[$index]);
-        check_bounds($actual, $quality->{functions}{$name}, "$path: O$level $name");
+        check_bounds($actual, $quality->{functions}{$name}, "$path: O$level $name", "Wasm");
     }
 }
 
-sub check_bounds {
-    my ($actual, $bounds, $where) = @_;
-    for my $metric (sort keys %$bounds) {
-        die "Unknown Wasm quality metric $metric\n" unless exists $actual->{$metric};
-        my $limit = $bounds->{$metric};
-        die "Invalid Wasm quality bound $metric\n" unless defined($limit) && $limit =~ /^\d+$/;
-        die "$where $metric $actual->{$metric} exceeds $limit\n" if $actual->{$metric} > $limit;
-    }
-}
 
 1;

@@ -1,0 +1,9 @@
+{
+  "source": true,
+  "target": "arm64-apple-macos11",
+  "units": ["600-apple-source-lto.t.1"],
+  "levels": ["z"],
+  "flags": ["-std=c++17"],
+  "source_link_flags": ["-flto"],
+  "commands": [{"exit": 34, "stdout": ""}]
+}

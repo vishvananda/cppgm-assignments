@@ -1,0 +1,67 @@
+struct Four { float lane[4]; };
+struct Large { long a, b, c; };
+extern "C" int exchange(Four, Large);
+extern "C" Four peer_float(Four f) {
+    f.lane[2] *= 2;
+    return f;
+}
+extern "C" Large peer_large(Large l) {
+    l.a -= 1;
+    return l;
+}
+struct Word { long value; };
+struct Box { long* value; };
+extern "C" Word word_after_eight(long, long, long, long, long, long, long, long, Word, Box);
+extern "C" double sum_samples(const float*, const double*, int);
+extern "C" double fp_peer(double x, float y) { return x * 2.0 + y; }
+struct Fields { unsigned long tag : 8, length : 8, payload : 48; };
+struct Pair { unsigned long a, b; };
+struct alignas(16) EvenPair { unsigned long a, b; };
+struct TwoFloats { float a, b; };
+extern "C" Pair records(long, Pair, Fields, EvenPair, Pair, TwoFloats);
+struct TwoWords { unsigned first, second; };
+struct EightBytes { unsigned char bytes[8]; };
+extern "C" TwoWords stacked_words(long, long, long, long, long, long, long, long, unsigned char, TwoWords, unsigned char, EightBytes);
+struct ThreeBytes { unsigned char x[3]; };
+struct ThirteenBytes { unsigned char x[13]; };
+extern "C" unsigned stacked_tails(long, long, long, long, long, long, long, long,
+                                  unsigned char, ThreeBytes, unsigned char, ThirteenBytes, unsigned char);
+extern "C" Large choose_large(long, Large);
+extern "C" void mutate_large(Large* p, long x) { p->b += x * 3; }
+extern "C" Large forward_large(long);
+extern "C" Large replace_large(long);
+static Large* remembered;
+extern "C" void remember_large(Large* p) { remembered = p; }
+extern "C" Large read_remembered(long x) {
+    Large result;
+    result.a = x * 3;
+    result.b = remembered->a + 5;
+    result.c = remembered->b + remembered->c;
+    return result;
+}
+int main() {
+    Large local = forward_large(9), observed = replace_large(9);
+    if (local.a != 8 || local.b != 10 || local.c != 19 ||
+        observed.a != 27 || observed.b != 14 || observed.c != 21) return 7;
+    Large in = {11, 12, 13};
+    Large empty = choose_large(0, in), original = choose_large(-1, in), changed = choose_large(7, in);
+    if (empty.a || empty.b || empty.c || original.a != 11 || original.b != 12 || original.c != 13 ||
+        changed.a != 7 || changed.b != 14 || changed.c != 14) return 6;
+    if (stacked_tails(1,2,3,4,5,6,7,8, 17, ThreeBytes{{0,1,29}}, 43,
+                      ThirteenBytes{{0,1,2,3,4,5,6,7,8,9,10,11,61}}, 79) != 1999) return 5;
+    TwoWords words = stacked_words(1,2,3,4,5,6,7,8, 0x3a, TwoWords{0x81234567u, 0xfedcba00u},
+                                   0x53, EightBytes{{0x11,2,3,4,5,6,7,0x98}});
+    if (words.first != 0xbb2345ffu || words.second != 0xfedd0d11u) return 4;
+    Pair r = records(3, Pair{0x8000000000000001UL, 7}, Fields{0x91, 0xa2, 0x123456789abcUL},
+                     EvenPair{11, 0x4000000000000002UL}, Pair{0x1000000000000004UL, 13},
+                     TwoFloats{1.5f, 2.5f});
+    if (r.a != 0xd000123456789abbUL || r.b != 345) return 3;
+    const float a[] = {-2.0f, 0.5f, 8.0f};
+    const double b[] = {3.0, -4.0, 0.25};
+    if (sum_samples(a, b, 3) != -7.5 || sum_samples(a, b, 0) != -1.5) return 2;
+    long delta = -4;
+    if (word_after_eight(1,2,3,4,5,6,7,8, Word{30}, Box{&delta}).value != 34) return 1;
+    Four f = {{1, 2, 3, 4}};
+    Large l = {7, 10, 14};
+    return exchange(f, l);
+}

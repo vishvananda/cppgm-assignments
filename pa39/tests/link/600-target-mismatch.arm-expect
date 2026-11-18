@@ -1,0 +1,1 @@
+{"source":true,"target":"aarch64-linux-gnu","reference_assembly":["600-target-mismatch.S"],"reference_flags":["--target=x86_64-linux-gnu"],"reject_link":true}

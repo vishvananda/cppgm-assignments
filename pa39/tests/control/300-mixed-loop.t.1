@@ -1,0 +1,38 @@
+extern "C" int series(const int*, int);
+extern "C" int twice(int x) { return 2 * x; }
+int values[] = {2, -7, 21, -1};
+extern "C" int pressure(volatile int*, unsigned);
+extern "C" unsigned rotate(unsigned, unsigned, unsigned, unsigned);
+extern "C" void overwrite(volatile int* p) {
+    for (int i = 0; i < 12; ++i) p[i] += i + 1;
+}
+int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+extern "C" unsigned long exit_pair(unsigned, unsigned, unsigned, unsigned);
+extern "C" void mark_nonzero(const int*, int*, int);
+static bool marked_correctly(int last, int offset, unsigned pattern) {
+    int expected[24], actual[24];
+    for (int i = 0; i < 24; ++i)
+        actual[i] = expected[i] = ((pattern >> (i % 8)) & 1) ? i + 1 : 0;
+    for (int i = 0; i <= last; ++i)
+        if (expected[2 + i]) expected[2 + offset + i] = 7;
+    mark_nonzero(actual + 2, actual + 2 + offset, last);
+    for (int i = 0; i < 24; ++i)
+        if (actual[i] != expected[i]) return false;
+    return true;
+}
+int main() {
+    for (int last = -1; last <= 18; ++last)
+        for (int offset = -1; offset <= 1; ++offset)
+            for (unsigned pattern = 0; pattern < 256; pattern += 17)
+                if (!marked_correctly(last, offset, pattern)) return 5;
+    if (exit_pair(0x80000001u, 0x12345678u, 0, 0) != 0x1234567880000001UL) return 4;
+    if (exit_pair(0x80000001u, 0x12345678u, 1, 0) != 0x8000000192345679UL) return 4;
+    if (exit_pair(0x80000001u, 0x12345678u, 13, 7) != 0xf418a4e92114cf31UL) return 4;
+    if (exit_pair(0x80000001u, 0x12345678u, 9, 17) != 0xcd5730c1d735f5cdUL) return 4;
+    if (rotate(0, 0x80000005u, 17, 0xfffffff1u) != 0xd432ed95u ||
+        rotate(1, 0x80000005u, 17, 0xfffffff1u) != 0x6dcb4609u ||
+        rotate(5, 0x80000005u, 17, 0xfffffff1u) != 0xedcb4677u ||
+        rotate(12, 0x80000005u, 17, 0xfffffff1u) != 0xd4339663u) return 2;
+    if (pressure(a, 0) != 67 || pressure(a, 7) != 14089 || a[11] != 96) return 1;
+    return series(values, 4);
+}

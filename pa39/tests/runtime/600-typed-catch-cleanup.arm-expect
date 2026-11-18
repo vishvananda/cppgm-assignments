@@ -1,0 +1,15 @@
+{
+  "source": true,
+  "units": [
+    "600-typed-catch-cleanup.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 39,
+      "stdout": ""
+    }
+  ],
+  "hosted": true,
+  "relocation": "R_AARCH64_PREL32"
+}

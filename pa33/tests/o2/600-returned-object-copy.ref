@@ -7,14 +7,8 @@ function @capture(%p : ptr) -> void [no_inline=yes] {
 }
 function @returned_value(%source : ptr) -> i64 [no_inline=yes] {
   block ^entry:
-    %a = load u32 %source
-    %t2 = convert zext i64 u32 %a
-    %next = index u32 %source, 1
-    %b = load u32 %next
-    %t5 = convert zext i64 u32 %b
-    %t6 = binary shl i64 %t5, 32
-    %t7 = binary or i64 %t2, %t6
-    return i64 %t7
+    %t1 = load i64 %source
+    return i64 %t1
 }
 function @captured_value(%source : ptr) -> i64 [no_inline=yes] {
   slot $out : obj<8x4>
@@ -51,14 +45,8 @@ function @observed_frame(%source : ptr) -> i64 [no_inline=yes] {
   block ^entry:
     %frame = frame_address
     call void @capture(%frame)
-    %a = load u32 %source
-    %t3 = convert zext i64 u32 %a
-    %next = index u32 %source, 1
-    %b = load u32 %next
-    %t6 = convert zext i64 u32 %b
-    %t7 = binary shl i64 %t6, 32
-    %t8 = binary or i64 %t3, %t7
-    return i64 %t8
+    %t2 = load i64 %source
+    return i64 %t2
 }
 function @main() -> i32 [role=entry] {
   slot $source : obj<8x4>
