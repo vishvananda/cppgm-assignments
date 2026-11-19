@@ -16,7 +16,8 @@
  * separate modules can construct/validate concurrently.
  *
  * Types: kind in bits 0..7, alignment log2 in 8..15, size in 16..63.
- * Scalars have zero alignment/size; obj carries both. ptr size 0 means 8.
+ * Scalars have zero alignment/size; obj carries both. ptr has zero alignment
+ * and size 4 for Wasm or size 8 (also spelled 0) for native targets.
  * A record type (since ABI version 4) is the value cppgm_lowir_record
  * returns: kind CPPGM_TYPE_RECORD, the record's ID in 16..63.
  * Value: kind byte, floating TypeKind byte, zero reserved halfword; index is
@@ -37,10 +38,10 @@
 #define CPPGM_LOWIR_API
 #endif
 
-/* Versions 3 and 4 add to the version before and change nothing in it:
+/* Versions 3 through 5 add to the version before and change nothing in it:
  * cppgm_lowir_create accepts CPPGM_LOWIR_ABI_VERSION_MIN to
  * CPPGM_LOWIR_ABI_VERSION. */
-#define CPPGM_LOWIR_ABI_VERSION 4u
+#define CPPGM_LOWIR_ABI_VERSION 5u
 #define CPPGM_LOWIR_ABI_VERSION_MIN 2u
 #define CPPGM_NO_ID UINT32_MAX
 
@@ -51,11 +52,17 @@ extern "C" {
 typedef struct CppgmLowir CppgmLowir;
 typedef uint64_t CppgmType;
 
-/* cppgm_lowir_create's target: an x86-64 object for Linux (ELF) or macOS (Mach-O). */
+/* cppgm_lowir_create's target, independent of the host running the library.
+ * The AArch64 and Wasm targets require ABI version 5. */
 enum CppgmTarget
 {
 	CPPGM_TARGET_LINUX = 0,
-	CPPGM_TARGET_MACOS = 1
+	CPPGM_TARGET_MACOS = 1,
+	CPPGM_TARGET_WASM32 = 2,
+	CPPGM_TARGET_WASIP1 = 3,
+	CPPGM_TARGET_EMSCRIPTEN = 4,
+	CPPGM_TARGET_AARCH64_LINUX = 5,
+	CPPGM_TARGET_AARCH64_MACOS = 6
 };
 
 /* The truth-valued arguments: cppgm_lowir_function's `definition`,
@@ -125,9 +132,10 @@ CPPGM_LOWIR_API int cppgm_lowir_global(CppgmLowir* module, uint32_t symbol, Cppg
 /* Validate once after construction, before optimization or serialization. */
 CPPGM_LOWIR_API int cppgm_lowir_validate(CppgmLowir* module);
 CPPGM_LOWIR_API int cppgm_lowir_write(CppgmLowir* module, const char* path);
-/* Optimizes and consumes the module, returning a host-linkable object in
- * module-owned memory. Valid until destroy; compile at most once. No host
- * toolchain, subprocess or temporary file is involved. level is 0..3. */
+/* Optimizes and consumes the module, returning a relocatable object for
+ * the selected target in module-owned memory. Valid until destroy; compile
+ * at most once. No external toolchain, subprocess or temporary file is
+ * involved. level is 0..3. Wasm objects require CPPGM_CODE_FIXED. */
 CPPGM_LOWIR_API int cppgm_lowir_compile(CppgmLowir* module, uint32_t level, uint32_t pic);
 CPPGM_LOWIR_API const uint8_t* cppgm_lowir_object_data(const CppgmLowir* module);
 CPPGM_LOWIR_API uint64_t cppgm_lowir_object_size(const CppgmLowir* module);
@@ -234,11 +242,11 @@ typedef struct CppgmField
  * failure. A record type stands for obj of its size and alignment wherever
  * a type is taken: in signatures, boundaries, globals, data items and the
  * instruction and slot records of a body. An object of a record type is
- * passed and returned directly as C passes and returns an object with the
- * same fields (the System V psABI classes): as a parameter or result, as a
- * call argument past a variadic boundary's fixed parameters, and as a
- * va_arg result. Classes that a boundary parameter or an argument fact
- * states are kept. */
+ * passed and returned as C passes and returns an object with the same
+ * fields. The library derives x86-64 eightbyte classes or, since version 5,
+ * Arm and Wasm aggregate shapes for parameters, results, unnamed variadic
+ * arguments and va_arg results. Explicit boundary and argument facts are
+ * kept. */
 CPPGM_LOWIR_API CppgmType cppgm_lowir_record(
 	CppgmLowir* module, uint64_t bytes, uint32_t alignment, const CppgmField* fields, uint32_t count);
 

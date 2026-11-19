@@ -87,6 +87,7 @@ This extension covers native C-linkage scalar functions, globals and plain
 slots. The header also declares the additions of ABI version 3: boundary and
 symbol metadata, argument facts, assembly templates and debug information, and
 version 4 adds record types. The starter file has failing functions for them
-and the supplied client does not call them, so they are outside this optional
-lane, as Wasm objects are. Their
-ordinary compiler lanes continue to exercise the full LowIR model.
+and the supplied client exercises the construction and x86-64 object contract
+above. ABI version 5 defines additional Arm and Wasm target constants for
+the library. Implement the two x86-64 targets for this optional lane. PA37
+and PA39 exercise the additional targets through the compiler.

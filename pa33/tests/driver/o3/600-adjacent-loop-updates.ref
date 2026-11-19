@@ -46,8 +46,8 @@ function @adjacent_updates(%data : ptr, %last : i32) -> void [linkage=c, binding
     jump ^for_body_2
 
   block ^for_body_2:
-    %t4 = phi i32 [^loop_preheader_1: %t3, ^loop_preheader_5: %t12]
-    %t5 = phi i64 [^loop_preheader_5: %t13, ^loop_preheader_1: 1]
+    %t4 = phi i32 [^loop_preheader_1: %t3, ^loop_preheader_5: %t8, ^if_then_3: %t4]
+    %t5 = phi i64 [^loop_preheader_5: %t15, ^loop_preheader_1: 1, ^if_then_3: %t12]
     %t6 = index inbounds i32 [projection=array_element] %data, %t5
     %t7 = index inbounds i32 [projection=array_element] %t6, 1
     %t8 = load typed i32 %t7
@@ -59,17 +59,19 @@ function @adjacent_updates(%data : ptr, %last : i32) -> void [linkage=c, binding
     %t11 = index inbounds i32 [projection=array_element] %t10, 1
     store typed i32 %t8, %t10
     store typed i32 %t4, %t11
-    jump ^loop_preheader_5
+    %t12 = binary add nowrap i64 %t5, 1
+    %t13 = convert trunc exact i32 i64 %t12
+    %t14 = cmp lt i32 %t13, %last
+    branch %t14, ^for_body_2, ^for_end_4
 
   block ^for_end_4:
     return void
 
   block ^loop_preheader_5:
-    %t12 = phi i32 [^for_body_2: %t8, ^if_then_3: %t4]
-    %t13 = binary add nowrap i64 %t5, 1
-    %t14 = convert trunc exact i32 i64 %t13
-    %t15 = cmp lt i32 %t14, %last
-    branch %t15, ^for_body_2, ^for_end_4
+    %t15 = binary add nowrap i64 %t5, 1
+    %t16 = convert trunc exact i32 i64 %t15
+    %t17 = cmp lt i32 %t16, %last
+    branch %t17, ^for_body_2, ^for_end_4
 }
 function @adjacent_updates_alias(%data : ptr, %last : i32, %other : ptr) -> void [linkage=c, binding=strong, no_inline=yes] {
   block ^entry:
