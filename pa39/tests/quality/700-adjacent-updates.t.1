@@ -1,0 +1,19 @@
+extern "C" void sweep(int*, int);
+extern "C" void sweep_alias(int*, int, int*);
+
+int main() {
+    sweep(nullptr, 1);
+    sweep(nullptr, 0);
+    int values[] = {99, -4, 8, 3, 8, -1, 6, 98};
+    sweep(values, 6);
+    const int expected[] = {99, -4, 3, 8, -1, 6, 8, 98};
+    for (int i = 0; i != 8; ++i)
+        if (values[i] != expected[i]) return 1;
+
+    int aliased[] = {99, 10, 3, 7, 1, 98};
+    sweep_alias(aliased, 4, aliased + 2);
+    const int changed[] = {99, 3, 2, 1, 7, 98};
+    for (int i = 0; i != 6; ++i)
+        if (aliased[i] != changed[i]) return 2;
+    return 37;
+}

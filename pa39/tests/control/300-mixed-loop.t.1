@@ -9,6 +9,23 @@ extern "C" void overwrite(volatile int* p) {
 int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 extern "C" unsigned long exit_pair(unsigned, unsigned, unsigned, unsigned);
 extern "C" void mark_nonzero(const int*, int*, int);
+extern "C" const long* bucket_start(const long*, long);
+extern "C" const long* skip_bucket_start(const long*, long);
+
+static bool bucket_starts_correctly() {
+    long values[12];
+    const long* base = values + 6;
+    for (long bucket = -4; bucket < 5; ++bucket) {
+        for (long remainder = 0; remainder < 64; ++remainder) {
+            long position = bucket * 64 + remainder;
+            if (bucket_start(base, position) != base + bucket) return false;
+            long skip_expected = bucket < 0 && remainder != 0 ? bucket - 1 : bucket;
+            if (skip_bucket_start(base, position) != base + skip_expected) return false;
+        }
+    }
+    return true;
+}
+
 static bool marked_correctly(int last, int offset, unsigned pattern) {
     int expected[24], actual[24];
     for (int i = 0; i < 24; ++i)
@@ -20,7 +37,48 @@ static bool marked_correctly(int last, int offset, unsigned pattern) {
         if (actual[i] != expected[i]) return false;
     return true;
 }
+
+extern "C" void rotate_floats(double*, float*, unsigned);
+static unsigned observed_rounds;
+extern "C" void observe_round(unsigned i) { observed_rounds += i; }
+
+static bool floats_rotated(unsigned rounds) {
+    double wide[6];
+    float narrow[6];
+    double expected_wide[6];
+    float expected_narrow[6];
+    for (int j = 0; j < 6; ++j) {
+        expected_wide[j] = wide[j] = 3 * j - 7;
+        expected_narrow[j] = narrow[j] = 11 - 5 * j;
+    }
+    unsigned expected_rounds = 0;
+    for (unsigned i = 0; i < rounds; ++i) {
+        bool forward = i % 2 != 0;
+        double next_wide[6];
+        float next_narrow[6];
+        for (int j = 0; j < 6; ++j) {
+            next_wide[j] = expected_wide[(j + (forward ? 1 : 5)) % 6];
+            next_narrow[j] = expected_narrow[(j + (forward ? 5 : 1)) % 6];
+        }
+        next_wide[forward ? 5 : 0] += forward ? 0.5 : -1;
+        next_narrow[forward ? 0 : 5] += forward ? 0.25f : -0.5f;
+        for (int j = 0; j < 6; ++j) {
+            expected_wide[j] = next_wide[j];
+            expected_narrow[j] = next_narrow[j];
+        }
+        if (i % 3 == 1) expected_rounds += i;
+    }
+    observed_rounds = 0;
+    rotate_floats(wide, narrow, rounds);
+    for (int j = 0; j < 6; ++j)
+        if (wide[j] != expected_wide[j] || narrow[j] != expected_narrow[j]) return false;
+    return observed_rounds == expected_rounds;
+}
+
 int main() {
+    if (!bucket_starts_correctly()) return 7;
+    for (unsigned rounds = 0; rounds <= 16; ++rounds)
+        if (!floats_rotated(rounds)) return 6;
     for (int last = -1; last <= 18; ++last)
         for (int offset = -1; offset <= 1; ++offset)
             for (unsigned pattern = 0; pattern < 256; pattern += 17)

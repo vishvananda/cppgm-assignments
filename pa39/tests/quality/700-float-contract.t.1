@@ -1,0 +1,12 @@
+extern "C" float product_sum(float, float, float);
+extern "C" double sum_product(double, double, double);
+
+int main() {
+    if (product_sum(3, -2, 8) != 2 || sum_product(3, -2, 8) != 2) return 1;
+    const float single = product_sum(1.00000011920928955078125f, 0.99999988079071044921875f, -1);
+    const double wide = sum_product(1.0000000000000002220446049250313080847263336181640625,
+                                    0.9999999999999997779553950749686919152736663818359375, -1);
+    if (single != 0 && single != -1.0f / (1ULL << 46)) return 2;
+    if (wide != 0 && wide != -1.0 / (1ULL << 52) / (1ULL << 52)) return 3;
+    return 0;
+}

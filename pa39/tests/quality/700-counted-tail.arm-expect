@@ -1,0 +1,6 @@
+{
+  "source": true,
+  "units": ["700-counted-tail.t.1"],
+  "llvm_interop": true,
+  "commands": [{"exit": 0, "stdout": ""}]
+}

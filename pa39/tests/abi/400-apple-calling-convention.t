@@ -4,6 +4,10 @@
 static_assert(sizeof(long) == 8 && sizeof(int) == 4 && sizeof(void*) == 8, "LP64");
 static_assert(sizeof(long double) == 8 && alignof(long double) == 8 && __LDBL_MANT_DIG__ == 53, "binary64 long double");
 static_assert(sizeof(__builtin_va_list) == 8 && (char)-1 < 0 && (wchar_t)-1 < 0, "Darwin scalar ABI");
+static_assert(1.00000000000000011102230246251565404236316680908203125L == 1.0L, "round binary64 literal to even");
+constexpr long double operator""_binary64(long double value) { return value; }
+static_assert(1.00000000000000011102230246251565404236316680908203125_binary64 == 1.0L,
+              "round a cooked floating literal to its parameter type");
 struct Empty {};
 struct Floats { double x, y, z; };
 extern "C" long fixed(int a, __int128 wide, Empty, int b, int c, int d, int e, int f,

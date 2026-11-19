@@ -1,0 +1,7 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "units": ["600-weak-import.t.1"],
+  "llvm_interop": true,
+  "commands": [{"exit": 47, "stdout": ""}]
+}

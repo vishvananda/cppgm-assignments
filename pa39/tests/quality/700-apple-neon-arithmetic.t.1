@@ -1,0 +1,5 @@
+#if defined(__clang__)
+// The cross replay links without the system stack protector runtime.
+__attribute__((no_stack_protector)) int main();
+#endif
+#include "700-neon-arithmetic.t.1"

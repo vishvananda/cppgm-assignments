@@ -13,6 +13,7 @@ extern "C" __attribute__((noinline)) U forward(U a, U b, double c, double d, Com
     return fn(b, a, d, c) + fn(a, a, c, c);
 }
 extern "C" U fp_kernel(U);
+extern "C" U cold_fp_kernel(const volatile double*, U, bool);
 extern "C" double sample_fp(U x) { return double(x & 255) + 0.25; }
 extern "C" U shuffle_args(U,U,U,U,U,U,U,U);
 extern "C" U fold_args(U a,U b,U c,U d,U e,U f,U g,U h) {
@@ -30,6 +31,14 @@ int main() {
         U sum = 2;
         for (U i = 0; i < 8; ++i) sum += (seed + i) & 255;
         if (!check_registers(seed, fp_kernel, sum ^ sample(seed))) return 3;
+        double values[12];
+        for (U i = 0; i < 12; ++i) values[i] = double((seed >> (2*i)) & 31);
+        for (int call = 0; call < 2; ++call) {
+            double x = double((seed + 3 * call) & 31) + 0.5;
+            double pairs = 0;
+            for (int i = 0; i < 12; i += 2) pairs += (values[i]+x)*(values[i+1]+x);
+            if (cold_fp_kernel(values, seed, call) != U(pairs)) return 5;
+        }
         seed = seed * 6364136223846793005ul + 1442695040888963407ul;
     }
     return 39;

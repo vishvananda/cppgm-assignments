@@ -28,6 +28,14 @@ __attribute__((noinline)) unsigned narrow(unsigned x, unsigned y)
   return value >> 16;
 }
 
+__attribute__((noinline)) unsigned retyped(unsigned char a, unsigned char b, unsigned char c, unsigned* whole)
+{
+  int signed_pack = (int(a) << 16) | (int(b) << 8) | int(c);
+  unsigned bits = static_cast<unsigned>(signed_pack);
+  *whole = bits;
+  return ((bits >> 18) << 12) | (((bits >> 10) & 63u) << 6) | (bits & 63u);
+}
+
 __attribute__((noinline)) U vector_masks(U x, U y)
 {
   __m128i a = _mm_set_epi64x(static_cast<long long>(x), static_cast<long long>(y));
@@ -101,6 +109,11 @@ int main()
     U shared = 0, merged = merged_bits(x, y, z);
     if (clipped(x, y, z, &shared) != slice(merged, 32, 32) || shared != merged) return 2;
     if (narrow(static_cast<unsigned>(x), static_cast<unsigned>(y)) != slice(y, 0, 8) * 256) return 3;
+    unsigned whole = 0;
+    const auto hi = static_cast<unsigned char>(x), mid = static_cast<unsigned char>(y), lo = static_cast<unsigned char>(z);
+    const unsigned parts = retyped(hi, mid, lo, &whole);
+    if (whole != hi * 65536u + mid * 256u + lo ||
+        parts != slice(hi, 2, 6) * 4096u + slice(mid, 2, 6) * 64u + slice(lo, 0, 6)) return 9;
     unsigned a = byte_mask(x, y), b = byte_mask(y, ~x);
     expected = static_cast<U>(b) + (static_cast<U>(a ^ b) << 16);
     if (vector_masks(x, y) != expected) return 4;

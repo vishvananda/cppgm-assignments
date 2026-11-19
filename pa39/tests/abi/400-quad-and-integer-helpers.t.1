@@ -1,9 +1,26 @@
 using W = unsigned __int128;
 extern "C" long double adjust(long double, long double);
 extern "C" double divide_wide(W, W);
+extern "C" unsigned long long high_word(unsigned long long, unsigned long long);
+extern "C" unsigned long long xor_words(unsigned long long, unsigned long long);
+extern "C" unsigned long long signed_high_word(long long, long long);
+extern "C" unsigned compare_quad(long double, long double);
+extern "C" double _Complex divide_complex(double _Complex, double _Complex);
 int main() {
     if (adjust(3.25L, 2.0L) != 9.0L) return 1;
     W divisor = (W(1) << 69) + 3;
     if (divide_wide(24 * divisor + 7, divisor) != 31.0) return 2;
+    if (compare_quad(1.25L, 2.5L) != 3 || compare_quad(2.5L, 1.25L) != 12) return 3;
+    if (compare_quad(-0.0L, 0.0L) != 10) return 4;
+    if (compare_quad(__builtin_nanl(""), 1.0L) != 0) return 5;
+    if (compare_quad(__builtin_infl(), 1.0L) != 28 || compare_quad(-__builtin_infl(), 1.0L) != 19) return 6;
+    double _Complex x, y;
+    __real__ x = 1.0; __imag__ x = 2.0;
+    __real__ y = 2.0; __imag__ y = -1.0;
+    double _Complex z = divide_complex(x, y);
+    if (__real__ z != 0.0 || __imag__ z != 1.0) return 7;
+    if (high_word(~0ull, 3) != 2 || high_word(1ull << 63, 2) != 1) return 8;
+    if (xor_words(~0ull, 3) != ~0ull || xor_words(0, ~0ull) != 0) return 9;
+    if (signed_high_word(-7, 3) != ~0ull || signed_high_word(-7, -3) != 0) return 10;
     return 53;
 }

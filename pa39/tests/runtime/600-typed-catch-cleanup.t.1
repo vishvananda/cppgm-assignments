@@ -1,11 +1,21 @@
-extern "C" { int cleanups = 0; }
+extern "C" { int cleanups = 0; int cursor_cleanup = 0; }
 extern "C" int guarded(int);
+extern "C" int cursor_total(const int*, const int*, int, int);
 extern "C" void raise_remote(int kind) {
     if (kind == 1) throw 17;
     if (kind == 2) throw 2.0;
 }
 int main() {
     if (guarded(0) != 1 || guarded(1) != 17) return 1;
+    const int first[] = {2, 3}, second[] = {5, 7};
+    if (cursor_total(first, second, 0, -1) != 0 || cursor_cleanup != 2) return 4;
+    if (cursor_total(first, second, 3, -1) != 15 || cursor_cleanup != 5) return 5;
+    for (int fail = 0; fail != 2; ++fail) {
+        try { cursor_total(first, second, 3, fail); return 6; }
+        catch (int n) {
+            if (n != 17 || cursor_cleanup != (fail == 0 ? 2 : 5)) return 7;
+        }
+    }
     try { guarded(2); }
     catch (double d) { return d == 2 && cleanups == 3 ? 39 : 2; }
     return 3;

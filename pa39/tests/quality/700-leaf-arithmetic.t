@@ -19,12 +19,41 @@ extern "C" unsigned long mix_bits(unsigned long x, unsigned shift, unsigned long
     return ((v & 0xff00ff00ff00ff00UL) | 0x000f000f000f000fUL) % divisor;
 }
 extern "C" int signed_remainder(int x, int divisor) { return x % divisor; }
+extern "C" int fixed_signed_remainder(int x) { return x % 139968; }
+extern "C" unsigned fixed_unsigned_quotient(unsigned x) { return x / 255u; }
+extern "C" double narrow_lane_counter(const double* data, long count, long start) {
+    double sum = 0;
+    for (long j = 0, i = start; j < count; ++j, ++i)
+        sum += data[j] * static_cast<double>(static_cast<int>(i));
+    return sum;
+}
+extern "C" unsigned long step_bit_cursor(const unsigned char* data, long count, unsigned long mask) {
+    const unsigned char* cursor = data;
+    unsigned long sum = 0;
+    for (long i = 0; i < count; ++i) {
+        sum += *cursor & mask;
+        if (mask > 1) {
+            mask >>= 1;
+        } else {
+            mask = 128;
+            ++cursor;
+        }
+    }
+    return (sum << 12) | (static_cast<unsigned long>(cursor - data) << 8) | mask;
+}
 extern "C" unsigned long widen_choice(bool a, unsigned x) { return a ? x : 0xffffffffu; }
 
 extern "C" unsigned byte_offset(const unsigned* data, signed char i, unsigned char j) {
     return i < -4 && j >= 250 ? data[i] + data[j] : 0;
 }
 extern "C" bool signed_order(short left, short right) { return left < right; }
+extern "C" int signed_entries(const signed char* bytes, const short* words, long i) {
+    return bytes[i] + words[i];
+}
+extern "C" int signed_lookup(const signed char* bytes, long i, const int* negative, const int* other) {
+    if (bytes[i] < 0) return *negative;
+    return *other;
+}
 
 extern "C" unsigned adjacent(const unsigned* a, long i) {
     const unsigned* p = a + i;
@@ -109,6 +138,8 @@ extern "C" unsigned projected_bytes(unsigned long* word, unsigned char v, unsign
 extern "C" unsigned shift_fields(unsigned long v, int s) {
     return static_cast<unsigned char>(v >> 41) + 257u * static_cast<unsigned char>(s >> 28);
 }
+extern "C" unsigned mask_shift_word(unsigned value) { return (value >> 10) & 63u; }
+extern "C" unsigned long mask_shift_long(long value) { return (value >> 41) & 511UL; }
 extern "C" int shift_cmp(long limit, long value) {
     return limit < (value >> 5) ? 7 : -3;
 }
@@ -129,4 +160,22 @@ extern "C" unsigned narrow_join(bool select, unsigned long a, unsigned long b) {
 extern "C" unsigned narrow_join_full(bool select, unsigned long a, unsigned long b) {
     unsigned long either = select ? (a >> 55) : b;
     return static_cast<unsigned char>(either) * 257u;
+}
+
+extern "C" unsigned long selected_field(const unsigned long* fields, unsigned selector) {
+    return (selector & 64) ? fields[3] : fields[1];
+}
+
+extern "C" unsigned scaled_with_bias(unsigned value) {
+    return (value + 0xffff0007u) * 19u + 2027u;
+}
+
+extern "C" unsigned triangle_slots(const unsigned* values) {
+    unsigned pairs[5][5];
+    for (int i = 0; i < 5; ++i)
+        for (int j = i + 1; j < 5; ++j) pairs[i][j] = values[i] + values[j];
+    unsigned result = 0;
+    for (int i = 0; i < 5; ++i)
+        for (int j = i + 1; j < 5; ++j) result += pairs[i][j];
+    return result;
 }

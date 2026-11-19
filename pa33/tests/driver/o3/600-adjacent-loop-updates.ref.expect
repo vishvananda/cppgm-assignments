@@ -1,0 +1,3 @@
+# Keep the adjacent sweep small. Execution covers the zero-trip and aliasing paths.
+count(load) <= 2 in @adjacent_updates
+instructions <= 42 in @adjacent_updates

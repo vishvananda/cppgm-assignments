@@ -22,7 +22,7 @@
     "levels": [1, 2, 3],
     "functions": {
       "copy65": {
-        "instructions": 10,
+        "instructions": 24,
         "calls": 0
       }
     }

@@ -1,7 +1,9 @@
 #ifdef __APPLE__
 #define WITNESS _check_registers
+#define COLD_SAMPLE _sample_cold
 #else
 #define WITNESS check_registers
+#define COLD_SAMPLE sample_cold
 #endif
 .text
 .p2align 2
@@ -57,6 +59,15 @@ WITNESS:
 	ldp d14, d15, [sp, #128]
 	ldp x29, x30, [sp, #144]
 	add sp, sp, #176
+	ret
+
+.p2align 2
+.globl COLD_SAMPLE
+COLD_SAMPLE:
+	.irp n,0,1,2,3,4,5,6,7,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+	movi v\n\().16b, #0
+	.endr
+	add x0, x0, #3
 	ret
 #ifndef __APPLE__
 .section .note.GNU-stack,"",%progbits

@@ -1,0 +1,7 @@
+{
+  "source": true,
+  "units": ["700-float-contract.t.1"],
+  "flags": ["-ffp-contract=fast"],
+  "llvm_interop": true,
+  "commands": [{"exit": 0, "stdout": ""}]
+}

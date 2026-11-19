@@ -1,6 +1,30 @@
-## CPPGM Programming Assignment 39 — AArch64 Linux and Apple Silicon backends (experimental)
+# CPPGM Programming Assignment 39 — AArch64 Linux and Apple Silicon backends (experimental)
 
 Implement the little-endian Armv8-A targets in the existing compiler after PA34 and PA37. The Linux profile has 64-bit pointers and long, 32-bit int, unsigned plain char and 32-bit unsigned wchar_t, binary128 long double, and 16-byte stack alignment. Use the Linux AAPCS64 calling convention and AAELF64 relocatable objects. Use a distinct target profile (`aarch64` in version-one LowIR) selected before parsing. Keep architecture-specific instructions and their encoder under `dev/src/aarch64/`. The frontend and optimizer pass typed data directly to the selector. [AAPCS64](https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst) · [AAELF64](https://github.com/ARM-software/abi-aa/blob/main/aaelf64/aaelf64.rst)
+
+### Work through the assignment
+
+1. Select the target before parsing and give it its own data layout and LowIR
+   target name. Start with leaf integer functions, then add branches, loads,
+   stores and parallel copies on control-flow edges. Run the target and
+   control fixtures as you work.
+2. Make a caller compiled by your compiler work with a callee compiled by
+   Clang, then reverse the roles. Work through the ABI fixtures for register
+   and stack arguments, homogeneous floating records, variadic calls and
+   indirect results. Add floating-point and NEON operations and check the
+   signed and unsigned cases.
+3. Extend PA25 and PA26's link and object support to both Arm targets. Run
+   the link fixtures, then the hosted runtime fixtures for exceptions,
+   cleanups, and thread-local storage.
+4. Run the quality lane at the optimized levels. Apply PA33's shared LowIR
+   optimizations before selection and reuse PA34's liveness and spill
+   analyses where the target permits. Inspect the emitted code to find extra
+   loads, spills and moves.
+
+Complete the assignment by passing the PA39 suite, including mixed-object
+and LowIR round-trip checks. The x86 Linux tools below can run the cross suite
+and check both file formats. Run the native replay on Apple Silicon when you
+have access to it.
 
 ### Required linking milestone
 
@@ -12,7 +36,12 @@ PA25 introduced `cppgm -c`, multiple translation units, symbol resolution, reloc
 | Write a Linux ELF executable and an Apple Silicon Mach-O executable in process. Honor each format's address, page, relocation and entry-point rules. Build macOS load commands, rebasing information and the ad-hoc code signature. | Inspect both images independently, run Linux images on Arm, verify every Mach-O code-signing page hash on x86 and run the signed image under dyld on Apple Silicon. |
 | Produce objects that the platform toolchain can link against its system libraries. | Use LLD or Apple's linker as an independent consumer and exercise hosted exceptions and thread-local storage. |
 
-The Apple SDK link for hosted programs belongs to the platform interoperability test. A full system-library linker, including arbitrary dylib imports and symbol binding, would need its own assignment contract.
+Use the platform linker for hosted programs that link against system libraries.
+On Linux, advertise the GNU attribute syntax so glibc leaves `__attribute__`
+available when a C header precedes the C++ headers. ABI tags must survive that
+include order so separately compiled callers and definitions agree.
+Test both forms of a weak ELF import. Its address is null when the linker
+finds no definition and names the linked definition when one is present.
 
 ### Compile and run
 
@@ -51,6 +80,7 @@ Use `--target=arm64-apple-macos11` for the macOS 11 deployment profile. Its LowI
 cppgm --target=arm64-apple-macos11 -O2 -c sum.cpp -o sum.o
 cppgm --target=arm64-apple-macos11 main.cpp sum.o -o program
 # Hosted libraries on a Mac, using the SDK toolchain
+cppgm --target=arm64-apple-macos11 -O2 -c main.cpp -o main.o
 xcrun clang++ -arch arm64 -mmacosx-version-min=11.0 main.o sum.o -o hosted-program
 ```
 
@@ -67,33 +97,77 @@ The cross test executes SDK-free fixtures at their linked Mach-O addresses under
 
 ### Test from x86 Linux
 
-Use Clang, LLD and llvm-readobj with the AArch64 target enabled and the `qemu-aarch64` Linux user emulator. The first verified configuration uses LLVM 22.1.2 and QEMU 10.2.1. Static tests need no target sysroot. The runner accepts the paths in `CPPGM_AARCH64_CLANG`, `CPPGM_AARCH64_LLD`, `CPPGM_AARCH64_READOBJ` and `CPPGM_AARCH64_QEMU`. Run `make test-pa39` from the root or `make check TEST=tests/control/300-mixed-loop.t` here. This assignment is opt-in.
+Install Clang, LLD, LLVM's object tools and the Linux user emulator
+`qemu-aarch64`. These are enough for the freestanding integer and control
+fixtures. For the hosted and binary128 fixtures, also install the AArch64
+libc, libstdc++ and libgcc cross-development packages. For example, on
+Ubuntu 26.04 use the following packages.
 
-Each fixture declares its expected exit status. The checker compiles at O0 through O3, inspects the object format, tests LowIR serialization, and executes the linked code. Mixed-object fixtures exchange caller and callee between cppgm and Clang. The checked-in entry stub lets LLD link the same objects independently. A full Clang build supplies a third observation. Code quality checks should bound work, memory traffic and size in named functions. Collect runtime measurements on AArch64 hardware.
+```sh
+sudo apt install clang-22 lld-22 llvm-22 qemu-user \
+  libgcc-14-dev-arm64-cross libstdc++-14-dev-arm64-cross libc6-dev-arm64-cross
+```
 
-### Implementation coverage
+From the repository root, run the full opt-in suite, the quality lane, or
+one fixture.
 
-The fixtures cover integer, floating-point and NEON code, switch lowering, independent callers and callees, baseline atomics, archive linking, typed exceptions, cleanup, and hosted thread-local storage. Linux thread-local accesses use the local-exec model for direct objects and initial-exec GOT offsets for PIC. TLS programs require a hosted linker and runtime.
+```sh
+make test-pa39
+make -C pa39 test-quality
+make -C pa39 check TEST=tests/control/300-mixed-loop.t
+```
 
-### Cross-tool setup and native replay
+Set `CPPGM_AARCH64_CLANG`, `CPPGM_AARCH64_LLD`,
+`CPPGM_AARCH64_OBJDUMP`, `CPPGM_AARCH64_READOBJ`, `CPPGM_AARCH64_AR`
+and `CPPGM_AARCH64_QEMU` when the tools use suffixed names or live outside
+your PATH. Set `CPPGM_AARCH64_SDK_ROOT` if your cross SDK is installed
+outside the standard Debian layout under `/`. Use
+`CPPGM_AARCH64_BUILTINS` to select its libgcc archive.
 
-The reference lane uses LLVM 22.1.2, QEMU user-mode 10.2.1 (Cortex-A53),
-GCC 14.3 AArch64 builtins and the GNU/Linux AArch64 C++ static runtime.
-On Ubuntu 26.04 install `clang-22 lld-22 llvm-22 qemu-user
-libgcc-14-dev-arm64-cross libstdc++-14-dev-arm64-cross libc6-dev-arm64-cross`.
-Use the suffixed LLVM tool names in the checker variables if your PATH lacks
-the unsuffixed commands. `CPPGM_AARCH64_OBJDUMP` selects llvm-objdump and
-`CPPGM_AARCH64_AR` selects llvm-ar. The libgcc and hosted unwinding controls
-use `CPPGM_AARCH64_BUILTINS` and `CPPGM_AARCH64_SDK_ROOT`. These default
-to the GCC 14 Arm cross archive and the installed Debian-style sysroot layout
-under `/`. Integer and control-flow fixtures use only the LLVM tools and QEMU.
+The checker builds at O0 through O3, inspects object files, checks the LowIR
+round trip and runs the linked programs under QEMU. For mixed-object fixtures
+it exchanges the caller and callee with Clang. LLD provides an independent
+consumer of the same ELF objects.
 
-The mixed ABI controls also cover homogeneous four-float records, indirect
-aggregate results, variadic GP and vector save areas, i128 arithmetic and
-binary128 helper calls. The link controls check GOT addressing, lazy archive
-member selection, and DWARF unwinding through a cppgm frame. The memory lane
-checks acquire/release, exclusive updates and compare-exchange. At O1 through
-O3 the integer leaf kernel must execute entirely in registers.
+### Code quality
+
+Use the Arm quality lane as you used PA34's native backend quality tests.
+See [PA34](../pa34/README.md).
+The tests check results and cap instruction count, memory traffic, stack
+accesses or code size for selected functions. Choose your instruction
+sequence and register assignments to meet those budgets.
+
+- Keep leaf arithmetic and vector values in registers. Check that moves
+  between register banks are needed and that spilled floating values can
+  be loaded directly into floating-point registers.
+- For division by a constant, compare the hardware divider with a widening
+  multiply and a shift. Check signed rounding and the cost of loading the
+  constants. A remainder can reuse the quotient.
+- For adjacent array accesses, see whether a value from one iteration can
+  serve the next. Check the zero-trip path and an update through an aliased
+  pointer before relying on a loop-carried value.
+- Preserve signed zero and unordered comparisons when choosing scalar or
+  vector floating-point instructions. Compare mixed-object results before
+  measuring speed.
+- For nested loops over contiguous floating-point arrays, check whether the
+  inner loop has independent lanes before expanding its iterations. Where
+  the arrays can overlap, preserve the order in which each value is read
+  and updated.
+- For loops with separate integer and floating-point exit tests, check
+  which values cross the backedge and which each exit uses. Changing the
+  loop layout can remove copies while preserving the order of the tests.
+- For a loop that updates a pointer used by cleanup code, check what the
+  cleanup reads when an exception is thrown before and after the update.
+- For a scalar floating-point multiply followed by an add, `-ffp-contract=fast`
+  permits rounding the result once on either Arm target. `-ffast-math` also
+  grants this permission. Use `-ffp-contract=off` when the intermediate rounding
+  matters. Compare source and LowIR object builds with the same contraction
+  option on the `cppgm -c` command.
+
+Use the quality lane on x86 while developing. Use Arm hardware for
+wall-clock performance comparisons.
+
+### Replay on Arm
 
 To save the exact guests that passed on the cross host:
 
@@ -105,12 +179,6 @@ Copy that directory to Linux AArch64 and run
 `perl scripts/replay_aarch64.pl obj/pa39-guests`. Each manifest records the
 SHA-256, exit status, optimization level, producers and linker. Native replay
 checks the digest and status for every recorded execution.
-
-At optimized levels the `transform` loop, including its setup and scalar tail, permits 160
-instructions, 12 loads or stores, and eight stack loads or stores. At O3, LLVM 22.1.2
-emits 35, four and zero for the same source. Both objects run the same odd-sized
-input. The separate vector leaf has zero memory traffic. These budgets track
-generated code on x86 while native runs measure execution time.
 
 ### Writing a fixture
 

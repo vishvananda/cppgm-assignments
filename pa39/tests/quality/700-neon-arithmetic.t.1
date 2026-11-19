@@ -3,6 +3,21 @@ using Float4 = float __attribute__((vector_size(16)));
 extern "C" Int4 mix(Int4, Int4);
 extern "C" Float4 scale(Float4, Float4);
 extern "C" void transform(int*, const int*, int);
+extern "C" void floating_bounds(double*, double*, const double*, const double*, int);
+extern "C" int dot_pairs(const short*, const short*, int);
+extern "C" double ordered_dot(const double*, const double*, int);
+extern "C" unsigned sum_words(const unsigned*, int);
+extern "C" unsigned long long adjust_count(unsigned long long, float, float, bool);
+extern "C" void update_arrays(double*, double*);
+extern "C" double bounded_recurrence(double, double, double, double, int);
+extern "C" Int4 vector_recurrence(Int4, Int4, int);
+extern "C" void vector_aggregate(Int4*, const Int4*, int, bool);
+extern "C" Int4 vector_recurrence_with_call(Int4, Int4, Int4, int);
+extern "C" float conditional_accumulation(const float*, int, int);
+volatile int accumulation_records;
+extern "C" void record_accumulation() {
+    accumulation_records = accumulation_records + 1;
+}
 int main() {
     Int4 a = {1,2,-3,4}, b = {3,4,2,1};
     Float4 p = {1,3,5,7}, q = {2,4,8,16};
@@ -17,6 +32,138 @@ int main() {
         for (int i = 0; i != 11; ++i) sentinels[i] = 73;
         transform(out, in, n);
         for (int i = 0; i != 11; ++i) if (out[i] != (i<n ? 3*(i-3)+1 : 73)) return 3;
+    }
+    double left[6], right[6], lo[6], hi[6];
+    volatile double* l = left;
+    volatile double* r2 = right;
+    l[0] = 1; l[1] = 4; l[2] = +0.0; l[3] = -0.0; l[4] = __builtin_nan(""); l[5] = 3;
+    r2[0] = 2; r2[1] = -1; r2[2] = -0.0; r2[3] = +0.0; r2[4] = 5; r2[5] = __builtin_nan("42");
+    floating_bounds(lo, hi, left, right, 6);
+    if (lo[0] != 1 || hi[0] != 2 || lo[1] != -1 || hi[1] != 4) return 4;
+    if (!__builtin_signbit(lo[2]) || !__builtin_signbit(hi[2]) ||
+        __builtin_signbit(lo[3]) || __builtin_signbit(hi[3])) return 5;
+    if (lo[4] != 5 || hi[4] != 5 || !__builtin_isnan(lo[5]) || !__builtin_isnan(hi[5])) return 6;
+    const float unordered = static_cast<float>(__builtin_nan(""));
+    if (adjust_count(~0ULL, -0.0f, +0.0f, false) != 0 ||
+        adjust_count(5, unordered, 1, false) != 5 ||
+        adjust_count(5, 1, unordered, true) != 6 ||
+        adjust_count(5, -0.0f, +0.0f, true) != 5) return 15;
+    short a16[40], b16[40];
+    int dot = 0;
+    for (int i = 0; i != 40; i += 2) {
+        a16[i] = -1700 + 23 * i;
+        a16[i + 1] = 1500 - 29 * i;
+        b16[i] = 71 - i;
+        b16[i + 1] = -63 + 3 * i;
+        int pair = a16[i] * b16[i] + a16[i + 1] * b16[i + 1];
+        dot += (pair < 0 ? pair - 255 : pair) / 256;
+    }
+    if (dot_pairs(a16, b16, 40) != dot || dot_pairs(nullptr, nullptr, 0) != 0) return 7;
+    unsigned words[17];
+    for (unsigned i = 0; i != 17; ++i) words[i] = 0xfffffff0u + i * 3;
+    if (sum_words(nullptr, 0) != 0) return 11;
+    volatile unsigned word_sum = 0;
+    for (int n = 1; n <= 17; ++n) {
+        word_sum = word_sum + words[n - 1];
+        if (sum_words(words, n) != word_sum) return 11;
+    }
+    for (int overlap = 0; overlap < 2; ++overlap) {
+        double actual[18], expected[18];
+        volatile double* reference = expected;
+        const int offset = overlap ? 1 : 10;
+        for (int i = 0; i < 18; ++i) actual[i] = reference[i] = i - 6;
+        for (int round = 0; round < 3; ++round) {
+            for (int i = 0; i < 8; ++i) {
+                double x = reference[i], y = reference[i + offset];
+                reference[i] = x - y;
+                reference[i + offset] = (x + y) * 0.25;
+            }
+        }
+        update_arrays(actual, actual + offset);
+        for (int i = 0; i < 18; ++i) if (actual[i] != expected[i]) return 12;
+    }
+    const double pattern[] = {1e20, 1, -1e20, 2};
+    double terms[17], factors[17];
+    volatile double* input_terms = terms;
+    volatile double* input_factors = factors;
+    for (int i = 0; i != 17; ++i) {
+        input_terms[i] = pattern[i % 4];
+        input_factors[i] = 1;
+    }
+    if (ordered_dot(nullptr, nullptr, 0) != 0) return 9;
+    volatile double ordered = 0;
+    for (int n = 1; n <= 17; ++n) {
+        ordered = ordered + terms[n - 1];
+        if (ordered_dot(terms, factors, n) != ordered) return 9;
+    }
+    for (int n = 0; n < 12; ++n) {
+        for (int limit = 1; limit < 7; ++limit) {
+            volatile double a = 1, b = 2, c = 0.5;
+            for (int i = 0; i < n && a + c < limit; ++i) {
+                double next = a + (b - c) * 0.5;
+                a = b;
+                b = c;
+                c = next;
+            }
+            if (bounded_recurrence(1, 2, 0.5, limit, n) != a - b + c) return 10;
+        }
+    }
+    for (int n = 0; n != 9; ++n) {
+        Int4 result = vector_recurrence(a, b, n);
+        for (int lane = 0; lane != 4; ++lane) {
+            int first = a[lane], second = b[lane];
+            for (int i = 0; i != n; ++i) {
+                int sum = first + second;
+                first = second;
+                second = sum;
+            }
+            if (result[lane] != second - first) return 8;
+        }
+    }
+    Int4 initial[8], updated[8];
+    for (int i = 0; i < 8; ++i) {
+        Int4 value = {i, -i, i + 5, 8 - i};
+        initial[i] = value;
+    }
+    for (int rounds = 0; rounds <= 5; ++rounds)
+        for (int use_pointer = 0; use_pointer <= 1; ++use_pointer) {
+            vector_aggregate(updated, initial, rounds, use_pointer != 0);
+            for (int i = 0; i < 8; ++i)
+                for (int lane = 0; lane < 4; ++lane)
+                    if (updated[i][lane] != initial[i][lane] + rounds * initial[7 - i][lane]) return 16;
+        }
+    for (int n = 0; n != 9; ++n) {
+        accumulation_records = 0;
+        Int4 result = vector_recurrence_with_call(a, b, c, n);
+        if (accumulation_records != n) return 14;
+        for (int lane = 0; lane != 4; ++lane) {
+            int first = a[lane], second = b[lane], third = c[lane];
+            for (int i = 0; i != n; ++i) {
+                int next = first + third;
+                first = second;
+                second = third;
+                third = next;
+            }
+            if (result[lane] != first + second * 2 - third) return 14;
+        }
+    }
+    const float samples[] = {2, 0, -1, 4, 0, -3, 0};
+    for (int n = 0; n <= 7; ++n) {
+        for (int at = -1; at < 7; ++at) {
+            volatile float sums[9];
+            for (int lane = 0; lane < 9; ++lane) sums[lane] = lane;
+            for (int i = 0; i < n; ++i) {
+                for (int lane = 0; lane < 9; ++lane) {
+                    int weight = lane % 2 ? -(lane + 1) : lane + 1;
+                    sums[lane] = sums[lane] + weight * samples[i];
+                }
+            }
+            float expected = 0;
+            for (int lane = 0; lane < 9; ++lane) expected += (lane + 1) * sums[lane];
+            accumulation_records = 0;
+            if (conditional_accumulation(samples, n, at) != expected) return 13;
+            if (accumulation_records != (at >= 0 && at < n && samples[at] != 0)) return 13;
+        }
     }
     return 61;
 }

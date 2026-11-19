@@ -21,7 +21,7 @@
         "memory_ops": 0,
         "calls": 0,
         "sp_uses": 0,
-        "instructions": 4
+        "instructions": 8
       },
       "transform": {
         "instructions": 160,
@@ -29,7 +29,7 @@
         "stack_ops": 8
       },
       "scale": {
-        "instructions": 4,
+        "instructions": 8,
         "memory_ops": 0,
         "calls": 0
       }

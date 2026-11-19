@@ -1,0 +1,7 @@
+namespace hosted {
+inline namespace tagged __attribute__((__abi_tag__("course"))) {
+struct Result { int value; };
+}
+}
+
+hosted::Result result_from_header() { return {37}; }

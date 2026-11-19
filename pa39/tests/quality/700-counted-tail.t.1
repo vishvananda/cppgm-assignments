@@ -1,0 +1,23 @@
+extern "C" int copy_bits(const unsigned char*, unsigned, int, int, unsigned*);
+
+static bool check(unsigned bytes, int first, int last, unsigned written) {
+    const unsigned char input[] = {0xa5, 0x80, 0xff};
+    unsigned output[25];
+    volatile unsigned* sentinel = output;
+    for (unsigned i = 0; i != 25; ++i) sentinel[i] = 2;
+    if (copy_bits(bytes ? input : nullptr, bytes, first, last, output) != first + (int)written)
+        return false;
+    for (unsigned i = 0; i != 25; ++i) {
+        unsigned expected = i < written ? (input[i / 8] >> (7 - i % 8)) & 1 : 2;
+        if (output[i] != expected) return false;
+    }
+    return true;
+}
+
+int main() {
+    if (!check(0, 0, 8, 0) || !check(3, 8, 8, 0) || !check(3, 8, 5, 0)) return 1;
+    if (!check(3, 0, 5, 5) || !check(3, 0, 8, 8) || !check(3, 0, 13, 13)) return 2;
+    if (!check(1, 0, 17, 8) || !check(3, -2147483647, -2147483636, 11)) return 3;
+    if (!check(3, 2147483644, 2147483647, 3)) return 4;
+    return 0;
+}

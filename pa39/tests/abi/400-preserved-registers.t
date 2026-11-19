@@ -15,6 +15,17 @@ extern "C" U fp_kernel(U seed) {
     return U(a+b+c+d+e+f+g+h) ^ salt;
 }
 
+extern "C" U sample_cold(U);
+extern "C" U cold_fp_kernel(const volatile double* values, U seed, bool call) {
+    double a = values[0], b = values[1], c = values[2], d = values[3];
+    double e = values[4], f = values[5], g = values[6], h = values[7];
+    double i = values[8], j = values[9], k = values[10], l = values[11];
+    if (__builtin_expect(call, 0)) seed = sample_cold(seed);
+    double x = double(seed & 31) + 0.5;
+    return U((a+x)*(b+x) + (c+x)*(d+x) + (e+x)*(f+x) +
+             (g+x)*(h+x) + (i+x)*(j+x) + (k+x)*(l+x));
+}
+
 extern "C" U fold_args(U, U, U, U, U, U, U, U);
 extern "C" U shuffle_args(U a, U b, U c, U d, U e, U f, U g, U h) {
     return fold_args(h,g,f,e,d,c,b,a) ^ fold_args(b,a,d,c,3,g,h,f);

@@ -320,6 +320,11 @@ diagnose constant arithmetic overflow and out-of-range integer conversions.
 List-initialization applies the same representability rules as other arithmetic
 types, including integer constants wider than 64 bits.
 
+Support `__builtin_signbitl` for hosted headers that use the GNU floating-point
+builtins. Convert the argument to the target's `long double` type and return
+a nonzero `int` if the sign bit is set, including for negative zero and
+negative NaNs.
+
 Runtime checks that require libgcc's binary128 or bfloat16 helpers run on
 Linux; the Darwin runtime does not supply those interfaces. Binary16 checks
 run on both hosts. Calls to conversion helpers must follow the target runtime's

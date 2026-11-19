@@ -23,28 +23,28 @@
         "sp_uses": 0
       },
       "store_if_less": {
-        "instructions": 8,
+        "instructions": 12,
         "memory_ops": 3,
         "stack_ops": 0,
         "calls": 0
       },
       "indexed": {
-        "instructions": 7,
+        "instructions": 10,
         "memory_ops": 2,
         "stack_ops": 0
       },
       "replace_half": {
-        "instructions": 4,
+        "instructions": 6,
         "memory_ops": 1,
         "stack_ops": 0
       },
       "conditions_and": {
-        "instructions": 7,
+        "instructions": 10,
         "memory_ops": 0,
         "calls": 0
       },
       "conditions_or": {
-        "instructions": 8,
+        "instructions": 11,
         "memory_ops": 0,
         "calls": 0
       }

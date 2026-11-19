@@ -126,6 +126,7 @@ struct OptimizationModel
 	bool locals_survive_calls;
 	bool floating_literal_loads;
 	bool packed_i32_multiply;
+	bool pack_loop_carried_f64;
 };
 
 constexpr bool is_wasm(Target target)
@@ -191,9 +192,9 @@ constexpr bool needs_aggregate_shape(Target target)
 
 constexpr OptimizationModel optimization_model(Target target)
 {
-	return is_aarch64(target) ? OptimizationModel{ true, false, false, true }
-		: is_wasm(target)     ? OptimizationModel{ false, true, false, true }
-							  : OptimizationModel{ true, false, true, false };
+	return is_aarch64(target) ? OptimizationModel{ true, false, false, true, true }
+		: is_wasm(target)     ? OptimizationModel{ false, true, false, true, false }
+							  : OptimizationModel{ true, false, true, false, false };
 }
 
 // The course's Linux runtime provides GNU's combined sin/cos call ABI.

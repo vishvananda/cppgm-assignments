@@ -31,6 +31,15 @@ extern "C" int classify_char(int c, int (*f)(int)) {
     }
 }
 
+extern "C" int classify_span(const char* first, const char* last, int (*f)(int)) {
+    switch (last - first) {
+    case 3: if (*first == 'x') return f(3); ++first; [[fallthrough]];
+    case 2: if (*first == 'x') return f(2); ++first; [[fallthrough]];
+    case 1: if (*first == 'x') return f(1); [[fallthrough]];
+    default: return f(0);
+    }
+}
+
 struct Code { unsigned char kind, count, offset; };
 extern "C" Code code_for(int n) {
     switch (n) {

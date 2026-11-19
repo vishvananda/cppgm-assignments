@@ -236,6 +236,10 @@ time for latency and layout changes. Preserve a behavior test for each
 counterexample. Neither the course reference dump nor a speed comparison
 requires a particular instruction, register allocation or block order.
 
+One incoming value can feed several phi results on the same edge. Those
+results can later be live together. Use the copies as register preferences
+and still check interference between the results.
+
 Include data-dependent loops with several back edges in layout experiments.
 Check that padding and branch shortening preserve behavior after linking;
 compare runtime across changes to preceding code as well as instruction counts.

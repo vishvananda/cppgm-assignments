@@ -1,0 +1,7 @@
+{
+  "source": true,
+  "target": "arm64-apple-macos11",
+  "units": ["700-apple-neon-arithmetic.t.1"],
+  "llvm_interop": true,
+  "commands": [{"exit": 61, "stdout": ""}]
+}

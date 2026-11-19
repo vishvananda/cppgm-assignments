@@ -2,9 +2,14 @@ extern "C" int dispatch(int, int (*)(int), int);
 int twice(int x) { return 2 * x; }
 extern "C" int dense(long, int (*)(int), int);
 extern "C" int classify_char(int, int (*)(int));
+extern "C" int classify_span(const char*, const char*, int (*)(int));
 struct Code { unsigned char kind, count, offset; };
 extern "C" Code code_for(int);
 int main() {
+    char bytes[] = {'a', 'x', 'b', 'c'};
+    if (classify_span(bytes, bytes, twice) != 0 || classify_span(bytes, bytes + 1, twice) != 0 ||
+        classify_span(bytes, bytes + 2, twice) != 2 || classify_span(bytes, bytes + 3, twice) != 4 ||
+        classify_span(bytes + 1, bytes, twice) != 0) return 9;
     static const int keys[] = {-103,-102,-100,-99,-98,-97,65530,65531,65532,65534,65535,65536};
     for (int i = 0; i < 12; ++i) {
         Code a = code_for(keys[i]);
