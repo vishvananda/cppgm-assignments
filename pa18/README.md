@@ -293,6 +293,13 @@ using the target's template parameter object ABI. See N4861 `[temp.param]`,
 `[temp.arg.nontype]`, `[temp.type]` and
 [P1907R1](../doc/cwg/paper-p1907r1.txt).
 
+A C++20 string literal operator template can declare a single class-valued
+non-type parameter. Use the string literal, including its terminating code
+unit, to initialize that parameter and select the specialization. Use this
+form before considering a literal operator that takes a pointer and a length.
+Apply class template argument deduction if the parameter names a class template.
+See N4861 `[lex.ext]` and `[over.literal]`.
+
 C++20 pointer and reference arguments may designate subobjects of named
 objects with static storage duration. Apply the same rule to pointer and
 reference members of structural values. Equivalent expressions for an

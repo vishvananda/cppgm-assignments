@@ -97,6 +97,7 @@ enum class RelocationKind : std::uint8_t
 	X(Return, 0x0f, None, "return") \
 	X(Call, 0x10, Index, "call") \
 	X(CallIndirect, 0x11, Indices, "call_indirect") \
+	X(ReturnCallIndirect, 0x13, Indices, "return_call_indirect") \
 	X(Drop, 0x1a, None, "drop") \
 	X(Select, 0x1b, None, "select") \
 	X(SelectTyped, 0x1c, Types, "select_t") \

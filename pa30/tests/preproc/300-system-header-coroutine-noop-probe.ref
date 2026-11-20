@@ -1,0 +1,5 @@
+preproc 1
+sof tests/preproc/300-system-header-coroutine-noop-probe.t
+identifier system_fallback
+identifier ordinary_builtin
+eof

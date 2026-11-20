@@ -283,6 +283,10 @@ To complete PA32, implement hosted link/runtime behavior for:
   temporary awaiter and operand at initial and final suspension, including
   when overload resolution selects an `operator co_await`. See N4861
   `[dcl.fct.def.coroutine]` and `[expr.await]`.
+- If `await_suspend` returns a coroutine handle, resume that coroutine after
+  suspending the current one. Release the current resume activation before
+  entering the next one so even a long chain of transfers uses bounded stack
+  space. The suspended frame stays available for resumption or destruction.
 - Coroutine exceptions. If construction or the initial await fails before
   the first `await_resume`, propagate the exception to the caller after
   destroying completed frame objects and releasing the allocation. From

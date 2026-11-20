@@ -1,0 +1,14 @@
+#include <cstdint>
+
+unsigned check(int count, int& calls) {
+  auto* data = static_cast<unsigned char*>(
+      __builtin_alloca_with_align((++calls, count), 512));
+  if (reinterpret_cast<std::uintptr_t>(data) % 64 != 0) return 0;
+  for (int i = 0; i < count; ++i) data[i] = i + 1;
+  return data[0] + data[count - 1];
+}
+
+int main() {
+  int calls = 0;
+  return check(21, calls) != 22 || calls != 1;
+}

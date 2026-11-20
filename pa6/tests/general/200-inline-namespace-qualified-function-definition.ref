@@ -1,0 +1,19 @@
+1 translation units
+start translation unit 1
+translation-unit
+  scope namespace <global>
+    scope namespace api
+      function count function of (double) returning double
+      function count function of (double) returning double
+      scope namespace v1
+        type-alias Result int
+        function count function of (int) returning int
+        function count function of (int) returning int
+        scope function count
+          parameter  int
+          scope block
+            variable result int
+      scope function count
+        parameter  double
+        scope block
+end translation unit

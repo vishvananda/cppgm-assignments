@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-builtin-alloca-with-nonconstant-alignment.t:2:42: stack alignment must be a power-of-two integral constant in bits

@@ -342,6 +342,9 @@ particular, the compiler should enforce the C++11-facing rules that matter for t
 supported language subset, such as:
 
 - `constexpr` variables require a compile-time initializer and a literal type
+- A union can be a literal type with a non-volatile literal member even if another
+  member has a nonliteral type. A constant evaluation still has to initialize
+  the active member as required for a constant expression.
 - a static data-member initializer is not a complete-class context: it cannot
   evaluate a member function body of its still-incomplete enclosing class,
   even when that body appears earlier in the class. Once the class closes,

@@ -1,0 +1,43 @@
+#include <coroutine>
+
+struct Task {
+  struct promise_type;
+  using Handle = std::coroutine_handle<promise_type>;
+  Handle handle;
+
+  struct promise_type {
+    Task get_return_object() noexcept { return {Handle::from_promise(*this)}; }
+    std::suspend_always initial_suspend() noexcept { return {}; }
+    std::suspend_always final_suspend() noexcept { return {}; }
+    void return_void() noexcept {}
+    void unhandled_exception() noexcept {}
+  };
+};
+
+struct Transfer {
+  std::coroutine_handle<> next;
+  bool await_ready() const noexcept { return false; }
+  std::coroutine_handle<> await_suspend(std::coroutine_handle<>) const noexcept { return next; }
+  void await_resume() const noexcept {}
+};
+
+Task repeat(int& remaining, std::coroutine_handle<>& next) {
+  while (remaining > 0) {
+    --remaining;
+    co_await Transfer{next};
+  }
+}
+
+int main() {
+  std::coroutine_handle<> first, second;
+  int remaining = 200001;
+  Task a = repeat(remaining, second);
+  Task b = repeat(remaining, first);
+  first = a.handle;
+  second = b.handle;
+  first.resume();
+  const bool okay = remaining == 0 && !first.done() && second.done();
+  first.destroy();
+  second.destroy();
+  return okay ? 0 : 1;
+}

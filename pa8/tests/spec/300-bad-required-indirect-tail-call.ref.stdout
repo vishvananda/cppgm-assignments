@@ -1,0 +1,1 @@
+ERROR: invalid required tail call in function @transfer at tests/spec/300-bad-required-indirect-tail-call.t:4

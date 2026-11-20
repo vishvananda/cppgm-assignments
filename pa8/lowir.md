@@ -1804,6 +1804,7 @@ convention that PA24 fixes.
 call void @function(<arg-list>)
 call void @function(<destination>, <source>, ...) [elision=copy]
 call void <callee-value>(<arg-list>) as (<param-list>) -> void
+call tail void <callee-value>(<ptr-arg>) as (<ptr-parameter>) -> void
 ```
 
 The PA8 subset requires direct calls and calls through pointer-valued operands.
@@ -1812,6 +1813,12 @@ stable LowIR surface because the callee operand alone does not describe the
 semantic boundary. That call signature may also carry call-boundary metadata
 such as `arity=variadic`, `effects=readonly`, `unwind=no` or `return=noreturn`
 when needed.
+
+`call tail` transfers control to an indirect callee with the same `void(ptr)`
+signature as its caller. The caller has no local slots and the instruction
+is immediately followed by `return void` in the same block. Execution releases
+the caller's activation before transferring control so a chain of calls uses
+bounded stack space. PA32 uses this form for symmetric coroutine transfer.
 
 A call may state `argument_type=<index>:<scalar-type>` for an unnamed variadic
 argument. Indexes count from zero across the complete argument list. For example:

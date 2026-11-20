@@ -18,6 +18,6 @@ constexpr const char* signature()
   return __PRETTY_FUNCTION__;
 }
 
-static_assert(contains(signature<&record.first_field>(), "first_field"));
+static_assert(contains(signature<&record.first_field>(), ".first_field]"));
 static_assert(!contains(signature<&record.first_field>(), "second_field"));
 static_assert(contains(signature<&record.second_field>(), "second_field"));

@@ -21,6 +21,7 @@ extension follows the source-location rules in [PA30](pa30/README.md).
 | UTF-8 character literals of type `char` | C++17 | PA1 and PA2 token and value rules, PA4 macro pasting, PA11 literal operators |
 | Optional variadic macro replacement with `__VA_OPT__` | C++20 | PA4 replacement, stringization and token pasting, PA30 hosted diagnostics in earlier modes |
 | Distinct `char8_t`, UTF-8 code-unit literals, narrow-array initialization from UTF-8 strings | C++20 | PA1–PA4 token/value/macro boundaries; PA6/PA7 types and conversions; PA9 ABI; PA11 initialization and literal operators |
+| String literal operator templates with a structural class parameter | C++20 | PA18 class template argument deduction and structural constant arguments |
 | Three-way comparison, rewritten candidates and defaulted comparisons | C++20 | PA2/PA4 tokens and macros; PA5 syntax; PA9 ABI; PA12 class/subobject comparisons; PA16 constexpr and earlier template instantiation |
 | Named concepts, boolean concept-ids, compound return-type requirements | C++20 | PA5 syntax; PA14 lookup and type arguments; PA15 value arguments and packs; PA16 constexpr calls; PA17 variable templates |
 | Requires-expressions with simple, type, `noexcept` compound and nested requirements | C++20 | PA5 syntax; PA7 non-template checks; PA14 substitution; PA15 packs; PA16 constant evaluation; PA17 variable templates |

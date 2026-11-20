@@ -1081,16 +1081,17 @@ enum class Keyword : std::uint8_t
 	Target,           // target <profile> <version>, before definitions
 	ExceptionAbi,     // target header exception_abi=<protocol>
 	Import,           // import @function "module" "field"
-	Export            // export @function "field"
+	Export,           // export @function "field"
+	Tail              // call tail void ...
 };
 
-const unsigned kKeywordCount = static_cast<unsigned>(Keyword::Export) + 1;
+const unsigned kKeywordCount = static_cast<unsigned>(Keyword::Tail) + 1;
 
 inline const char* spelling(Keyword keyword)
 {
 	static const char* const kKeywords[kKeywordCount] = { "declare", "global", "function", "alias", "object", "slot",
 		"block", "zero", "as", "debug_type", "debug_scope", "debug_local", "assembly", "equivalent_entry",
-		"assembly_function", "assembly_global", "code_label", "target", "exception_abi", "import", "export" };
+		"assembly_function", "assembly_global", "code_label", "target", "exception_abi", "import", "export", "tail" };
 	return kKeywords[static_cast<unsigned>(keyword)];
 }
 
