@@ -19,6 +19,7 @@ use CppgmBatchWorker qw(
 	open_worker
 	print_test_run_summary
 	read_env_file
+	read_word_list
 	run_command_capture
 	submit_cli_request
 	write_named_status_code
@@ -43,6 +44,7 @@ sub process_one_test
 		@include_args = ('-nostdinc', map { ('-isystem', $_) }
 			grep { $_ ne '' } split(/:/, $paths));
 	}
+	my @flags = read_word_list("$test_base.flags");
 	my @inputs = CppgmBatchWorker::input_files_with_prefix($test);
 	my $status;
 	my $build_timeout = get_timeout_from_env("CPPGM_BUILD_TEST_TIMEOUT_SEC", 30);
@@ -51,7 +53,7 @@ sub process_one_test
 	if (scalar(keys %{$env}) != 0)
 	{
 		$status = run_command_capture(
-			cmd => [$app, '-E', @include_args, '-o', $test_out, @inputs],
+			cmd => [$app, '-E', @include_args, @flags, '-o', $test_out, @inputs],
 			stdout => "$test_out.stdout",
 			stderr => "$test_out.stdout",
 			env => \%worker_env,
@@ -68,6 +70,7 @@ sub process_one_test
 			\%worker_env,
 			'-E',
 			@include_args,
+			@flags,
 			'-o',
 			$test_out,
 			@inputs);

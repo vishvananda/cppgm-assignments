@@ -1,0 +1,42 @@
+extern "C" {
+int ordinary_value = 7;
+__attribute__((visibility("protected"))) int protected_value = 3;
+__attribute__((visibility("default"))) int exported_fun() { return 5; }
+__attribute__((visibility("internal"))) int internal_fun() { return 1; }
+inline __attribute__((visibility("default"))) int exported_inline() { return 4; }
+inline int hidden_inline() { return 6; }
+}
+struct __attribute__((visibility("default"))) API {
+    static int value;
+    int out_of_line();
+};
+int API::value = 2;
+int API::out_of_line() { return value; }
+
+template<class T> struct Variant {
+    static int value();
+};
+template<class T> int Variant<T>::value() { return 8; }
+extern template struct __attribute__((visibility("default"))) Variant<int>;
+template struct Variant<int>;
+
+template<> struct __attribute__((visibility("default"))) Variant<long> {
+    static int value();
+};
+int Variant<long>::value() { return 9; }
+
+template<class T> struct Shared {
+    static int inline_value() { return 10; }
+    struct Nested {
+        static int inline_value() { return 11; }
+    };
+};
+extern template struct __attribute__((visibility("default"))) Shared<int>;
+
+int (*volatile used_inline)() = hidden_inline;
+int (*volatile used_exported_inline)() = exported_inline;
+int main() {
+    return exported_fun() + internal_fun() + used_inline() + used_exported_inline() + API{}.out_of_line()
+         + ordinary_value + protected_value + Variant<int>::value() + Variant<long>::value()
+         + Shared<int>::inline_value() + Shared<int>::Nested::inline_value() != 66;
+}

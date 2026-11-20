@@ -302,6 +302,11 @@ addresses), and a consumer may fold a load from a global that is not
 `replaceable` to the value of its initializer. The C++ lowering states it by the
 rule in Facts The C++ Lowering States below.
 
+`visibility=hidden`, `visibility=internal`, and `visibility=protected`
+describe a function or global's object visibility. The default is omitted.
+Visibility is independent of symbol binding. An ELF writer encodes it in
+the symbol's `st_other` field.
+
 `section=<name>` places a declared or defined global in a named ELF section.
 The first public form is intentionally token-safe: `<name>` must be nonempty
 and contain only ASCII letters, digits, `_`, and `.`. It does not accept a

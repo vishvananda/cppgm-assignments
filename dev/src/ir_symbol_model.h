@@ -107,6 +107,18 @@ enum SymbolBindingMode : std::uint8_t
 
 const unsigned kSymbolBindingModeCount = SBM_WEAK + 1;
 
+// The object visibility is independent of binding and is encoded in
+// ELF st_other with these values.
+enum SymbolVisibility : std::uint8_t
+{
+	SV_DEFAULT,
+	SV_INTERNAL,
+	SV_HIDDEN,
+	SV_PROTECTED
+};
+
+const unsigned kSymbolVisibilityCount = SV_PROTECTED + 1;
+
 enum GlobalStorageMode : std::uint8_t
 {
 	GSM_DEFAULT,
@@ -315,10 +327,11 @@ enum class MetadataKey : std::uint8_t
 	Projection,
 	ArgumentType,
 	ArgumentShape,
-	ThisReturn
+	ThisReturn,
+	Visibility
 };
 
-const unsigned kMetadataKeyCount = static_cast<unsigned>(MetadataKey::ThisReturn) + 1;
+const unsigned kMetadataKeyCount = static_cast<unsigned>(MetadataKey::Visibility) + 1;
 
 inline bool is_boundary_key(MetadataKey key)
 {
@@ -327,7 +340,7 @@ inline bool is_boundary_key(MetadataKey key)
 
 inline bool is_symbol_key(MetadataKey key)
 {
-	return key >= MetadataKey::Storage && key <= MetadataKey::Cold;
+	return (key >= MetadataKey::Storage && key <= MetadataKey::Cold) || key == MetadataKey::Visibility;
 }
 
 inline bool is_parameter_key(MetadataKey key)
@@ -388,6 +401,12 @@ inline const char* spelling(SymbolBindingMode value)
 {
 	static const char* const kBindings[kSymbolBindingModeCount] = { "", "internal", "strong", "weak" };
 	return kBindings[value];
+}
+
+inline const char* spelling(SymbolVisibility value)
+{
+	static const char* const kVisibility[kSymbolVisibilityCount] = { "", "internal", "hidden", "protected" };
+	return kVisibility[value];
 }
 
 inline const char* spelling(GlobalStorageMode value)
@@ -453,7 +472,7 @@ inline const char* spelling(MetadataKey key)
 		"noalias_result", "result_classes", "result_shape", "storage", "section", "role", "linkage", "binding",
 		"object", "tls_for", "keep_alias", "prefer_local", "object_root", "force_inline", "inline_hint", "no_inline",
 		"replaceable", "cold", "pass", "alias", "object_bytes", "classes", "shape", "elision", "projection",
-		"argument_type", "argument_shape", "this_return" };
+		"argument_type", "argument_shape", "this_return", "visibility" };
 	return kKeys[static_cast<unsigned>(key)];
 }
 
@@ -473,6 +492,23 @@ inline bool from_spelling(const char* text, std::size_t length, LanguageLinkageM
 inline bool from_spelling(const char* text, std::size_t length, SymbolBindingMode* value)
 {
 	return detail::find_spelling(text, length, 1, kSymbolBindingModeCount, value);
+}
+
+inline bool from_spelling(const char* text, std::size_t length, SymbolVisibility* value)
+{
+	return detail::find_spelling(text, length, 1, kSymbolVisibilityCount, value);
+}
+
+// Source conventions spell the default explicitly. In LowIR an omitted
+// visibility has the same meaning.
+inline bool source_visibility(const char* text, std::size_t length, SymbolVisibility* value)
+{
+	if (detail::same_spelling("default", text, length))
+	{
+		*value = SV_DEFAULT;
+		return true;
+	}
+	return from_spelling(text, length, value);
 }
 
 inline bool from_spelling(const char* text, std::size_t length, GlobalStorageMode* value)
@@ -686,6 +722,7 @@ struct SymbolFacts
 	LanguageLinkageMode linkage = LLM_DEFAULT;
 	SymbolBindingMode binding = SBM_DEFAULT;
 	GlobalStorageMode storage = GSM_DEFAULT;
+	SymbolVisibility visibility = SV_DEFAULT;
 	std::uint8_t flags = 0; // SymbolFlag bits
 };
 

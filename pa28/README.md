@@ -165,6 +165,9 @@ interoperability. The PA28 tests exercise that behavior without including hosted
 headers. For `typeid`, it is enough in this assignment to support the language
 operation with a narrow declaration of `std::type_info`; the tests do not depend
 on the hosted `<typeinfo>` header or on `std::type_info` member APIs.
+When an expression compares two `typeid` results in a host object, ordinary
+overload resolution still selects the declared comparison operator. Its body
+may be supplied by the library at link time.
 
 Parsing hosted `<exception>` and `<typeinfo>` headers, implementing APIs such
 as `std::type_info::name()` or `hash_code()`, compiling hosted exception

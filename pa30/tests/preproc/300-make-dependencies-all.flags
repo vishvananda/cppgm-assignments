@@ -1,0 +1,1 @@
+-M -MP -MT "product.o second.o" -nostdinc -Itests/preproc/dependency/user -isystem tests/preproc/dependency/system -include tests/preproc/dependency/forced.h

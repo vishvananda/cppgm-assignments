@@ -1,0 +1,6 @@
+namespace std { class type_info; }
+struct Foreign { virtual ~Foreign(); };
+
+const std::type_info& imported_rtti() { return typeid(Foreign); }
+
+int main() { return &imported_rtti() != &typeid(Foreign); }

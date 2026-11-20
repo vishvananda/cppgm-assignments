@@ -1035,6 +1035,20 @@ sub compare_text
 	push @missing_output, $my if !defined($my_data);
 	return (0, "ERROR: missing output file (" . join(', ', @missing_output) . ")")
 		if scalar(@missing_output) != 0;
+	if (-f "$testbase.flags")
+	{
+		my @flags = CppgmBatchWorker::read_word_list("$testbase.flags");
+		if (grep { $_ eq '-M' || $_ eq '-MM' } @flags)
+		{
+			# A dependency rule's continuation and indentation are only
+			# for readability, and can differ between make rule printers.
+			for ($ref_data, $my_data)
+			{
+				s/[ \t]*\\\n[ \t]*/ /g;
+				s/[ \t]+$//mg;
+			}
+		}
+	}
 	return ($ref_data eq $my_data
 		? (1, undef)
 		: (0, "ERROR: checked output does not match reference"));

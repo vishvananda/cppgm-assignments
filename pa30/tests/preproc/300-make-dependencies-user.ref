@@ -1,0 +1,2 @@
+output\ \#$$\ file.o: tests/preproc/300-make-dependencies-user.t \
+ tests/preproc/dependency/local.h

@@ -176,6 +176,18 @@ New or newly required in PA30:
     read source from standard input.
   - `-E -H` reports included file paths on standard error, with one dot
     for each level of inclusion
+- make dependency generation
+  - `-M` and `-MM` preprocess and write dependency rules without compiling.
+    The default output is standard output. Use `-MF <file>` to select a file.
+  - `-MD` and `-MMD` also write a make rule during compilation. The default
+    depfile is named for the output, with a `.d` suffix.
+  - `-M` and `-MD` include system headers. `-MM` and `-MMD` omit system
+    headers and headers reached solely through them.
+  - `-MT <target>` supplies a make target as written. `-MQ <target>`
+    quotes make-special characters. `-MP` adds an empty rule for each
+    header so a removed header does not break an older dependency file.
+  - The active include search determines the rule's physical source paths,
+    including forced headers. Preprocessing should run once in each route.
 - hosted preprocessor-control flags:
   - `-D <macro>` and `-D<macro>`
   - `-U <macro>` and `-U<macro>`

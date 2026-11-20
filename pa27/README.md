@@ -155,6 +155,25 @@ token must reach the LowIR as `section=` and the object as a section of that
 name, and an unsafe or conflicting section attribute must be rejected.
 `make check TEST=tests/controls/<name>.t` runs one.
 
+### Symbol visibility
+
+Keep visibility independent of linkage and weak binding. The GNU
+`visibility("default")`, `visibility("hidden")`, `visibility("internal")`,
+and `visibility("protected")` attributes set visibility on functions,
+variables, or classes. A class's member functions and data, vtable, and
+RTTI inherit its visibility where applicable. An explicit attribute on
+a member overrides the class. Preserve effective visibility across
+redeclarations and when instantiating templates and their specializations.
+
+`-fvisibility=<value>` sets the default for externally linked definitions.
+Unannotated imports retain default visibility. C++'s
+`-fvisibility-inlines-hidden` hides emitted inline functions, including
+members of public classes. An explicit function visibility overrides it,
+and explicit instantiation definitions keep their normal visibility.
+Reject unknown visibility values. On ELF, inspect the object symbol table
+with `readelf --wide --syms`. On Mach-O, hidden and internal visibility
+make a symbol private external.
+
 For each test anchor `x.t`, companion C++ sources are named:
 
 ```text

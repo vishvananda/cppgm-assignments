@@ -1,0 +1,17 @@
+namespace std {
+class type_info {
+public:
+    bool operator==(const type_info&) const;
+};
+}
+
+int comparisons;
+bool std::type_info::operator==(const type_info& right) const {
+    ++comparisons;
+    return this == &right;
+}
+
+int main() {
+    bool equal = typeid(int) == typeid(int);
+    return !equal || comparisons != 1;
+}

@@ -1,0 +1,10 @@
+set -eu
+readelf --wide --syms "__OBJ1__" | perl -ane '
+    if (@F >= 8 && $F[7] eq "_ZTI7Foreign" && $F[6] eq "UND" && $F[5] eq "DEFAULT") {
+        $found = 1;
+    }
+    END {
+        die "imported RTTI must have default visibility\n" unless $found;
+        print "default_visibility_imported_rtti 1\n";
+    }
+'

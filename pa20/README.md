@@ -278,6 +278,10 @@ forms, including references and local tuple-trait declarations without the STL.
 Preserve the hidden object's lifetime, cv/ref category and lookup behavior.
 C++17 direct-list initialization of fixed-underlying enums requires one
 nonnarrowing element; copy-list initialization remains distinct.
+For enum-to-integer list initialization, check the enum's value range.
+A non-fixed unscoped enum with only nonnegative values can initialize an
+unsigned integer that represents its range, even when the source enum
+uses signed storage and the initializer is a runtime expression.
 The existing cooked, raw and numeric-template literal-operator forms are
 required with declaration lookup and the original literal spelling.
 See N4659 `[dcl.struct.bind]`, `[dcl.init.list]` and `[over.literal]`.

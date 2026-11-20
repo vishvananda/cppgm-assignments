@@ -24,6 +24,7 @@ ENUMS = [
     ("ir_symbol_model.h", "SymbolRole", "CppgmSymbolRole", "ROLE", "SR_"),
     ("ir_symbol_model.h", "LanguageLinkageMode", "CppgmLanguageLinkageMode", "LINKAGE", "LLM_"),
     ("ir_symbol_model.h", "SymbolBindingMode", "CppgmSymbolBindingMode", "BINDING", "SBM_"),
+    ("ir_symbol_model.h", "SymbolVisibility", "CppgmSymbolVisibility", "VISIBILITY", "SV_"),
     ("ir_symbol_model.h", "GlobalStorageMode", "CppgmGlobalStorageMode", "STORAGE", "GSM_"),
     ("ir_symbol_model.h", "SymbolFlag", "CppgmSymbolFlag", "SYMBOL", "SF_"),
     ("ir_symbol_model.h", "CallArityMode", "CppgmCallArityMode", "ARITY", "CAM_"),

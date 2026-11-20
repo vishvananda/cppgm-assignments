@@ -1,0 +1,8 @@
+product.o second.o: tests/preproc/300-make-dependencies-all.t \
+ tests/preproc/dependency/forced.h tests/preproc/dependency/local.h \
+ tests/preproc/dependency/system/system_dep.h \
+ tests/preproc/dependency/user/system_child.h
+tests/preproc/dependency/forced.h:
+tests/preproc/dependency/local.h:
+tests/preproc/dependency/system/system_dep.h:
+tests/preproc/dependency/user/system_child.h:

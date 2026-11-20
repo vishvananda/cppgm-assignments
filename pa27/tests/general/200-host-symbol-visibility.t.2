@@ -1,0 +1,7 @@
+template<class T> struct Shared {
+    static int inline_value() { return 10; }
+    struct Nested {
+        static int inline_value() { return 11; }
+    };
+};
+template struct __attribute__((visibility("default"))) Shared<int>;

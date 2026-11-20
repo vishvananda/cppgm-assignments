@@ -1,0 +1,1 @@
+-MM -MQ 'output #$ file.o' -nostdinc -Itests/preproc/dependency/user -isystem tests/preproc/dependency/system
