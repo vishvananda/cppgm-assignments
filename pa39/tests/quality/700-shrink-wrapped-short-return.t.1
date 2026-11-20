@@ -1,0 +1,16 @@
+extern "C" long store_then_return(long, long*);
+
+static long recorded;
+extern "C" long record(long value) {
+    recorded += value;
+    return value * 2;
+}
+
+static long cells[2];
+
+int main() {
+    long sum = 0;
+    for (long k = -2; k <= 3; ++k)
+        sum += store_then_return(k, cells);
+    return sum == 206 && cells[0] == 3 && cells[1] == 6 && recorded == 3 ? 42 : 1;
+}

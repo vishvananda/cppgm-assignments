@@ -1,0 +1,15 @@
+extern "C" long scan_then_record(const long*, long);
+
+static const long values[] = { 4, 9, 0, -8, 7, -1 };
+static long recorded;
+extern "C" long record(long value) {
+    recorded += value;
+    return value + 1;
+}
+
+int main() {
+    long sum = 0;
+    for (long n = 0; n <= 6; ++n)
+        sum += scan_then_record(values, n);
+    return sum == -18 && recorded == -15 ? 42 : 1;
+}

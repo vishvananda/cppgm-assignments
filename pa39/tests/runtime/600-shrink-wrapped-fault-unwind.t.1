@@ -1,0 +1,58 @@
+extern "C" {
+typedef void (*Handler)(int);
+Handler signal(int, Handler);
+int strcmp(const char*, const char*);
+void _exit(int);
+struct _Unwind_Context;
+typedef int (*_Unwind_Trace_Fn)(_Unwind_Context*, void*);
+int _Unwind_Backtrace(_Unwind_Trace_Fn, void*);
+unsigned long _Unwind_GetCFA(_Unwind_Context*);
+unsigned long _Unwind_GetIP(_Unwind_Context*);
+void* _Unwind_FindEnclosingFunction(void*);
+long join_after_call(long, const long*, const long*);
+long call_between(long, const long*);
+long through_call(long n) { return 2 * n; }
+}
+
+// A fault in a wrapped function walks the stack from the signal frame: the
+// function must appear once, the CFAs must grow and the walk must reach run.
+static void* faulting;
+static int frames, hits, reached;
+static unsigned long last;
+static bool ordered = true;
+int run(const char* which);
+static int step(_Unwind_Context* context, void*) {
+    void* function = _Unwind_FindEnclosingFunction(reinterpret_cast<void*>(_Unwind_GetIP(context)));
+    const unsigned long cfa = _Unwind_GetCFA(context);
+    if (hits && cfa < last)
+        ordered = false;
+    last = cfa;
+    hits += function == faulting;
+    if (function == reinterpret_cast<void*>(&run)) {
+        ++reached;
+        return 5;
+    }
+    return ++frames > 64 ? 5 : 0;
+}
+static void on_fault(int) {
+    _Unwind_Backtrace(step, nullptr);
+    _exit(hits == 1 && reached == 1 && ordered ? 42 : 10 + hits + 4 * reached);
+}
+
+__attribute__((noinline)) int run(const char* which) {
+    signal(11, on_fault); // SIGSEGV
+    const long one = 1;
+    if (join_after_call(3, &one, &one) != 4 || join_after_call(20, &one, &one) != 41 || call_between(9, &one) != 19 ||
+        call_between(2, &one) != 3)
+        return 2;
+    if (strcmp(which, "join") == 0) {
+        faulting = reinterpret_cast<void*>(&join_after_call);
+        join_after_call(20, &one, nullptr);
+    } else {
+        faulting = reinterpret_cast<void*>(&call_between);
+        call_between(2, nullptr);
+    }
+    return 3;
+}
+
+int main(int argc, char** argv) { return argc == 2 ? run(argv[1]) : 1; }

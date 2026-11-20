@@ -1,0 +1,25 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "units": [
+    "600-shrink-wrapped-fault-unwind.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "args": [
+        "join"
+      ],
+      "exit": 42,
+      "stdout": ""
+    },
+    {
+      "args": [
+        "between"
+      ],
+      "exit": 42,
+      "stdout": ""
+    }
+  ],
+  "hosted": true
+}

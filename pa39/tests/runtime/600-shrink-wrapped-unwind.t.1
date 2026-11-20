@@ -1,0 +1,70 @@
+extern "C" {
+struct _Unwind_Context;
+typedef int (*_Unwind_Trace_Fn)(_Unwind_Context*, void*);
+int _Unwind_Backtrace(_Unwind_Trace_Fn, void*);
+unsigned long _Unwind_GetCFA(_Unwind_Context*);
+long early_or_call(long, long);
+long sum_then_call(const long*, long);
+long count_then_call(const long*, long, long);
+long two_paths(long, long);
+}
+
+// Each call of maybe_throw walks the stack from its caller's frame.
+struct Trace {
+    unsigned long last;
+    int frames;
+    bool ordered;
+};
+static int step(_Unwind_Context* context, void* data) {
+    Trace* trace = static_cast<Trace*>(data);
+    const unsigned long cfa = _Unwind_GetCFA(context);
+    if (trace->frames && cfa < trace->last)
+        trace->ordered = false;
+    trace->last = cfa;
+    ++trace->frames;
+    return 0;
+}
+static int traced, untraced;
+extern "C" void maybe_throw(long value) {
+    Trace trace = { 0, 0, true };
+    if (_Unwind_Backtrace(step, &trace) == 5 && trace.ordered && trace.frames >= 4)
+        ++traced;
+    else
+        ++untraced;
+    if (value < 0)
+        throw int(value);
+}
+extern "C" void adjust(long* cell, long by) {
+    if (by < 0)
+        throw int(*cell + by);
+    *cell += by;
+}
+
+// The values held across each call must survive its unwinding.
+static long data[6] = { 4, -9, 12, 3, -40, 7 };
+__attribute__((noinline)) long through(int which, long x, long y, long seed) {
+    long s1 = seed * 3, s2 = seed + 11, s3 = seed ^ 5, s4 = seed * seed, s5 = seed - 9;
+    long got;
+    try {
+        switch (which) {
+        case 0: got = early_or_call(x, y); break;
+        case 1: got = sum_then_call(data + (x + 1) % 3, (y + 3) / 41); break;
+        case 2: got = count_then_call(data, x + 1, y); break;
+        default: got = two_paths(x * 37, y); break;
+        }
+    } catch (int e) {
+        got = e * 2 + 1;
+    }
+    return got + s1 * 2 + s2 * 3 + s3 * 5 + s4 * 7 + s5 * 11;
+}
+
+int main() {
+    unsigned long sum = 0;
+    for (int which = 0; which < 4; ++which)
+        for (long x = -1; x < 6; ++x)
+            for (long y = -3; y < 120; y += 41)
+                sum = sum * 31 + static_cast<unsigned long>(through(which, x, y, x + y));
+    if (untraced)
+        return 3;
+    return sum == 9747567735604034468ul && traced == 36 ? 42 : 4;
+}
