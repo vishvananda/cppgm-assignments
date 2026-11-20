@@ -1,7 +1,7 @@
 Offline CWG decisions and related papers
 =======================================
 
-These plain-text copies let you read the Core Working Group issues cited by
+These plain-text references cover the Core Working Group issues cited by
 the compiler, required tests and assignment handouts without a network connection.
 The catalog also includes related rules used to interpret those examples.
 
@@ -33,6 +33,8 @@ CWG 136 | CD1 | cwg-0136.txt
 CWG 138 | CD6 | cwg-0138.txt
   Friend declaration name lookup
   Local paper: paper-p1787r6.txt
+CWG 150 | C++17 | cwg-0150.txt
+  Template template parameters and default arguments
 CWG 253 | C++17 | cwg-0253.txt
   Why must empty or fully-initialized const objects be initialized?
   Local paper: paper-p0490r0.txt
@@ -154,6 +156,8 @@ CWG 1741 | C++14 | cwg-1741.txt
 CWG 1742 | CD5 | cwg-1742.txt
   using-declarations and scoped enumerators
   Local paper: paper-p1099r5.txt
+CWG 1756 | CD4 | cwg-1756.txt
+  Direct-list-initialization of a non-class object
 CWG 1793 | CD4 | cwg-1793.txt
   thread_local in explicit specializations
 CWG 1839 | CD6 | cwg-1839.txt
@@ -212,11 +216,17 @@ CWG 2356 | CD5 | cwg-2356.txt
   Local paper: paper-p0136r1.txt
 CWG 2386 | CD5 | cwg-2386.txt
   tuple_size requirements for structured binding
+CWG 2398 | drafting | cwg-2398.txt
+  Template template parameter matching and deduction
 CWG 2476 | CD7 | cwg-2476.txt
   placeholder-type-specifiers and function declarators
 CWG 2549 | CD7 | cwg-2549.txt
   Implicitly moving the operand of a throw-expression in unevaluated contexts
   Local paper: paper-p0527r1.txt, paper-p1155r3.txt, paper-p1825r0.txt, paper-p2266r2.txt
+CWG 2621 | C++23 | cwg-2621.txt
+  Kind of lookup for using enum declarations
+CWG 2627 | C++23 | cwg-2627.txt
+  Bit-fields and narrowing conversions
 CWG 2631 | C++23 | cwg-2631.txt
   Immediate function evaluations in default arguments
 CWG 2746 | CD7 | cwg-2746.txt
@@ -324,6 +334,9 @@ CWG 2820 | CD7 | cwg-2820.txt
 CWG 2879 | CD7 | cwg-2879.txt
   Undesired outcomes with const_cast
 
+P1907R1 | paper-p1907r1.txt
+  C++20 structural non-type template parameter types, parameter objects
+  and template argument equivalence.
 P2280R4 | paper-p2280r4.txt
   Using unknown pointers and references in constant expressions.
 N4918 | paper-n4918.txt
@@ -425,6 +438,9 @@ CWG 2173 | open | cwg-2173.txt
 CWG 2327 | drafting | cwg-2327.txt
   Copy elision for direct-initialization with a conversion function
   (optional hosted compatibility; no adoption claim).
+
+CWG 3003 | review | cwg-3003.txt
+  Deduction through a template template parameter (course summary).
 
 P0170R1 | Wording for Constexpr Lambda | paper-p0170r1.txt
   C++17 closure literal types, constexpr call operators and conversion functions.

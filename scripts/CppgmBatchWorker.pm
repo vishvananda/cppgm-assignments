@@ -28,7 +28,7 @@ our @EXPORT_OK = qw(
   print_test_run_summary
   read_env_file
   read_word_list
-  standard_args_for
+  source_args_for
   resolve_host_command
   result_suffix
   run_result_name
@@ -436,11 +436,13 @@ sub app_args_for
 	return shellwords($ENV{CPPGM_APP_ARGS} || '');
 }
 
-sub standard_args_for
+sub source_args_for
 {
 	my ($test) = @_;
 	(my $base = $test) =~ s/\.(?:cpp|t(?:\.1)?)$//;
 	my @files = grep { -f $_ } ("$base.cxx-standard", "$base.c-standard");
+	# Without a language sidecar, the owning driver lane consumes any
+	# existing .flags. Preserve plain source/LowIR requests as before.
 	return () if !@files;
 	die "Conflicting language standards for $base\n" if @files != 1;
 	my $path = $files[0];
@@ -450,7 +452,7 @@ sub standard_args_for
 	my $language = $is_c ? 'C' : 'C++';
 	die "Expected one $language standard in $path\n"
 		if @standards != 1 || $standards[0] !~ $pattern;
-	return "-std=$standards[0]";
+	return ("-std=$standards[0]", read_word_list("$base.flags"));
 }
 
 sub open_worker
@@ -478,7 +480,14 @@ sub try_set_process_group
 	my ($pid) = @_;
 	return 0 if !defined($pid) || $pid <= 0;
 	return 1 if setpgid($pid, $pid);
-	return 0 if $!{EACCES} || $!{EPERM} || $!{ESRCH};
+	# The command child can establish its own group and exec before we get
+	# here. Keep tracking that group so a timeout also kills descendants.
+	if ($!{EACCES} || $!{EPERM})
+	{
+		my $group = getpgrp($pid);
+		return defined($group) && $group == $pid;
+	}
+	return 0 if $!{ESRCH};
 	die "Unable to set worker process group for $pid: $!";
 }
 

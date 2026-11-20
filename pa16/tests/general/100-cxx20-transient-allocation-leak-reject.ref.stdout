@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-transient-allocation-leak-reject.t:5:15: constant evaluation did not deallocate allocated storage

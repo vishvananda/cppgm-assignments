@@ -1,0 +1,81 @@
+#include <coroutine>
+
+struct Pair {
+  int first;
+  int second;
+};
+
+inline __attribute__((always_inline)) Pair advance(Pair p) {
+  ++p.first;
+  return p;
+}
+
+struct Value {
+  int number;
+  int& live;
+  Value(int n, int& count) noexcept : number(n), live(count) { ++live; }
+  Value(const Value&) = delete;
+  ~Value() { --live; }
+};
+
+struct Await {
+  int& live;
+  bool fails;
+};
+
+struct Transformed {
+  int& live;
+  bool fails;
+  bool await_ready() const noexcept { return false; }
+  void await_suspend(std::coroutine_handle<>) const noexcept {}
+  Value await_resume() const {
+    if (fails)
+      throw 80;
+    return Value(4, live);
+  }
+};
+
+struct Task {
+  struct promise_type;
+  using Handle = std::coroutine_handle<promise_type>;
+  Handle handle;
+
+  struct promise_type {
+    int value = 0;
+    Task get_return_object() noexcept { return {Handle::from_promise(*this)}; }
+    std::suspend_always initial_suspend() noexcept { return {}; }
+    std::suspend_always final_suspend() noexcept { return {}; }
+    Transformed await_transform(Await p) { return {p.live, p.fails}; }
+    void return_value(int result) noexcept { value = result; }
+    void unhandled_exception() noexcept { value = -1; }
+  };
+};
+
+Task run(int& live, bool throws) {
+  try {
+    Value outer(1, live);
+    const Value local = co_await Await{live, throws};
+    const Pair p = advance(Pair{local.number, live});
+    co_return p.first + p.second + outer.number;
+  } catch (int error) {
+    co_return error + live;
+  }
+}
+
+int main() {
+  for (int mode = 0; mode != 3; ++mode) {
+    int live = 0;
+    auto task = run(live, mode == 1);
+    task.handle.resume();
+    if (live != 1 || task.handle.done()) return 1;
+    if (mode == 2) {
+      task.handle.destroy();
+      if (live != 0) return 2;
+      continue;
+    }
+    task.handle.resume();
+    if (!task.handle.done() || live != 0 || task.handle.promise().value != (mode == 0 ? 8 : 80))
+      return 3;
+    task.handle.destroy();
+  }
+}

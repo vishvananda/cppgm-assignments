@@ -81,6 +81,20 @@
       }
     },
     {
+      "issue": 150,
+      "title": "Template template parameters and default arguments",
+      "status": "C++17",
+      "role": "course-reference",
+      "file": "cwg-0150.txt",
+      "source_url": "https://cplusplus.github.io/CWG/issues/150.html",
+      "snapshot_url": "https://raw.githubusercontent.com/cplusplus/CWG/38a43db15e384602a0c5debc3f7f22be32e186a1/issues/150.html",
+      "source_html_sha256": "ed6813395e284e12b873b54cee0ff01a4ce3c6287aec4b37bb3a68a12327f384",
+      "text_sha256": "0423cfe5d9bd33760f1fa8a67c182e0b06aebbf6248dc5a5b628164b1eb66c67",
+      "adopted_papers": [
+        "P0522R0"
+      ]
+    },
+    {
       "issue": 253,
       "title": "Why must empty or fully-initialized const objects be initialized?",
       "status": "C++17",
@@ -1180,6 +1194,23 @@
       "text_sha256": "a8e5e8e2bfb5be825f4cfa9cb2632f0c91304bab67a6be562730a587c66a4a70"
     },
     {
+      "issue": 1756,
+      "title": "Direct-list-initialization of a non-class object",
+      "status": "CD4",
+      "role": "course-reference",
+      "file": "cwg-1756.txt",
+      "source_url": "https://cplusplus.github.io/CWG/issues/1756.html",
+      "snapshot_url": "https://raw.githubusercontent.com/cplusplus/CWG/38a43db15e384602a0c5debc3f7f22be32e186a1/issues/1756.html",
+      "source_html_sha256": "a90fa1eddba63136028ece028bfcec29ba66bbcd95e6b229c82b5bd8bb01cdd4",
+      "text_sha256": "4e02e696163945f80f739a4d58f31c52401a2ae2fda7192044c175a95660c026",
+      "adopted_papers": [],
+      "text_renderer": {
+        "path": "scripts/cwg_html_text.py",
+        "sha256": "9f54db3aee8c6beec374ecea9a96ae5172f584cfcaf793c2d41dbf775afc43aa",
+        "historical_edits": "del/ins, s/u, marked blocks and source-defined stddel/stdins retained, not applied"
+      }
+    },
+    {
       "issue": 1792,
       "title": "Incorrect example of explicit specialization of member enumeration",
       "status": "NAD",
@@ -1728,6 +1759,18 @@
       "adopted_papers": []
     },
     {
+      "issue": 2398,
+      "title": "Template template parameter matching and deduction",
+      "status": "drafting",
+      "role": "course-reference",
+      "file": "cwg-2398.txt",
+      "source_url": "https://cplusplus.github.io/CWG/issues/2398.html",
+      "snapshot_url": "https://raw.githubusercontent.com/cplusplus/CWG/38a43db15e384602a0c5debc3f7f22be32e186a1/issues/2398.html",
+      "source_html_sha256": "39eab5c9e1c5f64a0b2af924097b4019cae88e9bed9c373b6fd0ac77be856b2d",
+      "text_sha256": "f9af7594800197bec71b1222173c2206c7394ced55366f1e2d29b2cd3daf25cf",
+      "adopted_papers": []
+    },
+    {
       "issue": 2476,
       "title": "placeholder-type-specifiers and function declarators",
       "status": "CD7",
@@ -1783,6 +1826,40 @@
         "paper-p1825r0.txt",
         "paper-p2266r2.txt"
       ],
+      "text_renderer": {
+        "path": "scripts/cwg_html_text.py",
+        "sha256": "9f54db3aee8c6beec374ecea9a96ae5172f584cfcaf793c2d41dbf775afc43aa",
+        "historical_edits": "del/ins, s/u, marked blocks and source-defined stddel/stdins retained, not applied"
+      }
+    },
+    {
+      "issue": 2621,
+      "title": "Kind of lookup for using enum declarations",
+      "status": "C++23",
+      "role": "course-reference",
+      "file": "cwg-2621.txt",
+      "source_url": "https://cplusplus.github.io/CWG/issues/2621.html",
+      "snapshot_url": "https://raw.githubusercontent.com/cplusplus/CWG/38a43db15e384602a0c5debc3f7f22be32e186a1/issues/2621.html",
+      "source_html_sha256": "c542314b0cfda27e64084625fb20fd2763636dcb309b23c8df690924b09b7cb0",
+      "text_sha256": "b666cd3aad269679493ed029cca5a1e6a55f3dbda89290a89ed6921b5040b880",
+      "adopted_papers": [],
+      "text_renderer": {
+        "path": "scripts/cwg_html_text.py",
+        "sha256": "9f54db3aee8c6beec374ecea9a96ae5172f584cfcaf793c2d41dbf775afc43aa",
+        "historical_edits": "del/ins, s/u, marked blocks and source-defined stddel/stdins retained, not applied"
+      }
+    },
+    {
+      "issue": 2627,
+      "title": "Bit-fields and narrowing conversions",
+      "status": "C++23",
+      "role": "course-reference",
+      "file": "cwg-2627.txt",
+      "source_url": "https://cplusplus.github.io/CWG/issues/2627.html",
+      "snapshot_url": "https://raw.githubusercontent.com/cplusplus/CWG/38a43db15e384602a0c5debc3f7f22be32e186a1/issues/2627.html",
+      "source_html_sha256": "014b5a3e76381dbbdce9cf74e11bb4e3f97ebfb5a099cfd4ec00d58b57ef0fba",
+      "text_sha256": "0ac478b1b4f78c26b41c8bb7e9316315ee16d4c090d60b10ae718066b3caf08a",
+      "adopted_papers": [],
       "text_renderer": {
         "path": "scripts/cwg_html_text.py",
         "sha256": "9f54db3aee8c6beec374ecea9a96ae5172f584cfcaf793c2d41dbf775afc43aa",
@@ -1991,6 +2068,19 @@
         "sha256": "9f54db3aee8c6beec374ecea9a96ae5172f584cfcaf793c2d41dbf775afc43aa",
         "historical_edits": "deletions/insertions preserved, not applied"
       }
+    },
+    {
+      "issue": 3003,
+      "title": "Naming a deducible template for class template argument deduction",
+      "status": "review",
+      "role": "course-reference",
+      "file": "cwg-3003.txt",
+      "source_url": "https://cplusplus.github.io/CWG/issues/3003.html",
+      "snapshot_url": "https://raw.githubusercontent.com/cplusplus/CWG/38a43db15e384602a0c5debc3f7f22be32e186a1/issues/3003.html",
+      "source_html_sha256": "f17bc4f78e1f0b9d218a20cfea57dda306531cfaa721fbae8c1059f2ca700f55",
+      "text_sha256": "4e3c27908642859ea80974d07928fe167b084c7a6e8566813f00330bc630206c",
+      "adopted_papers": [],
+      "text_format": "course summary"
     }
   ],
   "supplemental_papers": [
@@ -2193,6 +2283,19 @@
         "kind": "Working paper wording",
         "source_url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/n4918.html"
       }
+    },
+    {
+      "file": "paper-p1907r1.txt",
+      "source_url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1907r1.html",
+      "source_html_sha256": "9944af685671972c91662413383289ffab9d189052d116c72abe6971dc4c4bec",
+      "text_sha256": "398cd1c644ec805e68f77109885981ff0e3085cc5d9839b9bd658802a1d72f75",
+      "text_renderer": {
+        "path": "scripts/cwg_html_text.py",
+        "sha256": "9f54db3aee8c6beec374ecea9a96ae5172f584cfcaf793c2d41dbf775afc43aa",
+        "historical_edits": "del/ins, s/u, marked blocks and source-defined stddel/stdins retained, not applied"
+      },
+      "retrieved": "2026-11-20",
+      "paper": "P1907R1"
     },
     {
       "file": "paper-p2280r4.txt",

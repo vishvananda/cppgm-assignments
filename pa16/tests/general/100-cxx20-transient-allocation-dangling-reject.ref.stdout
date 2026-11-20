@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-transient-allocation-dangling-reject.t:4:11: an access to a constant allocation whose lifetime has ended

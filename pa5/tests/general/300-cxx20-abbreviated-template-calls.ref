@@ -19,6 +19,27 @@ translation-unit
             parameter-declaration
               decl-specifier-seq
                 decl-specifier KW_AUTO:auto
+  simple-declaration
+    decl-specifier-seq
+      decl-specifier KW_INT:int
+    init-declarator-list
+      init-declarator
+        declarator
+          identifier unnamed_pack
+          parameter-clause
+            parameter-declaration
+              decl-specifier-seq
+                decl-specifier KW_AUTO:auto
+              declarator
+                parameter-pack ...
+      init-declarator
+        declarator
+          identifier varargs
+          parameter-clause
+            parameter-declaration
+              decl-specifier-seq
+                decl-specifier KW_AUTO:auto
+            parameter-pack ...
   function-definition
     decl-specifier-seq
       decl-specifier KW_INT:int

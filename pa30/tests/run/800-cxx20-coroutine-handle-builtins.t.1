@@ -1,0 +1,71 @@
+#if !__has_builtin(__builtin_coro_resume) || !__has_builtin(__builtin_coro_destroy) || \
+    !__has_builtin(__builtin_coro_done) || !__has_builtin(__builtin_coro_promise) || \
+    !__has_builtin(__builtin_coro_noop)
+#error expected coroutine handle builtins
+#endif
+
+static_assert(!noexcept(__builtin_coro_resume(nullptr)));
+static_assert(!noexcept(__builtin_coro_destroy(nullptr)));
+static_assert(noexcept(__builtin_coro_done(nullptr)));
+static_assert(noexcept(__builtin_coro_promise(nullptr, alignof(int), false)));
+static_assert(noexcept(__builtin_coro_noop()));
+
+struct Frame {
+  void (*resume)(void*);
+  void (*destroy)(void*);
+  int promise;
+};
+
+struct AlignedFrame {
+  void (*resume)(void*);
+  void (*destroy)(void*);
+  alignas(64) int promise;
+};
+
+static void resume(void* address) {
+  Frame* frame = static_cast<Frame*>(address);
+  ++frame->promise;
+  frame->resume = nullptr;
+}
+
+static void destroy(void* address) {
+  Frame* frame = static_cast<Frame*>(address);
+  frame->promise *= 2;
+}
+
+static void fail(void*) { throw 42; }
+
+struct Cleanup {
+  int& count;
+  ~Cleanup() { ++count; }
+};
+
+int main() {
+  Frame frame{resume, destroy, 5};
+  if (__builtin_coro_done(&frame)) return 1;
+  if (__builtin_coro_promise(&frame, alignof(int), false) != &frame.promise) return 2;
+  __builtin_coro_resume(&frame);
+  if (!__builtin_coro_done(&frame) || frame.promise != 6) return 3;
+  __builtin_coro_destroy(&frame);
+  if (frame.promise != 12) return 4;
+
+  AlignedFrame aligned{nullptr, nullptr, 0};
+  void* promise = __builtin_coro_promise(&aligned, 64, false);
+  if (promise != &aligned.promise || __builtin_coro_promise(promise, 64, true) != &aligned) return 5;
+
+  void* noop = __builtin_coro_noop();
+  if (!noop || __builtin_coro_done(noop)) return 8;
+  __builtin_coro_resume(noop);
+  __builtin_coro_destroy(noop);
+  if (__builtin_coro_done(noop)) return 9;
+
+  int cleanups = 0;
+  frame.resume = fail;
+  try {
+    Cleanup cleanup{cleanups};
+    __builtin_coro_resume(&frame);
+    return 6;
+  } catch (int value) {
+    return value == 42 && cleanups == 1 ? 0 : 7;
+  }
+}

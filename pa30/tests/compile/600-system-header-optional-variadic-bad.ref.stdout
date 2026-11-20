@@ -1,0 +1,2 @@
+ERROR: tests/compile/600-system-header-optional-variadic.h:5:34: __VA_OPT__ requires C++20
+note: included from tests/compile/600-system-header-optional-variadic-bad.t:2

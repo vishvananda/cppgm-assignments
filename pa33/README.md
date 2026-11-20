@@ -302,6 +302,8 @@ to 16 bytes (`../pa8/lowir.md`, "Object ABI Conventions").
 `400-scalar-aggregate-copies` allows no `copyobj` and
 `500-packed-floating-bits` allows no store in `@floats`; this form reaches
 both. `600-source-returned-object-copy` accepts this form or one `copyobj`.
+Returning a staged object must preserve any stores to it after the copy.
+Use both objects' access facts before forwarding the return to the source.
 
 No course fixture requires a particular admission cap or pass order. The
 fixtures about inlining state outcomes that a range of policies reach. A

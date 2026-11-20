@@ -1,0 +1,1 @@
+ERROR: tests/general/400-inline-variable-cxx14-bad.t:1:12: inline variables are a C++17 extension

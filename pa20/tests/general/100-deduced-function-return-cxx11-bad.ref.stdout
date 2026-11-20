@@ -1,0 +1,1 @@
+ERROR: tests/general/100-deduced-function-return-cxx11-bad.t:1:6: a deduced function return type requires C++14

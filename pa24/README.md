@@ -162,6 +162,9 @@ Frame metadata is part of that final MIR contract. In particular, the
 callee-saved `preserve` list should name the callee-saved registers that the
 final instruction body actually uses after local setup/copy cleanup, and the
 stack size should match that final frame layout.
+Respect each local object's requested alignment. Address arithmetic on a
+local, including forming a one-past pointer, must preserve its byte offsets
+when the same function also has locals with different alignments.
 
 The frame section also records the final native layout policy.  It contains
 `frame_pointer keep|omit` and `epilogues shared|duplicated` (one epilogue

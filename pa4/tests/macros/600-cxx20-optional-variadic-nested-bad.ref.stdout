@@ -1,0 +1,1 @@
+ERROR: tests/macros/600-cxx20-optional-variadic-nested-bad.t:1:38: nested __VA_OPT__

@@ -242,6 +242,10 @@ PA15 supports the following in addition to the PA14 subset:
   bindings that feed lookup, template arguments, or `static_assert`
 - dependent qualified type/value lookups at the practical level needed by the supported
   metaprogramming subset
+- in a template argument such as `Choice<bool(T::value)>`, the functional
+  cast competes with a function type. The argument can name either a type or
+  a value, so treat the dependent value as the operand of the cast. See N4861
+  `[temp.res]`.
 - `static_assert` declarations whose condition is in the supported integral constant subset,
   including conditions that remain template-dependent until instantiation
 - inline virtual members required by a concrete class-template vtable are
@@ -324,6 +328,13 @@ Useful intermediate representations include:
 - compile-time constant bindings that can be reused by both `static_assert` and template
   argument resolution
 
+### C++20 constexpr virtual declarations
+
+Allow `constexpr` on virtual members and overrides starting in C++20.
+Use the ordinary virtual dispatch rules for their runtime calls, including
+calls through a base pointer or reference. See N4861 `[dcl.constexpr]` and
+`[class.virtual]`.
+
 ### C++20 requires-expressions
 
 In C++20 mode, retain requires-expressions as parsed requirements. Simple
@@ -357,6 +368,9 @@ checks every element and accepts an empty pack. Check these constraints
 before publishing a specialization or retaining a candidate. Unsatisfied
 immediate substitution rejects the candidate without instantiating its body.
 Preserve the written order and short-circuit substitution.
+Substitution can fail in a type argument of a constraint, including a
+parameter type inside a function type. Discard that candidate and consider
+the remaining overloads. See N4861 `[temp.deduct]` and `[temp.constr.atomic]`.
 
 A redeclaration of a class template repeats equivalent constraints; a
 different requires-clause is an error. An operand of a requires-clause that
@@ -367,6 +381,11 @@ requires-clause in its template head is an error.
 Keep different constrained overloads distinct, even when their function types
 agree. Equivalent
 redeclarations may rename parameters or qualify the same concept differently.
+Requirements may explicitly call an operator by name, including a qualified
+operator on a dependent type. Preserve the operator in comparisons of
+redeclarations and resolve the call at substitution as usual, including
+argument-dependent lookup for an unqualified call. See N4861
+`[expr.prim.req]`, `[temp.over.link]` and `[basic.lookup.argdep]`.
 Substitute a head clause only as satisfaction reaches its operands, including
 when enclosing class-template instantiations bind packs. For ordering, normalize named concepts
 to their original atomic expressions with canonical parameter mappings.

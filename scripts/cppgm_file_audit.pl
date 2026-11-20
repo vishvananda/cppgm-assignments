@@ -654,6 +654,8 @@ sub hosted_header_specialization_marker {
 
 sub hosted_library_private_marker {
     my ($text) = @_;
+    # These four names are part of the published __builtin_source_location ABI.
+    $text =~ s/\b(?:_M_file_name|_M_function_name|_M_line|_M_column)\b//g if $text =~ /_M_/;
     return undef if $text !~ /(?:_M_|_S_|_Rb_tree|_Hashtable|_Bit_|__normal_iterator|__deque|__tree|__hash|__shared|__compressed_pair|__bitset)/;
     return $1 if $text =~ /\b(_M_[A-Za-z0-9_]*|_S_[A-Za-z0-9_]*|_Rb_tree[A-Za-z0-9_]*|_Hashtable[A-Za-z0-9_]*|_Bit_[A-Za-z0-9_]*|__normal_iterator[A-Za-z0-9_]*|__deque[A-Za-z0-9_]*|__tree[A-Za-z0-9_]*|__hash[A-Za-z0-9_]*|__shared[A-Za-z0-9_]*|__compressed_pair[A-Za-z0-9_]*|__bitset[A-Za-z0-9_]*)\b/;
     return undef;

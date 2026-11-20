@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-transient-allocation-delete-mismatch-reject.t:4:3: constant allocation and deallocation use different forms of new and delete

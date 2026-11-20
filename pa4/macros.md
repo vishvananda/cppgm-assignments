@@ -51,6 +51,26 @@ The rules for macro replacement are described in section _16.3 Macro Replacement
 
 Course-defined: when the result of a `##` operator is not a single valid preprocessing token (16.3.3p3 leaves the behavior undefined), the source file is rejected with `EXIT_FAILURE`.
 
+### C++20 optional replacement
+
+In a variadic macro, `__VA_OPT__(tokens)` supplies its balanced operand
+when expanding the variable argument yields preprocessing tokens. It
+supplies a placemarker when the argument is omitted or expands to empty.
+Process parameters, `#` and `##` within the selected operand as in a
+replacement list. Retain placemarkers until any paste with neighboring
+tokens has completed. A preceding `#` stringizes the operand after
+substitution and omits placemarkers. Rescan with the rest of the macro
+replacement. Reject nested `__VA_OPT__` and `##` at either end of the
+operand.
+
+In earlier editions, use the ordinary extension diagnostic and its
+system-header and pragma rules. See N4861 `[cpp.replace]`,
+`[cpp.subst]`, `[cpp.stringize]` and `[cpp.concat]`.
+The examples in [P1042R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1042r1.html)
+explain how placemarkers interact with an enclosing paste.
+
+### Recursion and rescanning
+
 > If the name of the macro being replaced is found during this scan of the replacement list (not including the
 rest of the source file’s preprocessing tokens), it is not replaced. Furthermore, if any nested replacements
 encounter the name of the macro being replaced, it is not replaced. These nonreplaced macro name preprocessing

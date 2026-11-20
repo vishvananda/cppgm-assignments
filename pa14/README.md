@@ -251,6 +251,10 @@ PA14 supports the following in addition to the PA13 subset:
   and recognize explicit template calls when ordinary function overloads in the
   same namespace lookup set share their name with a template introduced by a
   using-directive, including transitive directives
+- when a namespace introduces a class or enumeration with a using-declaration
+  and also declares an alias for the same type and name, retain the name's first
+  declaration point for template lookup. See N4140 `[dcl.typedef]`,
+  `[namespace.udecl]` and `[temp.res]`.
 - basic template argument deduction for direct supported function-template calls
   from ordinary argument types, without function-template partial ordering or
   SFINAE
@@ -433,6 +437,10 @@ false; an invalid requirement outside a templated declaration is an error.
 Check in source order and stop once satisfaction is known. Constraint `&&` and
 `||` short-circuit substitution as well as evaluation. Later template and
 constant-evaluation assignments apply these rules to their added source forms.
+Keep the original type dependence of local parameters when checking a
+substituted requirement. A call or operator with dependent operands can
+find declarations from associated namespaces at instantiation. See N4861
+`[expr.prim.req]`, `[temp.dep.expr]` and `[temp.dep.candidate]`.
 
 ### C++20 named concepts
 
@@ -459,3 +467,4 @@ the parameters of a member function and of a function declared with a
 qualified name, the target of an alias-declaration, a trailing return type, a
 `new` type and the target type of a named cast. A block-scope declaration
 still needs `typename`, and so does every such name in an earlier mode.
+See N4861 `[temp.res]`.

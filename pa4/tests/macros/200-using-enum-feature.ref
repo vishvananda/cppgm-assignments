@@ -1,0 +1,6 @@
+preproc 1
+sof tests/macros/200-using-enum-feature.t
+simple int KW_INT
+identifier enabled
+simple ; OP_SEMICOLON
+eof

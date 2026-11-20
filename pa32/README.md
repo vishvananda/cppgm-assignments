@@ -269,6 +269,36 @@ To complete PA32, implement hosted link/runtime behavior for:
   link and run through the plain host toolchain
 - hosted link smokes where the main question is emitted symbol ownership, ABI
   spelling, or runtime behavior of hosted header-generated code
+- C++20 coroutine frame lifetimes. A call creates the frame, copies the
+  parameters, constructs the promise and obtains the return object. After
+  initial suspension, resumption enters the body with those same objects.
+  Destroying an initially or finally suspended frame ends the promise's
+  lifetime, ends the parameter copies' lifetimes and releases the allocation.
+  When allocation returns null and the promise provides a failure operation,
+  return its result. `co_await` and `co_yield` in the body can suspend more
+  than once. Keep objects and intermediate expression values alive across
+  each suspension. Resuming continues the expression from the selected
+  `await_resume` call. Destroying a frame suspended in the body destroys its
+  live objects in reverse order. Apply the same lifetime rules to the
+  temporary awaiter and operand at initial and final suspension, including
+  when overload resolution selects an `operator co_await`. See N4861
+  `[dcl.fct.def.coroutine]` and `[expr.await]`.
+- Coroutine exceptions. If construction or the initial await fails before
+  the first `await_resume`, propagate the exception to the caller after
+  destroying completed frame objects and releasing the allocation. From
+  the first `await_resume` onward, a body exception can reach a matching
+  handler in the coroutine or, if it escapes the body, the promise's
+  `unhandled_exception`. Resumption inside a `try` block must restore
+  its exception handling and preserve the lifetimes of its live objects.
+  A function-try-block covers the user body after initial suspension.
+  A member coroutine's class allocator sees the incoming object before
+  frame construction. The body uses the same object on resumption.
+  A captureless coroutine lambda converted to a function pointer still
+  calls its coroutine call operator with a default-constructed closure.
+  If resumption throws while initializing a local, unwind the objects
+  already constructed in the surrounding scope.
+  An exception escaping a `noexcept` coroutine call runs the startup
+  cleanup before calling `std::terminate`.
 
 If hosted header code compiles but the emitted objects do not link or run
 correctly, fix the hosted symbol emission, ABI spelling, object ownership, or

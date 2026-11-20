@@ -313,6 +313,22 @@ specification remains declaration metadata under the existing contract.
 PA7 owns conversions, PA9 the ABI spelling and PA18 dependent deduction.
 See N4659 `[namespace.def]`, `[except.spec]` and `[dcl.fct]`.
 
+### C++20 enumerator imports
+
+Look up the target of `using enum` by ordinary name lookup. It can name an
+enum through an alias, and the non-dependent enumeration must have a
+reachable definition. Introduce each enumerator with the same identity,
+type and value in the receiving scope. Diagnose conflicting declarations.
+C++20 also allows a using-declaration that names just one scoped enumerator
+or an enumerator of a class member enum outside the class. See N4861
+`[enum.udecl]`, `[namespace.udecl]` and [CWG 2621](../doc/cwg/cwg-2621.txt).
+A member using-declaration that names a class member must name a base
+class unless it imports an enumerator.
+
+In C++17 and later, check every declarator in a using list. A namespace can
+import a declaration repeatedly. Diagnose repeated imports of the same
+declaration within a class. See N4659 `[namespace.udecl]`.
+
 ### Out Of Scope
 
 PA6 does not require:

@@ -128,7 +128,7 @@ sub grade
 	my ($app, $native_reference, $test) = @_;
 	my ($kind, $status, $stdout) = expectation($test);
 	my @frontend = ($app, CppgmBatchWorker::app_args_for($app), '--emit-lowir', '-O0',
-		CppgmBatchWorker::standard_args_for($test));
+		CppgmBatchWorker::source_args_for($test));
 	(my $base = $test) =~ s/\.(?:cpp|t)$//;
 	if (-f "$base.limits")
 	{

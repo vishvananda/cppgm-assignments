@@ -1,0 +1,128 @@
+CWG 150: Template template parameters and default arguments
+Source: https://cplusplus.github.io/CWG/issues/150.html
+Snapshot: cplusplus/CWG gh-pages 38a43db15e384602a0c5debc3f7f22be32e186a1
+Retrieved: 2026-11-20
+Upstream status: C++17
+Catalog role: course-reference
+
+P0522R0 supplied the adopted wording, available in N4659 [temp.arg.template].
+
+This is an unofficial snapshot of the ISO/IEC JTC1 SC22 WG21 Core Issues List revision
+121a. See http://www.open-std.org/jtc1/sc22/wg21/ for the official list.
+
+2026-10-10
+
+150. Template template parameters and default arguments
+Section: 13.4.4 [temp.arg.template [1]] Status: C++17 Submitter: Mike Miller Date: 3 Aug
+1999
+
+[Moved to DR at the November, 2016 meeting as paper P0522R0.]
+
+[Picked up by evolution group at October 2002 meeting.]
+
+How are default template arguments handled with respect to template template parameters?
+Two separate questions have been raised:
+
+1.  Do default template arguments allow a template argument to match a template
+parameter with fewer template parameters, and can the template template parameter be
+specialized using the smaller number of template arguments? For example,
+
+    template <class T, class U = int>
+    class ARG { };
+
+    template <class X, template <class Y> class PARM>
+    void f(PARM<X>) { }    // specialization permitted?
+
+    void g() {
+        ARG<int> x;        // actually ARG<int, int>
+        f(x);              // does ARG (2 parms, 1 with default)
+                           // match PARM (1 parm)?
+
+Template template parameters are deducible (13.10.3.6 [temp.deduct.type [2]] paragraph
+9) , but 13.4.4 [temp.arg.template [1]] does not specify how matching is done.
+
+[INSERT: Jack Rouse]: I implemented template template parameters assuming template
+signature matching is analogous to function type matching. This seems like the minimum
+reasonable implementation. The code in the example would not be accepted by this
+compiler. However, template default arguments are compile time entities so it seems
+reasonable to relax the matching rules to allow cases like the one in the example. But I
+would consider this to be an extension to the language.
+
+[INSERT: Herb Sutter]: An open issue in the LWG is that the standard doesn't explicitly
+permit or forbid implementations' adding additional template-parameters to those
+specified by the standard, and the LWG may be leaning toward explicitly permitting this.
+[Under this interpretation,] if the standard is ever modified to allow additional
+template-parameters, then writing "a template that takes a standard library template as
+a template template parameter" won't be just ugly because you have to mention the
+defaulted parameters; it would not be (portably) possible at all except possibly by
+defining entire families of overloaded templates to account for all the possible numbers
+of parameters vector<> (or anything else) might actually have. That seems unfortunate.
+
+2.  Are default arguments permitted in the template parameter list of a template
+template parameter? For example,
+
+    template <template <class T, class U = int> class PARM>
+    class C {
+        PARM<int> pi;
+    };
+
+
+[INSERT: Jack Rouse]: I decided they could not in the compiler I support. This continues
+the analogy with function type matching. Also, I did not see a strong need to allow
+default arguments in this context.
+
+A class template used as a template template argument can have default template
+arguments from its declarations. How are the two sources of default arguments to be
+reconciled? The default arguments from the template template formal could override. But
+it could be cofusing if a template-id using the argument template, ARG<int>, behaves
+differently from a template-id using the template formal name, FORMAL<int>.
+
+Rationale (10/99): Template template parameters are intended to be handled analogously
+to function function parameters. Thus the number of parameters in a template template
+argument must match the number of parameters in a template template parameter,
+regardless of whether any of those paramaters have default arguments or not. Default
+arguments are allowed for the parameters of a template template parameter, and those
+default arguments alone will be considered in a specialization of the template template
+parameter within a template definition; any default arguments for the parameters of a
+template template argument are ignored.
+
+Note (Mark Mitchell, February, 2006):
+
+Perhaps it is already obvious to all, but it seems worth noting that this extension
+would change the meaning of conforming programs:
+
+
+    struct Dense { static const unsigned int dim = 1; };
+
+    template <template <typename> class View,
+              typename Block>
+    void operator+(float, View<Block> const&);
+
+    template <typename Block,
+              unsigned int Dim = Block::dim>
+    struct Lvalue_proxy { operator float() const; };
+
+    void test_1d (void) {
+        Lvalue_proxy<Dense> p;
+        float b;
+        b + p;
+    }
+
+
+If Lvalue_proxy is allowed to bind to View, then the template operator+ will be used to
+perform addition; otherwise, Lvalue_proxy's implicit conversion to float, followed by
+the built-in addition on floats will be used.
+
+Note (March, 2008):
+
+The Evolution Working Group has accepted the intent of this issue and referred it to CWG
+for action (not for C++0x). See paper J16/07-0033 = WG21 N2173.
+
+Notes from the June, 2008 meeting:
+
+The CWG decided to take no action on this issue until an interested party produces a
+paper with analysis and a proposal.
+
+Source links:
+[1] https://wg21.link/temp.arg.template
+[2] https://wg21.link/temp.deduct.type#9

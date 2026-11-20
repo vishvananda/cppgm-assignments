@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-hosted-coroutine-deleted-return-move-reject.t:18:3: use of a deleted function

@@ -1,0 +1,77 @@
+#include <coroutine>
+
+struct Trace {
+  int events[24] = {};
+  int count = 0;
+  void add(int event) noexcept { events[count++] = event; }
+};
+
+struct DefaultArgument {
+  constexpr DefaultArgument() noexcept {}
+  ~DefaultArgument() noexcept {}
+};
+
+struct Awaiter {
+  Trace& trace;
+  int tag;
+  bool await_ready() const noexcept { return false; }
+  void await_suspend(std::coroutine_handle<>) const noexcept { trace.add(tag + 2); }
+  void await_resume() const noexcept { trace.add(tag + 3); }
+  ~Awaiter() { trace.add(tag + 4); }
+};
+
+struct Operand {
+  Trace& trace;
+  int tag;
+  Awaiter operator co_await() && noexcept {
+    trace.add(tag + 1);
+    return {trace, tag};
+  }
+  ~Operand() { trace.add(tag + 5); }
+};
+
+struct Task {
+  struct promise_type;
+  using Handle = std::coroutine_handle<promise_type>;
+  Handle handle;
+
+  struct promise_type {
+    Trace& trace;
+    explicit promise_type(Trace& events) noexcept : trace(events) {}
+    ~promise_type() { trace.add(30); }
+    Task get_return_object() noexcept { return {Handle::from_promise(*this)}; }
+    Operand initial_suspend(DefaultArgument = {}) noexcept { return {trace, 0}; }
+    Operand final_suspend(DefaultArgument = {}) noexcept { return {trace, 10}; }
+    void return_void() noexcept { trace.add(20); }
+    void unhandled_exception() noexcept {}
+  };
+};
+
+Task run(Trace& trace) { co_return; }
+
+bool equal(const Trace& trace, const int* expected, int count) {
+  if (trace.count != count) return false;
+  for (int i = 0; i != count; ++i)
+    if (trace.events[i] != expected[i]) return false;
+  return true;
+}
+
+int main() {
+  Trace abandoned;
+  auto first = run(abandoned);
+  const int suspended[] = {1, 2};
+  if (!equal(abandoned, suspended, 2)) return 1;
+  first.handle.destroy();
+  const int left_initial[] = {1, 2, 4, 5, 30};
+  if (!equal(abandoned, left_initial, 5)) return 2;
+
+  Trace finished;
+  auto second = run(finished);
+  if (!equal(finished, suspended, 2)) return 3;
+  second.handle.resume();
+  const int returned[] = {1, 2, 3, 4, 5, 20, 11, 12};
+  if (!second.handle.done() || !equal(finished, returned, 8)) return 4;
+  second.handle.destroy();
+  const int left_final[] = {1, 2, 3, 4, 5, 20, 11, 12, 14, 15, 30};
+  if (!equal(finished, left_final, 11)) return 5;
+}

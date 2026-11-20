@@ -1,0 +1,9 @@
+identifier char8_t
+literal u8'A' char 41
+literal u8'\0' char 00
+literal u8'\xFF' char FF
+literal u8'\377' char FF
+invalid u8'é'
+invalid u8'\x100'
+invalid u8'AB'
+eof

@@ -191,12 +191,36 @@ the implemented surface, including:
 
 - full function-template deduction over the intended C++11 subset
 - function-template partial ordering
+  From C++14, a shorter template-id can match the trailing defaults of a
+  longer template in the supported template-template deduction case.
+  During partial ordering, compare the concrete template pattern using
+  its substituted trailing arguments. See N4659 `[temp.deduct.type]`
+  and the matching example in [CWG 2398](../doc/cwg/cwg-2398.txt).
 - substitution behavior and candidate dropping
+- when a return type uses a variable template, a dependent template argument
+  must name a template that matches its parameter. An invalid argument in
+  the immediate substitution context discards the candidate. See N4140
+  `[temp.arg.template]` and `[temp.deduct]`.
 - `enable_if`, `void_t`, and detected-idiom style SFINAE behavior
+- when an expansion in a trailing return type names a function parameter
+  pack, substitute the parameter at the same position as the selected
+  template arguments. See N4140 `[temp.variadic]` and `[temp.deduct]`.
 - conversion function template deduction
 - conversion template ABI names retain the declared target pattern, including
   explicit specializations and cv/reference target arguments
 - constructor template deduction and overload participation
+- a default template argument retains dependence on both operands of a
+  logical operator. Short-circuit evaluation can skip an operand after
+  substitution. Check a constructor template's dependent default when the
+  candidate needs it. See N4140 `[temp.dep.constexpr]` and `[temp.deduct]`.
+- when deduction checks an argument's specialization against a template
+  template parameter, resolve the specialization's default arguments where
+  they were declared, including defaults added by redeclarations. See N3485
+  `[temp.param]`, `[temp.res]` and `[temp.deduct.type]`.
+- a dependent member variable template can supply the value in a constructor
+  template's default argument. Preserve the `template` disambiguator and
+  substitute the value when checking the constructor candidate. See N4140
+  `[temp.arg.nontype]`, `[temp.dep.temp]` and `[temp.deduct]`.
 - non-deduced contexts and explicit template-id deduction edge cases
 - CWG 1391: after deduction and defaults, conversions to originally
   nondependent call parameters are checked before signature substitution
@@ -211,12 +235,21 @@ the implemented surface, including:
 - an argument that names a set of overloaded functions participates in
   deduction the same way whether the called template was found by ordinary
   lookup or only by argument-dependent lookup
+- a dependent unqualified call in a declaration uses ordinary lookup at
+  its declaration point. If that lookup finds nothing, a later member
+  declaration does not hide a function found through argument-dependent
+  lookup during substitution
 - dependent-call, dependent-alias, and no-eager-instantiation behavior when the
   primary assertion is a single PA18-owned feature rather than a broad
   multi-feature composition
 - equivalent redeclarations of a function template with a dependent result
   type name the same template, however many such templates a translation unit
   declares (14.5.6.1)
+
+In C++17, a deduced non-type argument in a partial specialization also
+supplies deductions for parameters in its declared type. A reference to
+an array can supply its bound. Retain the usual matching and
+substitution checks. See N4659 `[temp.deduct.type]`.
 
 A fixed pointer, reference, or function-address argument in a function-template
 body also forms a nondependent specialization. Its local alias can name member
@@ -233,14 +266,70 @@ Preserve explicitness, defaults and the copy-deduction/list-initialization
 rules; diagnose equivalent guides and invalid result specializations.
 See N4659 `[over.match.class.deduct]` and `[temp.deduct.guide]`.
 
+A deduction use that names a template template parameter depends on its
+argument. When that argument is a class template, use its guides after
+substitution. This follows GCC and Clang for the class-template case in
+[CWG 3003](../doc/cwg/cwg-3003.txt).
+
 Placeholder non-type parameters (`auto`, `auto*`, `auto&`, `decltype(auto)`)
 deduce type and value while retaining object/function identity, references
 and heterogeneous packs. The resulting argument must still be a permitted
-C++17 template argument. Trailing-return function-pointer parameter types
+C++17 template argument. An evaluated pointer to a named object or function
+keeps that identity, including an array's address after array-to-pointer
+conversion. See N4659 `[temp.arg.nontype]`.
+In C++20, a literal class with public, non-mutable structural members and
+public structural bases can be the type of a non-type parameter. A class
+template name in the parameter declaration deduces the class type first.
+Evaluate the argument with the ordinary constant initialization rules.
+Compare bases, array elements and members recursively when identifying
+specializations, including the active member of a union. A user-defined
+equality operator has no role in template argument equivalence.
+
+A class-valued parameter names a const lvalue. Equivalent values of the
+same class type name the same parameter object, including from different
+templates. The unparenthesized `decltype` gives the parameter's type.
+When the program uses the object's address, emit a linkable definition
+using the target's template parameter object ABI. See N4861 `[temp.param]`,
+`[temp.arg.nontype]`, `[temp.type]` and
+[P1907R1](../doc/cwg/paper-p1907r1.txt).
+
+C++20 pointer and reference arguments may designate subobjects of named
+objects with static storage duration. Apply the same rule to pointer and
+reference members of structural values. Equivalent expressions for an
+array element designate the same subobject, including array decay and the
+address of element zero. Keep overlapping union members distinct when
+they designate different subobjects. The prohibitions on temporary and
+string objects, `typeid`, `__func__`, and their subobjects still apply.
+
+Trailing-return function-pointer parameter types
 are distinct from a placeholder whose argument type is deduced.
 Pack-expanded using declarations import the corresponding names; diagnose a
 missing pack. Multiple-base object-model observations remain in PA22.
 Preserve C++17 `noexcept` function-type distinctions through substitution.
+Instantiate a selected conversion function's exception specification when
+overload resolution chooses it, including in a `decltype` operand. See
+[CWG 1330](../doc/cwg/cwg-1330.txt).
+Permit a non-throwing function pointer as a template argument for the
+matching potentially throwing pointer type. See N4659
+`[conv.fctptr]` and `[expr.const]`.
+When `noexcept` contains a deduced construction such as `View{value}`,
+its braced arguments can make the exception specification dependent.
+Deduce the class and compute the exception specification after substitution.
+Subsumption compares the identities and parameter mappings of atomic
+constraints. A conjunction can reuse a concept containing many
+disjunctions. Keep that case tractable when determining which overload is
+more constrained. See N4861 `[temp.constr.normal]` and
+`[temp.constr.order]`.
+
+A concept can constrain the deduced type of a non-type parameter,
+as in `template<Small auto N>`. Treat the parameter as a value and
+evaluate the concept for the deduced type. Include the type-constraint
+when comparing partial specializations. See N4861 `[temp.param]` and
+`[temp.constr]`.
+
+An equivalent pair of constraints may contain the same deduced construction
+with renamed parameters. Resolve the class template and compare the operands
+before substituting a concrete specialization. See N4861 `[temp.over.link]`.
 See N4659 `[temp.arg.nontype]`, `[namespace.udecl]` and `[temp.deduct]`.
 
 ### Out Of Scope

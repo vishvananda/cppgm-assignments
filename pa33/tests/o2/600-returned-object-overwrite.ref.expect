@@ -1,0 +1,3 @@
+# The caller checks the result after optimization. Allow any valid way to
+# retain the overwrite and return the updated value.
+count(return) >= 1 in @update

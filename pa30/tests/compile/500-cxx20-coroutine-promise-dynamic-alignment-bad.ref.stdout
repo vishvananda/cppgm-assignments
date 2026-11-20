@@ -1,0 +1,1 @@
+ERROR: tests/compile/500-cxx20-coroutine-promise-dynamic-alignment-bad.t:2:41: coroutine promise alignment must be a constant power of two

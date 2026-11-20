@@ -1,0 +1,18 @@
+1 translation units
+start translation unit 1
+translation-unit
+  namespace-definition tools
+    simple-declaration
+      decl-specifier-seq
+        decl-specifier KW_INT:int
+      init-declarator-list
+        init-declarator
+          declarator
+            identifier left
+        init-declarator
+          declarator
+            identifier right
+  using-declaration
+    target tools::left
+    target tools::right
+end translation unit

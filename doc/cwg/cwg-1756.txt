@@ -1,0 +1,38 @@
+CWG 1756: Direct-list-initialization of a non-class object
+Source: https://cplusplus.github.io/CWG/issues/1756.html
+Snapshot: cplusplus/CWG gh-pages 38a43db15e384602a0c5debc3f7f22be32e186a1
+Retrieved: 2026-11-19
+Upstream status: CD4
+Catalog role: course-reference
+
+This is an unofficial snapshot of the ISO/IEC JTC1 SC22 WG21 Core Issues List revision
+121a. See http://www.open-std.org/jtc1/sc22/wg21/ for the official list.
+
+2026-10-10
+
+1756. Direct-list-initialization of a non-class object
+Section: 9.5.5 [dcl.init.list [1]] Status: CD4 Submitter: Richard Smith Date: 2013-09-20
+
+[Moved to DR at the November, 2014 meeting.]
+
+The wording of 9.5.5 [dcl.init.list [2]] paragraph 3,
+
+if the initializer list has a single element of type E and either T is not a reference
+type or its referenced type is reference-related to E, the object or reference is
+initialized from that element
+
+does not specify whether the initialization is direct-initialization,
+copy-initialization, or the same kind of initialization that applied to the
+list-initialization. This matters when E is a class type with an explicit conversion
+function. (Note that aggregate initialization performs copy-initialization on its
+subobjects, but it's not clear whether that should be the pattern followed for this
+case.)
+
+Proposed resolution (June, 2014):
+
+This issue is resolved by the resolution of issue 1467 [3].
+
+Source links:
+[1] https://wg21.link/dcl.init.list
+[2] https://wg21.link/dcl.init.list#3
+[3] https://cplusplus.github.io/CWG/issues/1467.html

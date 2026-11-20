@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-hosted-coroutine-mixed-return-reject.t:14:21: a coroutine cannot contain an ordinary return statement

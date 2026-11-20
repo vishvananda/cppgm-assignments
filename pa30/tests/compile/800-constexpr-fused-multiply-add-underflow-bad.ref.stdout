@@ -1,0 +1,1 @@
+ERROR: tests/compile/800-constexpr-fused-multiply-add-underflow-bad.t:1:28: a fused multiply-add outside its constant range

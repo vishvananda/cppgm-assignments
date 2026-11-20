@@ -190,6 +190,12 @@ To complete PA21, implement these goals:
    parameter declared inside a lambda body is local to that body and is not
    an implicit capture.
 
+   C++20 permits `try` statements and function-try-blocks in constexpr
+   functions. Evaluate the protected block with its normal scope and lifetime
+   rules. An evaluated `throw` invalidates the constant expression before a
+   handler can run. Runtime calls still use ordinary exception handling.
+   See `[dcl.constexpr]` and `[expr.const]` in the [C++20 draft](../doc/n4861.pdf).
+
 2. `std::initializer_list` interoperation.
    Supported braced-list calls should materialize deterministic lowered storage and expose
    the expected `__begin` / `__size` semantics to range-for lowering.
@@ -199,6 +205,10 @@ To complete PA21, implement these goals:
    it exists, every potentially throwing call later in its scope, including
    one in a condition, unwinds through cleanup that destroys the elements in
    reverse order and the earlier automatic objects.
+   During C++20 constant evaluation, run the same element destruction at
+   scope exit for a named list. A temporary list passed to a call releases
+   its backing array at the end of the caller's full-expression. Copying a
+   list view preserves the identity and lifetime of its existing array.
 
 3. RTTI and `typeid`.
    The compiler should emit deterministic RTTI globals and lower both static and dynamic
@@ -417,4 +427,6 @@ completed nested rows. Preserve the lifetime of explicit initializer
 temporaries, the per-element lifetime of default-argument temporaries, and
 reverse destruction of every completed element if a later initialization
 throws. A completed nonthrowing array member still needs destruction if a
-later member throws.
+later member throws. Apply the same cleanup rules when copying an array for a
+C++17 structured binding. If an element's initialization throws, destroy the
+completed backing elements in reverse order.

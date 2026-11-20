@@ -1,0 +1,22 @@
+1 translation units
+start translation unit 1
+translation-unit
+  namespace-definition A
+    function-declaration A::pick function of (int) returning int
+    function-declaration A::pick function of (long int) returning int
+  namespace-definition B
+    function-declaration B::pick function of (int) returning int
+    function-declaration B::pick function of (char) returning int
+  function-definition from_a function of () returning int
+    compound-statement
+      return-statement
+        call-expression prvalue int
+          callee A::pick function of (long int) returning int
+          literal prvalue long int 1L
+  function-definition from_b function of () returning int
+    compound-statement
+      return-statement
+        call-expression prvalue int
+          callee B::pick function of (char) returning int
+          literal prvalue char 'a'
+end translation unit

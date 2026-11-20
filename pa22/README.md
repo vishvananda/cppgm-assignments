@@ -8,8 +8,13 @@ single-vptr ABI:
 - non-virtual multiple inheritance
 - member lookup and access across multiple base subobjects
 - constructor, copy, and destructor generation across multiple non-virtual bases
+- constructor inheritance from multiple direct bases, including constructor
+  templates. Resolve all inherited candidates with ordinary overload
+  resolution and diagnose ambiguous choices. See [P0136R1](../doc/cwg/paper-p0136r1.txt).
 - member pointer type formation, null/conversion handling, and `.*` / `->*`
   application over the completed non-virtual object model
+- selecting an overloaded member function's address using a pointer-to-member
+  target, including a template with a deduced return as covered in PA20
 - `dynamic_cast<void*>` for the current polymorphic single-inheritance ABI
 
 PA22 still produces LowIR. It does not introduce a new output format.
@@ -213,6 +218,9 @@ To complete PA22, implement these goals:
    `!=` overload resolution, including null literals and compatible base/derived
    and cv-qualified composite types. Explicit conversions do not participate, and
    member pointers have no built-in ordering operators.
+   When a C++20 class-valued template argument contains a pointer to
+   member, use the member-pointer value in template argument equivalence.
+   Preserve the value when the parameter object is used at runtime.
    Their contextual conversion to `bool` must distinguish a non-null target from a null
    member pointer without treating the adjustment word as an independent truth value.
    The representation below describes the native ABI. When adding PA37, use its
@@ -259,6 +267,10 @@ lookup ambiguity and cleanup across distinct subobjects. Modern cases whose
 observations require member pointers or multiple bases remain here even when
 their isolated deduction syntax was introduced earlier. This is not a new
 STL requirement. See N4659 `[dcl.init.aggr]`, `[namespace.udecl]` and `[temp.arg.nontype]`.
+
+As a C++17 template argument, a non-throwing member-function pointer
+converts to a potentially throwing member-function pointer with the same
+class and function signature. See N4659 `[conv.fctptr]` and `[expr.const]`.
 
 ### Out Of Scope
 

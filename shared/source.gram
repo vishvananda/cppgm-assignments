@@ -55,7 +55,11 @@ using-directive:
 	KW_USING KW_NAMESPACE qualified-id OP_SEMICOLON
 
 using-declaration:
-	KW_USING qualified-id OP_DOTS? OP_SEMICOLON
+	KW_USING using-declarator (OP_COMMA using-declarator)* OP_SEMICOLON
+	KW_USING KW_ENUM qualified-id OP_SEMICOLON
+
+using-declarator:
+	KW_TYPENAME? qualified-id OP_DOTS?
 
 alias-declaration:
 	KW_USING TT_IDENTIFIER OP_ASS type-id OP_SEMICOLON
@@ -763,6 +767,7 @@ operator-token:
 	OP_ARROWSTAR
 	OP_ARROW
 	OP_DOTSTAR
+	KW_CO_AWAIT
 
 close-angle-bracket:
 	OP_GT

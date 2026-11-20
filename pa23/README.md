@@ -12,6 +12,9 @@ earlier single-vptr, non-virtual-base ABI:
 
 PA23 still produces LowIR. It does not introduce a new output format.
 
+In C++20, a class with a virtual base cannot declare a constexpr
+destructor. See N4861 `[dcl.constexpr]`.
+
 ### Prerequisites
 
 You should complete Programming Assignment 22 before starting this assignment.
@@ -350,6 +353,12 @@ virtual bases. A base-object constructor stores each secondary virtual pointer
 of its VTT where the complete object placed that subobject, and takes the rest
 from its own vtable group. A class that is both a non-virtual base and a
 virtual base is constructed with the sub-VTT of the subobject being built.
+
+An inherited constructor can name a direct virtual base. The most-derived
+constructor initializes virtual bases on the inherited constructor's path
+with the inherited arguments. Intervening base-object constructor entries
+omit that initialization and its arguments while initializing their own
+other subobjects. See [P0136R1](../doc/cwg/paper-p0136r1.txt).
 
 A construction vtable group (`_ZTC<complete><offset>_<base>`) lays the base
 out as clang lays out a construction group, with the complete object's offsets

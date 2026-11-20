@@ -1,0 +1,73 @@
+#include <coroutine>
+
+struct Task {
+  struct promise_type;
+  using Handle = std::coroutine_handle<promise_type>;
+  Handle handle;
+
+  struct promise_type {
+    int value = 0;
+    Task get_return_object() noexcept { return {Handle::from_promise(*this)}; }
+    std::suspend_always initial_suspend() noexcept { return {}; }
+    std::suspend_always final_suspend() noexcept { return {}; }
+    void return_value(int v) noexcept { value = v; }
+    void unhandled_exception() noexcept {
+      try {
+        throw;
+      } catch (int v) {
+        value = v;
+      }
+    }
+  };
+};
+
+struct Guard {
+  int& alive;
+  explicit Guard(int& count) : alive(count) { ++alive; }
+  ~Guard() { --alive; }
+};
+
+struct Gate {
+  bool throws;
+  bool await_ready() const noexcept { return false; }
+  void await_suspend(std::coroutine_handle<>) const {
+    if (throws)
+      throw 23;
+  }
+  int await_resume() const noexcept { return 24; }
+};
+
+Task run(int& alive, int mode) {
+  Guard outer(alive);
+  try {
+    Guard inner(alive);
+    const int value = co_await Gate{mode == 1};
+    throw value;
+  } catch (int caught) {
+    if (mode == 2)
+      throw 26;
+    co_return caught + alive;
+  }
+}
+
+int main() {
+  for (int mode = 0; mode != 4; ++mode) {
+    int alive = 0;
+    auto task = run(alive, mode);
+    if (alive != 0 || task.handle.done()) return 1;
+    task.handle.resume();
+    if (mode != 1) {
+      if (alive != 2 || task.handle.done()) return 2;
+      if (mode == 3) {
+        task.handle.destroy();
+        if (alive != 0) return 3;
+        continue;
+      }
+      task.handle.resume();
+    }
+    const int expected = mode == 0 ? 25 : mode == 1 ? 24 : 26;
+    if (alive != 0 || !task.handle.done() || task.handle.promise().value != expected)
+      return 4;
+    task.handle.destroy();
+  }
+}

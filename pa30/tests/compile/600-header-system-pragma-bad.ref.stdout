@@ -1,0 +1,2 @@
+ERROR: tests/compile/600-header-system-pragma.h:4:5: if constexpr is a C++17 extension
+note: included from tests/compile/600-header-system-pragma-bad.t:2

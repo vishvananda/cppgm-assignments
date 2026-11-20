@@ -205,6 +205,9 @@ PA7 passes consume, including:
   declarator-id (`T... values`); an ellipsis after the last parameter, with or
   without a comma (`f(int, ...)`, `g(char value...)`), is the parameter
   clause's own and dumps under `parameter-clause`
+  An unnamed pointer or reference parameter can name a nested type
+  through `decltype(object)::`. Keep the qualified name and the
+  abstract declarator in the AST for later type lookup.
 - structured `type-id` syntax in casts, `new`, `typeid`, `alignof`,
   `sizeof(type)`, and `noexcept`
 - compound statements, selection statements, iteration statements, labels,
@@ -236,6 +239,15 @@ not combine it with individually scoped attributes in that same list.
 Retain language-mode distinctions, including an empty using-prefix list.
 GNU attribute effects remain hosted compatibility work. N4659
 `[namespace.def]` and `[dcl.attr.grammar]` govern these syntax checks.
+Accept a comma-separated list of using-declarators in C++17 and later. Each
+entry has its own qualified name and optional pack expansion. See N4659
+`[namespace.udecl]`.
+
+In C++20, parse `using enum` with a single qualified or unqualified enum
+name or alias template-id. Retain the target as a name and permit the
+declaration in the same scopes as a using-declaration. See N4861
+`[enum.udecl]` and [CWG 2621](../doc/cwg/cwg-2621.txt). PA6 resolves the target
+and declares its enumerators.
 
 ### Out Of Scope
 
@@ -519,6 +531,14 @@ and its [AST reference](tests/spec/100-required-modern-syntax.ref) show the
 required later forms together. The dump preserves their syntax before the
 owning semantic lessons perform deduction, capture analysis or instantiation.
 
+### C++20 coroutine syntax
+
+Parse `co_await` with a cast-expression operand, `co_yield` with an
+assignment-expression or braced list, and the `co_return` statement
+with its optional expression or braced list. The AST records the keyword
+and operand under `coroutine-operation`. See N4861 `[expr.await]`,
+`[expr.yield]` and `[stmt.return.coroutine]`.
+
 ### C++20 requires-expressions
 
 In C++20 mode, retain requires-expressions as parsed requirements. Simple
@@ -574,6 +594,9 @@ type-constraint as a `<name>`, one space, then `auto` or `decltype(auto)`.
 Keep its concept name and explicit arguments, and distinguish the
 two deduction rules. Generic and abbreviated parameters later use these parsed
 facts to introduce constrained template parameters without parsing them again.
+In `auto...` and `C auto...`, retain the ellipsis on the abstract parameter
+declarator. A comma before the ellipsis in `auto, ...` makes it the function's
+varargs ellipsis. See N4861 `[dcl.fct]` and `[dcl.spec.auto]`.
 
 ### C++20 explicit lambda template heads
 

@@ -253,6 +253,9 @@ PA7 must support:
   unbraced selection/iteration substatements
 - local simple declarations
 - block-scope using declarations and using directives
+- separate using declarations in the same scope can introduce functions
+  with identical parameter types. Keep both candidates and diagnose a call
+  that selects both. See N4140 `[namespace.udecl]`.
 - supported ordinary anonymous-union local declarations
 - unqualified and qualified lookup of namespace-scope non-template functions
 - unqualified lookup extended by using directives, using declarations, namespace

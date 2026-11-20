@@ -1,0 +1,1 @@
+ERROR: tests/general/100-relaxed-constexpr-cxx11-bad.t:2:3: a relaxed constexpr function body requires C++14

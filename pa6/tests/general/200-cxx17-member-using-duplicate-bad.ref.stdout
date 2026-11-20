@@ -1,0 +1,1 @@
+ERROR: tests/general/200-cxx17-member-using-duplicate-bad.t:3:23: a using-declaration redeclares a member

@@ -545,7 +545,9 @@ The course mapping for simple tokens is given below, and this has also been tran
 	simple xor_eq OP_XORASS
 	simple xor OP_XOR
 
-In C++20 mode, six more spellings are simple tokens. The starter code has the
+In C++20 mode, nine more spellings are simple tokens, including
+`co_await`, `co_return` and `co_yield`. Those three remain identifiers
+in the earlier editions. The starter code has the
 table above without them. Earlier modes read the five words as identifiers and
 `<=>` as `<=` followed by `>`:
 
@@ -592,8 +594,9 @@ Use N4140/N4659 `[lex.icon]`, `[lex.fcon]` and `[lex.ext]`; see
 [the reference guide](../doc/REFERENCES.md). Normal tests select modes with
 `.cxx-standard` sidecars.
 
-In C++20 mode, `char8_t` is a keyword and UTF-8 character and string literals
-have the distinct unsigned `char8_t` code-unit type. A UTF-8 character literal
+C++17 UTF-8 character literals have type `char`. In C++20 mode, `char8_t`
+is a keyword and UTF-8 character and string literals use that distinct
+unsigned code-unit type. See N4659 `[lex.ccon]`. A UTF-8 character literal
 must fit one UTF-8 code unit: a source character must be ASCII; a numeric
 escape may supply any byte from 0 through 255. Reject multicharacter forms
 and values needing multiple UTF-8 code units. UTF-8 string concatenation keeps

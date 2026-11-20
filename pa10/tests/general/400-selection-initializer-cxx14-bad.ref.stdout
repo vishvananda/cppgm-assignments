@@ -1,0 +1,1 @@
+ERROR: tests/general/400-selection-initializer-cxx14-bad.t:1:20: a selection initializer is a C++17 extension

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx20-nonconstexpr-member-destructor-reject.t:6:23: a constexpr destructor requires constexpr subobject destruction

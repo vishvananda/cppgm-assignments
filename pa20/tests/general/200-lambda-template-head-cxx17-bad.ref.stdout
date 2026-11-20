@@ -1,0 +1,1 @@
+ERROR: tests/general/200-lambda-template-head-cxx17-bad.t:1:10: lambda template parameters are a C++20 extension

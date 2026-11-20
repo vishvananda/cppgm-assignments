@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-hosted-coroutine-bad-await-suspend-reject.t:21:3: await_suspend must return void, bool, or a coroutine_handle by value

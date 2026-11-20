@@ -231,6 +231,9 @@ To complete PA20, implement these goals:
    `inline_hint=yes`, and `unwind=no` when the lambda is declared `noexcept`
    or `throw()`; a lambda-expression called directly states its call
    operator's `unwind=no` on the call signature.
+   In C++17, conversion of a captureless non-throwing lambda yields a
+   pointer to a non-throwing function. Preserve that type before applying
+   other conversions at the use site. See N4659 `[expr.prim.lambda.closure]`.
 
 4. Range-for lowering.
    Range-for over arrays and supported user-defined `begin` / `end`
@@ -238,6 +241,9 @@ To complete PA20, implement these goals:
    ordinary reference loop declarations such as `const int&` and `const auto&`. A
    materialized class prvalue used as the range remains alive through the loop and is
    destroyed when the complete range-for statement ends.
+   C++17 deduces the hidden iterator and sentinel separately, so `begin()`
+   and `end()` can yield different types. The loop compares the two and
+   increments and dereferences only the iterator. See N4659 `[stmt.ranged]`.
 
 The test suite also exercises a small remaining ordinary-language closure cluster here:
 direct braced-init expressions, direct aggregate construction, supported integral / enum
@@ -253,19 +259,55 @@ Follow adopted [P0588R1](../doc/cwg/paper-p0588r1.txt) for implicit captures:
 a potentially evaluated reference can require a capture even when it is not
 an odr-use. Preserve observable copy initialization; a non-odr-use in the body
 still reads the original constant object under [CWG2083](../doc/cwg/cwg-2083.txt).
+This applies to a constant pointer used by a C++17 constexpr call, including
+a call through a closure parameter in a template argument.
 
 
-C++14 adds `decltype(auto)` variables/returns, generic lambda parameters and
-initialized captures. Preserve the difference between a named expression and
+C++14 adds deduced function returns, `decltype(auto)` variables and returns,
+generic lambda parameters, and initialized captures. The default GNU C++11
+course mode retains visible-body return deduction as an extension. A nested
+lambda captures the enclosing closure's initialized object, by copy or by
+reference as written. Its initializer is evaluated when the enclosing
+closure is created.
+In ISO C++11 a function written with `auto` needs a trailing return type, including
+when the declaration appears in a system header. Preserve the difference between a named expression and
 its parenthesized lvalue in `decltype(auto)`. Diagnose inconsistent returns,
 braced placeholder deduction and invalid declarator combinations. Deleted
 placeholder-return declarations need no nonexistent body. A use that requires
-an undeduced return type from an unavailable definition is rejected. Initialized captures
+an undeduced return type from an unavailable definition is rejected. Deducing
+another function's return type inside a parameter's `decltype` leaves the
+enclosing function's own return type available for deduction. A static data
+member initializer in a class template specialization can require the return
+type of a member function. Instantiate that member when its return type is
+needed, using the specialization's template arguments. An explicit
+specialization must repeat the function template's written return placeholder.
+
+When selecting a function template by the target type of its address, a
+placeholder return contributes no template argument deductions. Deduce from
+the parameter types and explicit template arguments, then instantiate the
+body to determine its return type. Compare the complete function type with
+the target. See N4659 `[temp.deduct.funcaddr]`.
+Deduce the specialization's return type from its own definition. Initialized captures
 deduce from the enclosing scope; their new name is available in the body,
 not its own initializer. Support the existing assignment and parenthesized
 forms, generic parameter packs and nested capture propagation.
+An expansion that names both an enclosing pack and a generic lambda's
+parameter pack waits until both packs are bound. See N4140 `[temp.variadic]`.
+In nested generic lambdas, a qualified name such as `decltype(arg)::value`
+can depend on the inner lambda's parameter type. Resolve the member when
+that call operator is instantiated. Naming an outer parameter in `decltype`
+does not capture it.
+Use the lambda's parameter scope in its trailing return type. Substitution
+failure there can discard a generic call-operator candidate, just as for
+other function templates.
+A local type alias can hide an enclosing parameter pack inside a nested
+lambda. A fold in the enclosing scope still expands that pack.
 See N4140 `[dcl.spec.auto]`, `[expr.prim.lambda]` and
 [generalized capture wording](../doc/cwg/paper-n3648.txt).
+
+In a C++17 fold inside a generic lambda, packs declared by the lambda
+expand when its call operator is instantiated. See N4659 `[expr.prim.fold]`
+and `[temp.variadic]`.
 
 C++17 `[*this]` copies the enclosing object, retaining its copy/destruction
 and const/mutable behavior. Evaluate supported constexpr closures and captureless
@@ -273,9 +315,17 @@ function-pointer conversions with normal identity/lifetime rules; forbidden
 constexpr operations still fail. See N4659 `[expr.prim.lambda]`,
 [P0018R3](../doc/cwg/paper-p0018r3.txt) and [P0170R1](../doc/cwg/paper-p0170r1.txt).
 
+Hosted code may use a front attribute sequence after a lambda's capture
+list or template head. Parse it as an attribute on the call operator. This
+C++23 form uses PA30's extension diagnostic in earlier modes.
+
 Structured bindings support the existing array, member and tuple-protocol
 forms, including references and local tuple-trait declarations without the STL.
 Preserve the hidden object's lifetime, cv/ref category and lookup behavior.
+A by-value array binding creates a backing array and evaluates its source
+once. Initialize each element in subscript order using the written
+initialization form. A reference binding aliases the original array.
+A C++17 array prvalue supplies the backing array's elements directly.
 C++17 direct-list initialization of fixed-underlying enums requires one
 nonnarrowing element; copy-list initialization remains distinct.
 For enum-to-integer list initialization, check the enum's value range.
@@ -373,6 +423,8 @@ in parameter order, including packs, without adding a template nesting level.
 Use the same invention for generic lambdas. Keep the written syntax available;
 only the normalized signature needs a copy, and the body remains shared.
 Abbreviated function names are template names for later explicit template calls.
+An unnamed `auto...` parameter still introduces a type parameter pack.
+Deduction from a call can supply zero or more elements.
 
 ### C++20 constrained placeholders
 

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-using-declarations-shared-signature-ambiguous.t:7:26: ambiguous call to overloaded function

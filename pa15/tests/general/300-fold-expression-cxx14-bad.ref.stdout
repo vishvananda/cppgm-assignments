@@ -1,0 +1,1 @@
+ERROR: tests/general/300-fold-expression-cxx14-bad.t:1:47: fold expressions are a C++17 extension

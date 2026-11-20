@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-hosted-coroutine-static-initializer-reject.t:20:24: a coroutine cannot suspend in a static or thread-local initializer

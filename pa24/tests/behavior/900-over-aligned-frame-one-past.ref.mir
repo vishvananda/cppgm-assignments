@@ -1,0 +1,99 @@
+machine_ir x86_64 linux
+
+startup
+    call @main [args=()]
+    mov rdi, rax
+    exit
+
+function @check_distance
+  abi
+    param %begin -> rdi : ptr
+    param %end -> rsi : ptr
+    param %size -> rdx : i64
+    return i64 -> rax
+  frame
+    stack_size 0
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+
+  block ^entry
+    lea rdi, [rdi+rdx]
+    cmp.ptr rdi, rsi
+    sete rdi
+    movzx rdi, rdi
+    ret rdi
+
+function @check_objects
+  abi
+    param %spacing -> rdi : ptr
+    param %position -> rsi : i64
+    return i32 -> rax
+  frame
+    stack_size 160
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    aligned_base 64 r12 = rbp-112
+    preserve rbx r12
+    slot $aligned -> [rbp-112] : obj<64x64>
+    slot $array -> [rbp-144] : obj<16x8>
+
+  block ^entry
+    mov rbx, rsi
+    lea rsi, [r12+64]
+    mov rdi, r12
+    mov rdx, 64
+    call @check_distance [args=(rdx,rsi,rdi)]
+    cmp.i64 rax, 0
+    jne ^ordinary
+    jmp ^bad
+
+  block ^ordinary
+    lea rsi, [rbp-128]
+    lea rdi, [rbp-144]
+    mov rdx, 16
+    call @check_distance [args=(rdx,rsi,rdi)]
+    cmp.i64 rax, 0
+    jne ^indexed
+    jmp ^bad
+
+  block ^indexed
+    lea rsi, [r12+rbx-1]
+    mov rdi, r12
+    mov rdx, 0
+    call @check_distance [args=(rdx,rsi,rdi)]
+    cmp.i64 rax, 0
+    jne ^good
+    jmp ^bad
+
+  block ^good
+    mov rax, 0
+    ret rax
+
+  block ^bad
+    mov rax, 1
+    ret rax
+
+function @main
+  abi
+    return i32 -> rax
+  frame
+    stack_size 16
+    scratch_bytes 0
+    frame_pointer keep
+    epilogues shared
+    preserve rbx
+
+  block ^entry
+    stack_alloc rdi, 16
+    mov rsi, 1
+    call @check_objects [args=(rsi,rdi)]
+    mov rbx, rax
+    sext.i32 rbx
+    stack_alloc rdi, 16
+    mov rsi, 1
+    call @check_objects [args=(rsi,rdi)]
+    sext.i32 rax
+    or rbx, rax
+    ret rbx

@@ -55,6 +55,16 @@
         "n4659.pdf": "642b26867e3803d66696b240b7913042c4ccc37b9b0478b330de247d1daec9d1",
         "n4659.txt": "9329ed8cb3805975ab4437da83ca7c211abf62775566f5baca6eab893d7c4be1"
       }
+    },
+    {
+      "draft": "N4861",
+      "language": "C++20",
+      "date": "2020-04-01",
+      "source": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/n4861.pdf",
+      "format": "Unmodified WG21 working draft PDF.",
+      "files": {
+        "n4861.pdf": "ba9b98596751fa3d16ac7e34996a5b582bb594261162449d5848cba8865253d2"
+      }
     }
   ]
 }

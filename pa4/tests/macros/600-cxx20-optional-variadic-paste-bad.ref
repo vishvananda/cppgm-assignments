@@ -1,0 +1,2 @@
+preproc 1
+sof tests/macros/600-cxx20-optional-variadic-paste-bad.t

@@ -1,0 +1,1 @@
+{"source":true,"wasi":true,"target":"wasm32-wasip1","flags":["-std=c++20","-fexceptions"],"reference_flags":["-std=c++20","-fexceptions","-fwasm-exceptions","-mllvm","-wasm-use-legacy-eh=false"],"reference_link_flags":["-fwasm-exceptions"],"commands":[{"stdout":"","exit":0}]}

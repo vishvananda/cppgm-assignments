@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-hosted-coroutine-throwing-allocation-reject.t:15:26: a coroutine allocator with a failure return object must be non-throwing

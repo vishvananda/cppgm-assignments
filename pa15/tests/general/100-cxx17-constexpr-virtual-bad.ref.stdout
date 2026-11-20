@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx17-constexpr-virtual-bad.t:2:5: a constexpr virtual function

@@ -482,7 +482,9 @@ produces for the same entities; one encoder serving both is the direct way to
 keep them equal, and later class, template, native-object, exception, and
 hosted-runtime assignments extend the same facts.
 
-### C++20 three-way operator ABI
+### C++20 operator ABI
 
 The `three-way` operator terminal denotes `<=>` and uses Itanium code
 `ss`. It is a binary operator, counting a member function's implicit object.
+The `co-await` terminal denotes `operator co_await` and uses Itanium code
+`aw` for both member and nonmember forms. [Itanium mangling](../doc/itanium-mangling.txt)

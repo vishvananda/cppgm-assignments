@@ -1,0 +1,77 @@
+CWG 2398: Template template parameter matching and deduction
+Source: https://cplusplus.github.io/CWG/issues/2398.html
+Snapshot: cplusplus/CWG gh-pages 38a43db15e384602a0c5debc3f7f22be32e186a1
+Retrieved: 2026-11-20
+Upstream status: drafting
+Catalog role: course-reference
+
+This issue records proposed wording. The PA18 handout identifies the tested deduction cases.
+
+This is an unofficial snapshot of the ISO/IEC JTC1 SC22 WG21 Core Issues List revision
+121a. See http://www.open-std.org/jtc1/sc22/wg21/ for the official list.
+
+2026-10-10
+
+2398. Template template parameter matching and deduction
+Section: 13.4.4 [temp.arg.template [1]] Status: drafting Submitter: Jason Merrill Date:
+2016-12-03
+
+Do the changes from P0522R0 [2] regarding template template parameter matching apply to
+deduction? For example:
+
+
+  template<class T, class U = T> class B { /* ... */ };
+  template<template<class> class P, class T> void f(P<T>);
+
+  int main()  {
+    f(B<int>());       // OK?
+    f(B<int,float>()); // ill-formed, T deduced to int and float
+  }
+
+
+In deduction we can determine that P is more specialized than B, then substitute B into
+P<T>, and then compare B<T,T> to B<int,int>. This will allow deduction to succeed,
+whereas comparing <T> to <int,int> without this substitution would fail. I suppose this
+is similar to deducing a type parameter, substituting it into the type of a non-type
+parameter, then deducing the value of the non-type parameter
+
+Does this make sense? Do we need more wording?
+
+Consider also this example;
+
+
+  template<typename> struct match;
+
+  template<template<typename> class t,typename T>
+  struct match<t<T> > { typedef int type; };      // #1
+
+  template<template<typename,typename> class t,typename T0,typename T1>
+  struct match<t<T0,T1> > { typedef int type; };  // #2
+
+  template<typename,typename = void> struct other { };
+  typedef match<other<void,void> >::type type;
+
+
+Before this change, partial specialization #1 was not a candidate; now it is, and
+neither partial specialization is at least as specialized as the other, so we get an
+ambiguity. It seems that the consistent way to address this would be to use other during
+partial ordering, so we'd be comparing
+
+
+  template<typename T>
+  void fn (match<other<T>>); // i.e. other<T,void>
+  template<typename T0, typename T1>
+  void fn (match<other<T0,T1>>);
+
+
+So #1 is more specialized, whereas before this change we chose #2.
+
+Additional notes (May, 2024)
+
+Paper P3310R0 [3] (Solving partial ordering issues introduced by P0522R0) by Matheus
+Izvekov strives to solve this issue, currently with focus on partial ordering (only).
+
+Source links:
+[1] https://wg21.link/temp.arg.template
+[2] http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0522r0.html
+[3] https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3310r0.html

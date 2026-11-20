@@ -5,12 +5,10 @@
 | [N3485](n3485.txt) | C++11 baseline clauses and existing course citations |
 | [N4140 text](n4140.txt), [HTML](n4140.html) | C++14 draft, from Tim Song's N4140 source rendering with editorial fixes |
 | [N4659 text](n4659.txt), [PDF](n4659.pdf) | C++17 working draft, 2017-03-21; use the PDF for formatting/page numbers |
+| [N4861](n4861.pdf) | C++20 working draft, 2020-04-01 |
 | [CWG and paper index](cwg/INDEX.txt) | Individually retained defect reports and proposal wording |
 | [Itanium ABI](itanium-mangling.txt) | ABI names and runtime conventions |
 | [WebAssembly bundle](wasm/README.md) | PA37 core encoding, wasm32 data model and object ABI |
-
-No C++20 draft is retained here. The handouts state the rules of the selected
-C++20 features; N4861 is the C++20 working draft that they follow.
 
 These are references, not a requirement to implement their full language or
 library chapters. The [required profile](../LANGUAGE_PROFILE.md) and handouts
@@ -19,7 +17,7 @@ N4659 `[dcl.struct.bind]`; paragraph numbers differ between editions.
 
 The C++14 HTML/text is a reproduction of the public source rendering, not the
 ISO publication or a downloaded official PDF. It retains the rendering's
-editorial fixes. The C++17 PDF is the WG21-hosted working draft. Sources,
+editorial fixes. The C++17 and C++20 PDFs are WG21-hosted working drafts. Sources,
 dates, source revision and file SHA-256 hashes are recorded in
 [language-drafts.json](language-drafts.json). Copyright and contributor
 attribution remain with ISO/IEC and the original draft contributors/renderers.

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-init-capture-cxx11-bad.t:1:17: lambda init-capture is a C++14 extension

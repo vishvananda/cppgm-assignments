@@ -2,7 +2,14 @@
 #error wrong architecture
 #endif
 static_assert(sizeof(void*) == 8 && sizeof(long) == 8, "LP64");
+static_assert(__is_same(__INT8_TYPE__, signed char) && __is_same(__UINT8_TYPE__, unsigned char), "8-bit header types");
+static_assert(__is_same(__INT16_TYPE__, short) && __is_same(__UINT16_TYPE__, unsigned short), "16-bit header types");
+static_assert(__is_same(__INT32_TYPE__, int) && __is_same(__UINT32_TYPE__, unsigned int), "32-bit header types");
 static_assert(__is_same(__INT64_TYPE__, long) && __is_same(__UINT64_TYPE__, unsigned long), "64-bit header types");
+static_assert(__is_same(decltype(__INT32_MAX__), __INT32_TYPE__) && __INT32_MAX__ == 2147483647, "signed 32-bit maximum");
+static_assert(__is_same(decltype(__UINT32_MAX__), __UINT32_TYPE__) && __UINT32_MAX__ == 4294967295U, "unsigned 32-bit maximum");
+static_assert(__is_same(decltype(__INT64_MAX__), __INT64_TYPE__) && __INT64_MAX__ == 9223372036854775807L, "signed 64-bit maximum");
+static_assert(__is_same(decltype(__UINT64_MAX__), __UINT64_TYPE__) && __UINT64_MAX__ == 18446744073709551615UL, "unsigned 64-bit maximum");
 static_assert(sizeof(__builtin_va_list) == 32, "variadic register save state");
 static_assert(char(-1) > 0 && wchar_t(-1) > 0, "unsigned character types");
 #if defined(__CPPGM__)

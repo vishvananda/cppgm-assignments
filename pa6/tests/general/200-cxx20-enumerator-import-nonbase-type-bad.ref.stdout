@@ -1,0 +1,1 @@
+ERROR: tests/general/200-cxx20-enumerator-import-nonbase-type-bad.t:3:5: a member using-declaration must name a base class or an enumerator

@@ -531,6 +531,6 @@ user-defined suffix boundaries distinct. See N4140/N4659 `[lex.ppnumber]`
 in the [offline references](../doc/REFERENCES.md). The `.cxx-standard` sidecar
 selects the same mode for implementation and reference runs.
 
-C++20 mode also recognizes `u8'c'` as one character-literal preprocessing
+C++17 and later recognize `u8'c'` as one character-literal preprocessing
 token. Its value and code-unit restrictions belong to PA2.
 

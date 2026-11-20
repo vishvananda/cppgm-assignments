@@ -473,7 +473,7 @@ sub build_wrapped_text_request
 	{
 		my $test_out = $test;
 		$test_out =~ s/\.t$/\.$suffix/;
-		my @language_args = CppgmBatchWorker::standard_args_for($test);
+		my @language_args = CppgmBatchWorker::source_args_for($test);
 
 		# The assignment wrapper declares its CLI contract. Directory numbers
 		# must not decide whether a tool reads stdin or grouped source files.
@@ -537,7 +537,7 @@ sub build_wrapped_text_request
 		my $test_base = $test;
 		$test_base =~ s/\.t\.1$/\.t/;
 		my @inputs = CppgmBatchWorker::input_files_with_prefix("$test_base.");
-		my @language_args = CppgmBatchWorker::standard_args_for($test);
+		my @language_args = CppgmBatchWorker::source_args_for($test);
 		return ("$test_out.stdout",
 		        "$test_out.stdout",
 		        "-",

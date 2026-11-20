@@ -26,12 +26,12 @@ fi
 if [ -f "${2%.t}.no-exceptions" ]; then
   test_args+=("-fno-exceptions")
 fi
-if [ -f "${2%.t}.cxx-standard" ]; then
-  read -r cxx_standard < "${2%.t}.cxx-standard"
-  case "$cxx_standard" in
-    c++11|c++14|c++17) test_args+=("-std=$cxx_standard") ;;
-    *) echo "unsupported C++ standard sidecar: $cxx_standard" >&2; exit 2 ;;
-  esac
+if [ -f "${2%.t}.cxx-standard" ] || [ -f "${2%.t}.c-standard" ]; then
+  source_args=$(perl -I../scripts -MCppgmBatchWorker -e \
+    'print "$_\n" for CppgmBatchWorker::source_args_for($ARGV[0]);' "$2")
+  while IFS= read -r arg; do
+    if [ -n "$arg" ]; then test_args+=("$arg"); fi
+  done <<< "$source_args"
 fi
 
 obj="$3.o"

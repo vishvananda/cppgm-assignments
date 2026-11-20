@@ -1,0 +1,2 @@
+object.o: tests/preproc/300-make-dependencies-system-pragma.t \
+ tests/preproc/dependency/pragma.h tests/preproc/dependency/local.h

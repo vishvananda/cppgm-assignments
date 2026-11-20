@@ -1,0 +1,29 @@
+#include <coroutine>
+#include <cstdlib>
+#include <exception>
+
+struct Task {
+  struct promise_type {
+    Task get_return_object() noexcept { return {}; }
+    std::suspend_always initial_suspend() { throw 42; }
+    std::suspend_always final_suspend() noexcept { return {}; }
+    void return_void() noexcept {}
+    void unhandled_exception() noexcept {}
+  };
+};
+
+Task make_task() noexcept { co_return; }
+
+__attribute__((noinline)) int call(Task (*start)()) {
+  try {
+    start();
+  } catch (int) {
+    return 1;
+  }
+  return 2;
+}
+
+int main() {
+  std::set_terminate([] { std::_Exit(0); });
+  return call(&make_task);
+}

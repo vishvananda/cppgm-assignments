@@ -1,0 +1,72 @@
+CWG 2627: Bit-fields and narrowing conversions
+Source: https://cplusplus.github.io/CWG/issues/2627.html
+Snapshot: cplusplus/CWG gh-pages 38a43db15e384602a0c5debc3f7f22be32e186a1
+Retrieved: 2026-11-19
+Upstream status: C++23
+Catalog role: course-reference
+
+This is an unofficial snapshot of the ISO/IEC JTC1 SC22 WG21 Core Issues List revision
+121a. See http://www.open-std.org/jtc1/sc22/wg21/ for the official list.
+
+2026-10-10
+
+2627. Bit-fields and narrowing conversions
+Section: 9.5.5 [dcl.init.list [1]] Status: C++23 Submitter: Tim Song Date: 2021-08-13
+
+[Accepted as a DR at the November, 2022 meeting.]
+
+Consider:
+
+
+struct C {
+  long long i : 8;
+};
+
+void f() {
+  C x{1}, y{2};
+  x.i <=> y.i; // error: narrowing conversion required (7.6.8 [expr.spaceship [2]] bullet 4.1)
+}
+
+
+The rules for narrowing conversions in 9.5.5 [dcl.init.list [3]] paragraph 7 consider
+only the source type, even though integral promotions can change the type of a bit-field
+to a smaller integer type without loss of value range according to 7.3.7 [conv.prom [4]]
+paragraph 5:
+
+A prvalue for an integral bit-field (11.4.10 [class.bit [5]]) can be converted to a
+prvalue of type int if int can represent all the values of the bit-field; otherwise, it
+can be converted to unsigned int if unsigned int can represent all the values of the
+bit-field. If the bit-field is larger yet, no integral promotion applies to it. If the
+bit-field has enumeration type, it is treated as any other value of that type for
+promotion purposes.
+
+There is implementation divergence in the handling of this example.
+
+Proposed resolution (approved by CWG 2022-10-07):
+
+Change in 9.5.5 [dcl.init.list [6]] bullet 7.4 as follows:
+
+A narrowing conversion is an implicit conversion
+
+- ...
+
+- from an integer type or unscoped enumeration type to an integer type that cannot
+represent all the values of the original type, except where
+
+- [INSERT: the source is a bit-field whose width w is less than that of its type (or,
+for an enumeration type, its underlying type) and the target type can represent all the
+values of a hypothetical extended integer type with width w and with the same signedness
+as the original type or]
+
+- the source is a constant expression whose value after integral promotions will fit
+into the target type, or
+
+- ...
+
+Source links:
+[1] https://wg21.link/dcl.init.list
+[2] https://wg21.link/expr.spaceship#4.1
+[3] https://wg21.link/dcl.init.list#7
+[4] https://wg21.link/conv.prom#5
+[5] https://wg21.link/class.bit
+[6] https://wg21.link/dcl.init.list#7.4

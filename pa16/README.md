@@ -99,6 +99,24 @@ indeterminate; a required constant object or an indeterminate read still fails
 constant evaluation. Keep constructor eligibility separate from the initialized
 values of each actual object.
 
+In C++20, a constexpr constructor may also leave a trivially
+default-initialized member indeterminate. Track that state during
+evaluation. A later assignment can initialize it before a read, and a
+transient object's unread member may stay indeterminate. A required
+constant object still needs initialized values for its subobjects. See
+N4861 `[dcl.constexpr]` and `[expr.const]`.
+
+In C++14 and later, a defaulted union copy or move in a constant expression
+copies the source's active member. A defaulted assignment may change which
+member of the destination is active. The old member ends its lifetime, and
+the copy does not read any inactive member. See N4659 `[class.copy.assign]`
+and N4861 `[class.copy.assign]`.
+
+When a defaulted copy or move constructor initializes an array member,
+apply the selected constructor to each class element in order. This also
+applies to elements of a multidimensional member array. See
+`[class.copy.ctor]` in the [C++17 draft](../doc/n4659.pdf).
+
 ### Constant initialization of nonliteral objects
 
 A constexpr member function's enclosing class need not be a literal type
@@ -362,15 +380,74 @@ one-past-array checks; a pointer to a destroyed temporary is not publishable.
 The existing relaxed constexpr body subset remains required: local variables,
 assignments, branches and bounded loops can participate when every evaluated
 operation satisfies the constant-expression rules. Retain lifetime, forbidden
-body-operation and nonconstant-evaluation diagnostics. This course extension
-is also available in its existing C++11 tests; selecting C++14/17 must not
-change those earlier expectations.
+body-operation and nonconstant-evaluation diagnostics. The default GNU C++11
+course mode retains the relaxed body rules. In ISO C++11, apply N3485
+`[dcl.constexpr]` to the written body. An ordinary definition needs exactly one
+return statement and may also contain the allowed empty statements and
+declarations. A constructor body may contain those same auxiliary statements
+and declarations. Some later statements, such as an extra return or a local
+variable declaration, can be admitted by the C++14 extension diagnostic.
+A loop still requires C++14 when compiling with strict language diagnostics.
+A block-scope `extern` declaration in a C++14 constexpr function can name
+an object with linkage. Taking its address can be a constant expression.
+The declaration starts no local object lifetime.
+See PA30 for the system-header and diagnostic pragma controls.
 
 Apply the selected edition's aggregate initialization and C++17 result-object
 rules during constant evaluation, including default member initializers and
 inline static constexpr members. Lambda constant evaluation is introduced with
 closures in PA20. Read N4140 `[dcl.constexpr]` and `[expr.const]`, then N4659's
 corresponding clauses for the required later rules.
+
+A trivial constexpr copy from a static constexpr member can initialize the
+destination from its evaluated value. The destination has its own storage,
+even when the source member supplies only an in-class initializer.
+
+### C++20 literal types and transient allocation
+
+A class may be a literal type with a constexpr destructor. For a defaulted
+destructor, determine eligibility from the base and member destructors.
+A destructor declared constexpr must satisfy the C++20 requirements for
+its subobjects. A virtual destructor can be constexpr and run when
+deleting an object allocated during the same constant evaluation. For a
+constexpr variable, check hypothetical destruction
+separately and preserve the value computed by its initializer. The object
+and its non-mutable subobjects begin their lifetimes in that check. See
+N4861 `[basic.types]`, `[dcl.constexpr]` and `[expr.const]`.
+
+During evaluation, destroy automatic variables on scope exit in reverse
+initialization order. This includes exits through `break`, `continue`, and
+`return`, and the scope of an unbraced substatement. Evaluate a return
+operand before destroying the block's variables. Apply the ordinary
+constant-expression rules to operations the destructor actually executes.
+See N4861 `[stmt.dcl]`, `[stmt.iter]`, `[stmt.jump]` and `[stmt.return]`.
+
+Destroy materialized temporaries in reverse construction order at the end
+of their full-expression. An initializer, a condition, and a return operand
+each have their own boundary, including the conversions and initialization
+they perform. A local reference can extend the complete temporary's lifetime
+when it binds to the temporary or one of its subobjects. A temporary bound
+to a reference member of that temporary can follow it into the same scope.
+A call returning a reference does not extend its referent's lifetime.
+By-value class parameters
+passed by address with nontrivial destruction are destroyed with the caller's
+temporaries. See N4861 `[intro.execution]`, `[class.temporary]`, and `[expr.call]`.
+
+A C++20 constant expression may use `new` with a replaceable global
+allocation function. For scalar and array allocations, keep the new object's
+identity across calls and scopes within the evaluation. It must be released by
+the matching form of `delete` before the evaluation completes. Diagnose an
+attempt to access deallocated storage or to preserve its address in the result.
+Run the destructor body before destroying members and bases in reverse
+construction order. Array elements are destroyed last first. See N4861
+`[expr.const]`, `[expr.new]`, `[expr.delete]` and `[class.dtor]`.
+
+An explicit destructor call in a C++20 constant expression follows the
+same destruction order. A scalar pseudo-destructor call also ends its
+object's lifetime. Track the lifetime separately from the storage so
+accesses after destruction fail. Reject ordinary placement `new` in a
+C++20 constant expression. The hosted `std::construct_at` exception is
+exercised in PA31. See N4861 `[basic.life]`, `[expr.call]` and `[expr.const]`.
 
 ### Out Of Scope
 

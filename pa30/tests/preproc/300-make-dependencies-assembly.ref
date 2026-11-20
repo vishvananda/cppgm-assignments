@@ -1,0 +1,2 @@
+object.o: tests/preproc/300-make-dependencies-assembly.t \
+ tests/preproc/dependency/local.h

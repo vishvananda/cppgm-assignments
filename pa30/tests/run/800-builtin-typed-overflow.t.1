@@ -1,0 +1,17 @@
+int main()
+{
+    volatile int minus_one = -1;
+    unsigned long long sum[1] = {};
+    if (!__builtin_uaddll_overflow(minus_one, 1, sum) || sum[0] != 0)
+        return 1;
+
+    volatile long factor = 2;
+    long product = 0;
+    if (!__builtin_smull_overflow(__LONG_MAX__, factor, &product) || product != -2)
+        return 2;
+
+    unsigned difference = 0;
+    if (__builtin_usub_overflow(9, factor, &difference) || difference != 7)
+        return 3;
+    return 0;
+}

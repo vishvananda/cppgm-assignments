@@ -1,0 +1,1 @@
+ERROR: tests/general/300-single-argument-static-assert-cxx14-bad.t:1:1: static_assert without a message is a C++17 extension

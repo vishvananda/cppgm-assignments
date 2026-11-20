@@ -13,7 +13,7 @@ WASM_BENCH_ARGS ?=
 all: dev-shared-target
 
 dev-shared-target:
-	@$(MAKE) -C ../dev CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" $(TARGET) cppgm lowiropt
+	@if [ "$(CPPGM_SKIP_DEV_REBUILD)" = "1" ]; then true; else $(MAKE) -C ../dev CXX="$(CXX)" CPPGM_HOST_CXX="$(CPPGM_HOST_CXX)" $(TARGET) cppgm lowiropt; fi
 
 test: $(TEST_DEPS)
 	@perl ../scripts/run_all_tests_common.pl control_t $(CPPGM_TEST_APP) my tests

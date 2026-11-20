@@ -11,6 +11,8 @@ template declaration and specialization model so the compiler knows:
 - what specializations exist
 - which specialization is selected
 - which declarations/definitions own the selected specialization
+- how a failed substitution removes a function template from consideration
+  when selecting the target of an explicit instantiation
 
 PA17 still produces LowIR. It does not introduce a new output format.
 
@@ -136,6 +138,13 @@ declaration has no concrete binding until template deduction.  Naming a
 variable template without its required template arguments is invalid; lookup
 does not fall through to a hidden base data member.
 
+A member using-declaration imports the base overload set. A derived member
+template hides an imported member template with the same parameter types,
+template head and qualifiers, including equivalent dependent parameter
+types. Apply this rule in either declaration order and keep base overloads
+with different parameter types. See `[namespace.udecl]` in the
+[C++17 draft](../doc/n4659.pdf).
+
 ### Partial-specialization ordering
 
 When deduction skips a dependent member type or expression, ordering still
@@ -241,23 +250,34 @@ PA17 owns the template declaration graph and specialization model over the
 implemented language surface, including:
 
 - alias templates
-- variable templates (a C++14 feature, which the course accepts in C++11, as
+- variable templates (a C++14 feature, which the course accepts in GNU C++11, as
   clang and g++ do with a warning); each specialization is its own object, its
   symbol carrying the template arguments (`_Z5widthIiE`,
   `_ZN5store5countIcEE`, `_ZN5table5countIiEE`); a static data member template
   may be defined outside its class, an ordinary class or a class template, and
   the definition's initializer is analyzed in the class's scope
-- template-template parameters and template-template argument matching
+- template-template parameters and template-template argument matching.
+  From C++14, a class template argument may supply trailing defaults for
+  a shorter compatible parameter list. See [CWG 150](../doc/cwg/cwg-0150.txt) and
+  N4659 `[temp.arg.template]`.
 - member templates, including templated member operators and templated call
   operators
 - access checking for member class templates, alias templates, and nested type
   paths, including inherited access and template-template arguments
 - friend templates in the supported class-template/function-template subset, including a
-  friend type template-id whose non-type argument is a dependent constant expression
+  friend type template-id whose non-type argument is a dependent constant expression.
+  Match a qualified friend template to its namespace declaration even when a
+  dependent return type uses a variable template. Keep name lookup in the
+  context of the class granting friendship. See N4140 `[temp.friend]` and
+  `[temp.over.link]`.
 - class partial specialization
 - partial-specialization ordering and specialization selection
 - current-specialization identity in the supported class-template and
   specialization cases
+- overload resolution for enum operands in class-template arguments.
+  Evaluate a constant argument with its selected operator, and preserve
+  any dependence on template parameters until substitution. See N3485
+  `[over.match.oper]` and `[temp.arg.nontype]`.
 - explicit-instantiation declarations and definitions over the supported surface
 - an explicit-instantiation declaration for a class specialization suppresses
   non-inline instantiation but keeps a locally used in-class inline or defaulted
@@ -272,9 +292,16 @@ implemented language surface, including:
 - an explicit definition of a member template for a concrete class-template
   specialization replaces the definition instantiated from the primary and may
   not itself be defined more than once
+- a member type alias of a concrete specialization can qualify a member
+  template without a `template` disambiguator, including inside another
+  template definition. See N4140 `[temp.names]` and `[temp.dep.type]`.
 - a member template called before its out-of-class definition is still
   instantiated from that definition (14.6.4.1), whatever the order of the call
   and the definition
+- an exception specification on a member template is instantiated when
+  needed. Completing its enclosing class preserves the specification for a
+  later use, including when its operand depends only on the class template's
+  arguments. See N4140 `[temp.inst]` and [CWG 1330](../doc/cwg/cwg-1330.txt).
 - a block-scope static in a function-template or member-template
   specialization whose substituted initializer is a constant expression is
   constant-initialized data with no guard, as in an ordinary function (PA16),
@@ -392,6 +419,9 @@ unsatisfied alias or variable specialization before publishing it. A partial
 specialization may keep the primary's argument pattern when its constraints
 make it more specialized. Preserve distinct constrained partials with equal
 patterns and use normalized atomic subsumption to order viable matches.
+Check a dependent alias template-id's constraints when its arguments become
+known, including through another alias template. See N4861 `[temp.alias]`
+and `[temp.constr.decl]`.
 Equivalent redeclarations may rename parameters. Constrained hidden friends
 remain hidden until their own namespace declaration makes them visible. A
 friend function defined in a class template may end with a requires-clause

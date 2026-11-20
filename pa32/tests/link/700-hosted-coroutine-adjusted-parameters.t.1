@@ -1,0 +1,36 @@
+#include <coroutine>
+
+struct Task {
+  struct promise_type;
+  using Handle = std::coroutine_handle<promise_type>;
+  Handle handle;
+  explicit Task(Handle h) noexcept : handle(h) {}
+  Task(const Task&) = delete;
+  ~Task() {}
+
+  struct promise_type {
+    promise_type(char**&, int (*&)(int), int& n) noexcept : value(n) {}
+    Task get_return_object() noexcept { return Task(Handle::from_promise(*this)); }
+    std::suspend_always initial_suspend() noexcept { return {}; }
+    std::suspend_always final_suspend() noexcept { return {}; }
+    void return_value(int n) noexcept { value += n; }
+    void unhandled_exception() noexcept { value = -1; }
+    int value = 0;
+  };
+};
+
+Task compute(char* values[], int operation(int), int n) {
+  co_return operation(n) + values[0][0];
+}
+
+int twice(int n) { return n * 2; }
+
+int main() {
+  char string[] = "A";
+  char* values[] = {string};
+  auto task = compute(values, twice, 3);
+  task.handle.resume();
+  if (!task.handle.done() || task.handle.promise().value != 'A' + 9)
+    return 1;
+  task.handle.destroy();
+}

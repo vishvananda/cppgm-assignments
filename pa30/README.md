@@ -102,6 +102,23 @@ hosted headers depend on:
   callers that omit frame pointers cannot be traversed reliably. Inlining
   uses the containing activation's frame. The query is not a C++ constant
   expression, and `__has_builtin` advertises it through the builtin registry
+- Expose `__builtin_source_location()` through `__has_builtin`. Read
+  the four named fields of the record in the
+  [builtin contract](https://clang.llvm.org/docs/LanguageExtensions.html#source-location-builtins). Honor `#line`
+  and evaluate location-sensitive immediate calls in default arguments
+  and default member initializers at the point of use. See
+  `[support.srcloc.cons]` in the [C++20 draft](../doc/n4861.pdf) and
+  [CWG2631](../doc/cwg/cwg-2631.txt).
+- In C++20 hosted mode, `__builtin_coro_resume`, `__builtin_coro_destroy`,
+  `__builtin_coro_done`, and `__builtin_coro_promise` operate on a suspended
+  coroutine handle. Use the two entry pointers at the start of the frame.
+  A null resume entry marks completion. The promise starts after the entry
+  pointers, rounded up to the requested constant alignment. The constant
+  direction operand selects handle-to-promise or promise-to-handle.
+  Resume and destroy calls participate in ordinary exception unwinding.
+  `__builtin_coro_noop()` yields a handle that stays suspended and whose
+  resume and destroy operations have no effect.
+  See `[coroutine.handle]` for the library contract. [C++20 draft](../doc/n4861.pdf)
 
 The tests assume a Linux shell environment with `make`, `bash`, `perl`, and a
 working host C++ compiler with hosted C++ headers installed.
@@ -182,7 +199,9 @@ New or newly required in PA30:
   - `-MD` and `-MMD` also write a make rule during compilation. The default
     depfile is named for the output, with a `.d` suffix.
   - `-M` and `-MD` include system headers. `-MM` and `-MMD` omit system
-    headers and headers reached solely through them.
+    headers and headers reached solely through them. A system-header pragma
+    also excludes subsequent includes from that file. The file itself keeps
+    the status it had when it was included.
   - `-MT <target>` supplies a make target as written. `-MQ <target>`
     quotes make-special characters. `-MP` adds an empty rule for each
     header so a removed header does not break an older dependency file.
@@ -323,7 +342,8 @@ Optional sidecars include:
   include paths
 - `x.no-exceptions`: compile a `tests/compile` input with `-fno-exceptions`
 - `x.cxx-standard`: select the required language mode below
-- `x.flags`: additional compiler flags for a `tests/run` input
+- `x.flags`: additional compiler flags for `tests/run` or for a
+  `tests/compile` input with a language mode sidecar
 - `x.ref.impl.exit_status`, `x.ref.program.exit_status`, and
   `x.ref.program.stdout`: implementation and program-result references for
   `tests/run` host-link/run smokes
@@ -332,11 +352,35 @@ The default preprocessor references are intentionally host-agnostic. The test ha
 pin local host macro values such as platform-specific integer or floating-point
 limits.
 
-GNU `q`/`Q` floating suffixes denote `__float128`, as specified in
-[GCC's floating-type extensions](https://gcc.gnu.org/onlinedocs/gcc/Floating-Types.html),
-in both normal compilation and the typed `cppgm -E` stream. Emit binary128
-bytes for these literals; `l`/`L` still denote `long double`. This PA30
-extension does not change the strict C++11 literal grammar of PA2–PA4.
+In GNU C++ modes, `q` and `Q` floating suffixes denote `__float128` in
+compilation and in the typed `cppgm -E` stream. Emit binary128 bytes for
+these literals. ISO C++ modes leave those suffixes to the ordinary
+user-defined literal rules. The standard `l` and `L` suffixes denote
+`long double`. [GCC floating-type extensions](https://gcc.gnu.org/onlinedocs/gcc/Floating-Types.html)
+
+If the host probe defines `__SIZEOF_FLOAT128__` for the native target, preserve
+it in the hosted environment. Libraries use it to discover the GNU
+`__float128` type even in ISO C++ mode, where the GNU literal suffixes are
+disabled.
+
+Support `-fconstexpr-ops-limit=<n>` when compiling hosted C++. It sets the
+work limit for one constant evaluation. Use a finite default and reset the
+work counter between evaluations. A required evaluation that exceeds the
+selected limit must issue a diagnostic.
+[GCC dialect options](https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/C_002b_002b-Dialect-Options.html)
+
+In constant expressions, support the GNU builtins `__builtin_fmaf`,
+`__builtin_fma`, and `__builtin_fmal` for finite operands. Evaluate the
+product and sum with one rounding to the result type. An overflow or an
+inexact underflow cannot produce a constant expression.
+
+Support `__builtin_sinf`, `__builtin_sin`, and `__builtin_sinl` in constant
+expressions for finite operands. Compute the sine in the target floating-point
+format when the host math library supplies the needed precision. Preserve a
+signed zero. Infinite and NaN operands require a diagnostic in a required
+constant expression. Apply the same evaluation to the C-linkage sine
+declarations from system math headers, including declarations imported into
+`std` by `<cmath>`. Preserve user definitions and other signatures.
 
 Constant evaluation of binary128 values must use their target precision and
 range, including arithmetic, comparisons, casts and static initialization.
@@ -370,9 +414,21 @@ owning earlier assignments. Hosted headers consume those same type, deduction,
 constant-evaluation and closure rules. A language-only reducer belongs in its
 earlier lesson; host include/builtin/ABI consumers stay here or in PA32.
 The supplied `.cxx-standard` sidecars select required modes in normal tests.
-Later header concessions such as conditional `explicit(bool)`, alias-declaration
-initializers and `no_unique_address` remain bounded compatibility extensions;
-they do not imply full C++20/23 coverage.
+An edition extension such as `if constexpr`, conditional `explicit(bool)` or `__VA_OPT__`
+can appear in a system header under an earlier mode. Preserve the translation
+unit's edition and feature macros when suppressing its extension diagnostic.
+System status follows `-isystem`, nested includes from system headers, and
+`#pragma GCC system_header` or `#pragma clang system_header` from the pragma
+onward. `-Wsystem-headers` restores the default diagnostics for these locations.
+Honor scoped `diagnostic push`, `diagnostic ignored`, and `diagnostic pop`
+for the edition warning groups, including through `_Pragma`. Use
+`-pedantic-errors` to require rejection for active extension diagnostics.
+Ordinary language errors still diagnose inside a suppressed scope.
+A constexpr `try` statement or function-try-block follows the C++20
+extension group in C++14 and C++17. Evaluate an admitted protected block
+using the [PA21 constant-expression rules](../pa21/README.md).
+In C++20 mode, expose `__cpp_concepts`. PA31 exercises the hosted `<concepts>`
+declarations through the course's constraint and overload rules.
 
 ### Hosted ABI Name Guidance
 
@@ -396,6 +452,11 @@ separate hosted-only naming scheme.
 
 To complete PA30, implement hosted compatibility for:
 
+- GNU `__PRETTY_FUNCTION__` names the specialization in a function
+  template. Evaluate constant expressions that read the string with the
+  specialization's arguments, including when the result determines an
+  array bound. A C++20 argument that designates a named member includes
+  the member's name in the string.
 - predefined macro import, `__COUNTER__`, the GNU comma paste, `_Pragma`,
   `__has_*`, `#include_next`, `#warning`, ignored unknown pragmas, and hosted
   hex-float preprocessing forms such as `0x1p+4`. Hosted preprocessing also
@@ -466,6 +527,9 @@ To complete PA30, implement hosted compatibility for:
   `__has_declspec_attribute`, answer no rather than failing
 - GNU `always_inline` direct calls in host objects substitute the available
   body at every optimization level, including constructors and destructors.
+  A defaulted member of a class template still follows the rules for the
+  location of its original `= default`. Instantiating a call preserves the
+  special-member semantics of an in-class default.
   A bounded constant stack request outside every control-flow cycle can use
   fixed local storage before substitution. Preserve distinct allocations in
   loops; a dynamic request still needs its own stack lifetime.
@@ -554,10 +618,9 @@ To complete PA30, implement hosted compatibility for:
   headers, including post-declarator parameter
   attributes, explicit specializations of primary-template member functions,
   placeholder-return declarations without a body, such as a deleted overload
-  declared `auto` (a C++14 declaration form required by PA20; it remains
-  out of scope, and like PA20's deduced return types it is accepted in every
-  language mode), non-standard hex-float compile acceptance on ordinary
-  floating types,
+  declared `auto` in C++14 or later, the default GNU C++11 course
+  return-deduction extension from PA20, and GNU hexadecimal floating
+  literals on ordinary floating types,
   and `[[no_unique_address]]` empty-member layout through generated copy operations
 - the standard `[[noreturn]]` attribute takes no argument and appertains only
   to the declarator-id of a function declaration (7.6.3p1): a variable,
@@ -574,6 +637,9 @@ To complete PA30, implement hosted compatibility for:
   keeps only its own declarations'; a call through a pointer states none, and
   a call of such a function does not end its block. PA33's `-O0` driver lane
   compares the fact
+- default visibility for unannotated imports whose GNU inline body is
+  available only for inlining, even when the compilation uses
+  `-fvisibility=hidden` or `-fvisibility-inlines-hidden`.
 - semantic validation of primary-source GNU inline function bodies even when
   emission is deferred; an unimplemented reserved compiler builtin may defer
   its wrapper, but ordinary lookup and type errors in an unused wrapper must
@@ -837,6 +903,26 @@ with 128-bit operations, so programs run without AVX.
 `__builtin_ia32_tzcnt_u16`, `_u32` and `_u64` trailing zero bits. The result
 has the operand type of the builtin's width, and a zero operand gives that
 width. The operand converts to that type and is evaluated once.
+
+### x86 carry and borrow
+
+The `_addcarry_u32`, `_addcarry_u64`, `_subborrow_u32` and `_subborrow_u64`
+header functions use builtins with an unsigned byte input flag, two unsigned
+operands of the indicated width and a pointer to an output of that width.
+A nonzero input flag supplies one more unit to add or subtract. Evaluate
+each argument once, store the wrapped result and return an unsigned byte
+equal to zero or one according to whether the operation carried or borrowed.
+Accept GCC's `sbb` and Clang's `subborrow` builtin spellings.
+
+### Integer overflow builtins with fixed argument types
+
+The signed and unsigned forms of the overflow-checking builtins use the
+integer type selected by their names. For example, both operands of
+`__builtin_uaddll_overflow` convert to `unsigned long long`, and its third
+argument points to that type. Apply the argument conversions before
+computing the exact result. Store the result converted to the destination
+type and return whether the conversion changed its value.
+[GCC integer overflow builtins](https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html)
 
 ### Design Notes (Non-Normative)
 

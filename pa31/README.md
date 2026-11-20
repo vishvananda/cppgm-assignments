@@ -117,8 +117,8 @@ header together with a semantic check — a trait, `decltype`, `sizeof`, or
 so a test cannot pass by skipping or stubbing the include.
 
 Optional `x.no-exceptions` and `x.cxx-standard` sidecars disable exceptions or
-select the language mode for a compile test. The standard sidecar currently
-accepts `c++11` and `c++14`.
+select the language mode for a compile test. The standard sidecar accepts
+`c++11`, `c++14`, `c++17`, and `c++20`.
 
 ### Required Implementation Surface
 
@@ -127,6 +127,42 @@ To complete PA31, support:
 - compiling the heaviest hosted standard-library headers within that time limit
 - the template, trait, and overload-resolution depth those headers exercise
   during `-c` compilation
+- representative C++20 uses of `<concepts>`, `<compare>`, and `<atomic>`
+  through the earlier assignments' constraint, comparison, and atomic rules
+- compile `<source_location>` with the PA30 builtin. Check presumed file
+  and line numbers and the point of use for default arguments and default
+  member initializers.
+- Classify coroutine definitions from the operations in their own parsed
+  bodies. Resolve the promise through `std::coroutine_traits`, including
+  the implicit object parameter of a non-static member. Try the promise
+  constructor with the implicit object and the parameter copies as lvalues.
+  Try default initialization if none of those constructors is viable.
+  Initialize a class parameter's frame copy from an xvalue of the incoming
+  object. A reference parameter's frame copy binds to the same referent.
+  Use the adjusted pointer types for array and function parameters.
+  Look up allocation and deallocation in the promise class, with global
+  lookup as the fallback when the name is absent. Try a class allocator
+  with the frame size and the incoming arguments before trying the size
+  alone. A promise with `get_return_object_on_allocation_failure` needs a
+  non-throwing allocator and a static failure operation.
+  Resolve the promise and awaiter calls using normal overload resolution.
+  For `co_return`, first resolve `return_value` using an rvalue when the
+  operand names an implicitly movable entity in the coroutine, including
+  a possibly parenthesized local name. Retry as an lvalue only if overload
+  resolution fails. Diagnose a deleted or inaccessible selected overload.
+  See [P1825](../doc/cwg/paper-p1825r0.txt).
+  Reject suspension in a block-scope static or thread-local initializer.
+  Use the type and value category of `await_resume()` for the await expression.
+  Type-check the promise's coroutine handle and the resumption of the
+  continuation when `await_suspend()` returns a handle.
+  See `[dcl.fct.def.coroutine]`, `[expr.await]`, and `[stmt.return.coroutine]`.
+- constant evaluation of C++20 `<memory>`, `<vector>`, and `<algorithm>`.
+  `std::allocator<T>::allocate` starts the lifetime of the backing array.
+  Each element starts its own lifetime when constructed. Accept
+  `std::construct_at` for matching mutable storage created during the
+  evaluation, and use the lifetime rules from PA16 for `std::destroy_at`.
+  Require deallocation before evaluation ends. See N4861 `[expr.const]`,
+  `[allocator.members]`, and `[specialized.construct]`.
 
 The PA31 tests do not require:
 

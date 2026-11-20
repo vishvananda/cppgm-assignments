@@ -1,0 +1,4 @@
+preproc 1
+sof tests/macros/200-cxx17-utf8-character-preprocessing.t
+literal u8'A' char 41
+eof

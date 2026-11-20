@@ -1,0 +1,19 @@
+struct RuntimeAssignment {
+    int value;
+    RuntimeAssignment& operator=(RuntimeAssignment&& from) {
+        value = from.value;
+        return *this;
+    }
+};
+
+template<class T> struct Wrapper {
+    T member;
+    __attribute__((always_inline)) constexpr Wrapper& operator=(Wrapper&&) = default;
+};
+
+int main() {
+    Wrapper<RuntimeAssignment> a{}, b{};
+    b.member.value = 8;
+    a = static_cast<Wrapper<RuntimeAssignment>&&>(b);
+    return a.member.value != 8;
+}

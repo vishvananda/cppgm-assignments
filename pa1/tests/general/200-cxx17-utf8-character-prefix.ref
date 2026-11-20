@@ -1,0 +1,13 @@
+character-literal 5 u8'A'
+whitespace-sequence 0 
+character-literal 6 u8'\0'
+whitespace-sequence 0 
+user-defined-character-literal 15 u8'\xFF'_suffix
+new-line 0 
+identifier 2 u8
+whitespace-sequence 0 
+character-literal 3 'A'
+whitespace-sequence 0 
+string-literal 5 u8"A"
+new-line 0 
+eof

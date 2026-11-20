@@ -256,6 +256,7 @@ enum AbiTerminalKind : std::uint8_t
 	ABI_TERMINAL_CALL,
 	ABI_TERMINAL_INDEX,
 	ABI_TERMINAL_THREE_WAY,
+	ABI_TERMINAL_CO_AWAIT,
 	ABI_TERMINAL_COUNT
 };
 
@@ -279,7 +280,8 @@ inline const AbiTerminalEntry& abi_terminal_entry(AbiTerminalKind kind)
 		{ "right-shift-assign", "rS" }, { "equal", "eq" }, { "not-equal", "ne" }, { "less", "lt" }, { "greater", "gt" },
 		{ "less-equal", "le" }, { "greater-equal", "ge" }, { "logical-not", "nt" }, { "logical-and", "aa" },
 		{ "logical-or", "oo" }, { "increment", "pp" }, { "decrement", "mm" }, { "comma", "cm" },
-		{ "member-pointer", "pm" }, { "arrow", "pt" }, { "call", "cl" }, { "index", "ix" }, { "three-way", "ss" } };
+		{ "member-pointer", "pm" }, { "arrow", "pt" }, { "call", "cl" }, { "index", "ix" }, { "three-way", "ss" },
+		{ "co-await", "aw" } };
 	return kTerminals[kind];
 }
 
@@ -454,18 +456,19 @@ enum AbiTemplateParamDeclKind : std::uint16_t
 // or one of the special names (5.1.4).
 enum AbiTargetKind : std::uint8_t
 {
-	ABI_TARGET_TYPE,                // <type>
-	ABI_TARGET_ENTITY,              // _Z <encoding>
-	ABI_TARGET_C_NAME,              // an unmangled C-linkage name
-	ABI_TARGET_TYPEINFO,            // _ZTI <type>
-	ABI_TARGET_TYPEINFO_NAME,       // _ZTS <type>
-	ABI_TARGET_VTABLE,              // _ZTV <type>
-	ABI_TARGET_VTT,                 // _ZTT <type>
-	ABI_TARGET_CONSTRUCTION_VTABLE, // _ZTC <derived> <offset> _ <base>
-	ABI_TARGET_TLS_WRAPPER,         // _ZTW <name>
-	ABI_TARGET_THUNK,               // _ZT <call-offset> [<call-offset>] <encoding>
-	ABI_TARGET_TLS_INIT,            // _ZTH <name>
-	ABI_TARGET_GUARD_VARIABLE,      // _ZGV <name>
+	ABI_TARGET_TYPE,                      // <type>
+	ABI_TARGET_ENTITY,                    // _Z <encoding>
+	ABI_TARGET_C_NAME,                    // an unmangled C-linkage name
+	ABI_TARGET_TYPEINFO,                  // _ZTI <type>
+	ABI_TARGET_TYPEINFO_NAME,             // _ZTS <type>
+	ABI_TARGET_VTABLE,                    // _ZTV <type>
+	ABI_TARGET_VTT,                       // _ZTT <type>
+	ABI_TARGET_CONSTRUCTION_VTABLE,       // _ZTC <derived> <offset> _ <base>
+	ABI_TARGET_TLS_WRAPPER,               // _ZTW <name>
+	ABI_TARGET_THUNK,                     // _ZT <call-offset> [<call-offset>] <encoding>
+	ABI_TARGET_TLS_INIT,                  // _ZTH <name>
+	ABI_TARGET_GUARD_VARIABLE,            // _ZGV <name>
+	ABI_TARGET_TEMPLATE_PARAMETER_OBJECT, // _ZTA <template-arg>
 	ABI_TARGET_COUNT
 };
 
@@ -473,7 +476,7 @@ enum AbiTargetKind : std::uint8_t
 inline const char* abi_target_prefix(AbiTargetKind kind)
 {
 	static const char* const kPrefixes[ABI_TARGET_COUNT] = { "", "_Z", "", "_ZTI", "_ZTS", "_ZTV", "_ZTT", "_ZTC",
-		"_ZTW", "_ZT", "_ZTH", "_ZGV" };
+		"_ZTW", "_ZT", "_ZTH", "_ZGV", "_ZTA" };
 	return kPrefixes[kind];
 }
 

@@ -1,0 +1,17 @@
+#if defined(__x86_64__)
+#include <immintrin.h>
+#endif
+
+int main()
+{
+#if defined(__x86_64__)
+    volatile unsigned char in = 2;
+    unsigned s32;
+    unsigned long long s64;
+    if (_addcarry_u32(in, ~0u, 0u, &s32) != 1 || s32 != 0) return 1;
+    if (_subborrow_u32(in, 5u, 4u, &s32) != 0 || s32 != 0) return 2;
+    if (_addcarry_u64(0, ~0ull, 3ull, &s64) != 1 || s64 != 2) return 3;
+    if (_subborrow_u64(in, 0ull, ~0ull, &s64) != 1 || s64 != 0) return 4;
+#endif
+    return 0;
+}

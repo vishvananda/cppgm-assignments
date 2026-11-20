@@ -1,0 +1,1 @@
+ERROR: tests/general/100-cxx17-constexpr-destructor-reject.t:2:3: a constexpr destructor requires C++20

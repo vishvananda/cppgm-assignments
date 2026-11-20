@@ -1,0 +1,1 @@
+ERROR: tests/macros/600-cxx20-optional-variadic-paste-bad.t:1:21: `##` cannot begin or end a __VA_OPT__ operand

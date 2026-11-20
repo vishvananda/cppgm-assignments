@@ -1,0 +1,1 @@
+ERROR: tests/general/200-cxx20-enumerator-import-opaque-bad.t:2:1: using enum requires an enumeration definition

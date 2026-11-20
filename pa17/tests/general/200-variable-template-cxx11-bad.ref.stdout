@@ -1,0 +1,1 @@
+ERROR: tests/general/200-variable-template-cxx11-bad.t:1:33: variable templates are a C++14 extension

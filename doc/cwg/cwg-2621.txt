@@ -1,0 +1,109 @@
+CWG 2621: Kind of lookup for using enum declarations
+Source: https://cplusplus.github.io/CWG/issues/2621.html
+Snapshot: cplusplus/CWG gh-pages 38a43db15e384602a0c5debc3f7f22be32e186a1
+Retrieved: 2026-11-19
+Upstream status: C++23
+Catalog role: course-reference
+
+This is an unofficial snapshot of the ISO/IEC JTC1 SC22 WG21 Core Issues List revision
+121a. See http://www.open-std.org/jtc1/sc22/wg21/ for the official list.
+
+2026-10-10
+
+2621. Kind of lookup for using enum declarations
+Section: 9.8.2 [enum.udecl [1]] Status: C++23 Submitter: Sean Baxter Date: 2022-08-17
+
+P2720R0 comment CA 054
+[2]
+
+[Accepted as a DR at the November, 2022 meeting.]
+
+Consider:
+
+
+enum class E {
+  a, b, c
+};
+
+using MyE = E;
+
+int main() {
+  using enum MyE;   // #1
+}
+
+
+Does the lookup for the elaborated-enum-specifier at #1 use type-only lookup per 6.5.6
+[basic.lookup.elab [3]]? There is implementation divergence; EDG, gcc, and MSVC accept,
+clang rejects.
+
+[INSERT: Suggested resolution [SUPERSEDED]:]
+
+Change in 9.8.2 [enum.udecl [4]] paragraph 1 as follows:
+
+[INSERT: Lookup for the elaborated-enum-specifier is as specified in 6.5.6
+[basic.lookup.elab [3]].] The elaborated-enum-specifier shall not name a dependent type
+and the type shall have a reachable enum-specifier.
+
+CWG telecon 2022-09-09:
+
+The example at #1 is intended to be valid; even though the grammar suggests that an
+elaborated-type-specifier is used here, an ordinary (not a type-only) lookup is
+performed.
+
+Proposed resolution (approved by CWG 2022-09-23) [SUPERSEDED]:
+
+Change in 9.8.2 [enum.udecl [4]] paragraph 1 as follows:
+
+[INSERT: The terminal name of the elaborated-enum-specifier undergoes ordinary lookup
+(6.5.3 [basic.lookup.unqual [5]], 6.5.5 [basic.lookup.qual [6]]).] The
+elaborated-enum-specifier shall not name a dependent type and the type shall have a
+reachable enum-specifier.
+
+CWG 2022-11-07:
+
+Use the wording approach presented in CA-054, with necessary adjunct fixes.
+
+Proposed resolution (approved by CWG 2022-11-10):
+
+Change the grammar before 9.2.9.5 [dcl.type.elab [7]] paragraph 1 as follows, merging
+the grammar productions:
+
+
+elaborated-type-specifier :
+    class-key attribute-specifier-seqopt nested-name-specifieropt identifier
+    class-key simple-template-id
+    class-key nested-name-specifier templateopt simple-template-id
+    [DELETE: elaborated-enum-specifier
+
+elaborated-enum-specifier :]
+    enum nested-name-specifieropt identifier
+
+
+Change the grammar before 9.8.2 [enum.udecl [4]] paragraph 1 as follows:
+
+
+using-enum-declaration:
+    using [DELETE: elaborated-enum-specifier] [INSERT: enum using-enum-declarator] ;
+
+[INSERT: using-enum-declarator:
+    nested-name-specifieropt identifier
+    nested-name-specifieropt simple-template-id]
+
+
+Change in 9.8.2 [enum.udecl [4]] paragraph 1 as follows:
+
+[INSERT: A using-enum-declarator names the set of declarations found by lookup (6.5.3
+[basic.lookup.unqual [5]], 6.5.5 [basic.lookup.qual [6]]) for the
+using-enum-declarator.] The [DELETE: elaborated-enum-specifier] [INSERT:
+using-enum-declarator] shall [DELETE: not name a dependent] [INSERT: designate a
+non-dependent] type [DELETE: and the type shall have] [INSERT: with] a reachable
+enum-specifier.
+
+Source links:
+[1] https://wg21.link/enum.udecl
+[2] http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2720r0.pdf#CA054
+[3] https://wg21.link/basic.lookup.elab
+[4] https://wg21.link/enum.udecl#1
+[5] https://wg21.link/basic.lookup.unqual
+[6] https://wg21.link/basic.lookup.qual
+[7] https://wg21.link/dcl.type.elab#1

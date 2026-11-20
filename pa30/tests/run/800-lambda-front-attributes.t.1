@@ -1,0 +1,6 @@
+int main() {
+  int value = 3;
+  auto implicitParameters = [&] [[nodiscard]] { return ++value; };
+  auto explicitParameters = [&] [[nodiscard]] (int n) { return value + n; };
+  return implicitParameters() != 4 || explicitParameters(3) != 7;
+}

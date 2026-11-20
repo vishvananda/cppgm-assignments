@@ -1,0 +1,51 @@
+1 translation units
+start translation unit 1
+translation-unit
+  enum-specifier Direction
+    enum-key KW_CLASS:class
+    enumerator north
+    enumerator south
+  using-enum-declaration
+    target Direction
+  class-specifier Route
+    class-key KW_STRUCT:struct
+    using-enum-declaration
+      target ::Direction
+  alias-declaration selected
+    type-id
+      type-specifier-seq
+        type-specifier KW_CHAR:char
+      abstract-declarator
+        array-suffix
+          literal 16
+  class-specifier Table
+    class-key KW_STRUCT:struct
+    simple-declaration
+      decl-specifier-seq
+        enum-specifier Key
+          enum-key KW_CLASS:class
+  enum-specifier Table::Key
+    enum-key KW_CLASS:class
+    enumerator selected
+  alias-declaration KeyAlias
+    type-id
+      type-specifier-seq
+        type-name Table::Key
+  function-definition
+    decl-specifier-seq
+      decl-specifier KW_VOID:void
+    declarator
+      identifier lookup
+      parameter-clause
+    compound-statement
+      using-enum-declaration
+        target KeyAlias
+      static-assert-declaration
+        binary-expression OP_EQ:==
+          sizeof-expression
+            id-expression selected
+          sizeof-expression
+            type-id
+              type-specifier-seq
+                type-name Table::Key
+end translation unit

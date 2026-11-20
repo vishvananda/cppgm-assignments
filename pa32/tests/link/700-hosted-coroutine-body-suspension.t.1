@@ -1,0 +1,115 @@
+#include <coroutine>
+
+struct FrameTask {
+  struct promise_type;
+  using Handle = std::coroutine_handle<promise_type>;
+  Handle handle;
+
+  struct promise_type {
+    int value = 0;
+    FrameTask get_return_object() noexcept { return {Handle::from_promise(*this)}; }
+    std::suspend_always initial_suspend() noexcept { return {}; }
+    std::suspend_always final_suspend() noexcept { return {}; }
+    std::suspend_always yield_value(int v) noexcept { value = v; return {}; }
+    void return_value(int v) noexcept { value = v; }
+    void unhandled_exception() noexcept { value = -1; }
+  };
+};
+
+struct Guard {
+  int& alive;
+  explicit Guard(int& v) : alive(v) { ++alive; }
+  ~Guard() { --alive; }
+};
+
+struct Ready {
+  int value;
+  bool await_ready() const noexcept { return false; }
+  bool await_suspend(std::coroutine_handle<>) const noexcept { return false; }
+  int await_resume() const noexcept { return value; }
+};
+
+FrameTask produce(int& alive, bool early_return) {
+  Guard guard(alive);
+  co_yield 7;
+  if (early_return)
+    co_return -1;
+  const int value = co_await Ready{11};
+  co_return value;
+}
+
+struct Gate {
+  int number;
+  bool await_ready() const noexcept { return false; }
+  void await_suspend(std::coroutine_handle<>) const noexcept {}
+  int await_resume() const noexcept { return number; }
+};
+
+FrameTask sum_after_two_suspensions(int n) {
+  co_return (co_await Gate{n}) + (co_await Gate{n + 1});
+}
+
+struct ClassGate {
+  struct Value {
+    int value;
+    explicit Value(int n) : value(n) {}
+    Value(const Value&) = delete;
+    ~Value() {}
+  };
+  bool await_ready() const noexcept { return false; }
+  void await_suspend(std::coroutine_handle<>) const noexcept {}
+  Value await_resume() const noexcept { return Value(29); }
+};
+
+struct ReferenceGate {
+  int& value;
+  bool await_ready() const noexcept { return false; }
+  void await_suspend(std::coroutine_handle<>) const noexcept {}
+  int& await_resume() const noexcept { return value; }
+};
+
+FrameTask produce_returns(int& output) {
+  ClassGate::Value made = co_await ClassGate{};
+  (co_await ReferenceGate{output}) = made.value;
+  co_return output + 13;
+}
+
+int main() {
+  int alive = 0;
+  for (int mode = 0; mode != 3; ++mode) {
+    auto task = produce(alive, mode == 2);
+    if (alive != 0 || task.handle.done())
+      return 1;
+    task.handle.resume();
+    if (alive != 1 || task.handle.promise().value != 7 || task.handle.done())
+      return 2;
+    if (mode == 1) {
+      task.handle.destroy();
+      if (alive != 0)
+        return 3;
+      continue;
+    }
+    task.handle.resume();
+    if (alive != 0 || task.handle.promise().value != (mode == 2 ? -1 : 11) || !task.handle.done())
+      return 4;
+    task.handle.destroy();
+  }
+  auto sum = sum_after_two_suspensions(5);
+  sum.handle.resume();
+  if (sum.handle.done()) return 5;
+  sum.handle.resume();
+  if (sum.handle.done()) return 6;
+  sum.handle.resume();
+  if (!sum.handle.done() || sum.handle.promise().value != 11) return 7;
+  sum.handle.destroy();
+
+  int output = 0;
+  auto task = produce_returns(output);
+  task.handle.resume();
+  if (task.handle.done() || output != 0) return 8;
+  task.handle.resume();
+  if (task.handle.done() || output != 0) return 9;
+  task.handle.resume();
+  if (!task.handle.done() || output != 29 || task.handle.promise().value != 42) return 10;
+  task.handle.destroy();
+}

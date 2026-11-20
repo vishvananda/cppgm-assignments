@@ -1,0 +1,1 @@
+ERROR: tests/compile/800-constexpr-sine-infinite-bad.t:1:28: a sine outside its constant range or supported precision

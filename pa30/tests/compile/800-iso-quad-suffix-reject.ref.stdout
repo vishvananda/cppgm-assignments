@@ -1,0 +1,1 @@
+ERROR: tests/compile/800-iso-quad-suffix-reject.t:1:21: no literal operator for the user-defined literal

@@ -1,0 +1,19 @@
+Source: https://cplusplus.github.io/CWG/issues/3003.html
+Snapshot/source retrieval: https://raw.githubusercontent.com/cplusplus/CWG/38a43db15e384602a0c5debc3f7f22be32e186a1/issues/3003.html
+
+3003. Naming a deducible template for class template argument deduction
+Core issue list revision 121a, October 2026. Status: review.
+Submitter: Hubert Tong.
+
+A class template can supply deduction guides to its caller. When a template
+template parameter names the class template from inside another template,
+the published wording leaves a gap. GCC and Clang accept this form when
+the substituted argument is an ordinary class template.
+
+P3865R2 proposes to resolve the issue. It models the template parameter as
+an alias with its own parameter list, preserving its defaults and checking
+whether the result can be expressed with that list. The existing compiler
+behavior for ordinary class-template arguments predates this proposed wording.
+
+Related proposal: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3865r2.pdf
+Related library issue: https://cplusplus.github.io/LWG/issue4381

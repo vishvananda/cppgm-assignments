@@ -1,0 +1,4 @@
+simple co_await KW_CO_AWAIT
+simple co_yield KW_CO_YIELD
+simple co_return KW_CO_RETURN
+eof

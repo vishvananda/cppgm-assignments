@@ -1,0 +1,100 @@
+#include <coroutine>
+#include <cstdio>
+#include <new>
+
+struct Events {
+  int alloc = 0;
+  int free = 0;
+  int originals = 0;
+  int copies = 0;
+  int promises = 0;
+  int last_value = 0;
+  bool fail = false;
+  static Events* current;
+};
+Events* Events::current = nullptr;
+
+struct Argument {
+  Events& events;
+  bool frame_copy = false;
+  int value;
+
+  Argument(Events& e, int v) noexcept : events(e), value(v) { ++events.originals; }
+  Argument(const Argument&) = delete;
+  Argument(Argument&& other) noexcept
+      : events(other.events), frame_copy(true), value(other.value) {
+    ++events.copies;
+  }
+  ~Argument() noexcept {
+    if (frame_copy)
+      --events.copies;
+    else
+      --events.originals;
+  }
+};
+
+struct Task {
+  struct promise_type;
+  using Handle = std::coroutine_handle<promise_type>;
+  Handle handle;
+
+  struct promise_type {
+    Argument& argument;
+    explicit promise_type(Argument& arg) noexcept : argument(arg) {
+      ++argument.events.promises;
+    }
+    ~promise_type() noexcept {
+      argument.events.last_value = argument.value;
+      --argument.events.promises;
+    }
+    static void* operator new(std::size_t size, Argument& arg) noexcept {
+      ++arg.events.alloc;
+      if (arg.events.fail)
+        return nullptr;
+      return ::operator new(size, std::nothrow);
+    }
+    static void operator delete(void* frame, std::size_t size) noexcept {
+      if (size != 0)
+        ++Events::current->free;
+      ::operator delete(frame);
+    }
+    static Task get_return_object_on_allocation_failure() noexcept { return {}; }
+    Task get_return_object() noexcept { return {Handle::from_promise(*this)}; }
+    std::suspend_always initial_suspend() noexcept { return {}; }
+    std::suspend_always final_suspend() noexcept { return {}; }
+    void return_void() noexcept {}
+    void unhandled_exception() noexcept {}
+  };
+};
+
+Task make(Argument arg) {
+  arg.value += 3;
+  co_return;
+}
+
+int main() {
+  Events e;
+  Events::current = &e;
+  auto good = make(Argument(e, 8));
+  if (!good.handle || e.alloc != 1 || e.originals || e.copies != 1 || e.promises != 1)
+    return 1;
+  if (good.handle.promise().argument.value != 8 || !good.handle.promise().argument.frame_copy)
+    return 2;
+  good.handle.resume();
+  if (!good.handle.done() || good.handle.promise().argument.value != 11)
+    return 3;
+  good.handle.destroy();
+  if (e.free != 1 || e.copies || e.promises || e.last_value != 11)
+    return 4;
+  auto abandoned = make(Argument(e, 23));
+  if (!abandoned.handle || e.alloc != 2 || e.copies != 1 || e.promises != 1)
+    return 5;
+  abandoned.handle.destroy();
+  if (e.free != 2 || e.copies || e.promises || e.last_value != 23)
+    return 6;
+  e.fail = true;
+  auto failed = make(Argument(e, 17));
+  if (failed.handle || e.alloc != 3 || e.free != 2 || e.originals || e.copies || e.promises)
+    return 7;
+  std::puts("allocation, parameter copy and promise lifetime");
+}

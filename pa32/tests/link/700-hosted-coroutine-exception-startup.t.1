@@ -1,0 +1,74 @@
+#include <coroutine>
+
+static int fail_at;
+static int params;
+static int promises;
+static int awaiters;
+static int allocations;
+static int unhandled;
+alignas(64) static unsigned char memory[8192];
+
+void fail(int stage) {
+  if (stage == fail_at) throw stage;
+}
+
+struct Parameter {
+  Parameter() { ++params; }
+  Parameter(Parameter&&) { fail(1); ++params; }
+  ~Parameter() { --params; }
+};
+
+struct Initial {
+  Initial() { fail(4); ++awaiters; }
+  ~Initial() { --awaiters; }
+  bool await_ready() const { fail(5); return false; }
+  void await_suspend(std::coroutine_handle<>) const { fail(6); }
+  void await_resume() const { fail(7); }
+};
+
+struct Task {
+  struct promise_type;
+  using Handle = std::coroutine_handle<promise_type>;
+  Handle handle;
+
+  struct promise_type {
+    static void* operator new(decltype(sizeof(0)) n) {
+      fail(0);
+      if (n > sizeof(memory)) __builtin_trap();
+      ++allocations;
+      return memory;
+    }
+    static void operator delete(void*, decltype(sizeof(0))) noexcept { --allocations; }
+    explicit promise_type(Parameter&) { fail(2); ++promises; }
+    ~promise_type() { --promises; }
+    Task get_return_object() { fail(3); return {Handle::from_promise(*this)}; }
+    Initial initial_suspend() { return {}; }
+    std::suspend_always final_suspend() noexcept { return {}; }
+    void return_void() noexcept {}
+    void unhandled_exception() noexcept { ++unhandled; }
+  };
+};
+
+Task run(Parameter p) { co_return; }
+
+int main() {
+  for (fail_at = 0; fail_at != 7; ++fail_at) {
+    try {
+      auto task = run(Parameter());
+      return 1;
+    } catch (int stage) {
+      if (stage != fail_at) return 2;
+      if (params != 0 || promises != 0 || awaiters != 0 || allocations != 0 || unhandled != 0)
+        return 10 + stage;
+    }
+  }
+  {
+    auto task = run(Parameter());
+    if (params != 1 || promises != 1 || awaiters != 1 || allocations != 1) return 21;
+    task.handle.resume();
+    if (!task.handle.done() || params != 1 || promises != 1 || awaiters != 0 || allocations != 1 || unhandled != 1) return 22;
+    task.handle.destroy();
+    if (params != 0 || promises != 0 || allocations != 0) return 23;
+  }
+  return 0;
+}

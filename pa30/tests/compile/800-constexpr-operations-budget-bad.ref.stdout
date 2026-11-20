@@ -1,0 +1,1 @@
+ERROR: tests/compile/800-constexpr-operations-budget-bad.t:7:15: constant evaluation exceeds its storage budget

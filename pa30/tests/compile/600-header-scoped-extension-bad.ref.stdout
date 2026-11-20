@@ -1,0 +1,1 @@
+ERROR: tests/compile/600-header-scoped-extension-bad.t:5:2: conditional explicit is a C++20 extension

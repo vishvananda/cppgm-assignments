@@ -1,0 +1,67 @@
+#include <coroutine>
+
+struct Value {
+  int number;
+};
+
+int result;
+
+struct Overloads {
+  void return_value(Value& value) { result = value.number + 100; }
+  void return_value(Value&& value) { result = value.number; }
+};
+
+struct LvalueOnly {
+  void return_value(Value& value) { result = value.number; }
+};
+
+struct Callable {
+  void operator()(Value& value) const { result = value.number + 100; }
+  void operator()(Value&& value) const { result = value.number; }
+};
+
+struct CallableReturn {
+  Callable return_value;
+};
+
+template<class Return>
+struct Task {
+  struct promise_type : Return {
+    Task get_return_object() { return {}; }
+    std::suspend_never initial_suspend() noexcept { return {}; }
+    std::suspend_never final_suspend() noexcept { return {}; }
+    void unhandled_exception() {}
+  };
+};
+
+Task<Overloads> from_local() {
+  Value local{19};
+  co_return (local);
+}
+
+Task<Overloads> from_rvalue_reference(Value&& argument) { co_return argument; }
+Task<Overloads> from_lvalue_reference(Value& argument) { co_return argument; }
+
+Task<LvalueOnly> from_lvalue_fallback() {
+  Value local{26};
+  co_return local;
+}
+
+Task<CallableReturn> from_callable() {
+  Value local{32};
+  co_return local;
+}
+
+int main() {
+  from_local();
+  if (result != 19) return 1;
+  Value value{22};
+  from_rvalue_reference(static_cast<Value&&>(value));
+  if (result != 22) return 2;
+  from_lvalue_reference(value);
+  if (result != 122) return 3;
+  from_lvalue_fallback();
+  if (result != 26) return 4;
+  from_callable();
+  return result == 32 ? 0 : 5;
+}

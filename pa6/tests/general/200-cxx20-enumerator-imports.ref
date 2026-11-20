@@ -1,0 +1,22 @@
+1 translation units
+start translation unit 1
+translation-unit
+  scope namespace <global>
+    type Panel struct Panel
+    enumerator go enum class Signal 7
+    enumerator stop enum class Signal 9
+    enumerator blank enum Extra 3
+    scope namespace lights
+      type Signal enum class Signal
+      type-alias Signals enum class Signal
+      enumerator go enum class Signal 7
+      enumerator stop enum class Signal 9
+      scope enum Signal
+        enumerator go enum class Signal 7
+        enumerator stop enum class Signal 9
+    scope class Panel
+      enumerator go enum class Signal 7
+      enumerator stop enum class Signal 9
+      type Extra enum Extra
+      enumerator blank enum Extra 3
+end translation unit

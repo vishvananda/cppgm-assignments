@@ -1,0 +1,1 @@
+ERROR: tests/general/200-generic-lambda-cxx11-bad.t:1:10: generic lambdas require C++14

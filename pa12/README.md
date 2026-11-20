@@ -461,6 +461,8 @@ PA12 supports the following in addition to the PA11 subset:
   default member initializer; at most one variant may have a default member
   initializer; a namespace-scope anonymous union must be `static` in a named
   or the global namespace but not in an unnamed one (9.5p5)
+- a GNU zero-length array variant contributes its alignment and zero bytes
+  to the union's layout
 - conditional class-value cases in the supported copy/move subset, including
   cv-combined glvalue operands, lvalue/prvalue conversion, and destruction of a
   containing branch temporary only after its selected member result has been
@@ -481,6 +483,23 @@ PA12 supports the following in addition to the PA11 subset:
   statement, including braceless nested statements
 - non-template conversion operators that participate in the existing overload
   and conversion machinery
+- an initializer expression that can implicitly initialize a subaggregate
+  consumes one clause for the whole member. Apply brace elision to its
+  children when the expression cannot initialize that member. Evaluate
+  initializers of empty members for their side effects. See N3485
+  `[dcl.init.aggr]`.
+- single-element scalar list initialization preserves the direct or copy
+  initialization context when choosing conversion functions. Direct-list
+  initialization can select an explicit conversion function. Check narrowing
+  after selecting the conversion in either form. See N3485 `[dcl.init.list]`
+  and [CWG 1756](../doc/cwg/cwg-1756.txt).
+- In the second phase of constructor selection for `X{{...}}` or
+  `X x = {{...}}`, use only standard conversions when the inner list would
+  initialize a parameter of type `X` or a reference to `X`. See
+  [CWG 2076](../doc/cwg/cwg-2076.txt).
+- An inherited constructor uses the by-value parameter object initialized by
+  the caller. Preserve that object's identity and lifetime when forwarding
+  it to the base constructor. See [P0136R1](../doc/cwg/paper-p0136r1.txt).
 - class results copy-initialized through conversion operators from conditional
   glvalues, preserving the selected operand and the result calling convention
 
@@ -521,6 +540,14 @@ The core contract can use minimal declarations of `std::align_val_t` and the
 allocation functions; PA33 adds the real host `<new>` integration.
 See N4659 `[basic.align]`, `[expr.new]`, `[expr.delete]` and `[dcl.fct.spec]`.
 
+### C++20 bit-field initializers
+
+A named bit-field can have a brace-or-equal default member initializer.
+Read the longest conditional expression as the width, then parse the
+initializer if present. Apply the ordinary default member initialization and
+override rules from PA11, including the declared enumeration type for an enum
+bit-field. See N4861 `[class.bit]`.
+
 ### C++20 comparisons
 
 Resolve user-defined `<=>` and rewritten comparison candidates using the
@@ -533,6 +560,10 @@ comparison category and its static constants. Integer, enumeration and
 object-pointer comparisons yield `std::strong_ordering`; floating-point
 comparisons yield `std::partial_ordering`, including unordered results.
 Apply the arithmetic, narrowing and pointer restrictions of C++20.
+A narrower bit-field contributes the range represented by its width when
+checking an integral conversion for narrowing. For example, all values of
+an unsigned five-bit field fit in `int`. See N4861 `[expr.spaceship]` and
+[CWG 2627](../doc/cwg/cwg-2627.txt).
 
 Defaulted comparisons compare base and member subobjects in declaration
 order, expanding arrays in index order. Generate counted loops for arrays.

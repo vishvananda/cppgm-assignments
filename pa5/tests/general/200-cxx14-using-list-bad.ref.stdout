@@ -1,0 +1,1 @@
+ERROR: tests/general/200-cxx14-using-list-bad.t:2:18: a list of using-declarators requires C++17

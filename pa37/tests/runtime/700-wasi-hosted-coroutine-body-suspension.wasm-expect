@@ -1,0 +1,1 @@
+{"source":true,"wasi":true,"target":"wasm32-wasip1","flags":["-std=c++20","-fno-exceptions"],"reference_flags":["-std=c++20"],"commands":[{"stdout":"","exit":0}]}

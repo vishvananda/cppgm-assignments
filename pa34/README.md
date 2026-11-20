@@ -53,6 +53,10 @@ Higher optimization levels must preserve the correctness established by
 previous assignments. In `cppgm`, apply PA33's LowIR optimization before
 native lowering at the requested level.
 
+Preserve both inputs of a floating-point select until it computes the
+chosen value, including when a dying input shares the result register or
+the result is spilled.
+
 Loop fixtures combine invariant inputs, changing phi values and paths that
 finish an iteration early. Meet their frame-access and size bounds while
 preserving every path, including partial and empty iterations. Keep explicit
