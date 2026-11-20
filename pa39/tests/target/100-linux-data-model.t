@@ -19,6 +19,9 @@ static_assert(char(-1) > 0 && wchar_t(-1) > 0, "unsigned character types");
 static_assert(__FLT_EVAL_METHOD__ == 0, "evaluate at the nominal precision");
 #endif
 static_assert(sizeof(long double) == 16 && __LDBL_MANT_DIG__ == 113, "binary128");
+#if !defined(__STRICT_ANSI__)
+static_assert(__is_same(__GLIBCXX_TYPE_INT_N_0, __int128) && __GLIBCXX_BITSIZE_INT_N_0 == 128, "GNU dialects name the 128-bit integer for the library");
+#endif
 #define STRINGIFY_IMPL(value) #value
 #define STRINGIFY(value) STRINGIFY_IMPL(value)
 static_assert(sizeof(STRINGIFY(__USER_LABEL_PREFIX__)) == 1, "ELF declaration redirects use an empty prefix");

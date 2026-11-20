@@ -42,7 +42,9 @@ available when a C header precedes the C++ headers. ABI tags must survive that
 include order so separately compiled callers and definitions agree. Supply
 the signed and unsigned fixed-width type predefines for the target's data
 model and the corresponding 32-bit and 64-bit maximum values. Headers can
-use those macros without including `<stdint.h>`. Unwind
+use those macros without including `<stdint.h>`. In GNU dialects, also define
+`__GLIBCXX_TYPE_INT_N_0` as `__int128` and `__GLIBCXX_BITSIZE_INT_N_0` as 128,
+as GCC does; libstdc++ reads them to treat `__int128` as an integer type. Unwind
 ranges describe the code in each object even when another shared library
 exports a function under the same name. A position-independent object with
 public functions must link into a shared library. The platform linker also
