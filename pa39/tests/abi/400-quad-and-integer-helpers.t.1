@@ -22,5 +22,7 @@ int main() {
     if (high_word(~0ull, 3) != 2 || high_word(1ull << 63, 2) != 1) return 8;
     if (xor_words(~0ull, 3) != ~0ull || xor_words(0, ~0ull) != 0) return 9;
     if (signed_high_word(-7, 3) != ~0ull || signed_high_word(-7, -3) != 0) return 10;
+    typedef long double Quad;
+    if (compare_quad(Quad(), Quad{}) != 10) return 11;
     return 53;
 }

@@ -170,13 +170,26 @@ Previously required:
 New or newly required in PA30:
 
 - hosted preprocess mode: `-E`
+  - `-E -dM` writes the active object-like and function-like definitions
+    after reading the input, including command-line and header definitions.
+    It omits computed builtins such as `__LINE__`. Use `-` as the input to
+    read source from standard input.
+  - `-E -H` reports included file paths on standard error, with one dot
+    for each level of inclusion
 - hosted preprocessor-control flags:
   - `-D <macro>` and `-D<macro>`
   - `-U <macro>` and `-U<macro>`
   - `-include <file>`
   - `-isystem <dir>` and `-isystem<dir>`
+- `-nostdinc++` removes the default C++ library directories. Keep the
+  compiler and platform C headers and all explicit include directories.
+  `-nostdinc` removes both sets of default directories.
+- `__GNUG__` matches `__GNUC__` on the GNU C++ target profiles. Advertise
+  supported C++11 features through the SD-6 macros. Exception and RTTI
+  macros follow `-fno-exceptions` and `-fno-rtti`. In hosted mode,
+  `__FLT_EVAL_METHOD__` describes the target's evaluation precision.
 - source views (`--emit-ast`, `--emit-types`, `--emit-semantics`, and
-  `--emit-lowir`) honor the same `-include` and `-nostdinc` controls as object
+  `--emit-lowir`) honor the same `-include`, `-nostdinc`, and `-nostdinc++` controls as object
   compilation. Forced headers are read in order after all `-D` and `-U`
   options, even when those options follow `-include` on the command line
 - direct driver query forms:

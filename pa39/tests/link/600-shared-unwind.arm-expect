@@ -1,0 +1,12 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "shared_link": true,
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 30,
+      "stdout": ""
+    }
+  ]
+}

@@ -132,6 +132,14 @@ sub main {
             parse_include_paths($include_probe->{stdout} . $include_probe->{stderr});
     }
 
+    my @c_include_paths;
+    my $c_include_probe =
+        run_probe([@base_args, "-E", "-x", "c++", "-", "-v", "-nostdinc++"], "");
+    if(defined($c_include_probe) && $c_include_probe->{status} == 0) {
+        @c_include_paths =
+            parse_include_paths($c_include_probe->{stdout} . $c_include_probe->{stderr});
+    }
+
     my $target_probe = run_probe([@base_args, "-dumpmachine"], "");
     my $version_probe = run_probe([@base_args, "-dumpversion"], "");
     my $search_probe = run_probe([@base_args, "-print-search-dirs"], "");
@@ -154,12 +162,15 @@ sub main {
           raw_string_literal($predefined), ";\n";
     print "static const char kHostStrictPredefinedMacros[] = ",
           raw_string_literal($strict), ";\n";
-    print "static const char * const kStandardIncludePaths[] = {\n";
-    for my $path (@include_paths) {
-        print "  ", string_literal($path), ",\n";
+    for my $paths (["kStandardIncludePaths", \@include_paths],
+                   ["kCStandardIncludePaths", \@c_include_paths]) {
+        print "static const char * const $paths->[0]\[\] = {\n";
+        for my $path (@{$paths->[1]}) {
+            print "  ", string_literal($path), ",\n";
+        }
+        print "  nullptr\n";
+        print "};\n\n";
     }
-    print "  nullptr\n";
-    print "};\n\n";
     print "}  // namespace cppgm_builtin_host_config\n";
 }
 

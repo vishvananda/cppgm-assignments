@@ -1,0 +1,1 @@
+-nostdinc++ -isystem tests/run/c-only-system

@@ -133,6 +133,11 @@ for my $level (@{$expect->{levels} // [0..3]}) {
     die "$test: wrong ELF architecture\n" unless $header =~ /Machine: EM_AARCH64\b/;
     die "$test: expected relocation $expect->{relocation}\n"
         if $expect->{relocation} && index($header, $expect->{relocation}) < 0;
+    if ($expect->{shared_link}) {
+        my $pic_object = "$directory/pic-unit.o";
+        run(0, $compiler, @flags, '-fPIC', '-x', 'c++', '-c', $test, '-o', $pic_object);
+        run(0, $lld, '-m', 'aarch64elf', '-shared', '--no-undefined', '-z', 'text', $pic_object, '-o', "$directory/libfixture.so");
+    }
     my $quality = $expect->{quality};
     if ($quality && grep { $_ eq $level } @{$quality->{levels} // [1, 2, 3]}) {
         for my $symbol (sort keys %{$quality->{functions}}) {

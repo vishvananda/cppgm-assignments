@@ -386,7 +386,8 @@ This PA10 milestone supports the following:
   types, including C-style casts, `static_cast`, and `const_cast`
 - source-to-LowIR floating scalar literals and conversions among supported
   scalar types, including float/integer conversions needed for calls, returns,
-  comparisons, and branch conditions
+  comparisons, and branch conditions. A value-initialized floating scalar
+  supplies a zero of its own type.
 - C-style variadic function calls over supported scalar arguments, including
   source-to-LowIR default argument promotion before the call
 - expressions:

@@ -39,7 +39,12 @@ PA25 introduced `cppgm -c`, multiple translation units, symbol resolution, reloc
 Use the platform linker for hosted programs that link against system libraries.
 On Linux, advertise the GNU attribute syntax so glibc leaves `__attribute__`
 available when a C header precedes the C++ headers. ABI tags must survive that
-include order so separately compiled callers and definitions agree.
+include order so separately compiled callers and definitions agree. Unwind
+ranges describe the code in each object even when another shared library
+exports a function under the same name. A position-independent object with
+public functions must link into a shared library. The platform linker also
+checks that read-only objects containing addresses can be relocated before
+their storage is protected.
 Test both forms of a weak ELF import. Its address is null when the linker
 finds no definition and names the linked definition when one is present.
 
