@@ -1,0 +1,15 @@
+struct A {
+    int value;
+    int add(int n) const { return value + n; }
+};
+using Member = int (A::*)(int) const;
+extern "C" int named(int, Member, long);
+extern "C" int stacked(long, long, long, long, long, long, long, long, long, Member, long);
+extern "C" int varied(int, ...);
+
+int main() {
+    if (named(1, &A::add, 3L) != 16) return 1;
+    if (stacked(0, 1, 2, 3, 4, 5, 6, 7, 9L, &A::add, 5L) != 26) return 2;
+    if (varied(4, &A::add, 7L, Member{}, 9L) != 32) return 3;
+    return 0;
+}

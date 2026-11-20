@@ -137,6 +137,13 @@ round trip and runs the linked programs under QEMU. For mixed-object fixtures
 it exchanges the caller and callee with Clang. LLD provides an independent
 consumer of the same ELF objects.
 
+A pointer to a member function is two words aligned to eight bytes. On
+Linux it can start in an odd-numbered argument register. When passed on
+the stack, including through `...` on Apple Silicon, it starts at the
+next eight-byte-aligned slot. A true `__int128` keeps its 16-byte
+alignment. The member-function-pointer ABI fixture checks fixed,
+stacked and variadic arguments across both compilers.
+
 ### Code quality
 
 Use the Arm quality lane as you used PA34's native backend quality tests.

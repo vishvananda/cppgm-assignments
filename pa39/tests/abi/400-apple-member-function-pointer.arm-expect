@@ -1,0 +1,15 @@
+{
+  "source": true,
+  "target": "arm64-apple-macos11",
+  "units": [
+    "400-member-function-pointer.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "relocation": "ARM64_RELOC_BRANCH26"
+}

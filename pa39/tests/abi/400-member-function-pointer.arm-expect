@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "400-member-function-pointer.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ]
+}

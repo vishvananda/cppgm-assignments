@@ -1049,6 +1049,12 @@ For example, on wasm32 `obj<8x8>` with `f64x1` can cross as one `f64`, whereas
 alignment/padding and also crosses indirectly. PA37 requires explicit shape
 for object boundaries; do not guess from their size or generated symbol name.
 
+An AArch64 parameter of type `i128` may state `[shape=mixed]` for a member
+function pointer. Its value has two eight-byte words and alignment of eight
+at the call boundary. A plain `i128` retains 16-byte argument alignment.
+An unnamed member function pointer uses `obj<16x8>` with the same mixed
+shape at the call and at `va_arg`.
+
 ## Object ABI Conventions
 
 LowIR stays semantic at the call boundary. Later object-aware milestones use explicit
