@@ -142,7 +142,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^for_body_1
 
   block ^for_body_1:
-    %t1 = phi u32 [^for_iter_13: %t72, ^entry: 0]
+    %t1 = phi u32 [^for_iter_11: %t101, ^entry: 0]
     %t2 = addr $a
     zeroinit 32x4 %t2
     %t3 = addr $b
@@ -170,175 +170,200 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t18 = load v128 %t17
     %t19 = addr @__vector_literal_00000004000000040000000400000004
     %t20 = load v128 %t19
-    %t21 = vector psrlqi %t16, 32
-    jump ^unrolled_2
-
-  block ^unrolled_2:
-    %t22 = phi v128 [^unrolled_2: %t43, ^for_body_1: %t14]
-    %t23 = phi i64 [^unrolled_2: %t41, ^for_body_1: 0]
-    %t24 = vector pmuludq %t22, %t16
-    %t25 = vector psrlqi %t22, 32
-    %t26 = vector pmuludq %t25, %t21
-    %t27 = vector pshufd %t24, 8
-    %t28 = vector pshufd %t26, 8
-    %t29 = vector punpckldq %t27, %t28
-    %t30 = vector paddd %t29, %t18
-    %t31 = index inbounds i32 [projection=array_element] %t10, %t23
-    store v128 %t30, %t31
-    %t32 = vector paddd %t22, %t20
-    %t33 = vector pmuludq %t32, %t16
-    %t34 = vector psrlqi %t32, 32
-    %t35 = vector pmuludq %t34, %t21
-    %t36 = vector pshufd %t33, 8
-    %t37 = vector pshufd %t35, 8
-    %t38 = vector punpckldq %t36, %t37
-    %t39 = vector paddd %t38, %t18
-    %t40 = index inbounds i32 [projection=array_element] %t31, 4
-    store v128 %t39, %t40
-    %t41 = binary add nowrap i64 %t23, 8
-    %t42 = convert trunc exact u32 i64 %t41
-    %t43 = vector paddd %t32, %t20
-    %t44 = cmp ne u32 %t42, 24
-    branch %t44, ^unrolled_2, ^loop_exit_3
-
-  block ^loop_exit_3:
+    %t21 = vector pmuludq %t14, %t16
+    %t22 = vector psrlqi %t14, 32
+    %t23 = vector psrlqi %t16, 32
+    %t24 = vector pmuludq %t22, %t23
+    %t25 = vector pshufd %t21, 8
+    %t26 = vector pshufd %t24, 8
+    %t27 = vector punpckldq %t25, %t26
+    %t28 = vector paddd %t27, %t18
+    store v128 %t28, %t10
+    %t29 = vector paddd %t14, %t20
+    %t30 = vector pmuludq %t29, %t16
+    %t31 = vector psrlqi %t29, 32
+    %t32 = vector pmuludq %t31, %t23
+    %t33 = vector pshufd %t30, 8
+    %t34 = vector pshufd %t32, 8
+    %t35 = vector punpckldq %t33, %t34
+    %t36 = vector paddd %t35, %t18
+    %t37 = index inbounds i32 [projection=array_element] %t10, 4
+    store v128 %t36, %t37
+    %t38 = vector paddd %t29, %t20
+    %t39 = vector pmuludq %t38, %t16
+    %t40 = vector psrlqi %t38, 32
+    %t41 = vector pmuludq %t40, %t23
+    %t42 = vector pshufd %t39, 8
+    %t43 = vector pshufd %t41, 8
+    %t44 = vector punpckldq %t42, %t43
+    %t45 = vector paddd %t44, %t18
+    %t46 = index inbounds i32 [projection=array_element] %t10, 8
+    store v128 %t45, %t46
+    %t47 = vector paddd %t38, %t20
+    %t48 = vector pmuludq %t47, %t16
+    %t49 = vector psrlqi %t47, 32
+    %t50 = vector pmuludq %t49, %t23
+    %t51 = vector pshufd %t48, 8
+    %t52 = vector pshufd %t50, 8
+    %t53 = vector punpckldq %t51, %t52
+    %t54 = vector paddd %t53, %t18
+    %t55 = index inbounds i32 [projection=array_element] %t10, 12
+    store v128 %t54, %t55
+    %t56 = vector paddd %t47, %t20
+    %t57 = vector pmuludq %t56, %t16
+    %t58 = vector psrlqi %t56, 32
+    %t59 = vector pmuludq %t58, %t23
+    %t60 = vector pshufd %t57, 8
+    %t61 = vector pshufd %t59, 8
+    %t62 = vector punpckldq %t60, %t61
+    %t63 = vector paddd %t62, %t18
+    %t64 = index inbounds i32 [projection=array_element] %t10, 16
+    store v128 %t63, %t64
+    %t65 = vector paddd %t56, %t20
+    %t66 = vector pmuludq %t65, %t16
+    %t67 = vector psrlqi %t65, 32
+    %t68 = vector pmuludq %t67, %t23
+    %t69 = vector pshufd %t66, 8
+    %t70 = vector pshufd %t68, 8
+    %t71 = vector punpckldq %t69, %t70
+    %t72 = vector paddd %t71, %t18
+    %t73 = index inbounds i32 [projection=array_element] %t10, 20
+    store v128 %t72, %t73
     call void @copy_segments(%t6, %t2, %t10, %t1)
-    jump ^for_body_4
+    jump ^for_body_2
 
-  block ^for_body_4:
-    %t45 = phi u32 [^if_end_8: %t56, ^loop_exit_3: 0]
-    %t46 = binary udiv u32 %t45, 8
-    %t47 = index inbounds ptr [projection=array_element] %t6, %t46
-    %t48 = load typed ptr %t47
-    %t49 = binary umod u32 %t45, 8
-    %t50 = index inbounds i32 [projection=array_element] %t48, %t49
-    %t51 = load typed i32 %t50
-    %t52 = cmp ult u32 %t45, %t1
-    branch %t52, ^cond_then_5, ^cond_else_6
+  block ^for_body_2:
+    %t74 = phi u32 [^if_end_6: %t85, ^for_body_1: 0]
+    %t75 = binary udiv u32 %t74, 8
+    %t76 = index inbounds ptr [projection=array_element] %t6, %t75
+    %t77 = load typed ptr %t76
+    %t78 = binary umod u32 %t74, 8
+    %t79 = index inbounds i32 [projection=array_element] %t77, %t78
+    %t80 = load typed i32 %t79
+    %t81 = cmp ult u32 %t74, %t1
+    branch %t81, ^cond_then_3, ^cond_else_4
 
-  block ^cond_then_5:
-    %t53 = index inbounds i32 [projection=array_element] %t10, %t45
-    %t54 = load typed i32 %t53
-    %t55 = cmp ne i32 %t51, %t54
-    branch %t55, ^if_then_7, ^if_end_8
+  block ^cond_then_3:
+    %t82 = index inbounds i32 [projection=array_element] %t10, %t74
+    %t83 = load typed i32 %t82
+    %t84 = cmp ne i32 %t80, %t83
+    branch %t84, ^if_then_5, ^if_end_6
 
-  block ^cond_else_6:
-    branch %t51, ^if_then_7, ^if_end_8
+  block ^cond_else_4:
+    branch %t80, ^if_then_5, ^if_end_6
 
-  block ^if_then_7:
+  block ^if_then_5:
     return i32 1
 
-  block ^if_end_8:
-    %t56 = binary add u32 %t45, 1
-    %t57 = cmp ult u32 %t56, 24
-    branch %t57, ^for_body_4, ^for_end_9
+  block ^if_end_6:
+    %t85 = binary add u32 %t74, 1
+    %t86 = cmp ult u32 %t85, 24
+    branch %t86, ^for_body_2, ^for_end_7
 
-  block ^for_end_9:
-    %t58 = convert zext i64 u32 %t1
-    call void @copy_segments__2(%t6, %t2, %t10, %t58)
-    %t59 = copy i32 %t1
-    call void @copy_segments__3(%t6, %t2, %t10, %t59)
+  block ^for_end_7:
+    %t87 = convert zext i64 u32 %t1
+    call void @copy_segments__2(%t6, %t2, %t10, %t87)
+    %t88 = copy i32 %t1
+    call void @copy_segments__3(%t6, %t2, %t10, %t88)
     call void @copy_observed(%t6, %t2, %t10, %t1)
-    branch %t1, ^for_body_10, ^for_iter_13
+    branch %t1, ^for_body_8, ^for_iter_11
 
-  block ^for_body_10:
-    %t60 = phi u32 [^if_end_12: %t70, ^for_end_9: 0]
-    %t61 = binary udiv u32 %t60, 8
-    %t62 = index inbounds ptr [projection=array_element] %t6, %t61
-    %t63 = load typed ptr %t62
-    %t64 = binary umod u32 %t60, 8
-    %t65 = index inbounds i32 [projection=array_element] %t63, %t64
-    %t66 = load typed i32 %t65
-    %t67 = index inbounds i32 [projection=array_element] %t10, %t60
-    %t68 = load typed i32 %t67
-    %t69 = cmp ne i32 %t66, %t68
-    branch %t69, ^if_then_11, ^if_end_12
+  block ^for_body_8:
+    %t89 = phi u32 [^if_end_10: %t99, ^for_end_7: 0]
+    %t90 = binary udiv u32 %t89, 8
+    %t91 = index inbounds ptr [projection=array_element] %t6, %t90
+    %t92 = load typed ptr %t91
+    %t93 = binary umod u32 %t89, 8
+    %t94 = index inbounds i32 [projection=array_element] %t92, %t93
+    %t95 = load typed i32 %t94
+    %t96 = index inbounds i32 [projection=array_element] %t10, %t89
+    %t97 = load typed i32 %t96
+    %t98 = cmp ne i32 %t95, %t97
+    branch %t98, ^if_then_9, ^if_end_10
 
-  block ^if_then_11:
+  block ^if_then_9:
     return i32 2
 
-  block ^if_end_12:
-    %t70 = binary add u32 %t60, 1
-    %t71 = cmp ult u32 %t70, %t1
-    branch %t71, ^for_body_10, ^for_iter_13
+  block ^if_end_10:
+    %t99 = binary add u32 %t89, 1
+    %t100 = cmp ult u32 %t99, %t1
+    branch %t100, ^for_body_8, ^for_iter_11
 
-  block ^for_iter_13:
-    %t72 = binary add u32 %t1, 1
-    %t73 = cmp ule u32 %t72, 24
-    branch %t73, ^for_body_1, ^loop_preheader_14
+  block ^for_iter_11:
+    %t101 = binary add u32 %t1, 1
+    %t102 = cmp ule u32 %t101, 24
+    branch %t102, ^for_body_1, ^loop_preheader_12
 
-  block ^loop_preheader_14:
-    %t74 = addr $shared
-    %t75 = addr @__vector_literal_00000001000000010000000100000001
-    %t76 = load v128 %t75
-    jump ^unrolled_15
+  block ^loop_preheader_12:
+    %t103 = addr $shared
+    %t104 = addr @__vector_literal_00000001000000010000000100000001
+    %t105 = load v128 %t104
+    %t106 = vector paddd %t14, %t105
+    store v128 %t106, %t103
+    %t107 = vector paddd %t29, %t105
+    %t108 = index inbounds i32 [projection=array_element] %t103, 4
+    store v128 %t107, %t108
+    %t109 = vector paddd %t38, %t105
+    %t110 = index inbounds i32 [projection=array_element] %t103, 8
+    store v128 %t109, %t110
+    %t111 = vector paddd %t47, %t105
+    %t112 = index inbounds i32 [projection=array_element] %t103, 12
+    store v128 %t111, %t112
+    %t113 = vector paddd %t56, %t105
+    %t114 = index inbounds i32 [projection=array_element] %t103, 16
+    store v128 %t113, %t114
+    %t115 = vector paddd %t65, %t105
+    %t116 = index inbounds i32 [projection=array_element] %t103, 20
+    store v128 %t115, %t116
+    %t117 = vector paddd %t65, %t20
+    %t118 = vector paddd %t117, %t105
+    %t119 = index inbounds i32 [projection=array_element] %t103, 24
+    store v128 %t118, %t119
+    %t120 = vector paddd %t117, %t20
+    %t121 = vector paddd %t120, %t105
+    %t122 = index inbounds i32 [projection=array_element] %t103, 28
+    store v128 %t121, %t122
+    %t123 = addr $overlap
+    store typed ptr %t103, %t123
+    %t124 = index i8 %t123, 8
+    %t125 = index inbounds i8 %t103, 32
+    store typed ptr %t125, %t124
+    %t126 = index i8 %t123, 16
+    %t127 = index inbounds i8 %t103, 64
+    store typed ptr %t127, %t126
+    %t128 = index i8 %t123, 24
+    %t129 = index inbounds i8 %t103, 96
+    store typed ptr %t129, %t128
+    %t130 = index inbounds i8 %t103, 4
+    call void @copy_segments(%t123, %t130, %t103, 20)
+    jump ^for_body_13
 
-  block ^unrolled_15:
-    %t77 = phi v128 [^unrolled_15: %t92, ^loop_preheader_14: %t14]
-    %t78 = phi i64 [^unrolled_15: %t90, ^loop_preheader_14: 0]
-    %t79 = vector paddd %t77, %t76
-    %t80 = index inbounds i32 [projection=array_element] %t74, %t78
-    store v128 %t79, %t80
-    %t81 = vector paddd %t77, %t20
-    %t82 = vector paddd %t81, %t76
-    %t83 = index inbounds i32 [projection=array_element] %t80, 4
-    store v128 %t82, %t83
-    %t84 = vector paddd %t81, %t20
-    %t85 = vector paddd %t84, %t76
-    %t86 = index inbounds i32 [projection=array_element] %t80, 8
-    store v128 %t85, %t86
-    %t87 = vector paddd %t84, %t20
-    %t88 = vector paddd %t87, %t76
-    %t89 = index inbounds i32 [projection=array_element] %t80, 12
-    store v128 %t88, %t89
-    %t90 = binary add nowrap i64 %t78, 16
-    %t91 = convert trunc exact u32 i64 %t90
-    %t92 = vector paddd %t87, %t20
-    %t93 = cmp ne u32 %t91, 32
-    branch %t93, ^unrolled_15, ^loop_exit_16
+  block ^for_body_13:
+    %t131 = phi u32 [^if_end_15: %t135, ^loop_preheader_12: 0]
+    %t132 = index inbounds i32 [projection=array_element] %t103, %t131
+    %t133 = load typed i32 %t132
+    %t134 = cmp ne i32 %t133, 1
+    branch %t134, ^if_then_14, ^if_end_15
 
-  block ^loop_exit_16:
-    %t94 = addr $overlap
-    store typed ptr %t74, %t94
-    %t95 = index i8 %t94, 8
-    %t96 = index inbounds i8 %t74, 32
-    store typed ptr %t96, %t95
-    %t97 = index i8 %t94, 16
-    %t98 = index inbounds i8 %t74, 64
-    store typed ptr %t98, %t97
-    %t99 = index i8 %t94, 24
-    %t100 = index inbounds i8 %t74, 96
-    store typed ptr %t100, %t99
-    %t101 = index inbounds i8 %t74, 4
-    call void @copy_segments(%t94, %t101, %t74, 20)
-    jump ^for_body_17
-
-  block ^for_body_17:
-    %t102 = phi u32 [^if_end_19: %t106, ^loop_exit_16: 0]
-    %t103 = index inbounds i32 [projection=array_element] %t74, %t102
-    %t104 = load typed i32 %t103
-    %t105 = cmp ne i32 %t104, 1
-    branch %t105, ^if_then_18, ^if_end_19
-
-  block ^if_then_18:
+  block ^if_then_14:
     return i32 3
 
-  block ^if_end_19:
-    %t106 = binary add u32 %t102, 1
-    %t107 = cmp ule u32 %t106, 20
-    branch %t107, ^for_body_17, ^for_end_20
+  block ^if_end_15:
+    %t135 = binary add u32 %t131, 1
+    %t136 = cmp ule u32 %t135, 20
+    branch %t136, ^for_body_13, ^for_end_16
 
-  block ^for_end_20:
-    %t108 = addr $changing
-    store typed ptr %t74, %t108
-    %t109 = index i8 %t108, 8
-    store typed ptr %t98, %t109
-    %t110 = index i8 %t108, 16
-    store typed ptr %t100, %t110
-    %t111 = index inbounds i8 %t74, 16
-    %t112 = call i32 @byte_alias(%t108, %t74, %t111, 9)
-    %t113 = select i32 %t112, 4, 0
-    return i32 %t113
+  block ^for_end_16:
+    %t137 = addr $changing
+    store typed ptr %t103, %t137
+    %t138 = index i8 %t137, 8
+    store typed ptr %t127, %t138
+    %t139 = index i8 %t137, 16
+    store typed ptr %t129, %t139
+    %t140 = index inbounds i8 %t103, 16
+    %t141 = call i32 @byte_alias(%t137, %t103, %t140, 9)
+    %t142 = select i32 %t141, 4, 0
+    return i32 %t142
 }
 function @copy_segments(%node : ptr, %dst : ptr, %src : ptr, %n : u32) -> void [binding=weak, object=_Z13copy_segmentsIjEvPPiS0_PKiT_, no_inline=yes] {
   block ^entry:
