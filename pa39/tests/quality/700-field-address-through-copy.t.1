@@ -1,0 +1,36 @@
+// Walks a chain of four nodes, two of which add their order entry.
+struct Node {
+    unsigned char op;
+    unsigned id, next, extra;
+};
+
+template<typename T> struct Array {
+    T* first;
+    T* last;
+};
+
+struct Body {
+    char head[104];
+    Array<Node> nodes;
+    Array<unsigned> order;
+};
+
+struct Pass {
+    long count;
+    Body* body;
+};
+
+extern "C" unsigned walk(Pass* p, unsigned first);
+
+int main() {
+    static Node nodes[4] = { { 21, 2, 3, 0 }, { 7, 0, ~0u, 0 }, { 3, 1, 0, 0 }, { 21, 0, 1, 0 } };
+    static unsigned order[3] = { 5, 11, 30 };
+    static Body body;
+    body.nodes.first = nodes;
+    body.nodes.last = nodes + 4;
+    body.order.first = order;
+    body.order.last = order + 3;
+    static Pass pass;
+    pass.body = &body;
+    return walk(&pass, 2) == 35 && walk(&pass, ~0u) == 0 ? 0 : 1;
+}

@@ -1,0 +1,23 @@
+{
+  "source": true,
+  "units": [
+    "700-spill-home-reloads.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      2
+    ],
+    "functions": {
+      "spread": {
+        "instructions": 80
+      }
+    }
+  }
+}

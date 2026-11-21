@@ -1,0 +1,52 @@
+// Calls each switch with its cases, their neighbours and the limits of
+// the selector's type, against results worked out beforehand.
+extern "C" {
+int s32(int);
+int u32(unsigned);
+int u8(unsigned char);
+int s64(long);
+int u64(unsigned long);
+long moves(int, long, long);
+}
+
+int main() {
+    static const int s32_in[] = { -2147483647 - 1, -2147483647, -100001, -100000, -99999, -8, -7, -6, -2, -1, 0, 1,
+        2, 3, 4, 5, 6, 8, 9, 10, 99, 100, 101, 4095, 4096, 4097, 69999, 70000, 70001, 2147483646, 2147483647 };
+    static const int s32_out[] = { 1, 0, 0, 2, 0, 0, 3, 0, 0, 4, 5, 0, 0, 6, 6, 6, 0, 0, 7, 0, 0, 8, 0, 0, 9, 0,
+        0, 10, 0, 0, 11 };
+    for (unsigned k = 0; k < sizeof s32_in / sizeof s32_in[0]; ++k)
+        if (s32(s32_in[k]) != s32_out[k])
+            return 1;
+    static const unsigned u32_in[] = { 0, 1, 2, 3, 9, 10, 13, 14, 49, 50, 51, 0x7ffffffeu, 0x7fffffffu,
+        0x80000000u, 0x80000001u, 0xffffffefu, 0xfffffff0u, 0xfffffff1u, 0xfffffffeu, 0xffffffffu };
+    static const int u32_out[] = { 1, 0, 2, 0, 0, 3, 3, 0, 0, 4, 0, 0, 5, 6, 0, 0, 7, 0, 0, 8 };
+    for (unsigned k = 0; k < sizeof u32_in / sizeof u32_in[0]; ++k)
+        if (u32(u32_in[k]) != u32_out[k])
+            return 2;
+    for (unsigned v = 0; v < 256; ++v)
+    {
+        const int expected = v == 1 ? 1 : v == 8 ? 2 : v == 10 ? 3 : v == 21 ? 4 : v == 200 ? 5 : v == 255 ? 6 : 0;
+        if (u8(static_cast<unsigned char>(v)) != expected)
+            return 3;
+    }
+    static const long s64_in[] = { -9223372036854775807L - 1, -9223372036854775807L, -5000000001L, -5000000000L, -4999999999L, -4, -3,
+        -2, -1, 0, 1, 6, 7, 8, 999, 1000, 1002, 1003, 4999999999L, 5000000000L, 5000000001L, 9223372036854775806L,
+        9223372036854775807L, -2147483647 - 1, 0x100000000L };
+    static const int s64_out[] = { 1, 0, 0, 2, 0, 0, 3, 0, 0, 4, 0, 0, 5, 0, 0, 6, 6, 0, 0, 7, 0, 0, 8, 0, 0 };
+    for (unsigned k = 0; k < sizeof s64_in / sizeof s64_in[0]; ++k)
+        if (s64(s64_in[k]) != s64_out[k])
+            return 4;
+    static const unsigned long u64_in[] = { 0, 1, 4, 5, 6, 77, 78, 0x7ffffffffffffffful, 0x8000000000000000ul,
+        0x8000000000000001ul, 0xffffffffffffffeful, 0xfffffffffffffff0ul, 0xfffffffffffffffeul,
+        0xfffffffffffffffful, 0xffffffffful };
+    static const int u64_out[] = { 1, 0, 0, 2, 0, 3, 0, 0, 4, 0, 0, 5, 0, 6, 0 };
+    for (unsigned k = 0; k < sizeof u64_in / sizeof u64_in[0]; ++k)
+        if (u64(u64_in[k]) != u64_out[k])
+            return 5;
+    static const int moves_in[] = { 1, 2, 3, 9, 29, 30, 31, 32, 63, 64, 65, 999, 1000, 1001 };
+    static const long moves_out[] = { 62, 97, 62, 146, 62, 35, 0, 62, 62, 191, 62, 62, 11, 62 };
+    for (unsigned k = 0; k < sizeof moves_in / sizeof moves_in[0]; ++k)
+        if (moves(moves_in[k], 6, 13) != moves_out[k])
+            return 6;
+    return 0;
+}

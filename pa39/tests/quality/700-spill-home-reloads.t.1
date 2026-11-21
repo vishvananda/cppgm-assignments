@@ -1,0 +1,11 @@
+// Two arrays through spread; exit 0 when both sums match.
+extern "C" unsigned long spread(const unsigned long* p);
+
+int main() {
+    unsigned long v[14], w[14];
+    for (int i = 0; i < 14; ++i) {
+        v[i] = 3 * i + 2;
+        w[i] = 100 - 7 * i;
+    }
+    return (spread(v) == 250670 ? 0 : 1) + (spread(w) == 397758 ? 0 : 2);
+}

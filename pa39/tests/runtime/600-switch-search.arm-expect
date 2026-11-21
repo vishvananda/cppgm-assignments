@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "600-switch-search.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ]
+}
