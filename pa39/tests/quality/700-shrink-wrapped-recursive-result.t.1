@@ -1,0 +1,8 @@
+extern "C" unsigned long fib(unsigned long);
+
+int main() {
+    unsigned long sum = 0;
+    for (unsigned long n = 0; n < 20; ++n)
+        sum += fib(n);
+    return sum == 17710 ? 42 : 1;
+}

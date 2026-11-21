@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "600-table-case-flag-walk.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 42,
+      "stdout": ""
+    }
+  ]
+}

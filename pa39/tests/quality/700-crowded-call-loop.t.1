@@ -1,0 +1,20 @@
+extern "C" long crowded(const long*, int, long);
+
+long noted;
+
+extern "C" void note(long value) {
+    noted += value;
+}
+
+int main() {
+    long data[64];
+    for (int i = 0; i != 64; ++i) data[i] = (i * 37) % 23;
+    if (crowded(data, 0, 100) != 1 + 2 * 3 + 3 * 5 + 4 * 7 + 5 * 11 + 6 * 13 + 7 * 17 + 8 * 19 + 9 * 23 + 10 * 29 +
+            11 * 31 + 12 * 37)
+        return 1;
+    const long all = crowded(data, 64, 100);
+    if (noted) return 2;
+    if (crowded(data, 64, 20) != all) return 3;
+    if (noted != 21 + 22 + 21 + 22 + 21) return 4;
+    return int((all % 89 + 89) % 89) + 10;
+}

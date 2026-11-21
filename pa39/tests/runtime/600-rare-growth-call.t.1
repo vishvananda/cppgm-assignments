@@ -1,0 +1,31 @@
+struct bit_writer {
+    unsigned char* begin;
+    unsigned char* end;
+    unsigned char* limit;
+    unsigned char buffer;
+    int bits;
+    int written;
+    void write_bit(int bit);
+};
+
+extern "C" [[noreturn]] void abort();
+
+extern "C" [[noreturn]] void too_long() {
+    abort();
+}
+
+int main() {
+    bit_writer writer = {};
+    unsigned seed = 12345;
+    for (int i = 0; i < 20000; ++i) {
+        seed = seed * 1103515245u + 12345u;
+        writer.write_bit(seed >> 16);
+    }
+    unsigned sum = 0;
+    for (const unsigned char* at = writer.begin; at != writer.end; ++at)
+        sum = sum * 31 + *at;
+    const unsigned long size = writer.end - writer.begin;
+    const bool roomy = writer.limit - writer.begin >= static_cast<long>(size);
+    ::operator delete(writer.begin);
+    return roomy ? (sum + size + writer.written) % 211 : 1;
+}

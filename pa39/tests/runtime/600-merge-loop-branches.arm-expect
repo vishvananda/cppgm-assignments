@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "600-merge-loop-branches.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 21,
+      "stdout": ""
+    }
+  ]
+}

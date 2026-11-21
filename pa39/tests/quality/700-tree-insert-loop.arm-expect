@@ -1,0 +1,22 @@
+{
+  "source": true,
+  "units": [
+    "700-tree-insert-loop.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 36,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [3],
+    "functions": {
+      "insert_all": {
+        "instructions": 38,
+        "calls": 2
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+// A bump allocator for 600-fill-remainder-after-join.t.
+static unsigned pool[64];
+static unsigned long used;
+
+unsigned* take(unsigned long count)
+{
+	unsigned* p = pool + used;
+	used += count;
+	return p;
+}
+
+void reset()
+{
+	used = 0;
+}

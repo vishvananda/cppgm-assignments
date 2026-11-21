@@ -1,0 +1,10 @@
+{
+  "source": true,
+  "levels": [2],
+  "commands": [
+    {
+      "exit": 42,
+      "stdout": ""
+    }
+  ]
+}

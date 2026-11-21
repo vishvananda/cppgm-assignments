@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "700-phi-cycle.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 20,
+      "stdout": ""
+    }
+  ]
+}

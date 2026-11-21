@@ -1,0 +1,14 @@
+{
+  "source": true,
+  "units": [
+    "600-values-across-throwing-calls.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 87,
+      "stdout": ""
+    }
+  ],
+  "hosted": true
+}

@@ -1,0 +1,14 @@
+{
+  "source": true,
+  "units": [
+    "600-forwarding-blocks.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 69,
+      "stdout": ""
+    }
+  ],
+  "hosted": true
+}

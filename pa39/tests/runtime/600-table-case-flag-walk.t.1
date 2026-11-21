@@ -1,0 +1,13 @@
+extern "C" int intrinsic(unsigned op, unsigned variant, unsigned count, int* out);
+
+int main() {
+    int out[4] = {};
+    int sum = 0;
+    for (unsigned op = 0; op < 13; ++op)
+        sum += intrinsic(op, 0, 1, out);
+    if (intrinsic(7, 0, 2, out) != 29 || intrinsic(7, 1, 1, out) != 30 || intrinsic(7, 2, 2, out) != 31)
+        return 1;
+    if (intrinsic(7, 1, 2, out) != -1 || intrinsic(7, 0, 1, out) != -1 || intrinsic(7, 2, 1, out) != -1)
+        return 2;
+    return sum == 50 && out[2] == 31 ? 42 : 3;
+}

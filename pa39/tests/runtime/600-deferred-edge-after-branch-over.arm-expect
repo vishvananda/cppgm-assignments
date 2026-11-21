@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "600-deferred-edge-after-branch-over.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 42,
+      "stdout": ""
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "700-cold-call-loop.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 99,
+      "stdout": ""
+    }
+  ]
+}

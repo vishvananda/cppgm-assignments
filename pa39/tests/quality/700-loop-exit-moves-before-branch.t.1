@@ -1,0 +1,27 @@
+extern "C" void sift(long*, unsigned, unsigned);
+
+int main() {
+    long heap[64];
+    unsigned seed = 7;
+    for (unsigned i = 1; i < 64; ++i) {
+        seed = seed * 1103515245u + 12345u;
+        heap[i] = static_cast<long>((seed >> 8) % 1000);
+    }
+    for (unsigned parent = 31; parent >= 1; --parent)
+        sift(heap, parent, 63);
+    for (unsigned i = 2; i < 64; ++i)
+        if (heap[i / 2] < heap[i])
+            return 1;
+    long sum = 0;
+    for (unsigned last = 63; last > 1; --last) {
+        const long top = heap[1];
+        sum += top;
+        heap[1] = heap[last];
+        heap[last] = top;
+        sift(heap, 1, last - 1);
+    }
+    for (unsigned i = 2; i < 64; ++i)
+        if (heap[i - 1] > heap[i])
+            return 2;
+    return sum > 0 ? 42 : 3;
+}

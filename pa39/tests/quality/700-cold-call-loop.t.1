@@ -1,0 +1,22 @@
+struct Complex {
+    double re, im;
+};
+
+extern int clamped;
+extern "C" void butterflies(Complex*, unsigned long, const Complex*, unsigned long);
+
+int main() {
+    Complex data[64], roots[6];
+    for (int i = 0; i != 64; ++i) data[i] = {double(i % 7) - 3, double(i % 5) / 2};
+    for (int s = 0; s != 6; ++s) roots[s] = {s & 1 ? 0.0 : -1.0, s & 1 ? -1.0 : 0.0};
+    butterflies(data, 0, roots, 6);
+    butterflies(data, 64, roots, 0);
+    if (clamped || data[5].re != 2 || data[5].im != 0) return 1;
+    butterflies(data, 64, roots, 6);
+    double re = 0, im = 0;
+    for (int i = 0; i != 64; ++i) {
+        re += data[i].re * (i + 1);
+        im += data[i].im * (i % 3);
+    }
+    return (int(re) ^ int(im) * 3) % 100 + clamped;
+}

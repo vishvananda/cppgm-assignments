@@ -1,0 +1,45 @@
+struct rank_pair {
+    int first, second;
+};
+
+extern "C" void sort_ranks(unsigned long* begin, unsigned long* end, rank_pair* ranks);
+
+static unsigned long order[400];
+static rank_pair pairs[400];
+static unsigned checksum;
+
+// The first element ranks lowest, so the sort needs no bound check.
+extern "C" unsigned long* first_unsorted(unsigned long* begin, unsigned long* end) {
+    return end - begin > 1 ? begin + 1 : begin;
+}
+
+extern "C" void prepare(unsigned long* begin, unsigned long* end, rank_pair* ranks) {
+    checksum += static_cast<unsigned>(end - begin) + static_cast<unsigned>(ranks[0].second);
+}
+
+extern "C" void report(const unsigned long* begin, const unsigned long* end, int a, int b, int c, int d, int e, int f,
+    int g, int h) {
+    for (const unsigned long* at = begin; at + 1 < end; ++at) {
+        const rank_pair& x = pairs[at[0]];
+        const rank_pair& y = pairs[at[1]];
+        if (x.first > y.first || (x.first == y.first && x.second > y.second))
+            checksum += 1000;
+    }
+    checksum = checksum * 3 + static_cast<unsigned>(a + b * 2 + c * 3 + d * 4 + e * 5 + f * 6 + g * 7 + h * 8);
+}
+
+int main() {
+    unsigned seed = 99;
+    for (int round = 0; round < 6; ++round) {
+        const int count = 50 + round * 60;
+        for (int i = 0; i < count; ++i) {
+            seed = seed * 1103515245u + 12345u;
+            pairs[i].first = static_cast<int>(seed >> 20) % 37;
+            pairs[i].second = static_cast<int>(seed >> 8) % 101;
+            order[i] = static_cast<unsigned long>(count - 1 - i);
+        }
+        pairs[count - 1].first = -1;
+        sort_ranks(order, order + count, pairs);
+    }
+    return static_cast<int>(checksum % 199) + 3;
+}

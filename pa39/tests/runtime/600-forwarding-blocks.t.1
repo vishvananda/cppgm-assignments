@@ -1,0 +1,62 @@
+struct item {
+    item* next[2];
+    int key;
+};
+
+extern "C" const item* find(const item*, int);
+extern "C" int machine(const unsigned char*, int);
+extern "C" int guarded(const int*, int);
+extern "C" int insert_guarded(const int*, int);
+
+static item pool[200];
+static int pooled;
+
+extern "C" {
+item* root;
+}
+
+extern "C" item* make_item(int key) {
+    if (key % 9 == 4) throw 1 + key % 4;
+    item* at = &pool[pooled++];
+    at->next[0] = at->next[1] = 0;
+    at->key = key;
+    return at;
+}
+
+extern "C" void check_key(int key) {
+    if (key % 7 == 3) throw key % 5;
+}
+
+static item items[63];
+
+static item* build(int low, int high, int& used) {
+    if (low > high) return 0;
+    const int mid = (low + high) / 2;
+    item* at = &items[used++];
+    at->key = mid * 3;
+    at->next[0] = build(low, mid - 1, used);
+    at->next[1] = build(mid + 1, high, used);
+    return at;
+}
+
+int main() {
+    int used = 0;
+    const item* top = build(0, 62, used);
+    int found = 0;
+    for (int key = -5; key < 200; ++key)
+        if (const item* at = find(top, key)) found += at->key == key;
+    if (found != 63) return 1;
+    unsigned char text[300];
+    for (int i = 0; i != 300; ++i) text[i] = (unsigned char)((i * 73 + 11) % 251);
+    const int m = machine(text, 300);
+    int keys[100];
+    for (int i = 0; i != 100; ++i) keys[i] = i * 11;
+    const int g = guarded(keys, 100);
+    root = make_item(500);
+    int more[150];
+    for (int i = 0; i != 150; ++i) more[i] = (i * 389 + 7) % 1000;
+    const int failed = insert_guarded(more, 150) + insert_guarded(more, 150);
+    int sum = 0;
+    for (int i = 0; i != pooled; ++i) sum += pool[i].key % 10;
+    return (m % 50 + 50) % 50 + g % 7 + (g / 1000) % 13 + failed % 11 + pooled % 17 + sum % 5;
+}

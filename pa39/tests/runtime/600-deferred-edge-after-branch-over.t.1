@@ -1,0 +1,71 @@
+struct cell {
+    bool alive, next;
+    cell** first;
+    cell** last;
+};
+
+struct row {
+    cell* first;
+    cell* last;
+};
+
+extern "C" void step(row* rows, row* end);
+
+enum { W = 12, H = 10 };
+static cell cells[H][W];
+static cell* links[H][W][8];
+static row rows[H];
+
+int main() {
+    unsigned seed = 12345;
+    for (int y = 0; y < H; ++y) {
+        rows[y].first = cells[y];
+        rows[y].last = cells[y] + W;
+        for (int x = 0; x < W; ++x) {
+            seed = seed * 1103515245u + 12345u;
+            cells[y][x].alive = (seed >> 16) % 3 == 0;
+            int k = 0;
+            for (int dy = -1; dy <= 1; ++dy)
+                for (int dx = -1; dx <= 1; ++dx)
+                    if (dx || dy)
+                        links[y][x][k++] = &cells[(y + dy + H) % H][(x + dx + W) % W];
+            // Cells of the first column have fewer neighbors, so the loop
+            // over them also runs without its unrolled part.
+            cells[y][x].first = links[y][x];
+            cells[y][x].last = links[y][x] + (x == 0 ? 3 : 8);
+        }
+    }
+    for (int generation = 0; generation < 8; ++generation)
+        step(rows, rows + H);
+    unsigned hash = 2166136261u;
+    for (int y = 0; y < H; ++y)
+        for (int x = 0; x < W; ++x)
+            hash = (hash ^ cells[y][x].alive) * 16777619u;
+    // Recompute the same generations the plain way.
+    static bool plain[H][W], next[H][W];
+    seed = 12345;
+    for (int y = 0; y < H; ++y)
+        for (int x = 0; x < W; ++x) {
+            seed = seed * 1103515245u + 12345u;
+            plain[y][x] = (seed >> 16) % 3 == 0;
+        }
+    for (int generation = 0; generation < 8; ++generation) {
+        for (int y = 0; y < H; ++y)
+            for (int x = 0; x < W; ++x) {
+                int alive = 0, k = 0;
+                for (int dy = -1; dy <= 1; ++dy)
+                    for (int dx = -1; dx <= 1; ++dx)
+                        if ((dx || dy) && k++ < (x == 0 ? 3 : 8))
+                            alive += plain[(y + dy + H) % H][(x + dx + W) % W];
+                next[y][x] = plain[y][x] ? alive == 2 || alive == 3 : alive == 3;
+            }
+        for (int y = 0; y < H; ++y)
+            for (int x = 0; x < W; ++x)
+                plain[y][x] = next[y][x];
+    }
+    unsigned expect = 2166136261u;
+    for (int y = 0; y < H; ++y)
+        for (int x = 0; x < W; ++x)
+            expect = (expect ^ plain[y][x]) * 16777619u;
+    return hash == expect ? 42 : 1;
+}

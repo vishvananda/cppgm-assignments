@@ -1,0 +1,20 @@
+extern "C" int dispatch(const unsigned char* ops, int count, int value, int* out);
+
+int main() {
+    unsigned char ops[200];
+    int out[200];
+    unsigned seed = 99;
+    for (int i = 0; i < 200; ++i) {
+        seed = seed * 1103515245u + 12345u;
+        ops[i] = (seed >> 16) % 9;
+    }
+    unsigned hash = 2166136261u;
+    for (int value = 0; value < 12; ++value) {
+        for (int i = 0; i < 200; ++i)
+            out[i] = -1 - i;
+        hash = (hash ^ static_cast<unsigned>(dispatch(ops, 200, value, out))) * 16777619u;
+        for (int i = 0; i < 200; ++i)
+            hash = (hash ^ static_cast<unsigned>(out[i])) * 16777619u;
+    }
+    return hash == 494772228u ? 42 : 1;
+}

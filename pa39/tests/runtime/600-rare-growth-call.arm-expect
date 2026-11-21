@@ -1,0 +1,14 @@
+{
+  "source": true,
+  "units": [
+    "600-rare-growth-call.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 168,
+      "stdout": ""
+    }
+  ],
+  "hosted": true
+}

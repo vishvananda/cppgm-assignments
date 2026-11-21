@@ -1,0 +1,25 @@
+{
+  "source": true,
+  "units": [
+    "700-loop-exit-moves-before-branch.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 42,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      2,
+      3
+    ],
+    "functions": {
+      "sift": {
+        "instructions": 30,
+        "back_jumps": 0
+      }
+    }
+  }
+}

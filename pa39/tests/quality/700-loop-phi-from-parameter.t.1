@@ -1,0 +1,86 @@
+enum { UNUSED, DOT, BEGIN, END, QUESTIONMARK, STAR, PLUS, CHAR };
+
+struct regex_t {
+    unsigned char type;
+    union {
+        unsigned char ch;
+        unsigned char* ccl;
+    } u;
+};
+
+extern "C" int matchpattern(regex_t* pattern, const char* text, int* length);
+
+extern "C" int matchone(regex_t p, char c) {
+    return p.type == DOT ? c != '\n' : p.type == CHAR && p.u.ch == (unsigned char)c;
+}
+
+extern "C" int matchstar(regex_t p, regex_t* pattern, const char* text, int* length) {
+    int pre = *length;
+    const char* start = text;
+    while (text[0] != '\0' && matchone(p, *text)) {
+        text++;
+        (*length)++;
+    }
+    while (text >= start) {
+        if (matchpattern(pattern, text--, length))
+            return 1;
+        (*length)--;
+    }
+    *length = pre;
+    return 0;
+}
+
+extern "C" int matchplus(regex_t p, regex_t* pattern, const char* text, int* length) {
+    const char* start = text;
+    while (text[0] != '\0' && matchone(p, *text)) {
+        text++;
+        (*length)++;
+    }
+    while (text > start) {
+        if (matchpattern(pattern, text--, length))
+            return 1;
+        (*length)--;
+    }
+    return 0;
+}
+
+static int compile(const char* source, regex_t* out) {
+    int n = 0;
+    for (; *source; ++source) {
+        if (*source == '.')
+            out[n].type = DOT;
+        else if (*source == '?')
+            out[n].type = QUESTIONMARK;
+        else if (*source == '*')
+            out[n].type = STAR;
+        else if (*source == '+')
+            out[n].type = PLUS;
+        else if (*source == '$')
+            out[n].type = END;
+        else {
+            out[n].type = CHAR;
+            out[n].u.ch = *source;
+        }
+        ++n;
+    }
+    out[n].type = UNUSED;
+    out[n + 1].type = UNUSED;
+    return n;
+}
+
+int main() {
+    static const char* const patterns[] = { "ab", "a.c", "ab*c", "x+y", "colou?r", "end$", "aaaa", "b.b.b" };
+    static const char* const texts[] = { "abc", "axc", "abbbc", "xxxy", "color", "colour", "end", "aaa", "bababx",
+        "" };
+    int result = 0;
+    for (const char* source : patterns) {
+        regex_t compiled[24];
+        compile(source, compiled);
+        for (const char* text : texts) {
+            int length = 0;
+            const int matched = matchpattern(compiled, text, &length);
+            result = (result * 7 + matched * 3 + length) % 251;
+        }
+    }
+    return result;
+}

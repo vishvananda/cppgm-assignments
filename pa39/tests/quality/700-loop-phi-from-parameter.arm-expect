@@ -1,0 +1,22 @@
+{
+  "source": true,
+  "units": [
+    "700-loop-phi-from-parameter.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 233,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [3],
+    "functions": {
+      "matchpattern": {
+        "instructions": 128,
+        "calls": 6
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+struct node {
+    node* left;
+    node* right;
+    int key;
+};
+
+extern "C" void insert_all(const int*, int);
+extern "C" {
+node* tree;
+}
+
+static node pool[600];
+static int used;
+
+extern "C" node* make_node(int key) {
+    node* n = &pool[used++];
+    n->left = 0;
+    n->right = 0;
+    n->key = key;
+    return n;
+}
+
+static int depth(const node* n) {
+    if (!n) return 0;
+    const int a = depth(n->left), b = depth(n->right);
+    return 1 + (a > b ? a : b);
+}
+
+static long check(const node* n, long low, long high) {
+    if (!n) return 0;
+    if (n->key <= low || n->key >= high) return -1000000;
+    return n->key + check(n->left, n->key, high) + check(n->right, low, n->key);
+}
+
+int main() {
+    int keys[500];
+    long seed = 74755;
+    for (int i = 0; i != 500; ++i) {
+        seed = (seed * 1309 + 13849) & 65535;
+        keys[i] = int(seed) - 30000;
+    }
+    node* root = tree = make_node(0);
+    insert_all(keys, 500);
+    insert_all(keys, 250);
+    long sum = 0;
+    for (int i = 0; i != used; ++i) sum += pool[i].key;
+    if (check(root, -100000, 100000) != sum) return 1;
+    return int(used % 97) + depth(root);
+}

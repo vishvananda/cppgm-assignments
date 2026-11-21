@@ -1,0 +1,23 @@
+extern "C" long mix(const long*, int, long);
+
+extern "C" void check_value(long value, long limit) {
+    if (value > limit * 2) throw value;
+}
+
+int main() {
+    long data[64];
+    for (int i = 0; i != 64; ++i) data[i] = (i * 37) % 23;
+    if (mix(data, 0, 100) != 1 + 2 * 3 + 3 * 5 + 4 * 7 + 5 * 11 + 6 * 13 + 7 * 17 + 8 * 19 + 9 * 23 + 10 * 29)
+        return 1;
+    const long kept = mix(data, 64, 20);
+    if (mix(data, 64, 20) != kept) return 2;
+    data[40] = 99;
+    const long thrown = mix(data, 64, 20);
+    long seen = 0, a = 1;
+    for (int i = 0; i != 40; ++i) {
+        seen += data[i];
+        a += data[i];
+    }
+    if (thrown != seen * 1000 + 99 + a + 99) return 3;
+    return int((kept % 89 + 89) % 89) + 10;
+}
