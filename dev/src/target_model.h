@@ -126,7 +126,14 @@ struct OptimizationModel
 	bool locals_survive_calls;
 	bool floating_literal_loads;
 	bool packed_i32_multiply;
-	bool pack_loop_carried_f64;
+	// The vector registers that hold floating values in a loop (a Wasm
+	// engine's are its host's; SSE2's sixteen are the smaller bank).
+	std::uint8_t floating_registers;
+	// Two adjacent float stores are worth one eight-byte store of a lane pair,
+	// so that a later eight-byte copy of the pair forwards from one store
+	// (AArch64's stp already writes the pair at once; a Wasm engine's code is
+	// counted in instructions).
+	bool pairs_float_stores;
 };
 
 constexpr bool is_wasm(Target target)
@@ -192,9 +199,9 @@ constexpr bool needs_aggregate_shape(Target target)
 
 constexpr OptimizationModel optimization_model(Target target)
 {
-	return is_aarch64(target) ? OptimizationModel{ true, false, false, true, true }
-		: is_wasm(target)     ? OptimizationModel{ false, true, false, true, false }
-							  : OptimizationModel{ true, false, true, false, false };
+	return is_aarch64(target) ? OptimizationModel{ true, false, false, true, 32, false }
+		: is_wasm(target)     ? OptimizationModel{ false, true, false, true, 16, false }
+							  : OptimizationModel{ true, false, true, false, 16, true };
 }
 
 // The course's Linux runtime provides GNU's combined sin/cos call ABI.
