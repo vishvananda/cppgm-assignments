@@ -140,7 +140,10 @@ for my $level (@{$expect->{levels} // [0..3]}) {
     }
     my $quality = $expect->{quality};
     if ($quality && grep { $_ eq $level } @{$quality->{levels} // [1, 2, 3]}) {
-        for my $symbol (sort keys %{$quality->{functions}}) {
+        # `functions` bounds both compilers' code; `own_functions` bounds only the tested compiler's,
+        # for a rule Clang does not follow.
+        my %bounded = map { $_ => 1 } keys %{$quality->{functions} // {}}, keys %{$quality->{own_functions} // {}};
+        for my $symbol (sort keys %bounded) {
             for my $unit ($other, $object) {
                 my $assembly = run(0, $objdump, '-t', '-d', '--no-show-raw-insn', "--disassemble-symbols=$symbol", $unit);
                 my ($start, $size) = $assembly =~ /^([0-9a-f]+)\s+[^\n]*?\bF\s+\S+\s+([0-9a-f]+)\s+\Q$symbol\E$/m;
@@ -160,10 +163,13 @@ for my $level (@{$expect->{levels} // [0..3]}) {
                 my @memory = grep { /^(?:ld|st)/ } @ins;
                 my %counts = (instructions => scalar(@ins), code_bytes => 4 * @ins, memory_ops => scalar(@memory),
                     stack_ops => scalar(grep { /\[sp\b/ } @memory), calls => scalar(grep { /^bl(?:r)?\b/ } @ins),
+                    pair_ops => scalar(grep { /^(?:ldp|stp)\b/ } @memory),
                     sp_uses => scalar(grep { /\bsp\b/ } @ins), back_jumps => $back_jumps,
                     flag_values => scalar(grep { /^csetm?\b/ } @ins), jumps => scalar(grep { /^b\s/ } @ins),
                     conditional_branches => scalar(grep { /^(?:b\.\w+|cbn?z|tbn?z)\b/ } @ins));
-                check_bounds(\%counts, $quality->{functions}{$symbol}, "$test: O$level $symbol", 'AArch64');
+                check_bounds(\%counts, $quality->{functions}{$symbol} // {}, "$test: O$level $symbol", 'AArch64');
+                check_bounds(\%counts, $quality->{own_functions}{$symbol} // {}, "$test: O$level $symbol", 'AArch64')
+                    if $unit eq $object;
             }
         }
     }

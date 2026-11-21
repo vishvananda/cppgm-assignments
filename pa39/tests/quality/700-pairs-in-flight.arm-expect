@@ -1,0 +1,26 @@
+{
+  "source": true,
+  "units": [
+    "700-pairs-in-flight.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 41,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "walked": {
+        "memory_ops": 4
+      }
+    },
+    "own_functions": {
+      "carried": {
+        "pair_ops": 0
+      }
+    }
+  }
+}

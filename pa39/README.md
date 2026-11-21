@@ -219,5 +219,6 @@ For example, the Apple calling-convention control uses the following fields.
 directions. Each command may also specify `args`. Use PA37’s `reference_assembly` for an independent assembly unit,
 `archive_units` for archive linking, and `reject_link` for an expected link failure.
 The `quality.levels` and `quality.functions` fields publish the bounds for each
-named function. Keep expected output and exit status in the sidecar. Run one fixture with
+named function; Clang's code for the fixture meets them too. `quality.own_functions`
+holds bounds for your compiler's code alone, where the rule is not one Clang follows. Keep expected output and exit status in the sidecar. Run one fixture with
 `make check TEST=tests/abi/400-apple-calling-convention.t` in `pa39/`.
