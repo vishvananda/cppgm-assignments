@@ -1,4 +1,4 @@
-// Switches of four runs or more with gaps between them search by halves:
+// Switches of five runs or more with gaps between them search by halves:
 // each step compares the selector with the middle run's lowest value, and
 // the runs that remain test against what the earlier compares proved.
 // Signed and unsigned selectors of each width order their cases as their
