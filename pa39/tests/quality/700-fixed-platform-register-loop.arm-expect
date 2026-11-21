@@ -1,0 +1,23 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "units": [
+    "700-fixed-platform-register-loop.t.1"
+  ],
+  "flags": ["-ffixed-x18"],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 96,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "crowded": {
+        "platform_register_uses": 0
+      }
+    }
+  }
+}

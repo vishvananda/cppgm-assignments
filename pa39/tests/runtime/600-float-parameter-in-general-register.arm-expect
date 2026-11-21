@@ -1,0 +1,9 @@
+{
+  "source": true,
+  "commands": [
+    {
+      "exit": 150,
+      "stdout": ""
+    }
+  ]
+}
