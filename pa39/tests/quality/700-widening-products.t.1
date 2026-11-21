@@ -1,0 +1,44 @@
+extern "C" long smul(int, int);
+extern "C" unsigned long umul(unsigned, unsigned);
+extern "C" long smadd(long, int, int);
+extern "C" long smsub(long, int, int);
+extern "C" unsigned long umadd(unsigned long, unsigned, unsigned);
+extern "C" unsigned long umsub(unsigned long, unsigned, unsigned);
+extern "C" long square(int);
+extern "C" long thousand(int);
+extern "C" long minus_seven(int);
+extern "C" long eight(int);
+extern "C" long add_eight(long, int);
+extern "C" long sub_four(long, int);
+extern "C" unsigned long add_two(unsigned long, unsigned);
+extern "C" long add_sixty_four(long, int);
+extern "C" unsigned long top_bit(unsigned);
+extern "C" long past_int(int);
+extern "C" long below_int(int);
+extern "C" long int_min(int);
+extern "C" long mixed(int, unsigned);
+
+const int kMin = -2147483647 - 1, kMax = 2147483647;
+const unsigned kTop = 4294967295u;
+
+int main() {
+    if (smul(kMin, kMin) != 4611686018427387904L || smul(kMin, kMax) != -4611686016279904256L) return 1;
+    if (smul(-3, 5) != -15) return 2;
+    if (umul(kTop, kTop) != 18446744065119617025UL || umul(kTop, 2) != 8589934590UL) return 3;
+    if (smadd(10, -4, 6) != -14 || smadd(1, kMin, -1) != 2147483649L) return 4;
+    if (smsub(10, -4, 6) != 34 || smsub(0, kMax, kMax) != -4611686014132420609L) return 5;
+    if (umadd(1, kTop, kTop) != 18446744065119617026UL || umsub(0, kTop, 1) != 18446744069414584321UL) return 6;
+    if (square(kMin) != 4611686018427387904L || square(-9) != 81) return 7;
+    if (thousand(kMin) != -2147483648000L || minus_seven(kMax) != -15032385529L || minus_seven(-1) != 7) return 8;
+    if (eight(kMin) != -17179869184L || eight(-1) != -8) return 9;
+    if (add_eight(5, -1) != -3 || add_eight(0, kMax) != 17179869176L) return 10;
+    if (sub_four(5, -1) != 9 || sub_four(0, kMin) != 8589934592L) return 11;
+    if (add_two(1, kTop) != 8589934591UL) return 12;
+    if (add_sixty_four(0, kMin) != -137438953472L || add_sixty_four(3, -1) != -61) return 13;
+    if (top_bit(kTop) != 9223372034707292160UL || top_bit(3) != 6442450944UL) return 14;
+    if (past_int(-1) != -2147483648L || past_int(kMax) != 4611686016279904256L) return 15;
+    if (below_int(1) != -2147483649L || below_int(-2) != 4294967298L) return 16;
+    if (int_min(-1) != 2147483648L || int_min(3) != -6442450944L) return 17;
+    if (mixed(-1, kTop) != -4294967295L || mixed(kMin, 2) != -4294967296L) return 18;
+    return 37;
+}

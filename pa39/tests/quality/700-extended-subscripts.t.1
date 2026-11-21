@@ -1,0 +1,95 @@
+// Calls each function with subscripts that are negative or wrap in their
+// type, and with argument bits above 32 set, and checks the element read,
+// written or addressed.
+
+extern "C" {
+struct Pair {
+    double x, y;
+};
+typedef int v4 __attribute__((vector_size(16)));
+double pick(const Pair*, const int*, unsigned long, unsigned long);
+double sum_at(const Pair*, unsigned long, unsigned long);
+const Pair* where(const Pair*, unsigned long, unsigned long);
+const Pair* where_unsigned(const Pair*, unsigned long, unsigned long);
+int load_at(const int*, unsigned long, unsigned long);
+long load_unsigned(const long*, unsigned long, unsigned long);
+char byte_at(const char*, unsigned long);
+char byte_unsigned(const char*, unsigned long, unsigned long);
+const Pair* where_short(const Pair*, unsigned long, unsigned long);
+v4 lanes_at(const v4*, unsigned long, unsigned long);
+void lanes_store(v4*, unsigned long, unsigned long, v4);
+}
+
+static Pair pairs[64];
+static int ints[64];
+static long longs[16];
+static char bytes[70000];
+static v4 quads[24];
+static const int map[] = { 3, -4, 0, 31, -32 };
+
+int main() {
+    for (int j = 0; j < 64; ++j) {
+        pairs[j].x = j;
+        pairs[j].y = 100 + j;
+        ints[j] = 3 * (j - 32);
+    }
+    for (int j = 0; j < 16; ++j)
+        longs[j] = 7L * j;
+    for (int j = 0; j < 70000; ++j)
+        bytes[j] = (char)(2 * j);
+    for (int j = 0; j < 24; ++j)
+        for (int l = 0; l < 4; ++l)
+            quads[j][l] = 4 * j + l;
+    const Pair* base = pairs + 32;
+    int failed = 0;
+    if (!(sum_at(base, 0xa5a5a5a500000000UL, 0xa5a5a5a500000000UL) == 164.0)) failed = 2;
+    if (!(sum_at(base, 0xa5a5a5a500000005UL, 0xa5a5a5a500000003UL) == 168.0)) failed = 2;
+    if (!(sum_at(base, 0xa5a5a5a5fffffff9UL, 0xa5a5a5a500000002UL) == 146.0)) failed = 2;
+    if (!(sum_at(base, 0xa5a5a5a50000000aUL, 0xa5a5a5a5ffffffecUL) == 224.0)) failed = 2;
+    if (!(sum_at(base, 0xa5a5a5a500000003UL, 0xa5a5a5a500000023UL) == 100.0)) failed = 2;
+    if (!(where(base, 0xa5a5a5a500000000UL, 0xa5a5a5a500000000UL) == base + 0)) failed = 3;
+    if (!(where(base, 0xa5a5a5a500000005UL, 0xa5a5a5a500000003UL) == base + 8)) failed = 3;
+    if (!(where(base, 0xa5a5a5a5fffffff9UL, 0xa5a5a5a500000002UL) == base + -5)) failed = 3;
+    if (!(where(base, 0xa5a5a5a50000000aUL, 0xa5a5a5a5ffffffecUL) == base + -10)) failed = 3;
+    if (!(where(base, 0xa5a5a5a5ffffffe2UL, 0xa5a5a5a5ffffffffUL) == base + -31)) failed = 3;
+    if (!((unsigned long)where_unsigned(pairs, 0xa5a5a5a5fffffff0UL, 0xa5a5a5a500000014UL) - (unsigned long)pairs == 4UL * 16)) failed = 4;
+    if (!((unsigned long)where_unsigned(pairs, 0xa5a5a5a500000003UL, 0xa5a5a5a500000004UL) - (unsigned long)pairs == 7UL * 16)) failed = 4;
+    if (!((unsigned long)where_unsigned(pairs, 0xa5a5a5a580000000UL, 0xa5a5a5a580000005UL) - (unsigned long)pairs == 5UL * 16)) failed = 4;
+    if (!((long)where_short(base, 0xa5a5a5a500000005UL, 0xa5a5a5a500000009UL) - (long)base == -4L * 16)) failed = 5;
+    if (!((long)where_short(base, 0xa5a5a5a5ffff8000UL, 0xa5a5a5a500000001UL) - (long)base == 32767L * 16)) failed = 5;
+    if (!((long)where_short(base, 0xa5a5a5a500000064UL, 0xa5a5a5a5ffffff38UL) - (long)base == 300L * 16)) failed = 5;
+    if (!((long)where_short(base, 0xa5a5a5a5fffffffdUL, 0xa5a5a5a5fffffffdUL) - (long)base == 0L * 16)) failed = 5;
+    if (!(load_at(ints + 32, 0xa5a5a5a500000003UL, 0xa5a5a5a500000002UL) == 18)) failed = 6;
+    if (!(load_at(ints + 32, 0xa5a5a5a5fffffffeUL, 0xa5a5a5a500000004UL) == -24)) failed = 6;
+    if (!(load_at(ints + 32, 0xa5a5a5a500000000UL, 0xa5a5a5a500000064UL) == 0)) failed = 6;
+    if (!(load_at(ints + 32, 0xa5a5a5a5ffffffffUL, 0xa5a5a5a5fffffffbUL) == 15)) failed = 6;
+    if (!(load_unsigned(longs, 0xa5a5a5a580000001UL, 0xa5a5a5a500000002UL) == 14L)) failed = 7;
+    if (!(load_unsigned(longs, 0xa5a5a5a500000003UL, 0xa5a5a5a500000005UL) == 105L)) failed = 7;
+    if (!(load_unsigned(longs, 0xa5a5a5a5ffffffffUL, 0xa5a5a5a5ffffffffUL) == 7L)) failed = 7;
+    if (!(byte_at(bytes + 32, 0xa5a5a5a5fffffffbUL) == 54)) failed = 8;
+    if (!(byte_at(bytes + 32, 0xa5a5a5a500000000UL) == 64)) failed = 8;
+    if (!(byte_at(bytes + 32, 0xa5a5a5a500000007UL) == 78)) failed = 8;
+    if (!(byte_at(bytes + 32, 0xa5a5a5a5ffffffe0UL) == 0)) failed = 8;
+    if (!(byte_unsigned(bytes, 0xa5a5a5a50000fffaUL, 0xa5a5a5a50000000aUL) == 8)) failed = 9;
+    if (!(byte_unsigned(bytes, 0xa5a5a5a500000001UL, 0xa5a5a5a500000002UL) == 6)) failed = 9;
+    if (!(byte_unsigned(bytes, 0xa5a5a5a50000ffffUL, 0xa5a5a5a500000001UL) == 0)) failed = 9;
+    { v4 v = lanes_at(quads + 8, 0xa5a5a5a500000003UL, 0xa5a5a5a500000001UL); if (v[0] != 40 || v[3] != 43) failed = 10; }
+    { v4 v = lanes_at(quads + 8, 0xa5a5a5a5fffffffeUL, 0xa5a5a5a500000004UL); if (v[0] != 8 || v[3] != 11) failed = 10; }
+    { v4 v = lanes_at(quads + 8, 0xa5a5a5a50000000aUL, 0xa5a5a5a50000000aUL); if (v[0] != 32 || v[3] != 35) failed = 10; }
+    { v4 v = { 9, 8, 7, 6 }; lanes_store(quads, 0xa5a5a5a5fffffffeUL, 0xa5a5a5a500000003UL, v); if (quads[1][0] != 9 || quads[1][3] != 6) failed = 11; }
+    { v4 v = { 9, 8, 7, 6 }; lanes_store(quads, 0xa5a5a5a500000002UL, 0xa5a5a5a500000002UL, v); if (quads[4][0] != 9 || quads[4][3] != 6) failed = 11; }
+    if (!(pick(base, map, 0xa5a5a5a500000000UL, 0xa5a5a5a500000000UL) == 135.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000000UL, 0xa5a5a5a500000001UL) == 134.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000000UL, 0xa5a5a5a5ffffffffUL) == 136.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000001UL, 0xa5a5a5a500000000UL) == 128.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000001UL, 0xa5a5a5a500000001UL) == 127.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000001UL, 0xa5a5a5a5ffffffffUL) == 129.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000002UL, 0xa5a5a5a500000000UL) == 132.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000002UL, 0xa5a5a5a500000001UL) == 131.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000002UL, 0xa5a5a5a5ffffffffUL) == 133.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000003UL, 0xa5a5a5a500000000UL) == 163.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000003UL, 0xa5a5a5a500000001UL) == 162.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000004UL, 0xa5a5a5a500000000UL) == 100.0)) failed = 1;
+    if (!(pick(base, map, 0xa5a5a5a500000004UL, 0xa5a5a5a5ffffffffUL) == 101.0)) failed = 1;
+    return failed ? failed : 37;
+}

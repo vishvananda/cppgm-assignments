@@ -1,0 +1,27 @@
+{
+  "source": true,
+  "units": [
+    "700-indexed-writeback.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "swap_step": {
+        "instructions": 5
+      },
+      "store_down": {
+        "instructions": 2
+      },
+      "bytes": {
+        "instructions": 3
+      }
+    }
+  }
+}

@@ -1,0 +1,228 @@
+// Runs each loop on inputs that reach the lane and saturation bounds and
+// compares a hash of the results with values computed beforehand.
+extern "C" {
+void train(short*, short*, int, int);
+int dot_product(short*, short*, int);
+void widen8(short*, const signed char*, int);
+void widen8u(short*, const unsigned char*, int);
+void widen16(int*, const short*, int);
+void widen16u(int*, const unsigned short*, int);
+void addw16(int*, const short*, int);
+void addw16u(int*, const unsigned short*, int);
+int sum16(const short*, int);
+unsigned sum16u(const unsigned short*, int);
+int sra_sum(const int*, int);
+unsigned srl_sum(const unsigned*, int);
+void narrow32(short*, const int*, int);
+void halve(int*, const int*, int);
+void halve2(int*, const int*, const int*, int);
+void wrap(int*, const int*, const int*, int);
+}
+
+static short sc(int i) {
+    if (i % 5 == 0) return i % 2 ? 32767 : -32768;
+    return (short)(unsigned short)(((i * 7919) ^ (i << 9)) & 0xffff);
+}
+static const signed char s8v[7] = {-128, 127, -1, 0, 1, 100, -100};
+static const unsigned char u8v[6] = {0, 255, 128, 127, 1, 254};
+static const unsigned short u16v[6] = {0, 65535, 32768, 32767, 1, 40000};
+static const int i32v[7] = {-2147483647 - 1, 2147483647, -1, 0, 12345678, -87654321, 65536 * 3 + 7};
+static const unsigned u32v[6] = {0, 4294967295u, 2147483648u, 31, 32, 123456789};
+
+static unsigned long hash(const int* v, int n) {
+    unsigned long h = 0;
+    for (int i = 0; i < n; ++i) h = h * 1000003 + (unsigned)v[i];
+    return h;
+}
+static unsigned long hash16(const short* v, int n) {
+    unsigned long h = 0;
+    for (int i = 0; i < n; ++i) h = h * 1000003 + (unsigned)(int)v[i];
+    return h;
+}
+
+// A volatile fill value keeps Clang from calling memset_pattern16 on Darwin.
+static volatile short seven = 7;
+short t16[48], w16[48], d16[48];
+int d32[48];
+signed char s8a[48];
+unsigned char u8a[48];
+short s16a[48];
+unsigned short u16a[48];
+int i32a[48];
+unsigned u32a[48];
+int s32b[48];
+
+int main() {
+    int failed = 0;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i); w16[i] = sc(i * 3 + 1); }
+    train(t16, w16, 0, 5);
+    if (hash16(w16, 48) != 0xa6a633d333fa09b2UL) failed = 1;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i); w16[i] = sc(i * 3 + 1); }
+    train(t16, w16, 5, 32767);
+    if (hash16(w16, 48) != 0xda0097b48f2fd889UL) failed = 2;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i); w16[i] = sc(i * 3 + 1); }
+    train(t16, w16, 16, -32767);
+    if (hash16(w16, 48) != 0x88bd98fe0f960921UL) failed = 3;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i); w16[i] = sc(i * 3 + 1); }
+    train(t16, w16, 37, 12345);
+    if (hash16(w16, 48) != 0x7741945f24a1b28UL) failed = 4;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i); w16[i] = sc(i * 3 + 1); }
+    train(t16, w16, 40, -1);
+    if (hash16(w16, 48) != 0xf5d3732008b3698eUL) failed = 5;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i) >> 1; w16[i] = sc(i + 11) >> 1; }
+    if ((unsigned)dot_product(t16, w16, 0) != 0x0u) failed = 6;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i) >> 1; w16[i] = sc(i + 11) >> 1; }
+    if ((unsigned)dot_product(t16, w16, 8) != 0xfff11e13u) failed = 7;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i) >> 1; w16[i] = sc(i + 11) >> 1; }
+    if ((unsigned)dot_product(t16, w16, 16) != 0xffebad7eu) failed = 8;
+    for (int i = 0; i < 48; ++i) { t16[i] = sc(i) >> 1; w16[i] = sc(i + 11) >> 1; }
+    if ((unsigned)dot_product(t16, w16, 40) != 0xfffb6c85u) failed = 9;
+    for (int i = 0; i < 48; ++i) { s8a[i] = s8v[i % 7]; u8a[i] = u8v[i % 6]; s16a[i] = sc(i); u16a[i] = u16v[i % 6]; i32a[i] = i32v[i % 7]; u32a[i] = u32v[i % 6]; d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8(d16, s8a, 0);
+    if (hash16(d16, 48) != 0xc3c962c9b1fd9620UL) failed = 10;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8u(d16, u8a, 0);
+    if (hash16(d16, 48) != 0xc3c962c9b1fd9620UL) failed = 11;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16(d32, s16a, 0);
+    if (hash(d32, 48) != 0xd557eb7de22403c0UL) failed = 12;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16u(d32, u16a, 0);
+    if (hash(d32, 48) != 0xd557eb7de22403c0UL) failed = 13;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    addw16(d32, s16a, 0);
+    if (hash(d32, 48) != 0xd557eb7de22403c0UL) failed = 14;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    addw16u(d32, u16a, 0);
+    if (hash(d32, 48) != 0xd557eb7de22403c0UL) failed = 15;
+    if ((unsigned)sum16(s16a, 0) != 0x0u) failed = 16;
+    if (sum16u(u16a, 0) != 0x0u) failed = 17;
+    if ((unsigned)sra_sum(i32a, 0) != 0x0u) failed = 18;
+    if (srl_sum(u32a, 0) != 0x0u) failed = 19;
+    narrow32(d16, i32a, 0);
+    if (hash16(d16, 48) != 0xc3c962c9b1fd9620UL) failed = 20;
+    for (int i = 0; i < 48; ++i) { s8a[i] = s8v[i % 7]; u8a[i] = u8v[i % 6]; s16a[i] = sc(i); u16a[i] = u16v[i % 6]; i32a[i] = i32v[i % 7]; u32a[i] = u32v[i % 6]; d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8(d16, s8a, 3);
+    if (hash16(d16, 48) != 0x8c4d2d138e1fc513UL) failed = 21;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8u(d16, u8a, 3);
+    if (hash16(d16, 48) != 0xea1b5e4c95a08926UL) failed = 22;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16(d32, s16a, 3);
+    if (hash(d32, 48) != 0xa491462cd962baf9UL) failed = 23;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16u(d32, u16a, 3);
+    if (hash(d32, 48) != 0xfe1b6168f1fe30fUL) failed = 24;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    addw16(d32, s16a, 3);
+    if (hash(d32, 48) != 0x7a59005fb1ea1731UL) failed = 25;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    addw16u(d32, u16a, 3);
+    if (hash(d32, 48) != 0x7b1be0e867a73f47UL) failed = 26;
+    if ((unsigned)sum16(s16a, 3) != 0xffffd6cdu) failed = 27;
+    if (sum16u(u16a, 3) != 0x17fffu) failed = 28;
+    if ((unsigned)sra_sum(i32a, 3) != 0xfffffffeu) failed = 29;
+    if (srl_sum(u32a, 3) != 0xbffffffu) failed = 30;
+    narrow32(d16, i32a, 3);
+    if (hash16(d16, 48) != 0x5b55431128735e13UL) failed = 31;
+    for (int i = 0; i < 48; ++i) { s8a[i] = s8v[i % 7]; u8a[i] = u8v[i % 6]; s16a[i] = sc(i); u16a[i] = u16v[i % 6]; i32a[i] = i32v[i % 7]; u32a[i] = u32v[i % 6]; d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8(d16, s8a, 8);
+    if (hash16(d16, 48) != 0xc115d1e592d58d77UL) failed = 32;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8u(d16, u8a, 8);
+    if (hash16(d16, 48) != 0x8f95e4c567748f4eUL) failed = 33;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16(d32, s16a, 8);
+    if (hash(d32, 48) != 0xb255f2bed2887870UL) failed = 34;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16u(d32, u16a, 8);
+    if (hash(d32, 48) != 0x356a9115b08df590UL) failed = 35;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    addw16(d32, s16a, 8);
+    if (hash(d32, 48) != 0xb41661edccc8910UL) failed = 36;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    addw16u(d32, u16a, 8);
+    if (hash(d32, 48) != 0x1c38dbf2bad20630UL) failed = 37;
+    if ((unsigned)sum16(s16a, 8) != 0xb178u) failed = 38;
+    if (sum16u(u16a, 8) != 0x39c3eu) failed = 39;
+    if ((unsigned)sra_sum(i32a, 8) != 0xef70bc30u) failed = 40;
+    if (srl_sum(u32a, 8) != 0x143ade67u) failed = 41;
+    narrow32(d16, i32a, 8);
+    if (hash16(d16, 48) != 0x8f7e2f78f94f6386UL) failed = 42;
+    for (int i = 0; i < 48; ++i) { s8a[i] = s8v[i % 7]; u8a[i] = u8v[i % 6]; s16a[i] = sc(i); u16a[i] = u16v[i % 6]; i32a[i] = i32v[i % 7]; u32a[i] = u32v[i % 6]; d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8(d16, s8a, 13);
+    if (hash16(d16, 48) != 0xad1674b7ca7fd61bUL) failed = 43;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8u(d16, u8a, 13);
+    if (hash16(d16, 48) != 0x1b24b388fff901f1UL) failed = 44;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16(d32, s16a, 13);
+    if (hash(d32, 48) != 0xedd22c2fc5024d28UL) failed = 45;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16u(d32, u16a, 13);
+    if (hash(d32, 48) != 0x496d7a28d94a231aUL) failed = 46;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    addw16(d32, s16a, 13);
+    if (hash(d32, 48) != 0xd21985bf639a1658UL) failed = 47;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    addw16u(d32, u16a, 13);
+    if (hash(d32, 48) != 0xbdc64d6a77e1ec4aUL) failed = 48;
+    if ((unsigned)sum16(s16a, 13) != 0xcad0u) failed = 49;
+    if (sum16u(u16a, 13) != 0x5387eu) failed = 50;
+    if ((unsigned)sra_sum(i32a, 13) != 0xfee11860u) failed = 51;
+    if (srl_sum(u32a, 13) != 0x1875bcd0u) failed = 52;
+    narrow32(d16, i32a, 13);
+    if (hash16(d16, 48) != 0x22c018f62bac0f7cUL) failed = 53;
+    for (int i = 0; i < 48; ++i) { s8a[i] = s8v[i % 7]; u8a[i] = u8v[i % 6]; s16a[i] = sc(i); u16a[i] = u16v[i % 6]; i32a[i] = i32v[i % 7]; u32a[i] = u32v[i % 6]; d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8(d16, s8a, 37);
+    if (hash16(d16, 48) != 0x3ba571d9f06f6fffUL) failed = 54;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen8u(d16, u8a, 37);
+    if (hash16(d16, 48) != 0xb1862d06d460b68dUL) failed = 55;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16(d32, s16a, 37);
+    if (hash(d32, 48) != 0x773cb182914b0702UL) failed = 56;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    widen16u(d32, u16a, 37);
+    if (hash(d32, 48) != 0xc7fb5e324d7b6aeeUL) failed = 57;
+    for (int i = 0; i < 48; ++i) { d16[i] = seven; d32[i] = i * 1000 - 20000; }
+    addw16(d32, s16a, 37);
+    if (hash(d32, 48) != 0x2c62b6e35c2c8552UL) failed = 58;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    addw16u(d32, u16a, 37);
+    if (hash(d32, 48) != 0x5214ba03185ce93eUL) failed = 59;
+    if ((unsigned)sum16(s16a, 37) != 0xffffc70eu) failed = 60;
+    if (sum16u(u16a, 37) != 0xfa97au) failed = 61;
+    if ((unsigned)sra_sum(i32a, 37) != 0xfd33acefu) failed = 62;
+    if (srl_sum(u32a, 37) != 0x49613670u) failed = 63;
+    narrow32(d16, i32a, 37);
+    if (hash16(d16, 48) != 0x2cf0a2d8606a6856UL) failed = 64;
+    for (int i = 0; i < 48; ++i) { i32a[i] = i32v[i % 7]; s32b[i] = i32v[(i + 3) % 7]; d32[i] = i * 1000 - 20000; }
+    halve(d32, i32a, 0);
+    if (hash(d32, 48) != 0xd557eb7de22403c0UL) failed = 66;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    halve2(d32, i32a, s32b, 0);
+    if (hash(d32, 48) != 0xd557eb7de22403c0UL) failed = 67;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    wrap(d32, i32a, s32b, 0);
+    if (hash(d32, 48) != 0xd557eb7de22403c0UL) failed = 68;
+    for (int i = 0; i < 48; ++i) { i32a[i] = i32v[i % 7]; s32b[i] = i32v[(i + 3) % 7]; d32[i] = i * 1000 - 20000; }
+    halve(d32, i32a, 5);
+    if (hash(d32, 48) != 0x23d117170b4e2461UL) failed = 69;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    halve2(d32, i32a, s32b, 5);
+    if (hash(d32, 48) != 0x4da4e2a41b20509dUL) failed = 70;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    wrap(d32, i32a, s32b, 5);
+    if (hash(d32, 48) != 0xfdfdfda8533d429bUL) failed = 71;
+    for (int i = 0; i < 48; ++i) { i32a[i] = i32v[i % 7]; s32b[i] = i32v[(i + 3) % 7]; d32[i] = i * 1000 - 20000; }
+    halve(d32, i32a, 37);
+    if (hash(d32, 48) != 0x74b2f77f7d17fd7cUL) failed = 72;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    halve2(d32, i32a, s32b, 37);
+    if (hash(d32, 48) != 0xda427bade9283aa6UL) failed = 73;
+    for (int i = 0; i < 48; ++i) d32[i] = i * 1000 - 20000;
+    wrap(d32, i32a, s32b, 37);
+    if (hash(d32, 48) != 0x402f91f57b6daadUL) failed = 74;
+    return failed ? failed : 37;
+}

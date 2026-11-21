@@ -1,0 +1,86 @@
+// The narrow parameters are declared here as 64-bit integers, so their high
+// bits are whatever this caller passes; AAPCS64 leaves them unspecified.
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned uint32_t;
+typedef unsigned long uint64_t;
+
+extern "C" {
+short sum16(const short*, int);
+uint8_t divided(const uint8_t*, int, int, int);
+int parity(const uint8_t*, int);
+void store16(short*, long, long);
+int add32(long, long);
+unsigned literal();
+long sext16(const short*);
+long sext8(const signed char*, long);
+long sext32(const int*, long);
+long sext32_back(const int*);
+long sext16_far(const short*);
+int sdiv16(const short*, long);
+int widen16(long);
+unsigned widen8(long);
+int mixed16(long, long);
+unsigned shifted16(long);
+long negated16(long);
+long inverted16(long);
+uint32_t low_sum(uint64_t, long);
+void store_sum8(uint8_t*, long, long);
+void mark(const uint8_t*, int*);
+void mark_half(const uint16_t*, int*);
+}
+
+short shorts[6000];
+uint8_t bytes[64];
+int ints[8] = {-7, 8, -9, 10, -11, 12, -13, 14};
+signed char chars[4] = {-128, 127, -1, 3};
+const long kHigh = 0x5a5a5a5a00000000L;
+
+int main() {
+    for (int i = 0; i != 6000; ++i)
+        shorts[i] = (short)(i * 977 - 30000);
+    for (int i = 0; i != 64; ++i)
+        bytes[i] = (uint8_t)(i * 37 + 11);
+    short expect16 = 0;
+    for (int i = 0; i != 100; ++i)
+        expect16 += shorts[i];
+    if (sum16(shorts, 100) != expect16) return 1;
+    uint8_t expect8 = 0;
+    for (int i = 0; i != 64; ++i)
+        expect8 += (uint8_t)(bytes[i] / 3 / 2);
+    if (divided(bytes, 64, 3, 2) != expect8) return 2;
+    uint8_t x = 0;
+    for (int i = 0; i != 64; ++i)
+        x ^= bytes[i];
+    if (parity(bytes, 64) != (x == 0x5a) || parity(bytes, 0) != 0) return 3;
+    short out = 0;
+    store16(&out, kHigh | 0x7fff, kHigh | 2);
+    if (out != (short)0x8001) return 4;
+    if (add32(kHigh | 0xffffffffL, 3) != 2) return 5;
+    if (literal() != 5000) return 6;
+    if (sext16(shorts) != -30000 || sext8(chars, 0) != -128 || sext8(chars, 2) != -1) return 7;
+    if (sext32(ints, 4) != -11 || sext32_back(ints + 5) != -9) return 8;
+    if (sext16_far(shorts) != (short)(5000 * 977 - 30000)) return 9;
+    if (sdiv16(shorts, kHigh | 0xfffd) != 10000) return 10;
+    if (widen16(kHigh | 0x8000) != -32768 || widen8(kHigh | 0x1ff) != 255) return 11;
+    if (mixed16(kHigh | 0x7000, kHigh | 0x10) != (short)(0x7000 * 3 + 0x10)) return 12;
+    if (shifted16(kHigh | 0xffff) != 0x3ffe) return 13;
+    if ((short)negated16(kHigh | 0x8000) != -32768 || (uint16_t)inverted16(kHigh | 0xff00) != 0xff) return 14;
+    if (low_sum(0xffffffff00000005UL, kHigh | 7) != 12) return 15;
+    uint8_t byte = 0;
+    store_sum8(&byte, kHigh | 0xf0, kHigh | 0x20);
+    if (byte != 0x10) return 16;
+    const uint8_t marks[5] = {0, 1, 3, 4, 255};
+    for (int i = 0; i != 5; ++i) {
+        int marked = 0;
+        mark(marks + i, &marked);
+        if (marked != (i == 1 || i == 2)) return 17;
+    }
+    const uint16_t halves[5] = {0, 99, 100, 999, 1000};
+    for (int i = 0; i != 5; ++i) {
+        int marked = 0;
+        mark_half(halves + i, &marked);
+        if (marked != (i == 2 || i == 3)) return 18;
+    }
+    return 37;
+}

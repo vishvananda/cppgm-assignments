@@ -1,0 +1,38 @@
+{
+  "source": true,
+  "units": [
+    "700-load-store-pairs.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "quad_sum": {
+        "instructions": 12,
+        "memory_ops": 2
+      },
+      "mixed": {
+        "instructions": 9,
+        "memory_ops": 2
+      },
+      "cross": {
+        "instructions": 7,
+        "memory_ops": 3
+      },
+      "near_words": {
+        "instructions": 3,
+        "memory_ops": 1
+      },
+      "store_far": {
+        "instructions": 3,
+        "memory_ops": 2
+      }
+    }
+  }
+}

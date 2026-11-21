@@ -1,0 +1,48 @@
+{
+  "source": true,
+  "units": [
+    "700-conditional-increments.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "add_less": {
+        "instructions": 3
+      },
+      "add_equal": {
+        "instructions": 3
+      },
+      "add_below": {
+        "instructions": 3
+      },
+      "add_word": {
+        "instructions": 3
+      },
+      "bump_less": {
+        "instructions": 3
+      },
+      "bump_pointer_equal": {
+        "instructions": 3
+      },
+      "bump_unless": {
+        "instructions": 3
+      },
+      "self_plus": {
+        "instructions": 3
+      },
+      "widened_sum": {
+        "instructions": 3
+      },
+      "count_below": {
+        "instructions": 39
+      }
+    }
+  }
+}

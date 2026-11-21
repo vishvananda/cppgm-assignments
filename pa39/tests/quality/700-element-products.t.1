@@ -1,0 +1,31 @@
+// Calls each function with values whose products and quotients are exact,
+// so that any evaluation order or contraction gives the same results.
+
+extern "C" {
+struct Body {
+    double x, y, vx, vy;
+};
+void pull(Body*, const Body*, double);
+void push(Body*, const Body*, double);
+}
+
+int main() {
+    int failed = 0;
+    { Body a = { 3, 5, 7, -3 }, b = { 1, 1, 9, 9 };
+      pull(&a, &b, 10); if (a.x != 3 || a.y != 5 || a.vx != 6.0 || a.vy != -5.0) failed = 1; }
+    { Body a = { 3, 5, 7, -3 }, b = { 1, 1, 9, 9 };
+      push(&a, &b, 10); if (a.x != 3 || a.y != 5 || a.vx != 8.0 || a.vy != -1.0) failed = 2; }
+    { Body a = { 1, 0, 0.25, 8 }, b = { 0, 1, 0, 0 };
+      pull(&a, &b, 6); if (a.x != 1 || a.y != 0 || a.vx != -2.75 || a.vy != 11.0) failed = 1; }
+    { Body a = { 1, 0, 0.25, 8 }, b = { 0, 1, 0, 0 };
+      push(&a, &b, 6); if (a.x != 1 || a.y != 0 || a.vx != 3.25 || a.vy != 5.0) failed = 2; }
+    { Body a = { -2, 6, 0, 0 }, b = { 2, 2, 1, 1 };
+      pull(&a, &b, -64); if (a.x != -2 || a.y != 6 || a.vx != -8.0 || a.vy != 8.0) failed = 1; }
+    { Body a = { -2, 6, 0, 0 }, b = { 2, 2, 1, 1 };
+      push(&a, &b, -64); if (a.x != -2 || a.y != 6 || a.vx != 8.0 || a.vy != -8.0) failed = 2; }
+    { Body a = { 0.5, 0.5, 100, -100 }, b = { 0, 0, 0, 0 };
+      pull(&a, &b, 1); if (a.x != 0.5 || a.y != 0.5 || a.vx != 99.0 || a.vy != -101.0) failed = 1; }
+    { Body a = { 0.5, 0.5, 100, -100 }, b = { 0, 0, 0, 0 };
+      push(&a, &b, 1); if (a.x != 0.5 || a.y != 0.5 || a.vx != 101.0 || a.vy != -99.0) failed = 2; }
+    return failed ? failed : 37;
+}

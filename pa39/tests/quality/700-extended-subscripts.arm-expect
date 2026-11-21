@@ -1,0 +1,39 @@
+{
+  "source": true,
+  "units": [
+    "700-extended-subscripts.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "pick": {
+        "instructions": 6
+      },
+      "sum_at": {
+        "instructions": 5
+      },
+      "where": {
+        "instructions": 3
+      },
+      "where_unsigned": {
+        "instructions": 3
+      },
+      "where_short": {
+        "instructions": 3
+      },
+      "lanes_at": {
+        "instructions": 3
+      },
+      "lanes_store": {
+        "instructions": 3
+      }
+    }
+  }
+}

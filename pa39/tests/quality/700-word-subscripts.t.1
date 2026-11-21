@@ -1,0 +1,61 @@
+// Calls each function with 32-bit arguments whose high bits are set and
+// checks the element read or addressed, including unsigned subscripts of
+// elements larger than 16 bytes, which are extended.
+
+extern "C" {
+struct Big {
+    long a, b, c, d;
+};
+typedef int v4 __attribute__((vector_size(16)));
+int load_next(const int*, unsigned long);
+unsigned load_unsigned(const unsigned*, unsigned long);
+const int* where(const int*, unsigned long, unsigned long);
+v4 lanes(const v4*, unsigned long);
+long big_at(const Big*, unsigned long);
+long big_signed(const Big*, unsigned long);
+int choose(const int*, unsigned long, unsigned long);
+}
+
+static int ints[64];
+static unsigned words[64];
+static v4 quads[16];
+static Big bigs[16];
+
+int main() {
+    for (int j = 0; j < 64; ++j) {
+        ints[j] = 3 * (j - 32);
+        words[j] = 5u * j;
+    }
+    for (int j = 0; j < 16; ++j) {
+        for (int l = 0; l < 4; ++l)
+            quads[j][l] = 4 * j + l;
+        bigs[j].a = 10L * j;
+        bigs[j].b = 10L * j + 1;
+        bigs[j].c = 10L * j + 2;
+        bigs[j].d = 10L * j + 3;
+    }
+    if (load_next(ints + 32, 0xa5a5a5a500000000UL) != 3) return 1;
+    if (load_next(ints + 32, 0xa5a5a5a500000005UL) != 33) return 1;
+    if (load_next(ints + 32, 0xa5a5a5a5fffffffdUL) != -15) return 1;
+    if (load_next(ints + 32, 0xa5a5a5a50000001eUL) != 183) return 1;
+    if (load_unsigned(words, 0xa5a5a5a500000000UL) != 0u) return 2;
+    if (load_unsigned(words, 0xa5a5a5a500000007UL) != 42u) return 2;
+    if (load_unsigned(words, 0xa5a5a5a50000003fUL) != 378u) return 2;
+    if (where(ints + 32, 0xa5a5a5a500000003UL, 0xa5a5a5a500000002UL) != ints + 32 + 5) return 3;
+    if (where(ints + 32, 0xa5a5a5a5fffffffcUL, 0xa5a5a5a500000001UL) != ints + 32 + -3) return 3;
+    if (where(ints + 32, 0xa5a5a5a500000000UL, 0xa5a5a5a5fffffffbUL) != ints + 32 + -5) return 3;
+    { v4 v = lanes(quads + 8, 0xa5a5a5a500000000UL); if (v[0] != 32 || v[3] != 35) return 4; }
+    { v4 v = lanes(quads + 8, 0xa5a5a5a5fffffffeUL); if (v[0] != 24 || v[3] != 27) return 4; }
+    { v4 v = lanes(quads + 8, 0xa5a5a5a500000005UL); if (v[0] != 52 || v[3] != 55) return 4; }
+    if (big_at(bigs, 0xa5a5a5a500000000UL) != 2) return 5;
+    if (big_at(bigs, 0xa5a5a5a500000003UL) != 32) return 5;
+    if (big_at(bigs, 0xa5a5a5a50000000fUL) != 152) return 5;
+    if (big_signed(bigs + 8, 0xa5a5a5a500000000UL) != 83) return 6;
+    if (big_signed(bigs + 8, 0xa5a5a5a5fffffffdUL) != 53) return 6;
+    if (big_signed(bigs + 8, 0xa5a5a5a500000004UL) != 123) return 6;
+    if (choose(ints + 32, 0xa5a5a5a500000001UL, 0xa5a5a5a500000002UL) != 1) return 7;
+    if (choose(ints + 32, 0xa5a5a5a5fffffffbUL, 0xa5a5a5a500000006UL) != -5) return 7;
+    if (choose(ints + 32, 0xa5a5a5a500000007UL, 0xa5a5a5a500000007UL) != 7) return 7;
+    if (choose(ints + 32, 0xa5a5a5a500000009UL, 0xa5a5a5a5fffffff7UL) != -9) return 7;
+    return 37;
+}

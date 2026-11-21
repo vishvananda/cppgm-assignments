@@ -1,0 +1,25 @@
+extern "C" long times3_plus1(long);
+extern "C" long add_times8(long, long);
+extern "C" long sub_times8(long, long);
+extern "C" long add_times3(long, long);
+extern "C" long settle(long, long, long);
+extern "C" unsigned add_times5(unsigned, unsigned);
+extern "C" unsigned sub_times4(unsigned, unsigned);
+extern "C" unsigned top_word(unsigned, unsigned);
+extern "C" unsigned long top_double(unsigned long, unsigned long);
+extern "C" long minus_eight(long, long);
+extern "C" long eight_plus(long);
+extern "C" long nine_minus(long);
+extern "C" long sub_minus_two(long, long);
+extern "C" unsigned long top_negated(unsigned long, unsigned long);
+
+int main() {
+    if (times3_plus1(-5) != -14 || add_times8(-2, 7) != -9 || sub_times8(-2, 7) != 23) return 1;
+    if (add_times3(4, -1) != 11 || settle(1, 2, 3) != 22) return 2;
+    if (add_times5(0xffffffffu, 2) != 0xfffffffdu || sub_times4(0x40000001u, 0) != 0xfffffffcu) return 3;
+    if (top_word(3, 1) != 0x80000001u || top_word(2, 5) != 5) return 4;
+    if (top_double(1, 0) != 0x8000000000000000ul || top_double(2, 9) != 9) return 5;
+    if (minus_eight(3, 100) != 76 || eight_plus(-1) != 4087 || nine_minus(1000) != 4904) return 6;
+    if (sub_minus_two(-3, 1) != -5 || top_negated(3, 1) != 0x8000000000000001ul) return 7;
+    return 37;
+}

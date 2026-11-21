@@ -1,0 +1,36 @@
+{
+  "source": true,
+  "units": [
+    "700-floating-magnitudes.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "magnitude": {
+        "instructions": 2
+      },
+      "magnitude_float": {
+        "instructions": 2
+      },
+      "relative": {
+        "instructions": 3
+      },
+      "distance_float": {
+        "instructions": 2
+      },
+      "scaled": {
+        "instructions": 4
+      },
+      "below": {
+        "instructions": 3
+      }
+    }
+  }
+}

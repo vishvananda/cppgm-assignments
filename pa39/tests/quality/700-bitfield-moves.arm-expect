@@ -1,0 +1,90 @@
+{
+  "source": true,
+  "units": [
+    "700-bitfield-moves.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "sfield": {
+        "instructions": 2
+      },
+      "sfield64": {
+        "instructions": 2
+      },
+      "sfield_up": {
+        "instructions": 2
+      },
+      "ufield_up": {
+        "instructions": 2
+      },
+      "sign_bit": {
+        "instructions": 2
+      },
+      "low63": {
+        "instructions": 2
+      },
+      "place": {
+        "instructions": 2
+      },
+      "place_over": {
+        "instructions": 2
+      },
+      "place64": {
+        "instructions": 2
+      },
+      "shr_and": {
+        "instructions": 2
+      },
+      "shr_inside": {
+        "instructions": 2
+      },
+      "asr_top": {
+        "instructions": 2
+      },
+      "asr_inside": {
+        "instructions": 2
+      },
+      "sext_field": {
+        "instructions": 2
+      },
+      "wide_field": {
+        "instructions": 2
+      },
+      "narrow_of_wide": {
+        "instructions": 2
+      },
+      "insert": {
+        "instructions": 2
+      },
+      "insert_low": {
+        "instructions": 2
+      },
+      "insert_swapped": {
+        "instructions": 2
+      },
+      "insert_top": {
+        "instructions": 2
+      },
+      "insert_xor": {
+        "instructions": 2
+      },
+      "insert_add": {
+        "instructions": 2
+      },
+      "insert_self": {
+        "instructions": 2
+      },
+      "insert64": {
+        "instructions": 2
+      }
+    }
+  }
+}

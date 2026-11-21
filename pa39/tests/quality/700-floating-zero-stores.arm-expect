@@ -1,0 +1,27 @@
+{
+  "source": true,
+  "units": [
+    "700-floating-zero-stores.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "clear": {
+        "instructions": 3
+      },
+      "clear_floats": {
+        "instructions": 3
+      },
+      "negative_zero": {
+        "instructions": 5
+      }
+    }
+  }
+}

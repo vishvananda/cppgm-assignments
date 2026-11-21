@@ -1,0 +1,39 @@
+{
+  "source": true,
+  "units": [
+    "700-word-subscripts.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "load_next": {
+        "instructions": 5
+      },
+      "load_unsigned": {
+        "instructions": 3
+      },
+      "where": {
+        "instructions": 3
+      },
+      "lanes": {
+        "instructions": 2
+      },
+      "big_at": {
+        "instructions": 4
+      },
+      "big_signed": {
+        "instructions": 4
+      },
+      "choose": {
+        "instructions": 5
+      }
+    }
+  }
+}

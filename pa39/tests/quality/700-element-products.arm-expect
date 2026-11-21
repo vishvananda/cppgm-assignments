@@ -1,0 +1,24 @@
+{
+  "source": true,
+  "units": [
+    "700-element-products.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [3],
+    "functions": {
+      "pull": {
+        "instructions": 15
+      },
+      "push": {
+        "instructions": 15
+      }
+    }
+  }
+}

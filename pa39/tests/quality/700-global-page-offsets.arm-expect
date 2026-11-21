@@ -1,0 +1,38 @@
+{
+  "source": true,
+  "units": [
+    "700-global-page-offsets.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "pair_value": {
+        "instructions": 3,
+        "memory_ops": 1
+      },
+      "bump": {
+        "instructions": 9,
+        "memory_ops": 4
+      },
+      "far_entry": {
+        "instructions": 3
+      },
+      "set_far": {
+        "instructions": 3
+      },
+      "weight": {
+        "instructions": 3
+      },
+      "signed_byte": {
+        "instructions": 3
+      }
+    }
+  }
+}

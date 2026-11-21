@@ -1,0 +1,61 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "units": [
+    "700-narrow-values.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "store16": {
+        "instructions": 3
+      },
+      "add32": {
+        "instructions": 2
+      },
+      "literal": {
+        "instructions": 2
+      },
+      "sext16": {
+        "instructions": 2
+      },
+      "sext8": {
+        "instructions": 2
+      },
+      "sext32": {
+        "instructions": 2
+      },
+      "sext32_back": {
+        "instructions": 2
+      },
+      "sdiv16": {
+        "instructions": 4
+      },
+      "widen16": {
+        "instructions": 2
+      },
+      "widen8": {
+        "instructions": 2
+      },
+      "low_sum": {
+        "instructions": 2
+      },
+      "store_sum8": {
+        "instructions": 3
+      },
+      "mark": {
+        "instructions": 7
+      },
+      "mark_half": {
+        "instructions": 7
+      }
+    }
+  }
+}

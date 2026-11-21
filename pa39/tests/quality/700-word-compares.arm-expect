@@ -1,0 +1,57 @@
+{
+  "source": true,
+  "units": [
+    "700-word-compares.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "below": {
+        "instructions": 3
+      },
+      "less": {
+        "instructions": 3
+      },
+      "is_ten": {
+        "instructions": 3
+      },
+      "at_least": {
+        "instructions": 4
+      },
+      "quotient": {
+        "instructions": 2
+      },
+      "uquotient": {
+        "instructions": 2
+      },
+      "remainder_of": {
+        "instructions": 3
+      },
+      "uremainder_of": {
+        "instructions": 3
+      },
+      "larger": {
+        "instructions": 3
+      },
+      "pick": {
+        "instructions": 3
+      },
+      "flag": {
+        "instructions": 5
+      },
+      "widened": {
+        "instructions": 5
+      },
+      "zero_extended": {
+        "instructions": 3
+      }
+    }
+  }
+}

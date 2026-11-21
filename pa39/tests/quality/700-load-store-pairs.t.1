@@ -1,0 +1,56 @@
+struct Quad {
+    int a, b, c, d;
+};
+
+struct __attribute__((packed)) Unaligned {
+    int pad;
+    long a, b;
+};
+
+struct Node {
+    Node* next;
+    long value;
+};
+
+extern "C" int quad_sum(const Quad*);
+extern "C" long mixed(const long*);
+extern "C" double cross(const double*, const double*);
+extern "C" long far_words(const long*);
+extern "C" long past_far(const long*);
+extern "C" long near_words(const long*);
+extern "C" int far_ints(const int*);
+extern "C" int past_ints(const int*);
+extern "C" long unaligned(const Unaligned*);
+extern "C" long load_across(long*, long*);
+extern "C" void store_across(long*, const long*, long);
+extern "C" long next_value(Node*);
+extern "C" void store_far(long*, long, long);
+
+long words[200];
+int ints[100];
+
+int main() {
+    Quad q = {1, 2, 4, 8};
+    if (quad_sum(&q) != (1 ^ 3) + (2 ^ 5) + (4 ^ 7) + (8 ^ 9)) return 1;
+    long p[] = {6, 7, 10, -3};
+    if (mixed(p) != (6 ^ 5) + 21 + 11 * -3) return 2;
+    double v[] = {1.5, 2.0}, w[] = {4.0, 0.25};
+    if (cross(v, w) != 1.5 * 0.25 - 2.0 * 4.0) return 3;
+    for (int i = 0; i != 200; ++i) words[i] = i * i;
+    for (int i = 0; i != 100; ++i) ints[i] = 3 * i + 1;
+    long* mid = words + 100;
+    if (far_words(words) != 63 * 63 - 64 * 64 || past_far(words) != 64 * 64 - 65 * 65) return 4;
+    if (near_words(mid) != 68 * 68 - 69 * 69) return 5;
+    if (far_ints(ints) != -3 || past_ints(ints) != -3) return 6;
+    Unaligned u = {0, 100, 58};
+    if (unaligned(&u) != 42) return 7;
+    long pair[] = {9, 3};
+    if (load_across(pair, pair + 1) != 4 || pair[1] != 5) return 8;
+    store_across(pair, pair, 11);
+    if (pair[0] != 11 || pair[1] != 12) return 9;
+    Node last = {nullptr, 77}, first = {&last, 1};
+    if (next_value(&first) != 77) return 10;
+    store_far(mid, 5, 6);
+    if (mid[63] != 5 || mid[64] != 6 || mid[-32] != 6 || mid[-31] != 5 || mid[62] != 162 * 162) return 11;
+    return 37;
+}

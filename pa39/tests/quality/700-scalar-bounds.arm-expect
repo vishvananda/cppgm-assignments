@@ -1,0 +1,42 @@
+{
+  "source": true,
+  "units": [
+    "700-scalar-bounds.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "lowest": {
+        "instructions": 3
+      },
+      "highest": {
+        "instructions": 3
+      },
+      "low_half": {
+        "instructions": 3
+      },
+      "high_one": {
+        "instructions": 3
+      },
+      "lowestf": {
+        "instructions": 3
+      },
+      "low_halff": {
+        "instructions": 3
+      },
+      "limit": {
+        "instructions": 6
+      },
+      "flux": {
+        "instructions": 30
+      }
+    }
+  }
+}

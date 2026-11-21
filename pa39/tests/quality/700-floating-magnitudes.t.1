@@ -1,0 +1,66 @@
+// Checks each result bit for bit: magnitudes of negative values, of a
+// negative zero and of a negative quiet NaN, whose payload stays.
+
+extern "C" {
+double magnitude(double);
+float magnitude_float(float);
+double relative(double, double);
+float distance_float(float, float);
+double scaled(const double*, long, double);
+double below(double, double);
+}
+
+union Double {
+    double d;
+    unsigned long bits;
+};
+union Float {
+    float f;
+    unsigned bits;
+};
+
+static unsigned long bits_of(double d) {
+    Double u;
+    u.d = d;
+    return u.bits;
+}
+static unsigned bits_of(float f) {
+    Float u;
+    u.f = f;
+    return u.bits;
+}
+static double double_of(unsigned long bits) {
+    Double u;
+    u.bits = bits;
+    return u.d;
+}
+static float float_of(unsigned bits) {
+    Float u;
+    u.bits = bits;
+    return u.f;
+}
+
+int main() {
+    if (bits_of(magnitude(-2.5)) != bits_of(2.5) || bits_of(magnitude(3.0)) != bits_of(3.0))
+        return 1;
+    if (bits_of(magnitude(-0.0)) != 0)
+        return 2;
+    if (bits_of(magnitude(double_of(0xfff8000000000123UL))) != 0x7ff8000000000123UL)
+        return 3;
+    if (bits_of(magnitude_float(-1.5f)) != bits_of(1.5f) || bits_of(magnitude_float(-0.0f)) != 0)
+        return 4;
+    if (bits_of(magnitude_float(float_of(0xffc00123u))) != 0x7fc00123u)
+        return 5;
+    if (bits_of(relative(1.0, 4.0)) != bits_of(0.75) || bits_of(relative(6.0, 4.0)) != bits_of(0.5))
+        return 6;
+    if (bits_of(relative(2.0, 2.0)) != 0)
+        return 7;
+    if (bits_of(distance_float(1.0f, 3.5f)) != bits_of(2.5f) || bits_of(distance_float(3.5f, 1.0f)) != bits_of(2.5f))
+        return 8;
+    double p[3] = { 1.0, -3.0, 5.0 };
+    if (bits_of(scaled(p, 1, 2.0)) != bits_of(6.0) || bits_of(scaled(p, 2, -1.0)) != bits_of(-5.0))
+        return 9;
+    if (bits_of(below(-3.0, 1.0)) != bits_of(-2.0) || bits_of(below(0.5, 1.0)) != bits_of(0.5))
+        return 10;
+    return 37;
+}

@@ -1,0 +1,60 @@
+{
+  "source": true,
+  "units": [
+    "700-literal-multiply-add.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [1, 2, 3],
+    "functions": {
+      "times3_plus1": {
+        "instructions": 3
+      },
+      "add_times8": {
+        "instructions": 2
+      },
+      "sub_times8": {
+        "instructions": 2
+      },
+      "add_times3": {
+        "instructions": 3
+      },
+      "settle": {
+        "instructions": 5
+      },
+      "top_double": {
+        "instructions": 2
+      },
+      "minus_eight": {
+        "instructions": 2
+      },
+      "sub_minus_two": {
+        "instructions": 2
+      },
+      "top_negated": {
+        "instructions": 2
+      },
+      "eight_plus": {
+        "instructions": 3
+      },
+      "nine_minus": {
+        "instructions": 3
+      },
+      "add_times5": {
+        "instructions": 3
+      },
+      "sub_times4": {
+        "instructions": 2
+      },
+      "top_word": {
+        "instructions": 2
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+// Calls each function and checks the values loaded and stored, the cursor
+// returned and the words around each store.
+
+extern "C" {
+int* swap_step(int*, int*);
+long walk(const long*, const long*);
+double* store_down(double*, double);
+const unsigned char* bytes(const unsigned char*, unsigned*);
+}
+
+static int ints[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+static long longs[40];
+static double doubles[4] = { 1.0, 2.0, 3.0, 4.0 };
+static const unsigned char text[4] = { 200, 7, 9, 255 };
+
+int main() {
+    if (swap_step(ints + 1, ints + 6) != ints + 2)
+        return 1;
+    if (ints[0] != 1 || ints[1] != 7 || ints[2] != 3 || ints[5] != 6 || ints[6] != 2 || ints[7] != 8)
+        return 2;
+    if (swap_step(ints + 3, ints + 3) != ints + 4 || ints[3] != 4)
+        return 3;
+    long expect = 0;
+    for (int i = 0; i < 40; ++i) {
+        longs[i] = 3L * i - 50;
+        if (i < 37)
+            expect += longs[i];
+    }
+    if (walk(longs, longs + 37) != expect || walk(longs, longs) != 0 || walk(longs + 2, longs + 3) != -44)
+        return 4;
+    if (store_down(doubles + 3, 9.5) != doubles + 2 || doubles[2] != 9.5 || doubles[1] != 2.0 || doubles[3] != 4.0)
+        return 5;
+    unsigned out = 0;
+    if (bytes(text, &out) != text + 1 || out != 200)
+        return 6;
+    if (bytes(text + 3, &out) != text + 4 || out != 255)
+        return 7;
+    return 37;
+}
