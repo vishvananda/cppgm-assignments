@@ -1,0 +1,24 @@
+{
+  "source": true,
+  "units": [
+    "700-loop-held-literals.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 92,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [2, 3],
+    "functions": {
+      "settle": {
+        "instructions": 36,
+        "memory_ops": 1,
+        "stack_ops": 0,
+        "calls": 0
+      }
+    }
+  }
+}

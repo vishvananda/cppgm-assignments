@@ -153,7 +153,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     return i32 2
 
   block ^for_body_6:
-    %t6 = phi u32 [^if_end_21: %t49, ^lor_rhs_4: 0]
+    %t6 = phi u32 [^if_end_21: %t51, ^lor_rhs_4: 0]
     %t7 = addr $p
     store typed f64 8, %t7
     %t8 = index inbounds i8 [projection=field] %t7, 8
@@ -161,11 +161,11 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     branch %t6, ^loop_preheader_7, ^for_end_13
 
   block ^loop_preheader_7:
-    %t9 = cmp uge u32 %t6, 2
+    %t9 = cmp uge u32 %t6, 4
     branch %t9, ^loop_preheader_8, ^loop_preheader_11
 
   block ^loop_preheader_8:
-    %t10 = binary add u32 %t6, 4294967294
+    %t10 = binary add u32 %t6, 4294967292
     %t11 = addr @__vector_literal_3fe00000000000003fe0000000000000
     %t12 = load v128 %t11
     %t13 = vector tof64 %t12
@@ -175,146 +175,148 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^wide_loop_9
 
   block ^wide_loop_9:
-    %t17 = phi f64 [^loop_preheader_8: 8, ^wide_loop_9: %t20]
-    %t18 = phi u32 [^loop_preheader_8: 0, ^wide_loop_9: %t21]
+    %t17 = phi f64 [^loop_preheader_8: 8, ^wide_loop_9: %t22]
+    %t18 = phi u32 [^loop_preheader_8: 0, ^wide_loop_9: %t23]
     %t19 = binary mul f64 %t17, %t13
     %t20 = binary mul f64 %t19, %t16
-    %t21 = binary add u32 %t18, 2
-    %t22 = cmp ule u32 %t21, %t10
-    branch %t22, ^wide_loop_9, ^loop_exit_10
+    %t21 = binary mul f64 %t13, %t20
+    %t22 = binary mul f64 %t16, %t21
+    %t23 = binary add u32 %t18, 4
+    %t24 = cmp ule u32 %t23, %t10
+    branch %t24, ^wide_loop_9, ^loop_exit_10
 
   block ^loop_exit_10:
-    %t23 = cmp ult u32 %t21, %t6
-    branch %t23, ^loop_preheader_11, ^for_end_13
+    %t25 = cmp ult u32 %t23, %t6
+    branch %t25, ^loop_preheader_11, ^for_end_13
 
   block ^loop_preheader_11:
-    %t24 = phi f64 [^loop_preheader_7: 8, ^loop_exit_10: %t20]
-    %t25 = phi u32 [^loop_preheader_7: 0, ^loop_exit_10: %t21]
-    %t26 = copy f64 0.5
+    %t26 = phi f64 [^loop_preheader_7: 8, ^loop_exit_10: %t22]
+    %t27 = phi u32 [^loop_preheader_7: 0, ^loop_exit_10: %t23]
+    %t28 = copy f64 0.5
     jump ^for_body_12
 
   block ^for_body_12:
-    %t27 = phi u32 [^for_body_12: %t30, ^loop_preheader_11: %t25]
-    %t28 = phi f64 [^for_body_12: %t29, ^loop_preheader_11: %t24]
-    %t29 = binary mul f64 %t28, %t26
-    %t30 = binary add u32 %t27, 1
-    %t31 = cmp ult u32 %t30, %t6
-    branch %t31, ^for_body_12, ^for_end_13
+    %t29 = phi u32 [^for_body_12: %t32, ^loop_preheader_11: %t27]
+    %t30 = phi f64 [^for_body_12: %t31, ^loop_preheader_11: %t26]
+    %t31 = binary mul f64 %t30, %t28
+    %t32 = binary add u32 %t29, 1
+    %t33 = cmp ult u32 %t32, %t6
+    branch %t33, ^for_body_12, ^for_end_13
 
   block ^for_end_13:
-    %t32 = phi f64 [^for_body_6: 8, ^for_body_12: %t29, ^loop_exit_10: %t20]
-    %t33 = call u32 @scale_pair(%t7, %t7, %t6, 0.5)
-    %t34 = cmp ne u32 %t33, %t6
-    branch %t34, ^if_then_16, ^lor_rhs_14
+    %t34 = phi f64 [^for_body_6: 8, ^for_body_12: %t31, ^loop_exit_10: %t22]
+    %t35 = call u32 @scale_pair(%t7, %t7, %t6, 0.5)
+    %t36 = cmp ne u32 %t35, %t6
+    branch %t36, ^if_then_16, ^lor_rhs_14
 
   block ^lor_rhs_14:
-    %t35 = load typed f64 %t7
-    %t36 = cmp ne f64 %t35, %t32
-    branch %t36, ^if_then_16, ^lor_rhs_15
+    %t37 = load typed f64 %t7
+    %t38 = cmp ne f64 %t37, %t34
+    branch %t38, ^if_then_16, ^lor_rhs_15
 
   block ^lor_rhs_15:
-    %t37 = index inbounds i8 [projection=field] %t7, 8
-    %t38 = load typed f64 %t37
-    %t39 = binary mul f64 %t32, -2
-    %t40 = cmp ne f64 %t38, %t39
-    branch %t40, ^if_then_16, ^if_end_17
+    %t39 = index inbounds i8 [projection=field] %t7, 8
+    %t40 = load typed f64 %t39
+    %t41 = binary mul f64 %t34, -2
+    %t42 = cmp ne f64 %t40, %t41
+    branch %t42, ^if_then_16, ^if_end_17
 
   block ^if_then_16:
     return i32 3
 
   block ^if_end_17:
-    %t41 = index inbounds i8 [projection=field] %t7, 8
+    %t43 = index inbounds i8 [projection=field] %t7, 8
     store typed f64 -0, %t7
-    store typed f64 0, %t41
-    %t42 = call u32 @scale_pair(%t7, %t41, %t6, 0.5)
-    branch %t42, ^if_then_20, ^lor_rhs_18
+    store typed f64 0, %t43
+    %t44 = call u32 @scale_pair(%t7, %t43, %t6, 0.5)
+    branch %t44, ^if_then_20, ^lor_rhs_18
 
   block ^lor_rhs_18:
-    %t43 = load typed f64 %t7
-    %t44 = binary div f64 1, %t43
-    %t45 = cmp ge f64 %t44, 0
-    branch %t45, ^if_then_20, ^lor_rhs_19
+    %t45 = load typed f64 %t7
+    %t46 = binary div f64 1, %t45
+    %t47 = cmp ge f64 %t46, 0
+    branch %t47, ^if_then_20, ^lor_rhs_19
 
   block ^lor_rhs_19:
-    %t46 = load typed f64 %t41
-    %t47 = binary div f64 1, %t46
-    %t48 = cmp le f64 %t47, 0
-    branch %t48, ^if_then_20, ^if_end_21
+    %t48 = load typed f64 %t43
+    %t49 = binary div f64 1, %t48
+    %t50 = cmp le f64 %t49, 0
+    branch %t50, ^if_then_20, ^if_end_21
 
   block ^if_then_20:
     return i32 4
 
   block ^if_end_21:
-    %t49 = binary add u32 %t6, 1
-    %t50 = cmp ule u32 %t49, 12
-    branch %t50, ^for_body_6, ^for_end_22
+    %t51 = binary add u32 %t6, 1
+    %t52 = cmp ule u32 %t51, 12
+    branch %t52, ^for_body_6, ^for_end_22
 
   block ^for_end_22:
-    %t51 = addr $p__shadow2
-    store typed f64 8, %t51
-    %t52 = index inbounds i8 [projection=field] %t51, 8
-    store typed f64 16, %t52
+    %t53 = addr $p__shadow2
+    store typed f64 8, %t53
+    %t54 = index inbounds i8 [projection=field] %t53, 8
+    store typed f64 16, %t54
     store volatile f64 0.5, @factor
     store volatile u32 0, @destroyed
-    %t53 = load volatile u32 @destroyed
-    store volatile u32 %t53, @callbacks
-    %t54 = call u32 @guarded_pair(%t51, 3, 2, 1)
-    %t55 = cmp ne u32 %t54, 21
-    branch %t55, ^if_then_25, ^lor_rhs_23
+    %t55 = load volatile u32 @destroyed
+    store volatile u32 %t55, @callbacks
+    %t56 = call u32 @guarded_pair(%t53, 3, 2, 1)
+    %t57 = cmp ne u32 %t56, 21
+    branch %t57, ^if_then_25, ^lor_rhs_23
 
   block ^lor_rhs_23:
-    %t56 = load typed f64 %t51
-    %t57 = cmp ne f64 %t56, 0.25
-    branch %t57, ^if_then_25, ^lor_rhs_24
+    %t58 = load typed f64 %t53
+    %t59 = cmp ne f64 %t58, 0.25
+    branch %t59, ^if_then_25, ^lor_rhs_24
 
   block ^lor_rhs_24:
-    %t58 = index inbounds i8 [projection=field] %t51, 8
-    %t59 = load typed f64 %t58
-    %t60 = cmp ne f64 %t59, 5.375
-    branch %t60, ^if_then_25, ^if_end_26
+    %t60 = index inbounds i8 [projection=field] %t53, 8
+    %t61 = load typed f64 %t60
+    %t62 = cmp ne f64 %t61, 5.375
+    branch %t62, ^if_then_25, ^if_end_26
 
   block ^if_then_25:
     return i32 5
 
   block ^if_end_26:
-    %t61 = load volatile u32 @callbacks
-    %t62 = cmp ne u32 %t61, 3
-    branch %t62, ^if_then_28, ^lor_rhs_27
+    %t63 = load volatile u32 @callbacks
+    %t64 = cmp ne u32 %t63, 3
+    branch %t64, ^if_then_28, ^lor_rhs_27
 
   block ^lor_rhs_27:
-    %t63 = load volatile u32 @destroyed
-    %t64 = cmp ne u32 %t63, 1
-    branch %t64, ^if_then_28, ^if_end_29
+    %t65 = load volatile u32 @destroyed
+    %t66 = cmp ne u32 %t65, 1
+    branch %t66, ^if_then_28, ^if_end_29
 
   block ^if_then_28:
     return i32 6
 
   block ^if_end_29:
-    %t65 = index inbounds i8 [projection=field] %t51, 8
-    store typed f64 8, %t51
-    store typed f64 16, %t65
+    %t67 = index inbounds i8 [projection=field] %t53, 8
+    store typed f64 8, %t53
+    store typed f64 16, %t67
     store volatile f64 0.5, @factor
     store volatile u32 0, @destroyed
-    %t66 = load volatile u32 @destroyed
-    store volatile u32 %t66, @callbacks
+    %t68 = load volatile u32 @destroyed
+    store volatile u32 %t68, @callbacks
     eh_try ^catch_dispatch_30
-    %t67 = call u32 @guarded_pair(%t51, 3, 2, 2)
+    %t69 = call u32 @guarded_pair(%t53, 3, 2, 2)
     eh_end
     return i32 7
 
   block ^catch_dispatch_30:
     eh_catch @__external_rtti__int, 1
-    %t68 = exception ptr
-    %t69 = exception_selector i32
-    %t70 = cmp eq i32 %t69, 1
-    branch %t70, ^catch_body_31, ^catch_next_35
+    %t70 = exception ptr
+    %t71 = exception_selector i32
+    %t72 = cmp eq i32 %t71, 1
+    branch %t72, ^catch_body_31, ^catch_next_35
 
   block ^catch_body_31:
-    %t71 = call ptr @__external_runtime____cxa_begin_catch(%t68)
+    %t73 = call ptr @__external_runtime____cxa_begin_catch(%t70)
     eh_cleanup ^catch_cleanup_34
-    %t72 = load typed i32 %t71
-    %t73 = cmp ne i32 %t72, 5
-    branch %t73, ^if_then_32, ^if_end_33
+    %t74 = load typed i32 %t73
+    %t75 = cmp ne i32 %t74, 5
+    branch %t75, ^if_then_32, ^if_end_33
 
   block ^if_then_32:
     eh_end
@@ -324,9 +326,9 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   block ^if_end_33:
     eh_end
     call void @__external_runtime____cxa_end_catch()
-    %t74 = load volatile u32 @callbacks
-    %t75 = cmp ne u32 %t74, 2
-    branch %t75, ^if_then_39, ^lor_rhs_36
+    %t76 = load volatile u32 @callbacks
+    %t77 = cmp ne u32 %t76, 2
+    branch %t77, ^if_then_39, ^lor_rhs_36
 
   block ^catch_cleanup_34:
     call void @__external_runtime____cxa_end_catch()
@@ -337,43 +339,43 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     resume
 
   block ^lor_rhs_36:
-    %t76 = load volatile u32 @destroyed
-    %t77 = cmp ne u32 %t76, 1
-    branch %t77, ^if_then_39, ^lor_rhs_37
+    %t78 = load volatile u32 @destroyed
+    %t79 = cmp ne u32 %t78, 1
+    branch %t79, ^if_then_39, ^lor_rhs_37
 
   block ^lor_rhs_37:
-    %t78 = load typed f64 %t51
-    %t79 = cmp ne f64 %t78, 1
-    branch %t79, ^if_then_39, ^lor_rhs_38
+    %t80 = load typed f64 %t53
+    %t81 = cmp ne f64 %t80, 1
+    branch %t81, ^if_then_39, ^lor_rhs_38
 
   block ^lor_rhs_38:
-    %t80 = load typed f64 %t65
-    %t81 = cmp ne f64 %t80, 5.5
-    branch %t81, ^if_then_39, ^if_end_40
+    %t82 = load typed f64 %t67
+    %t83 = cmp ne f64 %t82, 5.5
+    branch %t83, ^if_then_39, ^if_end_40
 
   block ^if_then_39:
     return i32 9
 
   block ^if_end_40:
     store volatile f64 0, $zero
-    %t82 = load volatile f64 $zero
-    %t83 = binary div f64 1, %t82
-    store typed f64 %t83, %t51
-    %t84 = binary sub f64 %t83, %t83
-    store typed f64 %t84, %t65
-    %t85 = call u32 @scale_pair(%t51, %t65, 3, 0.5)
-    branch %t85, ^if_then_43, ^lor_rhs_41
+    %t84 = load volatile f64 $zero
+    %t85 = binary div f64 1, %t84
+    store typed f64 %t85, %t53
+    %t86 = binary sub f64 %t85, %t85
+    store typed f64 %t86, %t67
+    %t87 = call u32 @scale_pair(%t53, %t67, 3, 0.5)
+    branch %t87, ^if_then_43, ^lor_rhs_41
 
   block ^lor_rhs_41:
-    %t86 = load typed f64 %t51
-    %t87 = cmp ne f64 %t83, %t86
-    branch %t87, ^if_then_43, ^lor_rhs_42
+    %t88 = load typed f64 %t53
+    %t89 = cmp ne f64 %t85, %t88
+    branch %t89, ^if_then_43, ^lor_rhs_42
 
   block ^lor_rhs_42:
-    %t88 = load typed f64 %t65
-    %t89 = cmp eq f64 %t88, %t88
-    %t90 = select i32 %t89, 10, 0
-    return i32 %t90
+    %t90 = load typed f64 %t67
+    %t91 = cmp eq f64 %t90, %t90
+    %t92 = select i32 %t91, 10, 0
+    return i32 %t92
 
   block ^if_then_43:
     return i32 10

@@ -1,0 +1,9 @@
+extern "C" unsigned settle(const unsigned* in, int n);
+
+unsigned data[300];
+
+int main() {
+    for (unsigned i = 0; i < 300; ++i)
+        data[i] = i * 2654435761u >> 18;
+    return static_cast<int>(settle(data, 300) % 211);
+}

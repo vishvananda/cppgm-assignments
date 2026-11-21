@@ -471,16 +471,15 @@ function @exercise__2(%operation : ptr, %state : ptr) -> u32 [binding=weak, obje
     %t2 = binary add u32 %t1, 4294967293
     %t3 = binary ushr u32 %t2, 3
     %t4 = binary xor u32 %t2, %t3
-    %t5 = binary add u32 %t4, 4294967245
-    %t6 = binary mul u32 %t5, 13
-    %t7 = binary add u32 %t6, 5
-    %t8 = binary shl u32 %t7, 7
-    %t9 = binary xor u32 %t7, %t8
-    %t10 = binary ushr u32 %t9, 11
-    %t11 = binary add u32 %t9, %t10
-    %t12 = call u32 %operation(%t11, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t13 = binary xor u32 %t12, 4294967294
-    return u32 %t13
+    %t5 = binary mul u32 %t4, 13
+    %t6 = binary add u32 %t5, 4294966638
+    %t7 = binary shl u32 %t6, 7
+    %t8 = binary xor u32 %t6, %t7
+    %t9 = binary ushr u32 %t8, 11
+    %t10 = binary add u32 %t8, %t9
+    %t11 = call u32 %operation(%t10, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t12 = binary xor u32 %t11, 4294967294
+    return u32 %t12
 }
 function @exercise__3(%operation : ptr, %state : ptr) -> u32 [binding=weak, object=_Z8exerciseILin2ELi0ELb0EEjPFjjP5StateES1_, no_inline=yes] {
   block ^entry:
@@ -488,28 +487,26 @@ function @exercise__3(%operation : ptr, %state : ptr) -> u32 [binding=weak, obje
     %t2 = binary add u32 %t1, 4294967294
     %t3 = binary ushr u32 %t2, 3
     %t4 = binary xor u32 %t2, %t3
-    %t5 = binary add u32 %t4, 4294967262
-    %t6 = binary mul u32 %t5, 13
-    %t7 = binary add u32 %t6, 5
-    %t8 = binary shl u32 %t7, 7
-    %t9 = binary xor u32 %t7, %t8
-    %t10 = binary ushr u32 %t9, 11
-    %t11 = binary add u32 %t9, %t10
-    %t12 = call u32 %operation(%t11, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t13 = load typed u32 %state
-    %t14 = binary add u32 %t13, 4294967295
-    %t15 = binary ushr u32 %t14, 3
-    %t16 = binary xor u32 %t14, %t15
-    %t17 = binary add u32 %t16, 4294967279
-    %t18 = binary mul u32 %t17, 13
-    %t19 = binary add u32 %t18, 5
-    %t20 = binary shl u32 %t19, 7
-    %t21 = binary xor u32 %t19, %t20
-    %t22 = binary ushr u32 %t21, 11
-    %t23 = binary add u32 %t21, %t22
-    %t24 = call u32 %operation(%t23, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t25 = binary add u32 %t12, %t24
-    return u32 %t25
+    %t5 = binary mul u32 %t4, 13
+    %t6 = binary add u32 %t5, 4294966859
+    %t7 = binary shl u32 %t6, 7
+    %t8 = binary xor u32 %t6, %t7
+    %t9 = binary ushr u32 %t8, 11
+    %t10 = binary add u32 %t8, %t9
+    %t11 = call u32 %operation(%t10, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t12 = load typed u32 %state
+    %t13 = binary add u32 %t12, 4294967295
+    %t14 = binary ushr u32 %t13, 3
+    %t15 = binary xor u32 %t13, %t14
+    %t16 = binary mul u32 %t15, 13
+    %t17 = binary add u32 %t16, 4294967080
+    %t18 = binary shl u32 %t17, 7
+    %t19 = binary xor u32 %t17, %t18
+    %t20 = binary ushr u32 %t19, 11
+    %t21 = binary add u32 %t19, %t20
+    %t22 = call u32 %operation(%t21, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t23 = binary add u32 %t11, %t22
+    return u32 %t23
 }
 function @exercise__4(%operation : ptr, %state : ptr) -> u32 [binding=weak, object=_Z8exerciseILin1ELi2ELb0EEjPFjjP5StateES1_, no_inline=yes] {
   block ^entry:
@@ -517,40 +514,38 @@ function @exercise__4(%operation : ptr, %state : ptr) -> u32 [binding=weak, obje
     %t2 = binary add u32 %t1, 4294967295
     %t3 = binary ushr u32 %t2, 3
     %t4 = binary xor u32 %t2, %t3
-    %t5 = binary add u32 %t4, 4294967279
-    %t6 = binary mul u32 %t5, 13
-    %t7 = binary add u32 %t6, 5
-    %t8 = binary shl u32 %t7, 7
-    %t9 = binary xor u32 %t7, %t8
-    %t10 = binary ushr u32 %t9, 11
-    %t11 = binary add u32 %t9, %t10
-    %t12 = call u32 %operation(%t11, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t13 = load typed u32 %state
-    %t14 = binary ushr u32 %t13, 3
-    %t15 = binary xor u32 %t13, %t14
-    %t16 = binary mul u32 %t15, 13
-    %t17 = binary add u32 %t16, 5
-    %t18 = binary shl u32 %t17, 7
-    %t19 = binary xor u32 %t17, %t18
-    %t20 = binary ushr u32 %t19, 11
-    %t21 = binary add u32 %t19, %t20
-    %t22 = call u32 %operation(%t21, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t23 = binary add u32 %t12, %t22
-    %t24 = load typed u32 %state
-    %t25 = binary add u32 %t24, 1
-    %t26 = binary ushr u32 %t25, 3
-    %t27 = binary xor u32 %t25, %t26
-    %t28 = binary add u32 %t27, 17
-    %t29 = binary mul u32 %t28, 13
-    %t30 = binary add u32 %t29, 5
-    %t31 = binary shl u32 %t30, 7
-    %t32 = binary xor u32 %t30, %t31
-    %t33 = binary ushr u32 %t32, 11
-    %t34 = binary add u32 %t32, %t33
-    %t35 = call u32 %operation(%t34, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t36 = binary add u32 %t23, %t35
-    %t37 = binary xor u32 %t36, 2
-    return u32 %t37
+    %t5 = binary mul u32 %t4, 13
+    %t6 = binary add u32 %t5, 4294967080
+    %t7 = binary shl u32 %t6, 7
+    %t8 = binary xor u32 %t6, %t7
+    %t9 = binary ushr u32 %t8, 11
+    %t10 = binary add u32 %t8, %t9
+    %t11 = call u32 %operation(%t10, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t12 = load typed u32 %state
+    %t13 = binary ushr u32 %t12, 3
+    %t14 = binary xor u32 %t12, %t13
+    %t15 = binary mul u32 %t14, 13
+    %t16 = binary add u32 %t15, 5
+    %t17 = binary shl u32 %t16, 7
+    %t18 = binary xor u32 %t16, %t17
+    %t19 = binary ushr u32 %t18, 11
+    %t20 = binary add u32 %t18, %t19
+    %t21 = call u32 %operation(%t20, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t22 = binary add u32 %t11, %t21
+    %t23 = load typed u32 %state
+    %t24 = binary add u32 %t23, 1
+    %t25 = binary ushr u32 %t24, 3
+    %t26 = binary xor u32 %t24, %t25
+    %t27 = binary mul u32 %t26, 13
+    %t28 = binary add u32 %t27, 226
+    %t29 = binary shl u32 %t28, 7
+    %t30 = binary xor u32 %t28, %t29
+    %t31 = binary ushr u32 %t30, 11
+    %t32 = binary add u32 %t30, %t31
+    %t33 = call u32 %operation(%t32, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t34 = binary add u32 %t22, %t33
+    %t35 = binary xor u32 %t34, 2
+    return u32 %t35
 }
 function @exercise__5(%operation : ptr, %state : ptr) -> u32 [binding=weak, object=_Z8exerciseILi0ELi4ELb0EEjPFjjP5StateES1_, no_inline=yes] {
   block ^entry:
@@ -668,16 +663,15 @@ function @exercise__10(%operation : ptr, %state : ptr) -> u32 [binding=weak, obj
     %t2 = binary add u32 %t1, 4294967293
     %t3 = binary ushr u32 %t2, 3
     %t4 = binary xor u32 %t2, %t3
-    %t5 = binary add u32 %t4, 4294967245
-    %t6 = binary mul u32 %t5, 13
-    %t7 = binary add u32 %t6, 5
-    %t8 = binary shl u32 %t7, 7
-    %t9 = binary xor u32 %t7, %t8
-    %t10 = binary ushr u32 %t9, 11
-    %t11 = binary add u32 %t9, %t10
-    %t12 = call u32 %operation(%t11, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t13 = binary xor u32 %t12, 4294967292
-    return u32 %t13
+    %t5 = binary mul u32 %t4, 13
+    %t6 = binary add u32 %t5, 4294966638
+    %t7 = binary shl u32 %t6, 7
+    %t8 = binary xor u32 %t6, %t7
+    %t9 = binary ushr u32 %t8, 11
+    %t10 = binary add u32 %t8, %t9
+    %t11 = call u32 %operation(%t10, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t12 = binary xor u32 %t11, 4294967292
+    return u32 %t12
 }
 function @exercise__11(%operation : ptr, %state : ptr) -> u32 [binding=weak, object=_Z8exerciseILin2ELin4ELb1EEjPFjjP5StateES1_, no_inline=yes] {
   block ^entry:
@@ -685,29 +679,27 @@ function @exercise__11(%operation : ptr, %state : ptr) -> u32 [binding=weak, obj
     %t2 = binary add u32 %t1, 4294967294
     %t3 = binary ushr u32 %t2, 3
     %t4 = binary xor u32 %t2, %t3
-    %t5 = binary add u32 %t4, 4294967262
-    %t6 = binary mul u32 %t5, 13
-    %t7 = binary add u32 %t6, 5
-    %t8 = binary shl u32 %t7, 7
-    %t9 = binary xor u32 %t7, %t8
-    %t10 = binary ushr u32 %t9, 11
-    %t11 = binary add u32 %t9, %t10
-    %t12 = call u32 %operation(%t11, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t13 = load typed u32 %state
-    %t14 = binary add u32 %t13, 4294967293
-    %t15 = binary ushr u32 %t14, 3
-    %t16 = binary xor u32 %t14, %t15
-    %t17 = binary add u32 %t16, 4294967245
-    %t18 = binary mul u32 %t17, 13
-    %t19 = binary add u32 %t18, 5
-    %t20 = binary shl u32 %t19, 7
-    %t21 = binary xor u32 %t19, %t20
-    %t22 = binary ushr u32 %t21, 11
-    %t23 = binary add u32 %t21, %t22
-    %t24 = call u32 %operation(%t23, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t25 = binary add u32 %t12, %t24
-    %t26 = binary xor u32 %t25, 4294967292
-    return u32 %t26
+    %t5 = binary mul u32 %t4, 13
+    %t6 = binary add u32 %t5, 4294966859
+    %t7 = binary shl u32 %t6, 7
+    %t8 = binary xor u32 %t6, %t7
+    %t9 = binary ushr u32 %t8, 11
+    %t10 = binary add u32 %t8, %t9
+    %t11 = call u32 %operation(%t10, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t12 = load typed u32 %state
+    %t13 = binary add u32 %t12, 4294967293
+    %t14 = binary ushr u32 %t13, 3
+    %t15 = binary xor u32 %t13, %t14
+    %t16 = binary mul u32 %t15, 13
+    %t17 = binary add u32 %t16, 4294966638
+    %t18 = binary shl u32 %t17, 7
+    %t19 = binary xor u32 %t17, %t18
+    %t20 = binary ushr u32 %t19, 11
+    %t21 = binary add u32 %t19, %t20
+    %t22 = call u32 %operation(%t21, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t23 = binary add u32 %t11, %t22
+    %t24 = binary xor u32 %t23, 4294967292
+    return u32 %t24
 }
 function @exercise__12(%operation : ptr, %state : ptr) -> u32 [binding=weak, object=_Z8exerciseILin1ELin4ELb1EEjPFjjP5StateES1_, no_inline=yes] {
   block ^entry:
@@ -715,42 +707,39 @@ function @exercise__12(%operation : ptr, %state : ptr) -> u32 [binding=weak, obj
     %t2 = binary add u32 %t1, 4294967295
     %t3 = binary ushr u32 %t2, 3
     %t4 = binary xor u32 %t2, %t3
-    %t5 = binary add u32 %t4, 4294967279
-    %t6 = binary mul u32 %t5, 13
-    %t7 = binary add u32 %t6, 5
-    %t8 = binary shl u32 %t7, 7
-    %t9 = binary xor u32 %t7, %t8
-    %t10 = binary ushr u32 %t9, 11
-    %t11 = binary add u32 %t9, %t10
-    %t12 = call u32 %operation(%t11, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t13 = load typed u32 %state
-    %t14 = binary add u32 %t13, 4294967294
-    %t15 = binary ushr u32 %t14, 3
-    %t16 = binary xor u32 %t14, %t15
-    %t17 = binary add u32 %t16, 4294967262
-    %t18 = binary mul u32 %t17, 13
-    %t19 = binary add u32 %t18, 5
-    %t20 = binary shl u32 %t19, 7
-    %t21 = binary xor u32 %t19, %t20
-    %t22 = binary ushr u32 %t21, 11
-    %t23 = binary add u32 %t21, %t22
-    %t24 = call u32 %operation(%t23, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t25 = binary add u32 %t12, %t24
-    %t26 = load typed u32 %state
-    %t27 = binary add u32 %t26, 4294967293
-    %t28 = binary ushr u32 %t27, 3
-    %t29 = binary xor u32 %t27, %t28
-    %t30 = binary add u32 %t29, 4294967245
-    %t31 = binary mul u32 %t30, 13
-    %t32 = binary add u32 %t31, 5
-    %t33 = binary shl u32 %t32, 7
-    %t34 = binary xor u32 %t32, %t33
-    %t35 = binary ushr u32 %t34, 11
-    %t36 = binary add u32 %t34, %t35
-    %t37 = call u32 %operation(%t36, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
-    %t38 = binary add u32 %t25, %t37
-    %t39 = binary xor u32 %t38, 4294967292
-    return u32 %t39
+    %t5 = binary mul u32 %t4, 13
+    %t6 = binary add u32 %t5, 4294967080
+    %t7 = binary shl u32 %t6, 7
+    %t8 = binary xor u32 %t6, %t7
+    %t9 = binary ushr u32 %t8, 11
+    %t10 = binary add u32 %t8, %t9
+    %t11 = call u32 %operation(%t10, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t12 = load typed u32 %state
+    %t13 = binary add u32 %t12, 4294967294
+    %t14 = binary ushr u32 %t13, 3
+    %t15 = binary xor u32 %t13, %t14
+    %t16 = binary mul u32 %t15, 13
+    %t17 = binary add u32 %t16, 4294966859
+    %t18 = binary shl u32 %t17, 7
+    %t19 = binary xor u32 %t17, %t18
+    %t20 = binary ushr u32 %t19, 11
+    %t21 = binary add u32 %t19, %t20
+    %t22 = call u32 %operation(%t21, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t23 = binary add u32 %t11, %t22
+    %t24 = load typed u32 %state
+    %t25 = binary add u32 %t24, 4294967293
+    %t26 = binary ushr u32 %t25, 3
+    %t27 = binary xor u32 %t25, %t26
+    %t28 = binary mul u32 %t27, 13
+    %t29 = binary add u32 %t28, 4294966638
+    %t30 = binary shl u32 %t29, 7
+    %t31 = binary xor u32 %t29, %t30
+    %t32 = binary ushr u32 %t31, 11
+    %t33 = binary add u32 %t31, %t32
+    %t34 = call u32 %operation(%t33, %state) as (%arg0 : u32, %arg1 : ptr) -> u32
+    %t35 = binary add u32 %t23, %t34
+    %t36 = binary xor u32 %t35, 4294967292
+    return u32 %t36
 }
 function @exercise__13(%operation : ptr, %state : ptr) -> u32 [binding=weak, object=_Z8exerciseILi0ELin4ELb1EEjPFjjP5StateES1_, no_inline=yes] {
   block ^entry:
