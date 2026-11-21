@@ -1,0 +1,51 @@
+// N3485 15.3p1, 1.9p14: a value computed before a try-block is complete
+// before the call in it that throws, so a handler, and the code that its
+// path rejoins, reads it like the normal path does
+extern "C" int printf(const char*, ...);
+extern "C" double sin(double);
+extern "C" double cos(double);
+typedef unsigned long U;
+extern "C" U maythrow(U x);
+
+// b is read in the loop and after it, both reached from the handler.
+__attribute__((noinline)) U rejoined(const U* p, U n)
+{
+	U b = p[1] + 65;
+	U s = 0;
+	for (U i = 0; i < n; ++i)
+		s += p[i & 1];
+	try { s += maythrow(p[2]); } catch (int e) { s ^= static_cast<U>(e); }
+	for (U i = 0; i < n; ++i)
+		try { s += maythrow(b); } catch (int e) { s ^= static_cast<U>(e); }
+	return s ^ b;
+}
+
+// y is read in the handler and on the normal path after the call.
+__attribute__((noinline)) U stepped(const U* p)
+{
+	U x = p[0];
+	U y = x + 5;
+	U r;
+	try { r = maythrow(x); } catch (int e) { return y * 3 + static_cast<U>(e); }
+	return r + y;
+}
+
+// cos(x) in the handler is not taken from a sin/cos pair computed after the call.
+__attribute__((noinline)) double paired(double x, U k)
+{
+	double s;
+	try { s = static_cast<double>(maythrow(k)); s += sin(x); } catch (int e) { return cos(x) + e; }
+	return s;
+}
+
+int main()
+{
+	U p[3] = {1, 2, 5};
+	U q[3] = {1, 2, 6};
+	U a[1] = {5};
+	U b[1] = {7};
+	printf("%lu %lu\n", rejoined(p, 1), rejoined(q, 2));
+	printf("%lu %lu\n", stepped(a), stepped(b));
+	printf("%.6f %.6f\n", paired(0.5, 5), paired(0.25, 7));
+	return 0;
+}

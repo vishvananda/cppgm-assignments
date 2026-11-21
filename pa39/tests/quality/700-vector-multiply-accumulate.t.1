@@ -1,0 +1,41 @@
+// Checks each sum against its closed form, k * (sum of a) + 1024 * c, in the
+// width of the function's lanes, and each element of affine_into.
+extern "C" {
+unsigned scaled_sum(const unsigned*, unsigned);
+unsigned short scaled_halves(const unsigned short*, unsigned short);
+unsigned scaled_difference(const unsigned*, unsigned);
+void affine_into(unsigned*, const unsigned*, const unsigned*, unsigned, unsigned);
+int affine_words(const int*, int, int);
+}
+
+unsigned words[1024], others[1024], into[1024];
+int signed_words[1024];
+unsigned short halves[1024];
+
+int main() {
+    unsigned total = 0, half_total = 0;
+    int signed_total = 0;
+    for (int i = 0; i < 1024; ++i) {
+        words[i] = (i * 2654435761u) ^ (i >> 3);
+        others[i] = i * 40503u - 7777u;
+        signed_words[i] = (i & 15) - 7;
+        halves[i] = static_cast<unsigned short>(i * 40503u + 7);
+        total += words[i];
+        half_total += halves[i];
+        signed_total += signed_words[i];
+    }
+    int failed = 0;
+    if (scaled_sum(words, 77777u) != total * 77777u)
+        failed |= 1;
+    if (scaled_halves(halves, 311) != static_cast<unsigned short>(half_total * 311u))
+        failed |= 2;
+    if (scaled_difference(words, 0u - 12345u) != 0u - total * (0u - 12345u))
+        failed |= 4;
+    affine_into(into, words, others, 31337u, 0u - 99u);
+    for (int i = 0; i < 1024; ++i)
+        if (into[i] != others[i] + words[i] * 31337u - 99u)
+            failed |= 8;
+    if (affine_words(signed_words, 77777, -5) != signed_total * 77777 - 5 * 1024)
+        failed |= 16;
+    return failed ? failed : 37;
+}

@@ -1,0 +1,9 @@
+extern "C" long sums(long);
+
+extern "C" long step(long x) { return x * 3 + 1; }
+
+int main() {
+    if (sums(0) != 0 || sums(1) != 2972885 || sums(4) != 1475181263)
+        return 1;
+    return 0;
+}

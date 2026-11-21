@@ -1,0 +1,25 @@
+{
+  "source": true,
+  "units": [
+    "700-zero-frame-homes.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      2,
+      3
+    ],
+    "own_functions": {
+      "sums": {
+        "instructions": 135,
+        "memory_ops": 41
+      }
+    }
+  }
+}

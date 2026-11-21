@@ -36,36 +36,37 @@ global @__vector_literal_00000004000000040000000400000004 : obj<16x16> [storage=
 function @planned_transform(%seed : u32) -> u32 [linkage=c, binding=strong, no_inline=yes] {
   block ^entry:
     %t1 = addr @planning_data
-    %t2 = copy i32 %seed
-    %t3 = vector fromi32 %t2
-    %t4 = vector pshufd %t3, 0
-    %t5 = addr @__vector_literal_0000001d00000017000000110000000b
-    %t6 = load v128 %t5
+    %t2 = vector pzero
+    %t3 = copy i32 %seed
+    %t4 = vector fromi32 %t3
+    %t5 = vector pshufd %t4, 0
+    %t6 = addr @__vector_literal_0000001d00000017000000110000000b
+    %t7 = load v128 %t6
     jump ^unrolled_1
 
   block ^unrolled_1:
-    %t7 = phi u32 [^unrolled_1: %t21, ^entry: 0]
-    %t8 = phi i64 [^unrolled_1: %t22, ^entry: 0]
-    %t9 = index inbounds u32 [projection=array_element] %t1, %t8
-    %t10 = load v128 %t9
-    %t11 = vector paddd %t4, %t10
-    %t12 = vector psrldi %t10, 5
-    %t13 = vector paddd %t12, %t6
-    %t14 = vector pxor %t11, %t13
-    %t15 = vector pshufd %t14, 78
-    %t16 = vector paddd %t14, %t15
-    %t17 = vector pshufd %t16, 177
-    %t18 = vector paddd %t16, %t17
-    %t19 = vector toi32 %t18
-    %t20 = copy u32 %t19
-    %t21 = binary add u32 %t7, %t20
-    %t22 = binary add nowrap i64 %t8, 4
-    %t23 = convert trunc exact u32 i64 %t22
-    %t24 = cmp ult u32 %t23, 64
-    branch %t24, ^unrolled_1, ^for_end_2
+    %t8 = phi v128 [^unrolled_1: %t16, ^entry: %t2]
+    %t9 = phi i64 [^unrolled_1: %t17, ^entry: 0]
+    %t10 = index inbounds u32 [projection=array_element] %t1, %t9
+    %t11 = load v128 %t10
+    %t12 = vector paddd %t5, %t11
+    %t13 = vector psrldi %t11, 5
+    %t14 = vector paddd %t13, %t7
+    %t15 = vector pxor %t12, %t14
+    %t16 = vector paddd %t8, %t15
+    %t17 = binary add nowrap i64 %t9, 4
+    %t18 = convert trunc exact u32 i64 %t17
+    %t19 = cmp ult u32 %t18, 64
+    branch %t19, ^unrolled_1, ^for_end_2
 
   block ^for_end_2:
-    return u32 %t21
+    %t20 = vector pshufd %t16, 78
+    %t21 = vector paddd %t16, %t20
+    %t22 = vector pshufd %t21, 177
+    %t23 = vector paddd %t21, %t22
+    %t24 = vector toi32 %t23
+    %t25 = copy u32 %t24
+    return u32 %t25
 }
 function @planned_matrix(%seed : u32) -> u32 [linkage=c, binding=strong, no_inline=yes] {
   block ^entry:

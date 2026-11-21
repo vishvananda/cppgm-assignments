@@ -1,0 +1,33 @@
+{
+  "source": true,
+  "units": [
+    "700-vector-multiply-accumulate.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 37,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [3],
+    "functions": {
+      "scaled_sum": {
+        "instructions": 20
+      },
+      "scaled_halves": {
+        "instructions": 60
+      },
+      "scaled_difference": {
+        "instructions": 20
+      },
+      "affine_into": {
+        "instructions": 52
+      },
+      "affine_words": {
+        "instructions": 30
+      }
+    }
+  }
+}

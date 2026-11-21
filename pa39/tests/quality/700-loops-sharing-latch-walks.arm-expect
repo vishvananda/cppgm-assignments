@@ -1,0 +1,18 @@
+{
+  "source": true,
+  "units": [
+    "700-loops-sharing-latch-walks.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      3
+    ]
+  }
+}

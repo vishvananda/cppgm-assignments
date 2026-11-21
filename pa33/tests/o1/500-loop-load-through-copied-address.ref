@@ -1,0 +1,108 @@
+global @nodes : obj<64x8> = {
+  i32 2
+  i8 1
+  i8 0
+  i8 0
+  i8 0
+  i32 1
+  i32 0
+  i32 -1
+  i8 1
+  i8 0
+  i8 0
+  i8 0
+  i32 2
+  i32 0
+  i32 3
+  i8 0
+  i8 0
+  i8 0
+  i8 0
+  i32 0
+  i32 0
+  i32 1
+  i8 1
+  i8 0
+  i8 0
+  i8 0
+  i32 1
+  i32 0
+}
+global @list : obj<16x8> = {
+  i64 0
+  i64 0
+}
+global @holder : ptr = zero
+global @counts : obj<16x4> = {
+  i32 0
+  i32 0
+  i32 0
+  i32 0
+}
+
+function @count_marked(%holder : ptr, %first : u32, %counts : ptr) -> u32 [no_inline=yes] {
+  block ^entry:
+    %owner0 = load ptr %holder
+    %go = cmp ne u32 %first, 4294967295
+    branch %go, ^split_1, ^done
+
+  block ^split_1:
+    %t3 = index inbounds i8 [projection=field] %owner0, 8
+    %t4 = load ptr %t3
+    jump ^body
+
+  block ^body:
+    %items = phi ptr [^split_1: %t4, ^latch: %items1]
+    %i = phi u32 [^split_1: %first, ^latch: %next]
+    %seen = phi u32 [^split_1: 0, ^latch: %seen1]
+    %wide = convert zext i64 u32 %i
+    %item = index obj<16x1> %items, %wide
+    %item_ref = copy nonnull ptr %item
+    %mark_at = index inbounds i8 [projection=field] %item_ref, 4
+    %mark = load u8 %mark_at
+    %marked = cmp eq u8 %mark, 1
+    branch %marked, ^count, ^latch
+
+  block ^count:
+    %slot_at = index inbounds i8 [projection=field] %item_ref, 8
+    %slot = load u32 %slot_at
+    %slot_wide = convert zext i64 u32 %slot
+    %cell = index obj<4x1> %counts, %slot_wide
+    %old = load u32 %cell
+    %new = binary add u32 %old, 1
+    store u32 %new, %cell
+    jump ^latch
+
+  block ^latch:
+    %seen1 = binary add u32 %seen, 1
+    %owner1 = load ptr %holder
+    %items_at1 = index inbounds i8 [projection=field] %owner1, 8
+    %items_ref1 = copy nonnull ptr %items_at1
+    %items1 = load ptr %items_ref1
+    %item1 = index obj<16x1> %items1, %wide
+    %next = load u32 %item1
+    %more = cmp ne u32 %next, 4294967295
+    branch %more, ^body, ^done
+
+  block ^done:
+    %total = phi u32 [^entry: 0, ^latch: %seen1]
+    return u32 %total
+}
+function @main() -> i64 [role=entry] {
+  block ^entry:
+    %list_items = index inbounds i8 [projection=field] @list, 8
+    store ptr @nodes, %list_items
+    store ptr @list, @holder
+    %seen = call u32 @count_marked(@holder, 0, @counts)
+    %seen_bad = cmp ne u32 %seen, 4
+    %one_at = index inbounds i8 @counts, 4
+    %one = load u32 %one_at
+    %one_bad = cmp ne u32 %one, 2
+    %two_at = index inbounds i8 @counts, 8
+    %two = load u32 %two_at
+    %two_bad = cmp ne u32 %two, 1
+    %a = binary or i1 %seen_bad, %one_bad
+    %b = binary or i1 %two_bad, %a
+    %failed = convert zext i64 i1 %b
+    return i64 %failed
+}

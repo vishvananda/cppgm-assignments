@@ -1,0 +1,36 @@
+extern "C" int pick(unsigned, int);
+extern "C" long wide_pick(unsigned long, long);
+extern "C" int run(const unsigned char*, int);
+
+static bool picks() {
+    static const int expected[] = {101, 300, 93, 97, 400, 50, -100, 0, 100 | 64, 0, 0};
+    for (unsigned k = 0; k != 11; ++k)
+        if (pick(k, 100) != expected[k])
+            return false;
+    return pick(~0u, 100) == 0 && pick(0x80000000u, 100) == 0;
+}
+
+static bool wide_picks() {
+    static const long expected[] = {-1, 31, 100, 7, 0x55 ^ 20, 160, ~20l, -1, 20 & 0xf0, -1};
+    for (unsigned long k = 9; k != 19; ++k)
+        if (wide_pick(k, 20) != expected[k - 9])
+            return false;
+    return wide_pick(0, 20) == -1 && wide_pick(~0ul, 20) == -1 && wide_pick((1ul << 32) + 10, 20) == -1;
+}
+
+static bool runs() {
+    static const unsigned char empty[] = {0};
+    static const unsigned char code[] = {1, 2, 3, 4, 5, 6, 7, 9, 2, 0, 1};
+    // 5 -> 8 -> 16 -> 116 -> 52 -> -52 -> -26 -> -27 -> 73 -> 146.
+    return run(empty, 7) == 7 && run(code, 5) == 146;
+}
+
+int main() {
+    if (!picks())
+        return 1;
+    if (!wide_picks())
+        return 2;
+    if (!runs())
+        return 3;
+    return 0;
+}

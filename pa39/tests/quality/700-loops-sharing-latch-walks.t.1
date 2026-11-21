@@ -1,0 +1,15 @@
+extern "C" unsigned walk(unsigned* a, unsigned n, unsigned m);
+
+int main() {
+    unsigned h = 0;
+    for (unsigned n = 0; n != 4; ++n)
+        for (unsigned m = 0; m != 12; m += 3) {
+            unsigned a[8];
+            static const unsigned start[8] = {1, 6, 5, 9, 2, 6, 3, 5};
+            for (unsigned i = 0; i != 8; ++i)
+                a[i] = start[i];
+            h = h * 31 + walk(a, n, m);
+            h = h * 31 + a[5];
+        }
+    return h == 3292705254u ? 0 : 1;
+}

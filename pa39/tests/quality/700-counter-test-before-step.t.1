@@ -1,0 +1,49 @@
+struct Operand {
+    unsigned char kind;
+    unsigned index;
+};
+
+struct Node {
+    unsigned char op;
+    Operand ops[3];
+    unsigned extra_count;
+    const Operand* extra;
+};
+
+extern "C" unsigned weigh(const Node* node, unsigned* marks);
+
+static unsigned noted;
+
+void note(unsigned* marks, unsigned index) {
+    noted = noted * 31 + index + static_cast<unsigned>(marks[0] & 3);
+    marks[index & 7] += 1;
+}
+
+int main() {
+    static const Operand extra[4] = {{1, 5}, {2, 6}, {7, 2}, {9, 1}};
+    static const unsigned char ops[4] = {0, 4, 25, 32};
+    static const unsigned results[4] = {43, 29, 43, 0};
+    static const unsigned notes[4] = {154985, 152089, 6030, 0};
+    for (int k = 0; k != 4; ++k) {
+        // The course link has no C library: no aggregate copies.
+        unsigned marks[16];
+        for (unsigned i = 0; i != 16; ++i)
+            marks[i] = i + 1;
+        Node node;
+        node.op = ops[k];
+        node.ops[0].kind = 1;
+        node.ops[0].index = 3;
+        node.ops[1].kind = 2;
+        node.ops[1].index = 4;
+        node.ops[2].kind = 5;
+        node.ops[2].index = 1;
+        node.extra_count = 4;
+        node.extra = extra;
+        noted = 0;
+        if (weigh(&node, marks) != results[k])
+            return 1 + k;
+        if (noted != notes[k])
+            return 10 + k;
+    }
+    return 0;
+}

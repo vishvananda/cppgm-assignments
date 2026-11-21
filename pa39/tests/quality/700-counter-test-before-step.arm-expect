@@ -1,0 +1,23 @@
+{
+  "source": true,
+  "units": [
+    "700-counter-test-before-step.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      3
+    ],
+    "functions": {
+      "weigh": {
+        "flag_values": 0
+      }
+    }
+  }
+}
