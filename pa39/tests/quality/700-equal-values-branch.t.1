@@ -1,0 +1,18 @@
+extern "C" unsigned long decode(const unsigned char* bits, unsigned long count, const unsigned long* codes,
+    unsigned char* out);
+
+int main() {
+    // Codes read bit by bit as 2c+1 or 2c+2: "0" is 1, "10" is 5, "110"
+    // is 13 and "111" is 14; the last entry stops every scan.
+    static const unsigned long codes[] = {1, 5, 13, 14, ~0ul};
+    // 0 10 110 111 0 0 10 111 = a b c d a a b d.
+    static const unsigned char bits[] = {0x5b, 0x97};
+    static const unsigned char expected[] = {'a', 'b', 'c', 'd', 'a', 'a', 'b', 'd'};
+    unsigned char out[8];
+    if (decode(bits, 8, codes, out) != 8)
+        return 1;
+    for (int i = 0; i != 8; ++i)
+        if (out[i] != expected[i])
+            return 2 + i;
+    return 0;
+}

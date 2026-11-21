@@ -1,0 +1,23 @@
+{
+  "source": true,
+  "units": [
+    "700-conditional-compare-chain.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      3
+    ],
+    "functions": {
+      "settle": {
+        "conditional_branches": 2
+      }
+    }
+  }
+}

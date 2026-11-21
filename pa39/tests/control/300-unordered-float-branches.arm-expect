@@ -1,0 +1,13 @@
+{
+  "source": true,
+  "units": [
+    "300-unordered-float-branches.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ]
+}

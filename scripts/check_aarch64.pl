@@ -147,15 +147,22 @@ for my $level (@{$expect->{levels} // [0..3]}) {
                 defined $size or die "$test: no function size for $symbol\n";
                 my $end = hex($start) + hex($size);
                 my @ins;
+                my $back_jumps = 0;
                 # llvm-objdump can print the next function's alignment padding.
                 while ($assembly =~ /^\s*([0-9a-f]+):\s+(\S+[^\n]*)$/mg) {
-                    push @ins, $2 if hex($1) >= hex($start) && hex($1) < $end;
+                    my ($address, $text) = (hex($1), $2);
+                    next if $address < hex($start) || $address >= $end;
+                    push @ins, $text;
+                    # An unconditional jump to an earlier instruction.
+                    $back_jumps++ if $text =~ /^b\s+(?:0x)?([0-9a-f]+)\b/ && hex($1) < $address;
                 }
                 @ins or die "$test: no instructions for $symbol\n";
                 my @memory = grep { /^(?:ld|st)/ } @ins;
                 my %counts = (instructions => scalar(@ins), code_bytes => 4 * @ins, memory_ops => scalar(@memory),
                     stack_ops => scalar(grep { /\[sp\b/ } @memory), calls => scalar(grep { /^bl(?:r)?\b/ } @ins),
-                    sp_uses => scalar(grep { /\bsp\b/ } @ins));
+                    sp_uses => scalar(grep { /\bsp\b/ } @ins), back_jumps => $back_jumps,
+                    flag_values => scalar(grep { /^csetm?\b/ } @ins), jumps => scalar(grep { /^b\s/ } @ins),
+                    conditional_branches => scalar(grep { /^(?:b\.\w+|cbn?z|tbn?z)\b/ } @ins));
                 check_bounds(\%counts, $quality->{functions}{$symbol}, "$test: O$level $symbol", 'AArch64');
             }
         }

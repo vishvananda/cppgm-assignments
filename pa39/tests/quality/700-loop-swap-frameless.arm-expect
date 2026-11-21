@@ -1,0 +1,27 @@
+{
+  "source": true,
+  "units": [
+    "700-loop-swap-frameless.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      1,
+      2,
+      3
+    ],
+    "functions": {
+      "swap_sum": {
+        "memory_ops": 0,
+        "calls": 0,
+        "sp_uses": 0
+      }
+    }
+  }
+}

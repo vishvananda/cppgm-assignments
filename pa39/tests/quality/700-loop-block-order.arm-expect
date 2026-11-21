@@ -1,0 +1,39 @@
+{
+  "source": true,
+  "units": [
+    "700-loop-block-order.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      2,
+      3
+    ],
+    "functions": {
+      "scan_table": {
+        "back_jumps": 0
+      },
+      "scan_found": {
+        "back_jumps": 0
+      },
+      "probe_sum": {
+        "back_jumps": 1
+      },
+      "bubble_sort": {
+        "back_jumps": 2
+      },
+      "sift_down": {
+        "back_jumps": 1
+      },
+      "decode": {
+        "back_jumps": 2
+      }
+    }
+  }
+}

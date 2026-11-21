@@ -1,0 +1,24 @@
+{
+  "source": true,
+  "units": [
+    "700-loop-entry-fallthrough.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      3
+    ],
+    "functions": {
+      "render": {
+        "instructions": 166,
+        "conditional_branches": 19
+      }
+    }
+  }
+}

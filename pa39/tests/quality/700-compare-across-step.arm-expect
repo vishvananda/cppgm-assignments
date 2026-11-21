@@ -1,0 +1,24 @@
+{
+  "source": true,
+  "units": [
+    "700-compare-across-step.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      2,
+      3
+    ],
+    "functions": {
+      "sort_descending": {
+        "flag_values": 0
+      }
+    }
+  }
+}

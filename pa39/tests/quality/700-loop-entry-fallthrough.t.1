@@ -1,0 +1,29 @@
+struct Vec {
+    double x, y, z;
+};
+
+struct Ball {
+    Vec center;
+    double radius;
+    Vec color;
+};
+
+extern "C" unsigned render(const Ball* scene, const Ball* end, int w, int h);
+
+// The fixture links without a C library, and a peer compiler calls sqrt.
+extern "C" double sqrt(double x) {
+    if (!(x > 0))
+        return x == 0 ? x : (x - x) / (x - x);
+    double root = x > 1 ? x : 1;
+    for (int i = 0; i < 64; ++i)
+        root = 0.5 * (root + x / root);
+    return root;
+}
+
+int main() {
+    static const Ball scene[3] = {{{-1.0, 0.0, 3.0}, 0.3, {1, 0, 0}}, {{0.0, 0.0, 3.0}, 0.8, {0, 1, 0}},
+        {{1.0, 0.0, 3.0}, 0.4, {0, 0, 1}}};
+    if (render(scene, scene, 4, 3) != 12 * 32)
+        return 1;
+    return render(scene, scene + 3, 48, 24) == 108264 ? 0 : 2;
+}

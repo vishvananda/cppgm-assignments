@@ -1,0 +1,24 @@
+{
+  "source": true,
+  "units": [
+    "700-equal-values-branch.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [
+      2
+    ],
+    "functions": {
+      "decode": {
+        "conditional_branches": 4,
+        "sp_uses": 0
+      }
+    }
+  }
+}

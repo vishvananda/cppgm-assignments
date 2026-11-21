@@ -1,0 +1,124 @@
+struct Slot {
+    unsigned long key;
+    unsigned value;
+};
+
+extern "C" unsigned scan_table(const unsigned long*, unsigned long, unsigned);
+extern "C" int scan_found(const unsigned long*, unsigned long, unsigned, unsigned*);
+extern "C" unsigned probe_sum(const Slot*, unsigned, const unsigned long*, unsigned);
+extern "C" void bubble_sort(int*, int);
+extern "C" void sift_down(double*, unsigned, unsigned);
+extern "C" unsigned decode(const unsigned long*, const unsigned char*, const unsigned char*, unsigned long, unsigned,
+    unsigned char*);
+
+// The course link has no C library: tables are static, and writable arrays
+// are filled through volatile pointers so that no memset or memcpy appears.
+template<typename T>
+static void fill(T* to, const T* from, unsigned count) {
+    volatile T* out = to;
+    for (unsigned k = 0; k != count; ++k)
+        out[k] = from ? from[k] : T();
+}
+
+static bool scans() {
+    static const unsigned long heap[] = {0, 0, 3, 5, 9, 9, 14, ~0ul};
+    unsigned where = 99;
+    if (scan_table(heap, 0, 0) != 0 || scan_table(heap, 4, 0) != 3 || scan_table(heap, 9, 2) != 4)
+        return false;
+    if (scan_table(heap, 15, 1) != 7 || scan_table(heap, 3, 6) != 6)
+        return false;
+    if (!scan_found(heap, 9, 0, &where) || where != 4 || scan_found(heap, 10, 0, &where) || where != 6)
+        return false;
+    return scan_found(heap, 0, 0, &where) && where == 0;
+}
+
+static unsigned slot_of(unsigned long key, unsigned mask) {
+    return static_cast<unsigned>(key * 0x9e3779b97f4a7c15ull >> 40) & mask;
+}
+
+static bool probes() {
+    static const unsigned long stored[] = {7, 23, 40, 41, 1000, 77777, 5, 9};
+    static const unsigned long keys[] = {7, 23, 40, 41, 1000, 77777, 5, 9, 8, 6, 12345};
+    Slot slots[16];
+    for (unsigned k = 0; k != 16; ++k) {
+        volatile unsigned long* key = &slots[k].key;
+        volatile unsigned* value = &slots[k].value;
+        *key = 0;
+        *value = 0;
+    }
+    for (unsigned k = 0; k != 8; ++k) {
+        unsigned i = slot_of(stored[k], 15);
+        while (slots[i].value)
+            i = (i + 1) & 15;
+        slots[i].key = stored[k];
+        slots[i].value = k + 1;
+    }
+    if (probe_sum(slots, 15, keys, 0) != 0 || probe_sum(slots, 15, keys, 1) != 1)
+        return false;
+    return probe_sum(slots, 15, keys, 8) == 36 && probe_sum(slots, 15, keys, 11) == 36;
+}
+
+static bool sorts() {
+    static const int start[] = {5, -3, 9, 9, 0, 12, -7, 4, 4, 1};
+    static const int sorted[] = {-7, -3, 0, 1, 4, 4, 5, 9, 9, 12};
+    int values[10];
+    fill(values, start, 10);
+    bubble_sort(values, 0);
+    bubble_sort(values, 1);
+    if (values[0] != 5)
+        return false;
+    bubble_sort(values, 10);
+    for (int k = 0; k != 10; ++k)
+        if (values[k] != sorted[k])
+            return false;
+    return true;
+}
+
+static bool sifts() {
+    static const double start[] = {0, 1, 9, 8, 4, 5, 7, 6, 2, 3, 0.5};
+    static const double expected[] = {0, 9, 5, 8, 4, 1, 7, 6, 2, 3, 0.5};
+    double heap[11];
+    fill(heap, start, 11);
+    sift_down(heap, 1, 10);
+    for (int k = 0; k != 11; ++k)
+        if (heap[k] != expected[k])
+            return false;
+    static const double pair[] = {0, 2, 1};
+    double two[3];
+    fill(two, pair, 3);
+    sift_down(two, 1, 1);
+    sift_down(two, 1, 2);
+    return two[1] == 2 && two[2] == 1;
+}
+
+static bool decodes() {
+    // Codes 0 -> 'a', 10 -> 'b', 11 -> 'c' reach trie links 1, 5 and 6.
+    static const unsigned long heap[] = {1, 5, 6, ~0ul};
+    static const unsigned char symbols[] = {'a', 'b', 'c', 0};
+    static const unsigned char bits[] = {0x5b, 0x80};
+    static const char expected[] = "abcacba";
+    unsigned char out[8];
+    fill(out, static_cast<const unsigned char*>(nullptr), 8);
+    if (decode(heap, symbols, bits, 0, 2, out) != 2 || out[0])
+        return false;
+    if (decode(heap, symbols, bits, 7, 0, out) != 0)
+        return false;
+    for (int k = 0; k != 8; ++k)
+        if (out[k] != static_cast<unsigned char>(expected[k]))
+            return false;
+    return true;
+}
+
+int main() {
+    if (!scans())
+        return 1;
+    if (!probes())
+        return 2;
+    if (!sorts())
+        return 3;
+    if (!sifts())
+        return 4;
+    if (!decodes())
+        return 5;
+    return 0;
+}

@@ -1,0 +1,17 @@
+extern "C" int count_unordered(const double* values, int n);
+
+int main() {
+    volatile double zero = 0.0;
+    const double nan = zero / zero;
+    double values[11];
+    volatile double* v = values;
+    for (int i = 0; i < 11; ++i)
+        v[i] = i % 3 ? nan : i;
+    if (count_unordered(values, 0) != 0)
+        return 1;
+    if (count_unordered(values, 1) != 0)
+        return 2;
+    if (count_unordered(values, 3) != 2)
+        return 3;
+    return count_unordered(values, 11) == 7 ? 0 : 4;
+}

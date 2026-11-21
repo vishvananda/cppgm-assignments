@@ -1,0 +1,23 @@
+extern "C" double settle(double x);
+extern "C" int count_nan_pairs(const double* re, const double* im, int n);
+
+int main() {
+    volatile double zero = 0.0;
+    const double nan = zero / zero;
+    const double two = settle(4.0);
+    if (two < 1.999999 || two > 2.000001)
+        return 1;
+    const double nine = settle(81.0);
+    if (nine < 8.999999 || nine > 9.000001)
+        return 2;
+    if (settle(nan) == settle(nan))
+        return 3;
+    double re[4], im[4];
+    volatile double* r = re;
+    volatile double* m = im;
+    r[0] = nan, m[0] = nan;
+    r[1] = nan, m[1] = 1;
+    r[2] = 2, m[2] = nan;
+    r[3] = nan, m[3] = nan;
+    return count_nan_pairs(re, im, 4) == 2 ? 0 : 4;
+}

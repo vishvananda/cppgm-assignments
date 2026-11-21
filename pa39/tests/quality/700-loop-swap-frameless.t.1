@@ -1,0 +1,6 @@
+extern "C" unsigned long swap_sum(unsigned long a, unsigned long b, unsigned long n);
+
+int main() {
+    // a takes 3, 5, 4, 7, 7: the products are 0, 5, 8, 21, 28.
+    return swap_sum(3, 5, 5) == 62 && swap_sum(9, 2, 0) == 0 ? 0 : 1;
+}

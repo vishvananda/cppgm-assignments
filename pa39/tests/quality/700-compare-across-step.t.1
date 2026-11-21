@@ -1,0 +1,21 @@
+extern "C" void sort_descending(double* first, double* last);
+
+int main() {
+    // The course link has no C library: the array is filled through a
+    // volatile pointer so that no memcpy appears.
+    static const double start[] = {3, -1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    static const double sorted[] = {9, 6, 5, 5, 5, 4, 3, 3, 2, 1, -1};
+    double values[11];
+    volatile double* out = values;
+    for (int i = 0; i != 11; ++i)
+        out[i] = start[i];
+    sort_descending(values, values + 11);
+    for (int i = 0; i != 11; ++i)
+        if (values[i] != sorted[i])
+            return 1 + i;
+    double one[1];
+    out = one;
+    out[0] = 7;
+    sort_descending(one, one + 1);
+    return one[0] == 7 ? 0 : 20;
+}

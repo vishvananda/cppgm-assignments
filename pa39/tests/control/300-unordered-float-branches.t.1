@@ -1,0 +1,27 @@
+extern "C" int settle(double x);
+extern "C" int count_outside(const double* values, int n, double low, double high);
+extern "C" double clamp_below(double v, double limit);
+extern "C" int not_greater(float a, float b);
+extern "C" int first_unordered(const float* values, int n, float bound);
+extern "C" int not_at_least(double a, double b);
+
+int main() {
+    volatile double zero = 0.0;
+    const double nan = zero / zero;
+    const float fnan = static_cast<float>(nan);
+    if (settle(nan) != 107 || settle(4.0) == 107)
+        return 1;
+    const double values[] = {0.5, nan, 2.0, -1.0, 1.0};
+    if (count_outside(values, 5, 0.0, 1.0) != 3)
+        return 2;
+    if (clamp_below(nan, 3.0) != 3.0 || clamp_below(1.0, 3.0) != 1.0 || clamp_below(5.0, 3.0) != 3.0)
+        return 3;
+    if (!not_greater(fnan, 1.0f) || !not_greater(1.0f, fnan) || not_greater(2.0f, 1.0f) || !not_greater(1.0f, 1.0f))
+        return 4;
+    const float floats[] = {0.25f, 1.0f, fnan, 4.0f};
+    if (first_unordered(floats, 4, 1.0f) != 2 || first_unordered(floats, 2, 1.0f) != -1)
+        return 5;
+    if (!not_at_least(nan, 1.0) || !not_at_least(1.0, nan) || not_at_least(1.0, 1.0) || !not_at_least(1.0, 2.0))
+        return 6;
+    return 0;
+}

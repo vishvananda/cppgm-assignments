@@ -1,0 +1,20 @@
+{
+  "source": true,
+  "units": [
+    "700-float-compare-across-step.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "functions": {
+      "count_unordered": {
+        "flag_values": 0
+      }
+    }
+  }
+}
