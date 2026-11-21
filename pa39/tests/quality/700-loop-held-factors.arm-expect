@@ -1,0 +1,22 @@
+{
+  "source": true,
+  "units": [
+    "700-loop-held-factors.t.1"
+  ],
+  "llvm_interop": true,
+  "commands": [
+    {
+      "exit": 47,
+      "stdout": ""
+    }
+  ],
+  "quality": {
+    "levels": [2, 3],
+    "functions": {
+      "mix": {
+        "instructions": 62,
+        "calls": 0
+      }
+    }
+  }
+}
