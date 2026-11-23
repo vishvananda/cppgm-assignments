@@ -406,6 +406,14 @@ A trivial constexpr copy from a static constexpr member can initialize the
 destination from its evaluated value. The destination has its own storage,
 even when the source member supplies only an in-class initializer.
 
+In C++11, passing a static constexpr data member by reference ODR-uses it.
+The class's initializer supplies its value, and a definition at namespace
+scope without an initializer supplies storage. For example, the
+[reference-binding control](tests/controls/300-static-constexpr-member-reference.t)
+defines the member before passing it to a `const unsigned&` parameter. Removing
+that definition can leave an undefined symbol at link time. See N3485
+`[class.static.data]` paragraph 3.
+
 ### C++20 literal types and transient allocation
 
 A class may be a literal type with a constexpr destructor. For a defaulted
