@@ -1,0 +1,7 @@
+# explicit-outcomes
+
+# Test the shared key on entry before calling a predicate on the replay path.
+none(call) in @find_key ^entry
+count(call) <= 4 in @find_key
+instructions <= 28 in @find_key
+blocks <= 15 in @find_key

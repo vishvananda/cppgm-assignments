@@ -1,0 +1,8 @@
+# explicit-outcomes
+
+# Publish the fast result without a whole-object staging copy.
+# The partially overwritten record is a control with behavior and size checks.
+none(copyobj) in @publish
+instructions <= 44 in @publish
+blocks <= 9 in @publish
+instructions <= 26 in @partial

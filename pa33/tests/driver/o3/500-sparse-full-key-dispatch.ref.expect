@@ -1,0 +1,3 @@
+# Bound dispatch size with room for a switch, a comparison tree, or a guarded table.
+instructions <= 72 in @dispatch
+blocks <= 28 in @dispatch

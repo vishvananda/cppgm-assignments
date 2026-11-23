@@ -337,6 +337,19 @@ short chain of selects meets the same bounds of `400-return-switch-tables`.
 Add no data read where every case returns one value, and keep a default
 path's effects.
 
+The sparse-dispatch fixture (`500-sparse-full-key-dispatch`) bounds the
+size of `dispatch`. An ordinary switch, a bounded comparison tree and a
+guarded table are all valid. If you use part of the key to index a table,
+prove the index is in bounds and confirm the entire key before taking a
+case. The test includes misses that have the same low bits as real cases.
+
+The repeated-query fixture (`500-share-query-miss-path`) gives several
+calls the same inputs except for the tested key. Test the common key on
+entry without a predicate call. A proven miss can skip the entire chain.
+On a possible match, keep callbacks and exceptions in their original
+order. A short comparison chain and a membership test both fit the
+published bounds. Only share reads whose values and effects can be proved.
+
 The O3 bit-recurrence fixtures bound repeated shift/XOR work across several
 word widths and constants. `k` steps with one constant are linear over bits
 (see "Library math and representation" in the design notes): the result is
@@ -352,6 +365,23 @@ exercise every byte input, wider seeds and cases that invalidate a shortcut.
 An object returned by value is a read of its storage, not an escape of its
 address. Preserve actual address captures, pointer returns, volatile reads
 and physical frame observations when combining field copies.
+
+The guarded-publication fixture (`600-guarded-record-publication`) asks
+`publish` to write the result without a whole-object staging copy. One
+approach writes the final fields directly on the fast arm and initializes
+the local record on the arm that passes its address. Preserve the final
+writer of every byte, updates made by the call, and the result read after
+the branch. The partially overwritten record is a control. Preserve its
+unwritten bytes even if you leave its copy in place.
+
+The private-snapshot fixture (`600-private-snapshot-unwind`) asks
+`inspect` to avoid an extra whole-object copy. Reading the needed fields
+from a proven private snapshot or passing the saved fields to a closed
+internal callee both fit the bounds. The saved values must survive writes
+through an alias to the original object and remain available during
+unwinding. Keep every observable cleanup and any externally visible
+calling convention. The repeated-query and private-snapshot outcome checks
+run in the Linux x86-64 course lane.
 
 The object-transfer fixtures use equivalent value-copy and whole-object
 memory forms. Preserve when each snapshot is taken while meeting their size

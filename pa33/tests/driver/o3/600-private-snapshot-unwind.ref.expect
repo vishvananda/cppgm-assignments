@@ -1,0 +1,6 @@
+# explicit-outcomes
+
+# Avoid the extra callee-side copy while preserving the caller's snapshot.
+none(copyobj) in @inspect
+instructions <= 32 in @inspect
+instructions <= 68 in @main
