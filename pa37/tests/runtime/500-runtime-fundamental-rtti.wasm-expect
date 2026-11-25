@@ -1,0 +1,1 @@
+{"source":true,"target":"wasm32-unknown-emscripten","flags":["-nostdinc","-fno-exceptions"],"link_flags":["-nostdlib"],"units":["500-runtime-fundamental-rtti.t.1"],"llvm_interop":true,"calls":[{"export":"observe","result":"1"}]}

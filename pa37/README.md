@@ -80,6 +80,12 @@ the submitted compiler must not invoke them to implement code generation.
 Supplied runtime libraries may provide arithmetic and language-runtime
 services, as native libraries do in the earlier assignments.
 
+When compiling the C++ runtime, emit the shared RTTI for the fundamental
+types in the pinned LLVM toolchain's runtime profile. Emit the descriptors
+for those types, pointers to them and pointers to their const-qualified
+forms with the `__cxxabiv1::__fundamental_type_info` vtable. A separate object
+using `typeid(void)` must resolve its reference to `_ZTIv` against that runtime.
+
 Use `--sysroot <directory>` to select the supplied target headers and libraries,
 and `-resource-dir <directory>` for its builtin headers and arithmetic runtime.
 For example, after installing the pinned SDK, pass its `share/wasi-sysroot` and

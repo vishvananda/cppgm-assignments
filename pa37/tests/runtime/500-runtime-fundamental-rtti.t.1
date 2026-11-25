@@ -1,0 +1,45 @@
+namespace std {
+class type_info;
+}
+
+namespace __cxxabiv1 {
+struct __class_type_info {
+    virtual ~__class_type_info();
+};
+struct __fundamental_type_info {
+    virtual ~__fundamental_type_info();
+};
+struct __pointer_type_info {
+    virtual ~__pointer_type_info();
+};
+
+__class_type_info::~__class_type_info() {}
+__fundamental_type_info::~__fundamental_type_info() {}
+__pointer_type_info::~__pointer_type_info() {}
+}
+
+void operator delete(void*) noexcept {}
+
+struct TypeInfo {
+    const void* vtable;
+    const char* name;
+};
+
+struct PointerTypeInfo {
+    TypeInfo type;
+    unsigned flags;
+    const std::type_info* pointee;
+};
+
+extern "C" int check_rtti(
+    const std::type_info* plain, const std::type_info* pointer, const std::type_info* const_pointer) {
+    TypeInfo base;
+    PointerTypeInfo unqualified;
+    PointerTypeInfo qualified;
+    __builtin_memcpy(&base, plain, sizeof base);
+    __builtin_memcpy(&unqualified, pointer, sizeof unqualified);
+    __builtin_memcpy(&qualified, const_pointer, sizeof qualified);
+    return base.name[0] == 'v' && base.name[1] == '\0' &&
+        unqualified.flags == 0 && qualified.flags == 1 &&
+        unqualified.pointee == plain && qualified.pointee == plain;
+}
