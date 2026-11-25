@@ -40,7 +40,7 @@ export CPPGM_PROGRAM_TEST_TIMEOUT_SEC ?= 10
 DEBUGINFO_TEST_PAS ?= pa8 pa33 pa34
 
 ALL_PAS = $(patsubst %/Makefile,%,$(wildcard pa*/Makefile))
-EXPERIMENTAL_PAS ?= pa35 pa36 pa38 pa39
+EXPERIMENTAL_PAS ?= pa35 pa36 pa38 pa39 pa40
 PAS = $(filter-out $(EXPERIMENTAL_PAS),$(ALL_PAS))
 SORTED_PAS = $(shell printf '%s\n' $(PAS) | sort -t a -k 2,2n)
 TEST_REPORT_PAS ?= $(SORTED_PAS)

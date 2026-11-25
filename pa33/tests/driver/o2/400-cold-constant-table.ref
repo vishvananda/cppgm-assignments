@@ -1,0 +1,17 @@
+global @lengths [storage=readonly, binding=internal, object=_ZL7lengths] = {
+  u8 4
+  u8 2
+  u8 6
+}
+
+function @total_length() -> u32 [linkage=c, binding=strong, no_inline=yes, cold=yes] {
+  block ^entry:
+    return u32 13
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call u32 @total_length()
+    %t2 = cmp ne u32 %t1, 13
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}

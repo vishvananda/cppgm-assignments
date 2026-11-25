@@ -278,15 +278,16 @@ enum class SymbolAccess : std::uint8_t
 	Direct,
 	Got,
 	TlsLocal,
-	TlsInitial
+	TlsInitial,
+	PcRelative
 };
 
-const unsigned kSymbolAccessCount = static_cast<unsigned>(SymbolAccess::TlsInitial) + 1;
+const unsigned kSymbolAccessCount = static_cast<unsigned>(SymbolAccess::PcRelative) + 1;
 
-// The operand suffix after `@`: "got", "tpoff", "gottpoff"; "" for Direct.
+// The operand suffix after `@`: "got", "tpoff", "gottpoff", "pcrel"; "" for Direct.
 inline const char* spelling(SymbolAccess access)
 {
-	static const char* const kAccesses[kSymbolAccessCount] = { "", "got", "tpoff", "gottpoff" };
+	static const char* const kAccesses[kSymbolAccessCount] = { "", "got", "tpoff", "gottpoff", "pcrel" };
 	return kAccesses[static_cast<unsigned>(access)];
 }
 

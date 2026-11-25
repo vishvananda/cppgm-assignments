@@ -1,0 +1,5 @@
+{
+  "flags": ["-m16"],
+  "units": ["110-real-mode-file-asm.c"],
+  "commands": [{"exit": 0}]
+}

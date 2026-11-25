@@ -1,4 +1,4 @@
-# CPPGM Programming Assignment 39 — AArch64 Linux and Apple Silicon backends (experimental)
+# CPPGM Programming Assignment 39 — AArch64 Linux and Apple Silicon backends
 
 Implement the little-endian Armv8-A targets in the existing compiler after PA34 and PA37. The Linux profile has 64-bit pointers and long, 32-bit int, unsigned plain char and 32-bit unsigned wchar_t, binary128 long double, and 16-byte stack alignment. Use the Linux AAPCS64 calling convention and AAELF64 relocatable objects. On Linux, x18 is a temporary register unless `-ffixed-x18` or `-fsanitize=shadow-call-stack` reserves it. Use a distinct target profile (`aarch64` in version-one LowIR) selected before parsing. Keep architecture-specific instructions and their encoder under `dev/src/aarch64/`. The frontend and optimizer pass typed data directly to the selector. [AAPCS64](https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst) · [AAELF64](https://github.com/ARM-software/abi-aa/blob/main/aaelf64/aaelf64.rst)
 
@@ -69,6 +69,27 @@ qemu-aarch64 -cpu cortex-a53 ./program
 cppgm --target=aarch64-linux-gnu -S -emit-lowir -O2 main.cpp -o main.lowir
 lowir2native --target=aarch64-linux-gnu main.lowir -o main
 ```
+
+### AArch64 Linux assembly listings
+
+Implement `cppgm --target=aarch64-linux-gnu -S` with ELF labels, section
+directives and relocations that an independent assembler can resolve.
+For PA29 assembly, select register and memory operands from the typed packet,
+honor local register bindings and declared clobbers, and preserve each
+`asm goto` destination. Assembly directives can use integer operands whose
+value follows from a mask. Computed goto and static tables of label addresses
+also work in ordinary `-c` output.
+
+```sh
+cppgm --target=aarch64-linux-gnu -O2 -S control.cpp -o control.s
+clang --target=aarch64-linux-gnu -c control.s -o control.o
+make -C pa39 check TEST=tests/control/300-inline-assembly-listing.t
+make -C pa39 check TEST=tests/control/300-computed-goto.t
+```
+
+Freestanding C code can use `-mgeneral-regs-only` to suppress vectorization and
+keep compiler-generated aggregate copies in general registers. Explicit SIMD
+translation units use the regular AArch64 profile.
 
 ### Size optimization and source LTO
 

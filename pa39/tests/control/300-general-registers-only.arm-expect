@@ -1,0 +1,12 @@
+{
+  "source": true,
+  "flags": ["-mgeneral-regs-only"],
+  "commands": [{"exit": 0}],
+  "quality": {
+    "levels": [0, 1, 2, 3],
+    "functions": {
+      "copy_block": {"simd_register_uses": 0},
+      "total": {"simd_register_uses": 0}
+    }
+  }
+}

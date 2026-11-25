@@ -43,7 +43,8 @@ struct Bits
 enum class Dialect : uint8_t
 {
 	Att,
-	Intel
+	Intel,
+	AArch64
 };
 enum class RegisterBank : uint8_t
 {
@@ -107,7 +108,7 @@ enum class Record : uint8_t
 };
 
 const unsigned kRecordCount = static_cast<unsigned>(Record::Environment) + 1;
-const unsigned kDialectCount = static_cast<unsigned>(Dialect::Intel) + 1;
+const unsigned kDialectCount = static_cast<unsigned>(Dialect::AArch64) + 1;
 const unsigned kMemoryCount = static_cast<unsigned>(Memory::ReadWrite) + 1;
 
 inline const char* spelling(Record record)
@@ -119,7 +120,7 @@ inline const char* spelling(Record record)
 
 inline const char* spelling(Dialect dialect)
 {
-	static const char* const kDialects[kDialectCount] = { "att", "intel" };
+	static const char* const kDialects[kDialectCount] = { "att", "intel", "aarch64" };
 	return kDialects[static_cast<unsigned>(dialect)];
 }
 
@@ -153,7 +154,11 @@ enum class ImmediateKind : uint8_t
 {
 	IntegerRange,
 	FloatBits,
-	Relocatable
+	Relocatable,
+	ArmAdd,
+	ArmSub,
+	ArmLogical32,
+	ArmLogical64
 };
 
 enum Location : uint8_t

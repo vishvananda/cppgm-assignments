@@ -16,3 +16,13 @@ extern "C" unsigned memory_update(unsigned input, unsigned* calls) {
     asm("addl $7, %0" : "+m"(select(&result, calls)) : : "cc");
     return result;
 }
+
+extern "C" unsigned memory_array(unsigned input)
+{
+    unsigned values[2];
+    unsigned long both = (97UL << 32) | input;
+    asm("movq %1, %0" : "=m"(values) : "r"(both));
+    unsigned second;
+    asm("movl 4(%1), %0" : "=r"(second) : "r"(values) : "memory");
+    return values[0] + second;
+}

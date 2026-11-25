@@ -12,7 +12,8 @@ enum class Architecture : std::uint8_t
 {
 	X86_64,
 	Wasm32,
-	AArch64
+	AArch64,
+	I386
 };
 
 enum class Environment : std::uint8_t
@@ -37,7 +38,8 @@ enum class CallingConvention : std::uint8_t
 	DarwinAmd64,
 	WasmBasicC,
 	Aapcs64,
-	DarwinAarch64
+	DarwinAarch64,
+	SysVI386
 };
 
 enum class MemberFunctionTag : std::uint8_t
@@ -76,7 +78,8 @@ enum class Target : std::uint8_t
 	Wasi,
 	Emscripten,
 	AArch64Linux,
-	AArch64MacOS
+	AArch64MacOS,
+	I386Linux
 };
 
 enum class WasmFunctionAttribute : std::uint8_t
@@ -146,6 +149,11 @@ constexpr bool is_aarch64(Target target)
 	return target == Target::AArch64Linux || target == Target::AArch64MacOS;
 }
 
+constexpr bool is_i386(Target target)
+{
+	return target == Target::I386Linux;
+}
+
 // C23 bit-precise integers fit the existing one- and two-word machines.
 constexpr unsigned bit_int_max_width = 128;
 
@@ -173,12 +181,13 @@ constexpr bool is_inline_atomic_size(uint64_t bytes)
 
 constexpr bool pointer_va_list(Target target)
 {
-	return is_wasm(target) || target == Target::AArch64MacOS;
+	return is_wasm(target) || is_i386(target) || target == Target::AArch64MacOS;
 }
 
 constexpr DataLayout data_layout(Target target)
 {
 	return target == Target::AArch64MacOS ? DataLayout{ 8, 8, 8, 8, ExtendedFloat::Binary64, ByteOrder::Little }
+		: is_i386(target)                 ? DataLayout{ 4, 4, 12, 4, ExtendedFloat::X87, ByteOrder::Little }
 		: is_wasm(target)
 		? DataLayout{ 4, 4, 16, target == Target::Emscripten ? std::uint8_t(8) : std::uint8_t(16),
 			  ExtendedFloat::Binary128, ByteOrder::Little }
@@ -195,6 +204,7 @@ constexpr Description describe(Target target)
 {
 	return Description{ is_aarch64(target) ? Architecture::AArch64
 			: is_wasm(target)              ? Architecture::Wasm32
+			: is_i386(target)              ? Architecture::I386
 										   : Architecture::X86_64,
 		is_darwin(target)                  ? Environment::Darwin
 			: target == Target::Wasi       ? Environment::WasiPreview1
@@ -208,6 +218,7 @@ constexpr Description describe(Target target)
 			: target == Target::AArch64Linux ? CallingConvention::Aapcs64
 			: target == Target::MacOS        ? CallingConvention::DarwinAmd64
 			: is_wasm(target)                ? CallingConvention::WasmBasicC
+			: is_i386(target)                ? CallingConvention::SysVI386
 											 : CallingConvention::SysVAmd64,
 		data_layout(target) };
 }
@@ -265,6 +276,8 @@ inline const char* spelling(Target target)
 		return "arm64-apple-macos11";
 	case Target::AArch64Linux:
 		return "aarch64-linux-gnu";
+	case Target::I386Linux:
+		return "i386-linux-gnu";
 	}
 	return "";
 }
@@ -272,10 +285,11 @@ inline const char* spelling(Target target)
 // Version-one LowIR profile names; distinct from command-line aliases.
 inline const char* lowir_spelling(Target target)
 {
-	static const char* const names[] = { "linux", "macos", "wasm32", "wasi", "emscripten", "aarch64", "arm64_macos" };
+	static const char* const names[] = { "linux", "macos", "wasm32", "wasi", "emscripten", "aarch64", "arm64_macos",
+		"i386" };
 	return names[static_cast<unsigned>(target)];
 }
 
-const unsigned kTargetCount = static_cast<unsigned>(Target::AArch64MacOS) + 1;
+const unsigned kTargetCount = static_cast<unsigned>(Target::I386Linux) + 1;
 
 } // namespace target_model

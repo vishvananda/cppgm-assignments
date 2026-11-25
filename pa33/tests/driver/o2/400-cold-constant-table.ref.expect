@@ -1,0 +1,4 @@
+# explicit-outcomes
+
+# The sum is constant. The body can fit without a table access or a loop.
+instructions <= 3 in @total_length

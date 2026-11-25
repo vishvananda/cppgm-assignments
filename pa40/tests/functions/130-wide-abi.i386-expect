@@ -1,0 +1,5 @@
+{
+  "flags": ["-ffreestanding", "-O2"],
+  "units": ["130-wide-abi.c", "130-wide-abi.lib.product.c"],
+  "commands": [{"exit": 0}]
+}

@@ -3,6 +3,7 @@
 struct Block { unsigned low, high; };
 extern "C" unsigned long read_block(const Block*);
 extern "C" unsigned memory_update(unsigned, unsigned*);
+extern "C" unsigned memory_array(unsigned);
 int main() {
     const Block blocks[] = {{0x12345678, 0x87654321}, {0xffffffff, 0x80000000}};
     for (const Block& block : blocks) {
@@ -12,6 +13,7 @@ int main() {
     for (unsigned input : inputs) {
         unsigned calls = 0;
         if (memory_update(input, &calls) != input + 24 || calls != 1) return 2;
+        if (memory_array(input) != input + 97) return 3;
     }
     std::puts("memory objects, volatile access and one address evaluation passed");
 }

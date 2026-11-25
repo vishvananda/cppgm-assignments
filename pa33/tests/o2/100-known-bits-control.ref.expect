@@ -1,0 +1,5 @@
+# explicit-outcomes
+
+none(call) in @bit_switch
+instructions <= 3 in @known_sign
+instructions <= 3 in @known_nonzero

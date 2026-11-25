@@ -1,0 +1,5 @@
+{
+  "flags": ["-ffreestanding", "-O2"],
+  "units": ["100-integer-abi.c", "100-integer-abi.lib.adjust.c"],
+  "commands": [{"exit": 28}]
+}

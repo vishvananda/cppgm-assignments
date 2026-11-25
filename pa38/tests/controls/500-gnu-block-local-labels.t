@@ -47,9 +47,10 @@ success:
 
 int main(void)
 {
+    unsigned long address = ({ __label__ point; point: (unsigned long)&&point; });
     int first = SELECT(9);
     int second = SELECT(-1);
-    if (first != 9 || second != 12 || nested() != 10)
+    if (address == 0 || first != 9 || second != 12 || nested() != 10)
         return 1;
 #if defined(__x86_64__)
     if (!assembly_destination())

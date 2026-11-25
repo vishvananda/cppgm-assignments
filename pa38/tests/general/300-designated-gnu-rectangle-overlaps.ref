@@ -57,6 +57,65 @@ global @pairs [storage=readonly, linkage=c, binding=internal] = {
   i32 8
   zero 24
 }
+global @levels [storage=readonly, linkage=c, binding=internal] = {
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  zero 4
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 13
+  i32 3
+  zero 16
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+  i32 7
+}
 global @__constexpr_template__1 [storage=readonly, binding=internal] = {
   i8 97
   i8 111
@@ -150,6 +209,13 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   slot $land__55 : i64
   slot $land__56 : i64
   slot $land__57 : i64
+  slot $land__58 : i64
+  slot $land__59 : i64
+  slot $land__60 : i64
+  slot $land__61 : i64
+  slot $land__62 : i64
+  slot $land__63 : i64
+  slot $land__64 : i64
 
   block ^entry:
     %t1 = addr $array
@@ -1252,16 +1318,17 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     branch %t505, ^land_rhs_160, ^land_short_161
 
   block ^land_rhs_160:
-    %t506 = addr $words
-    %t507 = binary mul i64 2, 5
+    %t506 = addr @levels
+    %t507 = binary mul i64 0, 80
     %t508 = index inbounds i8 [projection=array_element] %t506, %t507
-    %t509 = index inbounds i8 [projection=array_element] %t508, 1
-    %t510 = load i8 %t509
-    %t511 = convert sext i32 i8 %t510
-    %t512 = cmp eq i32 %t511, 99
-    %t513 = convert trunc i32 i64 %t512
-    %t514 = cmp ne i32 %t513, 0
-    store typed i64 %t514, $land__54
+    %t509 = binary mul i64 1, 20
+    %t510 = index inbounds i8 [projection=array_element] %t508, %t509
+    %t511 = index inbounds i32 [projection=array_element] %t510, 2
+    %t512 = load typed i32 %t511
+    %t513 = cmp eq i32 %t512, 0
+    %t514 = convert trunc i32 i64 %t513
+    %t515 = cmp ne i32 %t514, 0
+    store typed i64 %t515, $land__54
     jump ^land_end_162
 
   block ^land_short_161:
@@ -1269,20 +1336,21 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^land_end_162
 
   block ^land_end_162:
-    %t515 = load typed i64 $land__54
-    branch %t515, ^land_rhs_163, ^land_short_164
+    %t516 = load typed i64 $land__54
+    branch %t516, ^land_rhs_163, ^land_short_164
 
   block ^land_rhs_163:
-    %t516 = addr $words
-    %t517 = binary mul i64 3, 5
-    %t518 = index inbounds i8 [projection=array_element] %t516, %t517
-    %t519 = index inbounds i8 [projection=array_element] %t518, 0
-    %t520 = load i8 %t519
-    %t521 = convert sext i32 i8 %t520
-    %t522 = cmp eq i32 %t521, 97
-    %t523 = convert trunc i32 i64 %t522
-    %t524 = cmp ne i32 %t523, 0
-    store typed i64 %t524, $land__55
+    %t517 = addr @levels
+    %t518 = binary mul i64 0, 80
+    %t519 = index inbounds i8 [projection=array_element] %t517, %t518
+    %t520 = binary mul i64 1, 20
+    %t521 = index inbounds i8 [projection=array_element] %t519, %t520
+    %t522 = index inbounds i32 [projection=array_element] %t521, 3
+    %t523 = load typed i32 %t522
+    %t524 = cmp eq i32 %t523, 7
+    %t525 = convert trunc i32 i64 %t524
+    %t526 = cmp ne i32 %t525, 0
+    store typed i64 %t526, $land__55
     jump ^land_end_165
 
   block ^land_short_164:
@@ -1290,20 +1358,21 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^land_end_165
 
   block ^land_end_165:
-    %t525 = load typed i64 $land__55
-    branch %t525, ^land_rhs_166, ^land_short_167
+    %t527 = load typed i64 $land__55
+    branch %t527, ^land_rhs_166, ^land_short_167
 
   block ^land_rhs_166:
-    %t526 = addr $words
-    %t527 = binary mul i64 3, 5
-    %t528 = index inbounds i8 [projection=array_element] %t526, %t527
-    %t529 = index inbounds i8 [projection=array_element] %t528, 1
-    %t530 = load i8 %t529
-    %t531 = convert sext i32 i8 %t530
-    %t532 = cmp eq i32 %t531, 99
-    %t533 = convert trunc i32 i64 %t532
-    %t534 = cmp ne i32 %t533, 0
-    store typed i64 %t534, $land__56
+    %t528 = addr @levels
+    %t529 = binary mul i64 1, 80
+    %t530 = index inbounds i8 [projection=array_element] %t528, %t529
+    %t531 = binary mul i64 3, 20
+    %t532 = index inbounds i8 [projection=array_element] %t530, %t531
+    %t533 = index inbounds i32 [projection=array_element] %t532, 4
+    %t534 = load typed i32 %t533
+    %t535 = cmp eq i32 %t534, 13
+    %t536 = convert trunc i32 i64 %t535
+    %t537 = cmp ne i32 %t536, 0
+    store typed i64 %t537, $land__56
     jump ^land_end_168
 
   block ^land_short_167:
@@ -1311,20 +1380,21 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^land_end_168
 
   block ^land_end_168:
-    %t535 = load typed i64 $land__56
-    branch %t535, ^land_rhs_169, ^land_short_170
+    %t538 = load typed i64 $land__56
+    branch %t538, ^land_rhs_169, ^land_short_170
 
   block ^land_rhs_169:
-    %t536 = addr $words
-    %t537 = binary mul i64 3, 5
-    %t538 = index inbounds i8 [projection=array_element] %t536, %t537
-    %t539 = index inbounds i8 [projection=array_element] %t538, 2
-    %t540 = load i8 %t539
-    %t541 = convert sext i32 i8 %t540
-    %t542 = cmp eq i32 %t541, 100
-    %t543 = convert trunc i32 i64 %t542
-    %t544 = cmp ne i32 %t543, 0
-    store typed i64 %t544, $land__57
+    %t539 = addr @levels
+    %t540 = binary mul i64 1, 80
+    %t541 = index inbounds i8 [projection=array_element] %t539, %t540
+    %t542 = binary mul i64 3, 20
+    %t543 = index inbounds i8 [projection=array_element] %t541, %t542
+    %t544 = index inbounds i32 [projection=array_element] %t543, 3
+    %t545 = load typed i32 %t544
+    %t546 = cmp eq i32 %t545, 7
+    %t547 = convert trunc i32 i64 %t546
+    %t548 = cmp ne i32 %t547, 0
+    store typed i64 %t548, $land__57
     jump ^land_end_171
 
   block ^land_short_170:
@@ -1332,9 +1402,159 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^land_end_171
 
   block ^land_end_171:
-    %t545 = load typed i64 $land__57
-    %t546 = convert trunc i32 i64 %t545
-    %t547 = cmp eq i32 %t546, 0
-    %t548 = convert trunc i32 i64 %t547
-    return i32 %t548
+    %t549 = load typed i64 $land__57
+    branch %t549, ^land_rhs_172, ^land_short_173
+
+  block ^land_rhs_172:
+    %t550 = addr @levels
+    %t551 = binary mul i64 2, 80
+    %t552 = index inbounds i8 [projection=array_element] %t550, %t551
+    %t553 = binary mul i64 0, 20
+    %t554 = index inbounds i8 [projection=array_element] %t552, %t553
+    %t555 = index inbounds i32 [projection=array_element] %t554, 0
+    %t556 = load typed i32 %t555
+    %t557 = cmp eq i32 %t556, 3
+    %t558 = convert trunc i32 i64 %t557
+    %t559 = cmp ne i32 %t558, 0
+    store typed i64 %t559, $land__58
+    jump ^land_end_174
+
+  block ^land_short_173:
+    store typed i64 0, $land__58
+    jump ^land_end_174
+
+  block ^land_end_174:
+    %t560 = load typed i64 $land__58
+    branch %t560, ^land_rhs_175, ^land_short_176
+
+  block ^land_rhs_175:
+    %t561 = addr @levels
+    %t562 = binary mul i64 2, 80
+    %t563 = index inbounds i8 [projection=array_element] %t561, %t562
+    %t564 = binary mul i64 0, 20
+    %t565 = index inbounds i8 [projection=array_element] %t563, %t564
+    %t566 = index inbounds i32 [projection=array_element] %t565, 1
+    %t567 = load typed i32 %t566
+    %t568 = cmp eq i32 %t567, 0
+    %t569 = convert trunc i32 i64 %t568
+    %t570 = cmp ne i32 %t569, 0
+    store typed i64 %t570, $land__59
+    jump ^land_end_177
+
+  block ^land_short_176:
+    store typed i64 0, $land__59
+    jump ^land_end_177
+
+  block ^land_end_177:
+    %t571 = load typed i64 $land__59
+    branch %t571, ^land_rhs_178, ^land_short_179
+
+  block ^land_rhs_178:
+    %t572 = addr @levels
+    %t573 = binary mul i64 2, 80
+    %t574 = index inbounds i8 [projection=array_element] %t572, %t573
+    %t575 = binary mul i64 1, 20
+    %t576 = index inbounds i8 [projection=array_element] %t574, %t575
+    %t577 = index inbounds i32 [projection=array_element] %t576, 1
+    %t578 = load typed i32 %t577
+    %t579 = cmp eq i32 %t578, 7
+    %t580 = convert trunc i32 i64 %t579
+    %t581 = cmp ne i32 %t580, 0
+    store typed i64 %t581, $land__60
+    jump ^land_end_180
+
+  block ^land_short_179:
+    store typed i64 0, $land__60
+    jump ^land_end_180
+
+  block ^land_end_180:
+    %t582 = load typed i64 $land__60
+    branch %t582, ^land_rhs_181, ^land_short_182
+
+  block ^land_rhs_181:
+    %t583 = addr $words
+    %t584 = binary mul i64 2, 5
+    %t585 = index inbounds i8 [projection=array_element] %t583, %t584
+    %t586 = index inbounds i8 [projection=array_element] %t585, 1
+    %t587 = load i8 %t586
+    %t588 = convert sext i32 i8 %t587
+    %t589 = cmp eq i32 %t588, 99
+    %t590 = convert trunc i32 i64 %t589
+    %t591 = cmp ne i32 %t590, 0
+    store typed i64 %t591, $land__61
+    jump ^land_end_183
+
+  block ^land_short_182:
+    store typed i64 0, $land__61
+    jump ^land_end_183
+
+  block ^land_end_183:
+    %t592 = load typed i64 $land__61
+    branch %t592, ^land_rhs_184, ^land_short_185
+
+  block ^land_rhs_184:
+    %t593 = addr $words
+    %t594 = binary mul i64 3, 5
+    %t595 = index inbounds i8 [projection=array_element] %t593, %t594
+    %t596 = index inbounds i8 [projection=array_element] %t595, 0
+    %t597 = load i8 %t596
+    %t598 = convert sext i32 i8 %t597
+    %t599 = cmp eq i32 %t598, 97
+    %t600 = convert trunc i32 i64 %t599
+    %t601 = cmp ne i32 %t600, 0
+    store typed i64 %t601, $land__62
+    jump ^land_end_186
+
+  block ^land_short_185:
+    store typed i64 0, $land__62
+    jump ^land_end_186
+
+  block ^land_end_186:
+    %t602 = load typed i64 $land__62
+    branch %t602, ^land_rhs_187, ^land_short_188
+
+  block ^land_rhs_187:
+    %t603 = addr $words
+    %t604 = binary mul i64 3, 5
+    %t605 = index inbounds i8 [projection=array_element] %t603, %t604
+    %t606 = index inbounds i8 [projection=array_element] %t605, 1
+    %t607 = load i8 %t606
+    %t608 = convert sext i32 i8 %t607
+    %t609 = cmp eq i32 %t608, 99
+    %t610 = convert trunc i32 i64 %t609
+    %t611 = cmp ne i32 %t610, 0
+    store typed i64 %t611, $land__63
+    jump ^land_end_189
+
+  block ^land_short_188:
+    store typed i64 0, $land__63
+    jump ^land_end_189
+
+  block ^land_end_189:
+    %t612 = load typed i64 $land__63
+    branch %t612, ^land_rhs_190, ^land_short_191
+
+  block ^land_rhs_190:
+    %t613 = addr $words
+    %t614 = binary mul i64 3, 5
+    %t615 = index inbounds i8 [projection=array_element] %t613, %t614
+    %t616 = index inbounds i8 [projection=array_element] %t615, 2
+    %t617 = load i8 %t616
+    %t618 = convert sext i32 i8 %t617
+    %t619 = cmp eq i32 %t618, 100
+    %t620 = convert trunc i32 i64 %t619
+    %t621 = cmp ne i32 %t620, 0
+    store typed i64 %t621, $land__64
+    jump ^land_end_192
+
+  block ^land_short_191:
+    store typed i64 0, $land__64
+    jump ^land_end_192
+
+  block ^land_end_192:
+    %t622 = load typed i64 $land__64
+    %t623 = convert trunc i32 i64 %t622
+    %t624 = cmp eq i32 %t623, 0
+    %t625 = convert trunc i32 i64 %t624
+    return i32 %t625
 }

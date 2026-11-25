@@ -1,0 +1,16 @@
+extern "C" unsigned char real_mode_code[], real_mode_code_end[];
+extern "C" unsigned int real_mode_word_count;
+
+int main()
+{
+    const unsigned char expected[] = {
+        0x8b, 0x00, 0x67, 0x66, 0x89, 0x44, 0x24, 0x08, 0x66, 0x9c, 0x1f, 0xf3, 0x66, 0xa5,
+        0xe8, 0xfd, 0xff, 0x66, 0x6a, 0x07, 0x66, 0xc3, 0x3e, 0x3e, 0x3e, 0xcd, 0x80,
+        0xf3, 0x0f, 0xc7, 0xf8
+    };
+    if (real_mode_code_end != real_mode_code + sizeof(expected) || real_mode_word_count != 4)
+        return 1;
+    for (unsigned i = 0; i < sizeof(expected); ++i)
+        if (real_mode_code[i] != expected[i])
+            return 2;
+}

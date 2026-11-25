@@ -21,5 +21,8 @@ int main(void)
 {
     enum Counter counter = next;
     enum Delta delta = below;
+    const void *data = (const void *)(__UINTPTR_TYPE__)next;
+    if ((enum Counter)data != next)
+        return 1;
     return read_counter(&counter) != 4 || read_delta(&delta) != -5;
 }

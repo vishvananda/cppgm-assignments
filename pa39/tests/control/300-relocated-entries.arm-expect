@@ -1,0 +1,6 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "assemble_listing": true,
+  "commands": [{"exit": 0}]
+}

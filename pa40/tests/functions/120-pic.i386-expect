@@ -1,0 +1,6 @@
+{
+  "flags": ["-ffreestanding", "-O2", "-fPIC"],
+  "units": ["120-pic.c", "120-pic.lib.external.c"],
+  "shared_link": true,
+  "commands": [{"exit": 56}]
+}

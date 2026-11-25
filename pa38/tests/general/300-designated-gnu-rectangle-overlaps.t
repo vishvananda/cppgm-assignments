@@ -18,6 +18,13 @@ static const struct Pair pairs[3][4] = {
     [0 ... 2][1 ... 2] = { 3, 4 }, [1][0 ... 1] = { 8 }, [2] = { { 9, 8 } }
 };
 
+static const int levels[3][4][5] = {
+    [0 ... 2] = { [0 ... 3] = { [0 ... 4] = 7 } },
+    [0][1][2] = 0,
+    [1][3][4] = 13,
+    [2][0] = { 3 }
+};
+
 int main(void)
 {
     int array[][5] = {
@@ -43,5 +50,7 @@ int main(void)
         pairs[1][0].x == 8 && pairs[1][1].y == 0 && pairs[1][2].y == 4 &&
         pairs[2][0].x == 9 && pairs[2][0].y == 8 && pairs[2][1].x == 0 &&
         words[0][0] == 'a' && words[0][2] == 'o' && words[1][0] == 'b' && words[1][1] == 0 &&
+        levels[0][1][2] == 0 && levels[0][1][3] == 7 && levels[1][3][4] == 13 &&
+        levels[1][3][3] == 7 && levels[2][0][0] == 3 && levels[2][0][1] == 0 && levels[2][1][1] == 7 &&
         words[2][1] == 'c' && words[3][0] == 'a' && words[3][1] == 'c' && words[3][2] == 'd');
 }

@@ -64,6 +64,16 @@ sub run {
     return read_bytes("$directory/out");
 }
 
+sub compile_unit {
+    my ($input, $output, @flags) = @_;
+    if ($expect->{assemble_listing}) {
+        run(0, $compiler, @flags, '-S', $input, '-o', "$directory/listing.s");
+        run(0, $clang, @target, '-x', 'assembler', '-c', "$directory/listing.s", '-o', $output);
+    } else {
+        run(0, $compiler, @flags, '-c', $input, '-o', $output);
+    }
+}
+
 my $bundle;
 my ($level_name, $producers, @manifest);
 if ($ENV{CPPGM_AARCH64_ARTIFACTS}) {
@@ -121,7 +131,7 @@ for my $level (@{$expect->{levels} // [0..3]}) {
     my $object = "$directory/unit.o";
     my $other = "$directory/reference.o";
     run(0, @reference, '-c', $test, '-o', $other);
-    run(0, $compiler, @flags, '-x', 'c++', '-c', $test, '-o', $object);
+    compile_unit($test, $object, @flags, '-x', 'c++');
     if ($expect->{reject_link}) {
         for my $cmd ([$compiler, @target, $object], [$lld, '-m', 'aarch64elf', '-static', '-e', 'main', $other]) {
             run(1, @$cmd, @assembly, '-o', "$directory/rejected");
@@ -135,7 +145,7 @@ for my $level (@{$expect->{levels} // [0..3]}) {
         if $expect->{relocation} && index($header, $expect->{relocation}) < 0;
     if ($expect->{shared_link}) {
         my $pic_object = "$directory/pic-unit.o";
-        run(0, $compiler, @flags, '-fPIC', '-x', 'c++', '-c', $test, '-o', $pic_object);
+        compile_unit($test, $pic_object, @flags, '-fPIC', '-x', 'c++');
         run(0, $lld, '-m', 'aarch64elf', '-shared', '--no-undefined', '-z', 'text', $pic_object, '-o', "$directory/libfixture.so");
     }
     my $quality = $expect->{quality};
@@ -169,7 +179,8 @@ for my $level (@{$expect->{levels} // [0..3]}) {
                     conditional_branches => scalar(grep { /^(?:b\.\w+|cbn?z|tbn?z)\b/ } @ins),
                     divides => scalar(grep { /^[su]div\b/ } @ins),
                     register_moves => scalar(grep { /^mov\s+[xw]\d+, [xw]\d+$/ } @ins),
-                    platform_register_uses => scalar(grep { /\b[xw]18\b/ } @ins));
+                    platform_register_uses => scalar(grep { /\b[xw]18\b/ } @ins),
+                    simd_register_uses => scalar(grep { /\b[bhdqsv](?:[0-9]|[12][0-9]|3[01])\b/ } @ins));
                 check_bounds(\%counts, $quality->{functions}{$symbol} // {}, "$test: O$level $symbol", 'AArch64');
                 check_bounds(\%counts, $quality->{own_functions}{$symbol} // {}, "$test: O$level $symbol", 'AArch64')
                     if $unit eq $object;
@@ -181,9 +192,16 @@ for my $level (@{$expect->{levels} // [0..3]}) {
             ('-O0', '--emit-lowir', '-g0', ($level ? '-D__OPTIMIZE__=1' : ()), ($level eq 'z' ? '-D__OPTIMIZE_SIZE__=1' : ()));
         run(0, $compiler, @target, @emit, @{$expect->{flags} // []}, '-x', 'c++', $test, '-o', "$directory/unit.lowir");
         run(0, $opt, '-O0', "$directory/unit.lowir", '-o', "$directory/roundtrip.lowir");
-        run(0, $compiler, @flags, ($optimized ? '-fno-lowir-passes' : ()), '-c', "$directory/roundtrip.lowir", '-o', "$directory/roundtrip.o");
+        compile_unit("$directory/roundtrip.lowir", "$directory/roundtrip.o", @flags,
+            ($optimized ? '-fno-lowir-passes' : ()));
         copy("$directory/roundtrip.lowir", "$directory/raw.lowir") or die "$!" unless $optimized;
-        die "$test: O$level LowIR object differs (optimized=$optimized)\n" if compare($object, "$directory/roundtrip.o");
+        if ($expect->{assemble_listing}) {
+            $producers = 'cppgm-lowir-assembly';
+            link_external("$directory/roundtrip.o");
+        } else {
+            die "$test: O$level LowIR object differs (optimized=$optimized)\n"
+                if compare($object, "$directory/roundtrip.o");
+        }
     }
     if ($expect->{source_link_flags}) {
         my @group = ($compiler, @flags, @{$expect->{source_link_flags}}, '-x', 'c++', $test, @units);
@@ -199,7 +217,7 @@ for my $level (@{$expect->{levels} // [0..3]}) {
             push @clang_peers, "$directory/clang-peer-$i.o";
             push @cppgm_peers, "$directory/cppgm-peer-$i.o";
             run(0, @reference, '-c', $units[$i], '-o', $clang_peers[-1]);
-            run(0, $compiler, @flags, '-x', 'c++', '-c', $units[$i], '-o', $cppgm_peers[-1]);
+            compile_unit($units[$i], $cppgm_peers[-1], @flags, '-x', 'c++');
         }
         if ($expect->{archive_units}) {
             for my $pair (['witness', \@clang_peers], ['cppgm', \@cppgm_peers]) {
@@ -235,8 +253,10 @@ for my $level (@{$expect->{levels} // [0..3]}) {
         $producers = 'cppgm';
         link_external($object);
         link_course($object);
-        run(0, $backend, @flags, "$directory/raw.lowir", '-o', "$directory/program");
-        execute_image('lowir2native');
+        unless ($expect->{assemble_listing}) {
+            run(0, $backend, @flags, "$directory/raw.lowir", '-o', "$directory/program");
+            execute_image('lowir2native');
+        }
     }
 }
 if ($bundle && @manifest) {

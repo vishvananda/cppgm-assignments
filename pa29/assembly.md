@@ -62,7 +62,7 @@ bindings may list several. `:0` means to derive the register's view from the
 operand type. Register names otherwise specify their architectural view;
 `:bits[:offset]` can override it explicitly, including mask-register views.
 
-The template header gives dialect (`att` or `intel`), memory effect (`none`,
+The template header gives dialect (`att`, `intel`, or PA39’s `aarch64`), memory effect (`none`,
 `read`, `write`, `readwrite`), property bits, state-read bits, state-write bits,
 and invocation argument count. An optional `environment N` before `{` selects
 macro definitions after the first N ordered `assembly_global` invocations for
@@ -118,7 +118,9 @@ one place. Distinct input and output places can instead use a register binding.
 
 A register alternative lists `group (...)` choices. Immediate domains use
 `range <kind> <signed> <low-lo> <low-hi> <high-lo> <high-hi>`; kinds are integer
-range (0), floating bits (1), relocatable (2), with each endpoint represented by
+range (0), floating bits (1), relocatable (2), AArch64 add immediate (3),
+AArch64 sub immediate (4), and AArch64 32-bit (5) and 64-bit (6) logical
+immediates. Integer range endpoints are represented by
 two unsigned 64-bit words. An omitted domain permits any constant of the type.
 A symbol location uses an ordinary `ptr` input naming a LowIR symbol address,
 optionally through `addr` and a constant `index`. The symbol ID and byte addend
@@ -132,7 +134,7 @@ Integer ranges compare the invocation's complete two-word value. A frontend
 that uses machine-mode constants normalizes them before constructing LowIR.
 
 Template pieces are `text "..."`, `use <operand> <format> <bits> <offset>`, or
-`unique`. Formats are default (0), bare (1), negated (2), label (3), suffix (4).
+`unique`. Formats are default (0), bare (1), negated (2), label (3), suffix (4) and AArch64 bracketed address (5).
 Zero width chooses the operand's view; offset 8 selects an available high-byte
 view. The frontend handles its own string escapes and placeholder syntax. The
 backend parses the resulting assembly source once and retains typed operands.

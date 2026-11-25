@@ -1,0 +1,20 @@
+declare function @unexpected() -> void
+
+function @bit_switch(%value : i32) -> i32 {
+  block ^entry:
+    %masked = binary and i32 %value, 2
+    %t2 = select i32 %masked, 27, 11
+    return i32 %t2
+}
+function @known_sign(%left : u16, %right : u16) -> i64 {
+  block ^entry:
+    return i64 1
+}
+function @known_nonzero(%value : i32) -> i64 {
+  block ^entry:
+    return i64 1
+}
+function @main() -> i32 [role=entry] {
+  block ^entry:
+    return i32 0
+}
