@@ -31,10 +31,11 @@ not make differently qualified types compatible or allow unrelated pointer
 conversions, nested qualifier removal, or removal of atomic qualification.
 Strict `-std=c17` retains its qualifier and escape diagnostics. The C input
 profile also accepts `-std=c99`, `-std=gnu99`, `-std=c11`, and `-std=gnu11`,
-with the selected edition's value of `__STDC_VERSION__`. The input language and target
-are separate choices. `-x c++` continues to select C++; a language and standard
-that disagree must be diagnosed. The existing `.c` handling is unchanged unless
-C is selected explicitly.
+with the selected edition's value of `__STDC_VERSION__`. Select GNU C17 for
+each `.c` input by default. Select C++ for C++ source and course fixtures
+such as `.t` and `.t.1`. An explicit `-x` or language standard overrides the
+filename. Diagnose a conflicting explicit language and standard. The target
+is selected separately.
 
 For C input, `-fshort-wchar` selects `unsigned short` as the type of wide
 character constants and the element type of wide string literals. Wide
@@ -970,8 +971,9 @@ generated LowIR through the supplied native backend.
 
 `make test-wasm` runs the same source inputs through PA37's Wasm checker and
 their `.wasm-expect` result sidecars. It requires the pinned Wasm tools and SDK.
-`make test-native-driver` runs selected variable-length array programs
-at `-O0` and `-O2` using the executable, object and LowIR paths on the host.
+`make test-native-driver` checks `.c` language selection and selected
+variable-length array programs at `-O0` and `-O2` using the executable,
+object and LowIR paths on the host.
 `make test-native-abi` runs `tests/abi/` using the mixed-object runner from
 PA27. Use GCC as `CPPGM_HOST_CC` on x86-64 Linux and Clang on Darwin.
 Pass and return a flexible array record's fixed part by the target ABI,

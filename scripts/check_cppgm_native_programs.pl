@@ -14,7 +14,8 @@ my $levels = '1,2,3';
 die "Usage: check_cppgm_native_programs.pl [--levels=0,2] <cppgm> <test-or-directory> [lowir2native]\n"
 	unless GetOptions('levels=s' => \$levels) && $levels =~ /\A[0-3](?:,[0-3])*\z/ && (@ARGV == 2 || @ARGV == 3);
 my ($app, $root, $backend) = @ARGV;
-my @tests = collect_tests($root, qr/\.t$/);
+# An explicitly named C source exercises the driver's filename inference.
+my @tests = -f $root && $root =~ /\.c$/ ? collect_tests($root, qr/\.c$/) : collect_tests($root, qr/\.t$/);
 die "No native driver tests found under $root\n" if !@tests;
 my @host = resolve_host_command($ENV{CPPGM_HOST_CXX} // $ENV{CXX} // '',
 	'g++', 'clang++', 'c++');
@@ -24,7 +25,7 @@ my @routes = qw(direct object native);
 push @routes, 'lowir' if defined $backend;
 for my $test (@tests)
 {
-	(my $base = $test) =~ s/\.t$//;
+	(my $base = $test) =~ s/\.(?:t|c)$//;
 	my @source_args = source_args_for($test);
 	my @flags = (app_args_for($app), @source_args ? @source_args : read_word_list("$base.flags"));
 	my $directory = tempdir('cppgm-native-program-XXXXXX', TMPDIR => 1, CLEANUP => 1);
