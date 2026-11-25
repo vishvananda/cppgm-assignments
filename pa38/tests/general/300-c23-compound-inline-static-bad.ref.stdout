@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-compound-inline-static-bad.t:3:14: an external C inline definition defines a modifiable object with static or thread storage duration

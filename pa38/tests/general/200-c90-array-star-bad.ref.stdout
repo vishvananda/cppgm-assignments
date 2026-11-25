@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c90-array-star-bad.t:1:21: [*] in an array declarator requires C99

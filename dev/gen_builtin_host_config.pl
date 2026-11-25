@@ -124,6 +124,13 @@ sub main {
         $strict = $strict_probe->{stdout};
     }
 
+    # Some replacements contain casts spelled in the probed language.
+    my $c_predefined_probe = run_probe([@base_args, "-std=gnu17", "-dM", "-E", "-x", "c", "-"], "");
+    my $c_strict_probe = run_probe([@base_args, "-std=c17", "-dM", "-E", "-x", "c", "-"], "");
+    die "cannot probe host C predefined macros\n"
+        if !defined($c_predefined_probe) || $c_predefined_probe->{status} != 0 ||
+           !defined($c_strict_probe) || $c_strict_probe->{status} != 0;
+
     my @include_paths;
     my $include_probe =
         run_probe([@base_args, "-E", "-x", "c++", "-", "-v"], "");
@@ -162,6 +169,10 @@ sub main {
           raw_string_literal($predefined), ";\n";
     print "static const char kHostStrictPredefinedMacros[] = ",
           raw_string_literal($strict), ";\n";
+    print "static const char kHostCPredefinedMacros[] = ",
+          raw_string_literal($c_predefined_probe->{stdout}), ";\n";
+    print "static const char kHostStrictCPredefinedMacros[] = ",
+          raw_string_literal($c_strict_probe->{stdout}), ";\n";
     for my $paths (["kStandardIncludePaths", \@include_paths],
                    ["kCStandardIncludePaths", \@c_include_paths]) {
         print "static const char * const $paths->[0]\[\] = {\n";

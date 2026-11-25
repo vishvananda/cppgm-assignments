@@ -1,0 +1,847 @@
+global @original [storage=readonly, linkage=c, binding=internal] = {
+  zero 1076700
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  zero 1521
+  u8 35
+  u8 10
+  u8 11
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 1518
+  u8 35
+  u8 10
+  u8 11
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 1521
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 98322
+}
+global @points [storage=readonly, linkage=c, binding=internal] = {
+  zero 1076700
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  zero 1521
+  u8 35
+  u8 10
+  u8 11
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 1518
+  u8 35
+  u8 10
+  u8 11
+  u8 53
+  u8 12
+  u8 13
+  u8 71
+  u8 20
+  u8 21
+  u8 49
+  u8 12
+  u8 13
+  u8 53
+  zero 1
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 1521
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 98322
+}
+global @last [storage=readonly, linkage=c, binding=internal] = {
+  zero 1076700
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  u8 35
+  u8 10
+  u8 11
+  zero 1521
+  u8 35
+  u8 10
+  u8 11
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 1518
+  u8 35
+  u8 10
+  u8 11
+  u8 53
+  u8 12
+  u8 13
+  u8 7
+  u8 20
+  u8 21
+  u8 49
+  u8 12
+  u8 22
+  u8 53
+  zero 1
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 1521
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  u8 53
+  u8 12
+  u8 13
+  zero 98322
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $row : u32
+  slot $first : u32
+  slot $replaced : u32
+  slot $changed : u32
+  slot $cleared : u32
+  slot $last_col : u32
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+  slot $lor__6 : i64
+  slot $lor__7 : i64
+  slot $lor__8 : i64
+  slot $lor__9 : i64
+  slot $lor__10 : i64
+  slot $lor__11 : i64
+  slot $lor__12 : i64
+  slot $lor__13 : i64
+  slot $lor__14 : i64
+  slot $lor__15 : i64
+  slot $lor__16 : i64
+  slot $lor__17 : i64
+  slot $lor__18 : i64
+  slot $lor__19 : i64
+
+  block ^entry:
+    store volatile u32 702, $row
+    store volatile u32 501, $first
+    store volatile u32 502, $replaced
+    store volatile u32 503, $changed
+    store volatile u32 504, $cleared
+    store volatile u32 505, $last_col
+    %t1 = addr @original
+    %t2 = index inbounds i8 [projection=field] %t1, 0
+    %t3 = load volatile u32 $row
+    %t4 = convert zext i64 u32 %t3
+    %t5 = binary mul i64 %t4, 1536
+    %t6 = index inbounds i8 [projection=array_element] %t2, %t5
+    %t7 = load volatile u32 $changed
+    %t8 = convert zext i64 u32 %t7
+    %t9 = binary mul i64 %t8, 3
+    %t10 = index inbounds i8 [projection=array_element] %t6, %t9
+    %t11 = index inbounds i8 [projection=field] %t10, 0
+    %t12 = load u8 %t11
+    %t13 = binary and u8 %t12, 7
+    %t14 = convert zext i32 u8 %t13
+    %t15 = cmp ne i32 %t14, 5
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t17 = addr @original
+    %t18 = index inbounds i8 [projection=field] %t17, 0
+    %t19 = load volatile u32 $row
+    %t20 = convert zext i64 u32 %t19
+    %t21 = binary mul i64 %t20, 1536
+    %t22 = index inbounds i8 [projection=array_element] %t18, %t21
+    %t23 = load volatile u32 $changed
+    %t24 = convert zext i64 u32 %t23
+    %t25 = binary mul i64 %t24, 3
+    %t26 = index inbounds i8 [projection=array_element] %t22, %t25
+    %t27 = index inbounds i8 [projection=field] %t26, 0
+    %t28 = load u8 %t27
+    %t29 = binary ushr u8 %t28, 3
+    %t30 = binary and u8 %t29, 15
+    %t31 = convert zext i32 u8 %t30
+    %t32 = cmp ne i32 %t31, 6
+    %t33 = convert trunc i32 i64 %t32
+    %t34 = cmp ne i32 %t33, 0
+    store typed i64 %t34, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t35 = load typed i64 $lor__1
+    branch %t35, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t36 = addr @points
+    %t37 = index inbounds i8 [projection=field] %t36, 0
+    %t38 = index inbounds i8 [projection=field] %t37, 0
+    %t39 = load volatile u32 $row
+    %t40 = convert zext i64 u32 %t39
+    %t41 = binary mul i64 %t40, 1536
+    %t42 = index inbounds i8 [projection=array_element] %t38, %t41
+    %t43 = load volatile u32 $replaced
+    %t44 = convert zext i64 u32 %t43
+    %t45 = binary mul i64 %t44, 3
+    %t46 = index inbounds i8 [projection=array_element] %t42, %t45
+    %t47 = index inbounds i8 [projection=field] %t46, 0
+    %t48 = load u8 %t47
+    %t49 = binary and u8 %t48, 7
+    %t50 = convert zext i32 u8 %t49
+    %t51 = cmp ne i32 %t50, 7
+    %t52 = convert trunc i32 i64 %t51
+    %t53 = cmp ne i32 %t52, 0
+    store typed i64 %t53, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t54 = load typed i64 $lor__2
+    branch %t54, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t55 = addr @points
+    %t56 = index inbounds i8 [projection=field] %t55, 0
+    %t57 = index inbounds i8 [projection=field] %t56, 0
+    %t58 = load volatile u32 $row
+    %t59 = convert zext i64 u32 %t58
+    %t60 = binary mul i64 %t59, 1536
+    %t61 = index inbounds i8 [projection=array_element] %t57, %t60
+    %t62 = load volatile u32 $replaced
+    %t63 = convert zext i64 u32 %t62
+    %t64 = binary mul i64 %t63, 3
+    %t65 = index inbounds i8 [projection=array_element] %t61, %t64
+    %t66 = index inbounds i8 [projection=field] %t65, 0
+    %t67 = load u8 %t66
+    %t68 = binary ushr u8 %t67, 3
+    %t69 = binary and u8 %t68, 15
+    %t70 = convert zext i32 u8 %t69
+    %t71 = cmp ne i32 %t70, 8
+    %t72 = convert trunc i32 i64 %t71
+    %t73 = cmp ne i32 %t72, 0
+    store typed i64 %t73, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t74 = load typed i64 $lor__3
+    branch %t74, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t75 = addr @last
+    %t76 = index inbounds i8 [projection=field] %t75, 0
+    %t77 = index inbounds i8 [projection=field] %t76, 0
+    %t78 = load volatile u32 $row
+    %t79 = convert zext i64 u32 %t78
+    %t80 = binary mul i64 %t79, 1536
+    %t81 = index inbounds i8 [projection=array_element] %t77, %t80
+    %t82 = load volatile u32 $first
+    %t83 = convert zext i64 u32 %t82
+    %t84 = binary mul i64 %t83, 3
+    %t85 = index inbounds i8 [projection=array_element] %t81, %t84
+    %t86 = index inbounds i8 [projection=field] %t85, 0
+    %t87 = load u8 %t86
+    %t88 = binary and u8 %t87, 7
+    %t89 = convert zext i32 u8 %t88
+    %t90 = cmp ne i32 %t89, 5
+    %t91 = convert trunc i32 i64 %t90
+    %t92 = cmp ne i32 %t91, 0
+    store typed i64 %t92, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t93 = load typed i64 $lor__4
+    branch %t93, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t94 = addr @last
+    %t95 = index inbounds i8 [projection=field] %t94, 0
+    %t96 = index inbounds i8 [projection=field] %t95, 0
+    %t97 = load volatile u32 $row
+    %t98 = convert zext i64 u32 %t97
+    %t99 = binary mul i64 %t98, 1536
+    %t100 = index inbounds i8 [projection=array_element] %t96, %t99
+    %t101 = load volatile u32 $first
+    %t102 = convert zext i64 u32 %t101
+    %t103 = binary mul i64 %t102, 3
+    %t104 = index inbounds i8 [projection=array_element] %t100, %t103
+    %t105 = index inbounds i8 [projection=field] %t104, 1
+    %t106 = index inbounds u8 [projection=array_element] %t105, 1
+    %t107 = load u8 %t106
+    %t108 = convert zext i32 u8 %t107
+    %t109 = cmp ne i32 %t108, 13
+    %t110 = convert trunc i32 i64 %t109
+    %t111 = cmp ne i32 %t110, 0
+    store typed i64 %t111, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t112 = load typed i64 $lor__5
+    branch %t112, ^lor_short_17, ^lor_rhs_16
+
+  block ^lor_rhs_16:
+    %t113 = addr @last
+    %t114 = index inbounds i8 [projection=field] %t113, 0
+    %t115 = index inbounds i8 [projection=field] %t114, 0
+    %t116 = load volatile u32 $row
+    %t117 = convert zext i64 u32 %t116
+    %t118 = binary mul i64 %t117, 1536
+    %t119 = index inbounds i8 [projection=array_element] %t115, %t118
+    %t120 = load volatile u32 $replaced
+    %t121 = convert zext i64 u32 %t120
+    %t122 = binary mul i64 %t121, 3
+    %t123 = index inbounds i8 [projection=array_element] %t119, %t122
+    %t124 = index inbounds i8 [projection=field] %t123, 0
+    %t125 = load u8 %t124
+    %t126 = binary and u8 %t125, 7
+    %t127 = convert zext i32 u8 %t126
+    %t128 = cmp ne i32 %t127, 7
+    %t129 = convert trunc i32 i64 %t128
+    %t130 = cmp ne i32 %t129, 0
+    store typed i64 %t130, $lor__6
+    jump ^lor_end_18
+
+  block ^lor_short_17:
+    store typed i64 1, $lor__6
+    jump ^lor_end_18
+
+  block ^lor_end_18:
+    %t131 = load typed i64 $lor__6
+    branch %t131, ^lor_short_20, ^lor_rhs_19
+
+  block ^lor_rhs_19:
+    %t132 = addr @last
+    %t133 = index inbounds i8 [projection=field] %t132, 0
+    %t134 = index inbounds i8 [projection=field] %t133, 0
+    %t135 = load volatile u32 $row
+    %t136 = convert zext i64 u32 %t135
+    %t137 = binary mul i64 %t136, 1536
+    %t138 = index inbounds i8 [projection=array_element] %t134, %t137
+    %t139 = load volatile u32 $replaced
+    %t140 = convert zext i64 u32 %t139
+    %t141 = binary mul i64 %t140, 3
+    %t142 = index inbounds i8 [projection=array_element] %t138, %t141
+    %t143 = index inbounds i8 [projection=field] %t142, 0
+    %t144 = load u8 %t143
+    %t145 = binary ushr u8 %t144, 3
+    %t146 = binary and u8 %t145, 15
+    %t147 = convert zext i32 u8 %t146
+    %t148 = cmp ne i32 %t147, 0
+    %t149 = convert trunc i32 i64 %t148
+    %t150 = cmp ne i32 %t149, 0
+    store typed i64 %t150, $lor__7
+    jump ^lor_end_21
+
+  block ^lor_short_20:
+    store typed i64 1, $lor__7
+    jump ^lor_end_21
+
+  block ^lor_end_21:
+    %t151 = load typed i64 $lor__7
+    branch %t151, ^lor_short_23, ^lor_rhs_22
+
+  block ^lor_rhs_22:
+    %t152 = addr @last
+    %t153 = index inbounds i8 [projection=field] %t152, 0
+    %t154 = index inbounds i8 [projection=field] %t153, 0
+    %t155 = load volatile u32 $row
+    %t156 = convert zext i64 u32 %t155
+    %t157 = binary mul i64 %t156, 1536
+    %t158 = index inbounds i8 [projection=array_element] %t154, %t157
+    %t159 = load volatile u32 $replaced
+    %t160 = convert zext i64 u32 %t159
+    %t161 = binary mul i64 %t160, 3
+    %t162 = index inbounds i8 [projection=array_element] %t158, %t161
+    %t163 = index inbounds i8 [projection=field] %t162, 1
+    %t164 = index inbounds u8 [projection=array_element] %t163, 0
+    %t165 = load u8 %t164
+    %t166 = convert zext i32 u8 %t165
+    %t167 = cmp ne i32 %t166, 20
+    %t168 = convert trunc i32 i64 %t167
+    %t169 = cmp ne i32 %t168, 0
+    store typed i64 %t169, $lor__8
+    jump ^lor_end_24
+
+  block ^lor_short_23:
+    store typed i64 1, $lor__8
+    jump ^lor_end_24
+
+  block ^lor_end_24:
+    %t170 = load typed i64 $lor__8
+    branch %t170, ^lor_short_26, ^lor_rhs_25
+
+  block ^lor_rhs_25:
+    %t171 = addr @last
+    %t172 = index inbounds i8 [projection=field] %t171, 0
+    %t173 = index inbounds i8 [projection=field] %t172, 0
+    %t174 = load volatile u32 $row
+    %t175 = convert zext i64 u32 %t174
+    %t176 = binary mul i64 %t175, 1536
+    %t177 = index inbounds i8 [projection=array_element] %t173, %t176
+    %t178 = load volatile u32 $replaced
+    %t179 = convert zext i64 u32 %t178
+    %t180 = binary mul i64 %t179, 3
+    %t181 = index inbounds i8 [projection=array_element] %t177, %t180
+    %t182 = index inbounds i8 [projection=field] %t181, 1
+    %t183 = index inbounds u8 [projection=array_element] %t182, 1
+    %t184 = load u8 %t183
+    %t185 = convert zext i32 u8 %t184
+    %t186 = cmp ne i32 %t185, 21
+    %t187 = convert trunc i32 i64 %t186
+    %t188 = cmp ne i32 %t187, 0
+    store typed i64 %t188, $lor__9
+    jump ^lor_end_27
+
+  block ^lor_short_26:
+    store typed i64 1, $lor__9
+    jump ^lor_end_27
+
+  block ^lor_end_27:
+    %t189 = load typed i64 $lor__9
+    branch %t189, ^lor_short_29, ^lor_rhs_28
+
+  block ^lor_rhs_28:
+    %t190 = addr @last
+    %t191 = index inbounds i8 [projection=field] %t190, 0
+    %t192 = index inbounds i8 [projection=field] %t191, 0
+    %t193 = load volatile u32 $row
+    %t194 = convert zext i64 u32 %t193
+    %t195 = binary mul i64 %t194, 1536
+    %t196 = index inbounds i8 [projection=array_element] %t192, %t195
+    %t197 = load volatile u32 $changed
+    %t198 = convert zext i64 u32 %t197
+    %t199 = binary mul i64 %t198, 3
+    %t200 = index inbounds i8 [projection=array_element] %t196, %t199
+    %t201 = index inbounds i8 [projection=field] %t200, 0
+    %t202 = load u8 %t201
+    %t203 = binary and u8 %t202, 7
+    %t204 = convert zext i32 u8 %t203
+    %t205 = cmp ne i32 %t204, 1
+    %t206 = convert trunc i32 i64 %t205
+    %t207 = cmp ne i32 %t206, 0
+    store typed i64 %t207, $lor__10
+    jump ^lor_end_30
+
+  block ^lor_short_29:
+    store typed i64 1, $lor__10
+    jump ^lor_end_30
+
+  block ^lor_end_30:
+    %t208 = load typed i64 $lor__10
+    branch %t208, ^lor_short_32, ^lor_rhs_31
+
+  block ^lor_rhs_31:
+    %t209 = addr @last
+    %t210 = index inbounds i8 [projection=field] %t209, 0
+    %t211 = index inbounds i8 [projection=field] %t210, 0
+    %t212 = load volatile u32 $row
+    %t213 = convert zext i64 u32 %t212
+    %t214 = binary mul i64 %t213, 1536
+    %t215 = index inbounds i8 [projection=array_element] %t211, %t214
+    %t216 = load volatile u32 $changed
+    %t217 = convert zext i64 u32 %t216
+    %t218 = binary mul i64 %t217, 3
+    %t219 = index inbounds i8 [projection=array_element] %t215, %t218
+    %t220 = index inbounds i8 [projection=field] %t219, 0
+    %t221 = load u8 %t220
+    %t222 = binary ushr u8 %t221, 3
+    %t223 = binary and u8 %t222, 15
+    %t224 = convert zext i32 u8 %t223
+    %t225 = cmp ne i32 %t224, 6
+    %t226 = convert trunc i32 i64 %t225
+    %t227 = cmp ne i32 %t226, 0
+    store typed i64 %t227, $lor__11
+    jump ^lor_end_33
+
+  block ^lor_short_32:
+    store typed i64 1, $lor__11
+    jump ^lor_end_33
+
+  block ^lor_end_33:
+    %t228 = load typed i64 $lor__11
+    branch %t228, ^lor_short_35, ^lor_rhs_34
+
+  block ^lor_rhs_34:
+    %t229 = addr @last
+    %t230 = index inbounds i8 [projection=field] %t229, 0
+    %t231 = index inbounds i8 [projection=field] %t230, 0
+    %t232 = load volatile u32 $row
+    %t233 = convert zext i64 u32 %t232
+    %t234 = binary mul i64 %t233, 1536
+    %t235 = index inbounds i8 [projection=array_element] %t231, %t234
+    %t236 = load volatile u32 $changed
+    %t237 = convert zext i64 u32 %t236
+    %t238 = binary mul i64 %t237, 3
+    %t239 = index inbounds i8 [projection=array_element] %t235, %t238
+    %t240 = index inbounds i8 [projection=field] %t239, 1
+    %t241 = index inbounds u8 [projection=array_element] %t240, 0
+    %t242 = load u8 %t241
+    %t243 = convert zext i32 u8 %t242
+    %t244 = cmp ne i32 %t243, 12
+    %t245 = convert trunc i32 i64 %t244
+    %t246 = cmp ne i32 %t245, 0
+    store typed i64 %t246, $lor__12
+    jump ^lor_end_36
+
+  block ^lor_short_35:
+    store typed i64 1, $lor__12
+    jump ^lor_end_36
+
+  block ^lor_end_36:
+    %t247 = load typed i64 $lor__12
+    branch %t247, ^lor_short_38, ^lor_rhs_37
+
+  block ^lor_rhs_37:
+    %t248 = addr @last
+    %t249 = index inbounds i8 [projection=field] %t248, 0
+    %t250 = index inbounds i8 [projection=field] %t249, 0
+    %t251 = load volatile u32 $row
+    %t252 = convert zext i64 u32 %t251
+    %t253 = binary mul i64 %t252, 1536
+    %t254 = index inbounds i8 [projection=array_element] %t250, %t253
+    %t255 = load volatile u32 $changed
+    %t256 = convert zext i64 u32 %t255
+    %t257 = binary mul i64 %t256, 3
+    %t258 = index inbounds i8 [projection=array_element] %t254, %t257
+    %t259 = index inbounds i8 [projection=field] %t258, 1
+    %t260 = index inbounds u8 [projection=array_element] %t259, 1
+    %t261 = load u8 %t260
+    %t262 = convert zext i32 u8 %t261
+    %t263 = cmp ne i32 %t262, 22
+    %t264 = convert trunc i32 i64 %t263
+    %t265 = cmp ne i32 %t264, 0
+    store typed i64 %t265, $lor__13
+    jump ^lor_end_39
+
+  block ^lor_short_38:
+    store typed i64 1, $lor__13
+    jump ^lor_end_39
+
+  block ^lor_end_39:
+    %t266 = load typed i64 $lor__13
+    branch %t266, ^lor_short_41, ^lor_rhs_40
+
+  block ^lor_rhs_40:
+    %t267 = addr @last
+    %t268 = index inbounds i8 [projection=field] %t267, 0
+    %t269 = index inbounds i8 [projection=field] %t268, 0
+    %t270 = load volatile u32 $row
+    %t271 = convert zext i64 u32 %t270
+    %t272 = binary mul i64 %t271, 1536
+    %t273 = index inbounds i8 [projection=array_element] %t269, %t272
+    %t274 = load volatile u32 $cleared
+    %t275 = convert zext i64 u32 %t274
+    %t276 = binary mul i64 %t275, 3
+    %t277 = index inbounds i8 [projection=array_element] %t273, %t276
+    %t278 = index inbounds i8 [projection=field] %t277, 0
+    %t279 = load u8 %t278
+    %t280 = binary and u8 %t279, 7
+    %t281 = convert zext i32 u8 %t280
+    %t282 = cmp ne i32 %t281, 5
+    %t283 = convert trunc i32 i64 %t282
+    %t284 = cmp ne i32 %t283, 0
+    store typed i64 %t284, $lor__14
+    jump ^lor_end_42
+
+  block ^lor_short_41:
+    store typed i64 1, $lor__14
+    jump ^lor_end_42
+
+  block ^lor_end_42:
+    %t285 = load typed i64 $lor__14
+    branch %t285, ^lor_short_44, ^lor_rhs_43
+
+  block ^lor_rhs_43:
+    %t286 = addr @last
+    %t287 = index inbounds i8 [projection=field] %t286, 0
+    %t288 = index inbounds i8 [projection=field] %t287, 0
+    %t289 = load volatile u32 $row
+    %t290 = convert zext i64 u32 %t289
+    %t291 = binary mul i64 %t290, 1536
+    %t292 = index inbounds i8 [projection=array_element] %t288, %t291
+    %t293 = load volatile u32 $cleared
+    %t294 = convert zext i64 u32 %t293
+    %t295 = binary mul i64 %t294, 3
+    %t296 = index inbounds i8 [projection=array_element] %t292, %t295
+    %t297 = index inbounds i8 [projection=field] %t296, 0
+    %t298 = load u8 %t297
+    %t299 = binary ushr u8 %t298, 3
+    %t300 = binary and u8 %t299, 15
+    %t301 = convert zext i32 u8 %t300
+    %t302 = cmp ne i32 %t301, 6
+    %t303 = convert trunc i32 i64 %t302
+    %t304 = cmp ne i32 %t303, 0
+    store typed i64 %t304, $lor__15
+    jump ^lor_end_45
+
+  block ^lor_short_44:
+    store typed i64 1, $lor__15
+    jump ^lor_end_45
+
+  block ^lor_end_45:
+    %t305 = load typed i64 $lor__15
+    branch %t305, ^lor_short_47, ^lor_rhs_46
+
+  block ^lor_rhs_46:
+    %t306 = addr @last
+    %t307 = index inbounds i8 [projection=field] %t306, 0
+    %t308 = index inbounds i8 [projection=field] %t307, 0
+    %t309 = load volatile u32 $row
+    %t310 = convert zext i64 u32 %t309
+    %t311 = binary mul i64 %t310, 1536
+    %t312 = index inbounds i8 [projection=array_element] %t308, %t311
+    %t313 = load volatile u32 $cleared
+    %t314 = convert zext i64 u32 %t313
+    %t315 = binary mul i64 %t314, 3
+    %t316 = index inbounds i8 [projection=array_element] %t312, %t315
+    %t317 = index inbounds i8 [projection=field] %t316, 1
+    %t318 = index inbounds u8 [projection=array_element] %t317, 0
+    %t319 = load u8 %t318
+    %t320 = convert zext i32 u8 %t319
+    %t321 = cmp ne i32 %t320, 0
+    %t322 = convert trunc i32 i64 %t321
+    %t323 = cmp ne i32 %t322, 0
+    store typed i64 %t323, $lor__16
+    jump ^lor_end_48
+
+  block ^lor_short_47:
+    store typed i64 1, $lor__16
+    jump ^lor_end_48
+
+  block ^lor_end_48:
+    %t324 = load typed i64 $lor__16
+    branch %t324, ^lor_short_50, ^lor_rhs_49
+
+  block ^lor_rhs_49:
+    %t325 = addr @last
+    %t326 = index inbounds i8 [projection=field] %t325, 0
+    %t327 = index inbounds i8 [projection=field] %t326, 0
+    %t328 = load volatile u32 $row
+    %t329 = convert zext i64 u32 %t328
+    %t330 = binary mul i64 %t329, 1536
+    %t331 = index inbounds i8 [projection=array_element] %t327, %t330
+    %t332 = load volatile u32 $cleared
+    %t333 = convert zext i64 u32 %t332
+    %t334 = binary mul i64 %t333, 3
+    %t335 = index inbounds i8 [projection=array_element] %t331, %t334
+    %t336 = index inbounds i8 [projection=field] %t335, 1
+    %t337 = index inbounds u8 [projection=array_element] %t336, 1
+    %t338 = load u8 %t337
+    %t339 = convert zext i32 u8 %t338
+    %t340 = cmp ne i32 %t339, 13
+    %t341 = convert trunc i32 i64 %t340
+    %t342 = cmp ne i32 %t341, 0
+    store typed i64 %t342, $lor__17
+    jump ^lor_end_51
+
+  block ^lor_short_50:
+    store typed i64 1, $lor__17
+    jump ^lor_end_51
+
+  block ^lor_end_51:
+    %t343 = load typed i64 $lor__17
+    branch %t343, ^lor_short_53, ^lor_rhs_52
+
+  block ^lor_rhs_52:
+    %t344 = addr @last
+    %t345 = index inbounds i8 [projection=field] %t344, 0
+    %t346 = index inbounds i8 [projection=field] %t345, 0
+    %t347 = load volatile u32 $row
+    %t348 = convert zext i64 u32 %t347
+    %t349 = binary mul i64 %t348, 1536
+    %t350 = index inbounds i8 [projection=array_element] %t346, %t349
+    %t351 = load volatile u32 $last_col
+    %t352 = convert zext i64 u32 %t351
+    %t353 = binary mul i64 %t352, 3
+    %t354 = index inbounds i8 [projection=array_element] %t350, %t353
+    %t355 = index inbounds i8 [projection=field] %t354, 0
+    %t356 = load u8 %t355
+    %t357 = binary and u8 %t356, 7
+    %t358 = convert zext i32 u8 %t357
+    %t359 = cmp ne i32 %t358, 5
+    %t360 = convert trunc i32 i64 %t359
+    %t361 = cmp ne i32 %t360, 0
+    store typed i64 %t361, $lor__18
+    jump ^lor_end_54
+
+  block ^lor_short_53:
+    store typed i64 1, $lor__18
+    jump ^lor_end_54
+
+  block ^lor_end_54:
+    %t362 = load typed i64 $lor__18
+    branch %t362, ^lor_short_56, ^lor_rhs_55
+
+  block ^lor_rhs_55:
+    %t363 = addr @last
+    %t364 = index inbounds i8 [projection=field] %t363, 0
+    %t365 = index inbounds i8 [projection=field] %t364, 0
+    %t366 = load volatile u32 $row
+    %t367 = convert zext i64 u32 %t366
+    %t368 = binary mul i64 %t367, 1536
+    %t369 = index inbounds i8 [projection=array_element] %t365, %t368
+    %t370 = load volatile u32 $last_col
+    %t371 = convert zext i64 u32 %t370
+    %t372 = binary mul i64 %t371, 3
+    %t373 = index inbounds i8 [projection=array_element] %t369, %t372
+    %t374 = index inbounds i8 [projection=field] %t373, 1
+    %t375 = index inbounds u8 [projection=array_element] %t374, 1
+    %t376 = load u8 %t375
+    %t377 = convert zext i32 u8 %t376
+    %t378 = cmp ne i32 %t377, 13
+    %t379 = convert trunc i32 i64 %t378
+    %t380 = cmp ne i32 %t379, 0
+    store typed i64 %t380, $lor__19
+    jump ^lor_end_57
+
+  block ^lor_short_56:
+    store typed i64 1, $lor__19
+    jump ^lor_end_57
+
+  block ^lor_end_57:
+    %t381 = load typed i64 $lor__19
+    %t382 = convert trunc i32 i64 %t381
+    return i32 %t382
+}

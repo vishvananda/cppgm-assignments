@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-block-function-hidden-bad.t:10:16: sizeof of an incomplete or function type

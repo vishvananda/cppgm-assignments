@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-enum-redefinition-nested-bad.t:2:36: nested enumeration redefinition

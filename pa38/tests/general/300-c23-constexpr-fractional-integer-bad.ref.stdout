@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-constexpr-fractional-integer-bad.t:1:23: a C constexpr initializer requires an exactly representable constant

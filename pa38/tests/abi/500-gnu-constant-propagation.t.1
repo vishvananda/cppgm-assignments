@@ -1,0 +1,26 @@
+static volatile int runtime_value = -5;
+static volatile int effects;
+
+extern void constant_was_not_proved(void);
+
+static int known_after_propagation(void)
+{
+    int count = 1 << 6;
+    if (!__builtin_constant_p((long long)count >= 0))
+        constant_was_not_proved();
+    return count;
+}
+
+static __attribute__((noinline)) int unknown_parameter(int value)
+{
+    return __builtin_constant_p((long long)value >= 0);
+}
+
+int main(void)
+{
+    return known_after_propagation() != 64 ||
+        unknown_parameter(runtime_value) ||
+        __builtin_constant_p(runtime_value) ||
+        __builtin_constant_p(++effects) ||
+        effects != 0;
+}

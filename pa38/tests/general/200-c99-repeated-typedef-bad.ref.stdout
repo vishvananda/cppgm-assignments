@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c99-repeated-typedef-bad.t:2:13: a repeated typedef declaration requires C11

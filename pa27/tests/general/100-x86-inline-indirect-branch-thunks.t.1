@@ -1,0 +1,11 @@
+using Callback = int (*)(int);
+
+extern "C" int indirect_call(Callback callback, int value)
+{
+    return callback(value) + 1;
+}
+
+extern "C" int indirect_tail(Callback callback, int value)
+{
+    return callback(value);
+}

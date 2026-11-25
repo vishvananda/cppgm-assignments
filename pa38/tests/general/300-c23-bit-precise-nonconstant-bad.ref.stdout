@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-bit-precise-nonconstant-bad.t:2:9: a C integer constant expression is required

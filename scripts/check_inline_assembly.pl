@@ -14,7 +14,7 @@ use Text::ParseWords qw(shellwords);
 use lib $FindBin::Bin;
 
 use CppgmBatchWorker qw(collect_tests run_command_capture ensure_test_app_available
-	get_timeout_from_env note_progress_state clear_progress_state);
+	get_timeout_from_env note_progress_state clear_progress_state read_word_list);
 
 sub read_file
 {
@@ -82,7 +82,7 @@ sub fixture_link_options
 	my $mode = read_file($test);
 	$mode =~ s/\s+\z//;
 	die "$test: unknown assembly link mode '$mode'\n" if $mode ne 'no-pie';
-	return $^O eq 'darwin' ? ('-Wl,-no_pie') : ('-no-pie');
+	return $^O eq 'darwin' ? ('-Wl,-no_pie') : ('-fno-pie', '-no-pie');
 }
 
 sub requested_instructions
@@ -125,10 +125,12 @@ sub observe
 for my $test (@tests)
 {
 	my $source = abs_path($test);
+	(my $flags = $source) =~ s/\.t$/.flags/;
+	my @flags = read_word_list($flags);
 	@fixture_link = fixture_link_options($test);
 	my $profile = read_file(profile_path($test));
 	$profile =~ s/\s+\z//;
-	die "$test: unknown assembly profile '$profile'\n" if $profile !~ /\A(?:(?:lowir|gnu)(?:-reject)?|gnu-native|gnu-compile|native-source|lowir-native(?:-reject)?)\z/;
+	die "$test: unknown assembly profile '$profile'\n" if $profile !~ /\A(?:(?:lowir|gnu)(?:-reject)?|gnu-native|gnu-compile|gnu-text|native-source|lowir-native(?:-reject)?)\z/;
 	my $directory = File::Spec->rel2abs(tempdir('case-XXXXXX', DIR => $out, CLEANUP => 0));
 	if ($profile =~ /-reject\z/)
 	{
@@ -154,17 +156,18 @@ for my $test (@tests)
 	{
 		for my $level (@levels)
 		{
-			command($directory, "$level.compile", $app, "-$level", '-c', $source, '-o', "$directory/$level.o");
+			command($directory, "$level.compile", $app, "-$level", @flags, '-c', $source, '-o', "$directory/$level.o");
 			(my $expect = $source) =~ s/\.t$/.inspect.expect/;
 			if (-f $expect)
 			{
 				command($directory, "$level.inspect", $^X, "$FindBin::Bin/check_object_expectations.pl", $expect, "$directory/$level.o");
 			}
 			my $lowered = "$directory/$level.lowir";
-			command($directory, "$level.lower", $app, '--emit-lowir', "-$level", '-o', $lowered, $source);
+			my @emit = @flags ? ('-S', '-emit-lowir', @flags) : ('--emit-lowir');
+			command($directory, "$level.lower", $app, @emit, "-$level", '-o', $lowered, $source);
 			for my $input (canonical_inputs($directory, $lowered))
 			{
-				command($directory, "$level.roundtrip", $app, "-$level", '-c', $input, '-o', "$directory/roundtrip.o");
+				command($directory, "$level.roundtrip", $app, "-$level", @flags, '-c', $input, '-o', "$directory/roundtrip.o");
 				command($directory, "$level.roundtrip-inspect", $^X, "$FindBin::Bin/check_object_expectations.pl", $expect, "$directory/roundtrip.o") if -f $expect;
 			}
 		}
@@ -217,6 +220,16 @@ for my $test (@tests)
 				command($directory, "$label.roundtrip-compile", $app, "-$level", '-c', $canonical, '-o', "$directory/$label.roundtrip.o");
 				push @observations, observe($directory, "$label.roundtrip", "$directory/$label.roundtrip.o", $driver);
 			}
+			if ($profile eq 'gnu-text' && $^O eq 'linux')
+			{
+				my $text = "$directory/$label.s";
+				my $assembled = "$directory/$label.assembly.o";
+				command($directory, "$label.assembly", $app, "-$level", '-S', $source, '-o', $text);
+				die "$test: textual assembly lost its string directives\n"
+					if read_file($text) !~ /^\s*\.ascii\s+"/m;
+				command($directory, "$label.assemble", 'as', '--64', $text, '-o', $assembled);
+				push @observations, observe($directory, "$label.assembly-run", $assembled, $driver);
+			}
 			if (my @requested = requested_instructions($source))
 			{
 				my @inspect = $^O eq 'darwin' ? ('otool', '-tvV') : ('objdump', '-d');
@@ -233,7 +246,7 @@ for my $test (@tests)
 		}
 		++$index;
 	}
-	if ($profile eq 'gnu')
+	if ($profile eq 'gnu' || $profile eq 'gnu-text')
 	{
 		command($directory, 'host-compile', @host, '-std=c++11', '-O3', @stdlib, @fixture_link,
 			'-x', 'c++', $source, $driver, '-o', "$directory/host.program");

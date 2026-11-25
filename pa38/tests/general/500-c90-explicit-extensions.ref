@@ -1,0 +1,59 @@
+function @variable_size(%count : i32) -> i32 [linkage=c, binding=internal] {
+  slot $count : i32
+  slot $tmpobj__1 : i64
+
+  block ^entry:
+    store typed i32 %count, $count
+    %t1 = load typed i32 $count
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = load typed i64 $tmpobj__1
+    %t5 = load typed i32 $count
+    %t6 = const i64 4
+    %t7 = convert sext i64 i32 %t5
+    %t8 = binary mul i64 %t7, %t6
+    %t9 = cmp eq i64 %t4, %t8
+    %t10 = convert trunc i32 i64 %t9
+    return i32 %t10
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $value : i64
+  slot $tmpobj__1 : i32
+  slot $packet : obj<4x4>
+  slot $lor__2 : i64
+
+  block ^entry:
+    store typed i32 42, $tmpobj__1
+    %t1 = load typed i32 $tmpobj__1
+    %t2 = convert sext i64 i32 %t1
+    store typed i64 %t2, $value
+    %t3 = addr $packet
+    %t4 = addr $packet
+    %t5 = index inbounds i8 [projection=field] %t4, 0
+    store typed i32 2, %t5
+    %t6 = load typed i64 $value
+    %t7 = cmp ne i64 %t6, 42
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t9 = addr $packet
+    %t10 = index inbounds i8 [projection=field] %t9, 0
+    %t11 = load typed i32 %t10
+    %t12 = call i32 @variable_size(%t11)
+    %t13 = cmp eq i32 %t12, 0
+    %t14 = convert trunc i32 i64 %t13
+    %t15 = cmp ne i32 %t14, 0
+    store typed i64 %t15, $lor__2
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__2
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t16 = load typed i64 $lor__2
+    %t17 = convert trunc i32 i64 %t16
+    return i32 %t17
+}

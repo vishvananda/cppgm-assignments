@@ -1,0 +1,106 @@
+declare function @__cppgm_builtin_memset(%arg0 : ptr, %arg1 : i32, %arg2 : i64) -> ptr [unwind=no, binding=strong, object=cppgm_builtin_memset]
+
+function @repeat_initialization(%rounds : u32) -> i32 [linkage=c, binding=internal] {
+  slot $rounds : u32
+  slot $length : u32
+  slot $seen : u32
+  slot $tmpobj__1 : i64
+  slot $cleanup_return__2 : i32
+
+  block ^entry:
+    store typed u32 %rounds, $rounds
+    store typed u32 2, $length
+    store typed u32 0, $seen
+    jump ^goto_1
+
+  block ^goto_1:
+    jump ^goto_2
+
+  block ^goto_2:
+    %t1 = load typed u32 $length
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, $length
+    %t3 = convert zext i64 u32 %t1
+    %t4 = binary mul i64 %t3, 4
+    store typed i64 %t4, $tmpobj__1
+    %t5 = stack_save
+    %t6 = stack_alloc %t4
+    %t7 = call ptr @__cppgm_builtin_memset(%t6, 0, %t4)
+    %t8 = index inbounds i32 [projection=array_element] %t6, 0
+    %t9 = load typed i32 %t8
+    %t10 = cmp ne i32 %t9, 0
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^if_then_3, ^lor_rhs_5
+
+  block ^lor_rhs_5:
+    %t12 = load typed u32 $length
+    %t13 = binary sub u32 %t12, 2
+    %t14 = index inbounds i32 [projection=array_element] %t6, %t13
+    %t15 = load typed i32 %t14
+    %t16 = cmp ne i32 %t15, 0
+    %t17 = convert trunc i32 i64 %t16
+    branch %t17, ^if_then_3, ^if_else_4
+
+  block ^if_then_3:
+    store typed i32 2, $cleanup_return__2
+    jump ^return_cleanup_action_7
+
+  block ^return_cleanup_terminal_6:
+    return i32 $cleanup_return__2
+
+  block ^return_cleanup_action_7:
+    stack_restore %t5
+    jump ^return_cleanup_terminal_6
+
+  block ^if_else_4:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t18 = index inbounds i32 [projection=array_element] %t6, 0
+    store typed i32 11, %t18
+    %t19 = load typed u32 $seen
+    %t20 = binary add u32 %t19, 1
+    store typed u32 %t20, $seen
+    %t21 = load typed u32 $rounds
+    %t22 = cmp ult u32 %t20, %t21
+    %t23 = convert trunc i32 i64 %t22
+    branch %t23, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    stack_restore %t5
+    jump ^goto_2
+
+  block ^if_else_10:
+    jump ^if_end_11
+
+  block ^if_end_11:
+    %t24 = load typed u32 $length
+    %t25 = load typed u32 $rounds
+    %t26 = binary add u32 %t25, 2
+    %t27 = cmp ne u32 %t24, %t26
+    %t28 = convert trunc i32 i64 %t27
+    branch %t28, ^if_then_12, ^lor_rhs_14
+
+  block ^lor_rhs_14:
+    %t29 = index inbounds i32 [projection=array_element] %t6, 0
+    %t30 = load typed i32 %t29
+    %t31 = cmp ne i32 %t30, 11
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_12, ^if_else_13
+
+  block ^if_then_12:
+    store typed i32 3, $cleanup_return__2
+    jump ^return_cleanup_action_7
+
+  block ^if_else_13:
+    jump ^if_end_15
+
+  block ^if_end_15:
+    store typed i32 0, $cleanup_return__2
+    jump ^return_cleanup_action_7
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @repeat_initialization(20)
+    return i32 %t1
+}

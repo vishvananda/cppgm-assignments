@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c99-unicode-prefix-paste-reject.t:3:20: token pasting does not form one preprocessing token

@@ -1,0 +1,64 @@
+global @negative : i32 [linkage=c, binding=internal] = -1
+global @wrapped : i32 [linkage=c, binding=internal] = -2147483648
+global @operand : i32 [linkage=c, binding=internal] = 10
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+
+  block ^entry:
+    %t1 = load volatile i32 @operand
+    %t2 = binary shl i32 %t1, 30
+    jump ^switch_dispatch_1
+
+  block ^switch_dispatch_1:
+    switch %t2, ^switch_default_4, -2147483648:^switch_case_3
+
+  block ^switch_case_3:
+    %t3 = unary neg i32 4
+    %t4 = cmp ne i32 -4, %t3
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^lor_short_6, ^lor_rhs_5
+
+  block ^lor_rhs_5:
+    %t6 = load typed i32 @negative
+    %t7 = unary neg i32 1
+    %t8 = cmp ne i32 %t6, %t7
+    %t9 = convert trunc i32 i64 %t8
+    %t10 = cmp ne i32 %t9, 0
+    store typed i64 %t10, $lor__1
+    jump ^lor_end_7
+
+  block ^lor_short_6:
+    store typed i64 1, $lor__1
+    jump ^lor_end_7
+
+  block ^lor_end_7:
+    %t11 = load typed i64 $lor__1
+    branch %t11, ^lor_short_9, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t12 = load typed i32 @wrapped
+    %t13 = unary neg i32 2147483647
+    %t14 = binary sub nowrap i32 %t13, 1
+    %t15 = cmp ne i32 %t12, %t14
+    %t16 = convert trunc i32 i64 %t15
+    %t17 = cmp ne i32 %t16, 0
+    store typed i64 %t17, $lor__2
+    jump ^lor_end_10
+
+  block ^lor_short_9:
+    store typed i64 1, $lor__2
+    jump ^lor_end_10
+
+  block ^lor_end_10:
+    %t18 = load typed i64 $lor__2
+    %t19 = convert trunc i32 i64 %t18
+    return i32 %t19
+
+  block ^switch_default_4:
+    return i32 1
+
+  block ^switch_end_2:
+    return i32 0
+}

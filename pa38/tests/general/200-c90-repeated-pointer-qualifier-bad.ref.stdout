@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c90-repeated-pointer-qualifier-bad.t:1:12: a repeated pointer qualifier requires C99

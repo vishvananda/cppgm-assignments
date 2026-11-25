@@ -1,0 +1,15 @@
+global @high_bits : i128 [linkage=c, binding=internal] = 18446744073709551619
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $input : i128
+
+  block ^entry:
+    store volatile i128 18446744073709551619, $input
+    %t1 = load volatile i128 $input
+    %t2 = binary and i128 %t1, 36893488147419103231
+    %t3 = load typed i128 @high_bits
+    %t4 = binary and i128 %t3, 36893488147419103231
+    %t5 = cmp ne i128 %t2, %t4
+    %t6 = convert trunc i32 i64 %t5
+    return i32 %t6
+}

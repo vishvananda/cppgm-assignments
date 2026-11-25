@@ -1,0 +1,1 @@
+-mno-sse -mno-sse2 -mno-mmx -mno-80387 -mno-fp-ret-in-387 -mno-red-zone

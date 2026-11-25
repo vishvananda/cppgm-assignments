@@ -1,0 +1,116 @@
+global @floats [storage=readonly, linkage=c, binding=internal] = {
+  f32 1f
+  f32 -1f
+}
+global @doubles [storage=readonly, linkage=c, binding=internal] = {
+  f64 1
+  f64 -2
+  f64 -0.5
+}
+global @extended [storage=readonly, linkage=c, binding=internal] = {
+  f80 -3L
+  f80 18446744073709551615L
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $i : u32
+  slot $land__1 : i64
+  slot $land__2 : i64
+  slot $land__3 : i64
+  slot $land__4 : i64
+
+  block ^entry:
+    store volatile u32 1, $i
+    %t1 = addr @floats
+    %t2 = load volatile u32 $i
+    %t3 = index inbounds f32 [projection=array_element] %t1, %t2
+    %t4 = load typed f32 %t3
+    %t5 = unary neg f32 1f
+    %t6 = cmp eq f32 %t4, %t5
+    %t7 = convert trunc i32 i64 %t6
+    branch %t7, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t8 = addr @doubles
+    %t9 = load volatile u32 $i
+    %t10 = index inbounds f64 [projection=array_element] %t8, %t9
+    %t11 = load typed f64 %t10
+    %t12 = unary neg f64 2
+    %t13 = cmp eq f64 %t11, %t12
+    %t14 = convert trunc i32 i64 %t13
+    %t15 = cmp ne i32 %t14, 0
+    store typed i64 %t15, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t16 = load typed i64 $land__1
+    branch %t16, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t17 = addr @doubles
+    %t18 = load volatile u32 $i
+    %t19 = binary add u32 %t18, 1
+    %t20 = index inbounds f64 [projection=array_element] %t17, %t19
+    %t21 = load typed f64 %t20
+    %t22 = unary neg f64 0.5
+    %t23 = cmp eq f64 %t21, %t22
+    %t24 = convert trunc i32 i64 %t23
+    %t25 = cmp ne i32 %t24, 0
+    store typed i64 %t25, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t26 = load typed i64 $land__2
+    branch %t26, ^land_rhs_7, ^land_short_8
+
+  block ^land_rhs_7:
+    %t27 = addr @extended
+    %t28 = load volatile u32 $i
+    %t29 = binary sub u32 %t28, 1
+    %t30 = index inbounds f80 [projection=array_element] %t27, %t29
+    %t31 = load typed f80 %t30
+    %t32 = unary neg f80 3L
+    %t33 = cmp eq f80 %t31, %t32
+    %t34 = convert trunc i32 i64 %t33
+    %t35 = cmp ne i32 %t34, 0
+    store typed i64 %t35, $land__3
+    jump ^land_end_9
+
+  block ^land_short_8:
+    store typed i64 0, $land__3
+    jump ^land_end_9
+
+  block ^land_end_9:
+    %t36 = load typed i64 $land__3
+    branch %t36, ^land_rhs_10, ^land_short_11
+
+  block ^land_rhs_10:
+    %t37 = addr @extended
+    %t38 = load volatile u32 $i
+    %t39 = index inbounds f80 [projection=array_element] %t37, %t38
+    %t40 = load typed f80 %t39
+    %t41 = cmp eq f80 %t40, 18446744073709551615L
+    %t42 = convert trunc i32 i64 %t41
+    %t43 = cmp ne i32 %t42, 0
+    store typed i64 %t43, $land__4
+    jump ^land_end_12
+
+  block ^land_short_11:
+    store typed i64 0, $land__4
+    jump ^land_end_12
+
+  block ^land_end_12:
+    %t44 = load typed i64 $land__4
+    %t45 = convert trunc i32 i64 %t44
+    %t46 = cmp eq i32 %t45, 0
+    %t47 = convert trunc i32 i64 %t46
+    return i32 %t47
+}

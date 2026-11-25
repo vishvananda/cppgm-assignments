@@ -1,0 +1,13 @@
+extern const void boundary_marker;
+
+const void *local_boundary(void)
+{
+    extern const void boundary_marker;
+    return &boundary_marker;
+}
+
+int main(void)
+{
+    const unsigned char *from_block = local_boundary();
+    return local_boundary() != &boundary_marker || from_block[0] != 116 || from_block[2] != 39;
+}

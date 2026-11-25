@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-block-function-storage-bad.t:3:16: a block-scope C function declaration cannot be static

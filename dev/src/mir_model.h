@@ -225,14 +225,15 @@ inline const char* spelling(WideOp op)
 
 enum InstFlag : std::uint16_t
 {
-	MF_VARIADIC = 1,       // call: `variadic`
-	MF_UNWIND_NO = 2,      // call: `unwind=no`
-	MF_NORETURN = 4,       // call: `returns=noreturn`
-	MF_VOLATILE = 8,       // a volatile access (Wide: an i128 atomic load)
-	MF_COPY_DYNAMIC = 16,  // copy_bytes_dynamic: rdx bytes from rsi to rdi
-	MF_STRLEN_PREFIX = 32, // call: `strlen_prefix=16`, a strlen whose first 16 bytes are probed inline
-	MF_FRAMELESS = 64,     // ret in a shrink-wrapped function's frameless region: no epilogue
-	MF_COLD = 128          // call: of a function stated `cold=yes`, a rarely reached block (not written)
+	MF_VARIADIC = 1,           // call: `variadic`
+	MF_UNWIND_NO = 2,          // call: `unwind=no`
+	MF_NORETURN = 4,           // call: `returns=noreturn`
+	MF_VOLATILE = 8,           // a volatile access (Wide: an i128 atomic load)
+	MF_COPY_DYNAMIC = 16,      // copy_bytes_dynamic: rdx bytes from rsi to rdi
+	MF_STRLEN_PREFIX = 32,     // call: `strlen_prefix=16`, a strlen whose first 16 bytes are probed inline
+	MF_FRAMELESS = 64,         // ret in a shrink-wrapped function's frameless region: no epilogue
+	MF_COLD = 128,             // call: of a function stated `cold=yes`, a rarely reached block (not written)
+	MF_SIGNALING_COMPARE = 256 // floating comparison: invalid on quiet as well as signaling NaNs
 };
 
 // The call fact a flag writes in a call's `[args=(...), ...]` list; null

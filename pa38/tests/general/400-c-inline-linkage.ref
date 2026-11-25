@@ -1,3 +1,6 @@
+global @increment : i32 [linkage=c, binding=internal] = 5
+global @__local_static__declared_last__decl0__local : i32 [binding=internal, object=_ZZ13declared_lastE5local] = zero
+
 function @declared_first(%n : i32) -> i32 [linkage=c, binding=strong, inline_hint=yes] {
   slot $n : i32
 
@@ -12,9 +15,12 @@ function @declared_last(%n : i32) -> i32 [linkage=c, binding=strong, inline_hint
 
   block ^entry:
     store typed i32 %n, $n
-    %t1 = load typed i32 $n
-    %t2 = binary add nowrap i32 %t1, 5
-    return i32 %t2
+    %t1 = load typed i32 @increment
+    store typed i32 %t1, @__local_static__declared_last__decl0__local
+    %t2 = load typed i32 $n
+    %t3 = load typed i32 @__local_static__declared_last__decl0__local
+    %t4 = binary add nowrap i32 %t2, %t3
+    return i32 %t4
 }
 function @declared_with_extern(%n : i32) -> i32 [linkage=c, binding=strong, inline_hint=yes] {
   slot $n : i32

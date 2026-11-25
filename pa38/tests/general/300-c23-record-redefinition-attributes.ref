@@ -1,0 +1,38 @@
+global @header : obj<16x16> [linkage=c, binding=internal] = {
+  i8 2
+  zero 3
+  i32 7
+  zero 8
+}
+global @packet : obj<8x8> [linkage=c, binding=internal] = {
+  i8 5
+  u8 11
+  u8 0
+  u8 0
+  u8 0
+  zero 3
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = addr @header
+    %t2 = index inbounds i8 [projection=field] %t1, 0
+    %t3 = load volatile i8 %t2
+    %t4 = addr @header
+    %t5 = index inbounds i8 [projection=field] %t4, 4
+    %t6 = load volatile i32 %t5
+    %t7 = convert sext i32 i8 %t3
+    %t8 = binary add nowrap i32 %t7, %t6
+    %t9 = addr @packet
+    %t10 = index inbounds i8 [projection=field] %t9, 0
+    %t11 = load volatile i8 %t10
+    %t12 = convert sext i32 i8 %t11
+    %t13 = binary add nowrap i32 %t8, %t12
+    %t14 = addr @packet
+    %t15 = index inbounds i8 [projection=field] %t14, 1
+    %t16 = load volatile i32 %t15
+    %t17 = binary add nowrap i32 %t13, %t16
+    %t18 = cmp ne i32 %t17, 25
+    %t19 = convert trunc i32 i64 %t18
+    return i32 %t19
+}

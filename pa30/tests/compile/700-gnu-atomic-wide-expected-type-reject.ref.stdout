@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-gnu-atomic-wide-expected-type-reject.t:3:48: invalid implicit conversion

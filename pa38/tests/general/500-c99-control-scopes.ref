@@ -1,0 +1,176 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+  slot $lor__6 : i64
+
+  block ^entry:
+    %t1 = const i64 4
+    branch %t1, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    jump ^if_end_3
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    jump ^while_cond_4
+
+  block ^while_cond_4:
+    %t2 = const i64 4
+    %t3 = convert sext i64 i32 0
+    %t4 = cmp eq i64 %t2, %t3
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^while_body_5, ^while_end_6
+
+  block ^while_body_5:
+    jump ^while_cond_4
+
+  block ^while_end_6:
+    jump ^do_body_7
+
+  block ^do_body_7:
+    jump ^do_cond_8
+
+  block ^do_cond_8:
+    %t6 = const i64 4
+    %t7 = convert sext i64 i32 0
+    %t8 = cmp eq i64 %t6, %t7
+    %t9 = convert trunc i32 i64 %t8
+    branch %t9, ^do_body_7, ^do_end_9
+
+  block ^do_end_9:
+    jump ^for_cond_10
+
+  block ^for_cond_10:
+    branch 0, ^for_body_11, ^for_end_13
+
+  block ^for_body_11:
+    jump ^for_iter_12
+
+  block ^for_iter_12:
+    jump ^for_cond_10
+
+  block ^for_end_13:
+    %t10 = const i64 4
+    jump ^switch_dispatch_14
+
+  block ^switch_dispatch_14:
+    switch %t10, ^switch_default_16
+
+  block ^switch_default_16:
+    jump ^switch_end_15
+
+  block ^switch_end_15:
+    %t11 = const i64 1
+    %t12 = convert sext i64 i32 1
+    %t13 = cmp ne i64 %t11, %t12
+    %t14 = convert trunc i32 i64 %t13
+    branch %t14, ^lor_short_18, ^lor_rhs_17
+
+  block ^lor_rhs_17:
+    %t15 = const i64 1
+    %t16 = convert sext i64 i32 1
+    %t17 = cmp ne i64 %t15, %t16
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp ne i32 %t18, 0
+    store typed i64 %t19, $lor__1
+    jump ^lor_end_19
+
+  block ^lor_short_18:
+    store typed i64 1, $lor__1
+    jump ^lor_end_19
+
+  block ^lor_end_19:
+    %t20 = load typed i64 $lor__1
+    branch %t20, ^lor_short_21, ^lor_rhs_20
+
+  block ^lor_rhs_20:
+    %t21 = const i64 1
+    %t22 = convert sext i64 i32 1
+    %t23 = cmp ne i64 %t21, %t22
+    %t24 = convert trunc i32 i64 %t23
+    %t25 = cmp ne i32 %t24, 0
+    store typed i64 %t25, $lor__2
+    jump ^lor_end_22
+
+  block ^lor_short_21:
+    store typed i64 1, $lor__2
+    jump ^lor_end_22
+
+  block ^lor_end_22:
+    %t26 = load typed i64 $lor__2
+    branch %t26, ^lor_short_24, ^lor_rhs_23
+
+  block ^lor_rhs_23:
+    %t27 = const i64 1
+    %t28 = convert sext i64 i32 1
+    %t29 = cmp ne i64 %t27, %t28
+    %t30 = convert trunc i32 i64 %t29
+    %t31 = cmp ne i32 %t30, 0
+    store typed i64 %t31, $lor__3
+    jump ^lor_end_25
+
+  block ^lor_short_24:
+    store typed i64 1, $lor__3
+    jump ^lor_end_25
+
+  block ^lor_end_25:
+    %t32 = load typed i64 $lor__3
+    branch %t32, ^lor_short_27, ^lor_rhs_26
+
+  block ^lor_rhs_26:
+    %t33 = const i64 1
+    %t34 = convert sext i64 i32 1
+    %t35 = cmp ne i64 %t33, %t34
+    %t36 = convert trunc i32 i64 %t35
+    %t37 = cmp ne i32 %t36, 0
+    store typed i64 %t37, $lor__4
+    jump ^lor_end_28
+
+  block ^lor_short_27:
+    store typed i64 1, $lor__4
+    jump ^lor_end_28
+
+  block ^lor_end_28:
+    %t38 = load typed i64 $lor__4
+    branch %t38, ^lor_short_30, ^lor_rhs_29
+
+  block ^lor_rhs_29:
+    %t39 = const i64 1
+    %t40 = convert sext i64 i32 1
+    %t41 = cmp ne i64 %t39, %t40
+    %t42 = convert trunc i32 i64 %t41
+    %t43 = cmp ne i32 %t42, 0
+    store typed i64 %t43, $lor__5
+    jump ^lor_end_31
+
+  block ^lor_short_30:
+    store typed i64 1, $lor__5
+    jump ^lor_end_31
+
+  block ^lor_end_31:
+    %t44 = load typed i64 $lor__5
+    branch %t44, ^lor_short_33, ^lor_rhs_32
+
+  block ^lor_rhs_32:
+    %t45 = const i64 1
+    %t46 = convert sext i64 i32 1
+    %t47 = cmp ne i64 %t45, %t46
+    %t48 = convert trunc i32 i64 %t47
+    %t49 = cmp ne i32 %t48, 0
+    store typed i64 %t49, $lor__6
+    jump ^lor_end_34
+
+  block ^lor_short_33:
+    store typed i64 1, $lor__6
+    jump ^lor_end_34
+
+  block ^lor_end_34:
+    %t50 = load typed i64 $lor__6
+    %t51 = convert trunc i32 i64 %t50
+    return i32 %t51
+}

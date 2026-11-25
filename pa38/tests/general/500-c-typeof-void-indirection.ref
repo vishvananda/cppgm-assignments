@@ -1,0 +1,57 @@
+global @empty_pointer : ptr [linkage=c, binding=internal] = 0
+global @object : i32 [linkage=c, binding=internal] = zero
+global @calls : i32 [linkage=c, binding=internal] = zero
+
+function @next() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @calls
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, @calls
+    %t3 = addr @object
+    return ptr %t3
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = load typed ptr @empty_pointer
+    %t2 = cmp ne ptr %t1, 0
+    %t3 = convert trunc i32 i64 %t2
+    branch %t3, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t4 = load typed i32 @calls
+    %t5 = cmp ne i32 %t4, 0
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t7 = call ptr @next()
+    %t8 = addr @object
+    %t9 = cmp ne ptr %t7, %t8
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^if_then_5, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t11 = load typed i32 @calls
+    %t12 = cmp ne i32 %t11, 1
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 2
+
+  block ^if_else_6:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t14 = call ptr @next()
+    %t15 = load typed i32 @calls
+    %t16 = cmp ne i32 %t15, 2
+    %t17 = convert trunc i32 i64 %t16
+    return i32 %t17
+}

@@ -1,0 +1,25 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = cmp ne u32 42, 42
+    %t2 = convert trunc i32 i64 %t1
+    branch %t2, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t3 = convert sext i64 i32 42
+    %t4 = cmp ne i64 42, %t3
+    %t5 = convert trunc i32 i64 %t4
+    %t6 = cmp ne i32 %t5, 0
+    store typed i64 %t6, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t7 = load typed i64 $lor__1
+    %t8 = convert trunc i32 i64 %t7
+    return i32 %t8
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-compound-storage-in-cast-bad.t:3:12: storage-class specifiers require a compound literal

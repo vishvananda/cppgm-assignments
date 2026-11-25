@@ -1,1 +1,0 @@
-ERROR: tests/general/300-variable-array-typeid-bad.t:1:43: a variable-length array type-id is outside the C profile

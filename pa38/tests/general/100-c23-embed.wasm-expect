@@ -1,0 +1,1 @@
+{"source":true,"wasi":true,"target":"wasm32-wasip1","flags":["-x","c","-std=c23","-pedantic-errors","--embed-dir=tests/general/100-c23-embed.inc/resources","-Itests/general/100-c23-embed.inc/headers"],"commands":[{"exit":0,"stdout":""}]}

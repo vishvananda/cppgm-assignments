@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-nested-flexible-overlap-bad.t:3:83: a nested flexible array initializer overlaps a following member

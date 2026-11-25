@@ -1,0 +1,4 @@
+# Each read of the error number still observes memory after the library call.
+count(load) >= 1 in @read_named
+count(load) >= 1 in @read_named_byte
+count(load) >= 2 in @read_opaque_byte

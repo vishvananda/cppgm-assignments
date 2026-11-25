@@ -10,6 +10,14 @@ static_assert(1.00000000000000011102230246251565404236316680908203125_binary64 =
               "round a cooked floating literal to its parameter type");
 struct Empty {};
 struct Floats { double x, y, z; };
+struct SeparatedBits { unsigned char first : 3; unsigned : 0; unsigned char last : 5; };
+static_assert(sizeof(SeparatedBits) == 5 && alignof(SeparatedBits) == 1, "Darwin bit-field alignment");
+union FloatWithBits { float value; unsigned : 1; };
+extern "C" FloatWithBits add_to_float_with_bits(FloatWithBits input) {
+    input.value += 2.5f;
+    return input;
+}
+
 extern "C" long fixed(int a, __int128 wide, Empty, int b, int c, int d, int e, int f,
                       signed char g, signed char h, short i, long double fp) {
     return a + long(wide >> 64) + long(wide) + b + c + d + e + f + g + h + i + long(fp);

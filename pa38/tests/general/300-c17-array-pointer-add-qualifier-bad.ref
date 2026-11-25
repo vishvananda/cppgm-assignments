@@ -1,0 +1,19 @@
+declare function @accept(%arg0 : i32, %arg1 : ptr) -> void [linkage=c, binding=strong]
+
+function @forward(%length : i32, %array : ptr) -> void [linkage=c, binding=strong] {
+  slot $length : i32
+  slot $array : ptr
+  slot $tmpobj__1 : i64
+
+  block ^entry:
+    store typed i32 %length, $length
+    store typed ptr %array, $array
+    %t1 = load typed i32 $length
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = load typed i32 $length
+    %t5 = load typed ptr $array
+    call void @accept(%t4, %t5)
+    return void
+}

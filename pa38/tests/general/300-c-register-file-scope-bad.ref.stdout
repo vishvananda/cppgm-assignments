@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-register-file-scope-bad.t:1:14: register storage requires a block-scope object or parameter

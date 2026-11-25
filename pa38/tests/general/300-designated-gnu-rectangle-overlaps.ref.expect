@@ -1,0 +1,4 @@
+# explicit-outcomes
+
+# The native and WASI controls check values, continuation and call counts.
+has(return) in @main

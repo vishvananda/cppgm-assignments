@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-static-local-call-bad.t:4:24: a C static initializer requires a constant expression

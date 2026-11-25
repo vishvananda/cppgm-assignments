@@ -1,0 +1,16 @@
+#if __SIZEOF_WCHAR_T__ != 2 || __WCHAR_WIDTH__ != 16 || __WCHAR_MAX__ != 65535 || __WCHAR_MIN__ != 0
+#error unexpected wide character predefines
+#endif
+
+typedef __WCHAR_TYPE__ wide_t;
+
+_Static_assert(_Generic(L'\u1234', unsigned short: 1, default: 0), "wide character type");
+_Static_assert(L'\u1234' == 0x1234, "wide character value");
+_Static_assert(sizeof(L"A" "\U0001F642") == 8, "wide string code units");
+
+static const wide_t text[] = L"A" "\U0001F642";
+
+int main(void)
+{
+	return text[0] != 65 || text[1] != 0xd83d || text[2] != 0xde42 || text[3] != 0;
+}

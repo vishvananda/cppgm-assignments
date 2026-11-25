@@ -1,0 +1,191 @@
+global @rounded_float : f32 [linkage=c, binding=internal] = INFINITYf
+global @overflow_double : f64 [linkage=c, binding=internal] = -inf
+global @overflow_long_double : f80 [linkage=c, binding=internal] = INFINITYL
+global @largest_float : f32 [linkage=c, binding=internal] = 3.4028234663852885981e+38f
+global @smallest_float : f32 [linkage=c, binding=internal] = 0x1p-149f
+global @negative_zero : f64 [linkage=c, binding=internal] = -0
+
+function @local_float() -> f32 [linkage=c, binding=internal] {
+  block ^entry:
+    return f32 INFINITYf
+}
+function @local_double() -> f64 [linkage=c, binding=internal] {
+  block ^entry:
+    return f64 inf
+}
+function @local_long_double() -> f80 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = unary neg f80 INFINITYL
+    return f80 %t1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $local : f80
+  slot $lor__1 : i64
+  slot $floating_signbit__2 : f64
+
+  block ^entry:
+    %t1 = load volatile f32 @rounded_float
+    %t2 = unary neg f32 INFINITYf
+    %t3 = cmp eq f32 %t1, INFINITYf
+    %t4 = convert trunc i32 i64 %t3
+    %t5 = cmp eq f32 %t1, %t2
+    %t6 = convert trunc i32 i64 %t5
+    %t7 = binary or i32 %t4, %t6
+    %t8 = cmp eq i32 %t7, 0
+    %t9 = convert trunc i32 i64 %t8
+    branch %t9, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t10 = call f32 @local_float()
+    %t11 = unary neg f32 INFINITYf
+    %t12 = cmp eq f32 %t10, INFINITYf
+    %t13 = convert trunc i32 i64 %t12
+    %t14 = cmp eq f32 %t10, %t11
+    %t15 = convert trunc i32 i64 %t14
+    %t16 = binary or i32 %t13, %t15
+    %t17 = cmp eq i32 %t16, 0
+    %t18 = convert trunc i32 i64 %t17
+    branch %t18, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t19 = load volatile f64 @overflow_double
+    %t20 = unary neg f64 inf
+    %t21 = cmp eq f64 %t19, inf
+    %t22 = convert trunc i32 i64 %t21
+    %t23 = cmp eq f64 %t19, %t20
+    %t24 = convert trunc i32 i64 %t23
+    %t25 = binary or i32 %t22, %t24
+    %t26 = cmp eq i32 %t25, 0
+    %t27 = convert trunc i32 i64 %t26
+    branch %t27, ^if_then_5, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t28 = load volatile f64 @overflow_double
+    %t29 = cmp lt f64 %t28, 0
+    %t30 = convert trunc i32 i64 %t29
+    %t31 = cmp eq i32 %t30, 0
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 2
+
+  block ^if_else_6:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t33 = call f64 @local_double()
+    %t34 = unary neg f64 inf
+    %t35 = cmp eq f64 %t33, inf
+    %t36 = convert trunc i32 i64 %t35
+    %t37 = cmp eq f64 %t33, %t34
+    %t38 = convert trunc i32 i64 %t37
+    %t39 = binary or i32 %t36, %t38
+    %t40 = cmp eq i32 %t39, 0
+    %t41 = convert trunc i32 i64 %t40
+    branch %t41, ^if_then_9, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t42 = load volatile f80 @overflow_long_double
+    %t43 = unary neg f80 INFINITYL
+    %t44 = cmp eq f80 %t42, INFINITYL
+    %t45 = convert trunc i32 i64 %t44
+    %t46 = cmp eq f80 %t42, %t43
+    %t47 = convert trunc i32 i64 %t46
+    %t48 = binary or i32 %t45, %t47
+    %t49 = cmp eq i32 %t48, 0
+    %t50 = convert trunc i32 i64 %t49
+    branch %t50, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 3
+
+  block ^if_else_10:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    %t51 = call f80 @local_long_double()
+    store typed f80 %t51, $local
+    %t52 = load typed f80 $local
+    %t53 = unary neg f80 INFINITYL
+    %t54 = cmp eq f80 %t52, INFINITYL
+    %t55 = convert trunc i32 i64 %t54
+    %t56 = cmp eq f80 %t52, %t53
+    %t57 = convert trunc i32 i64 %t56
+    %t58 = binary or i32 %t55, %t57
+    %t59 = cmp eq i32 %t58, 0
+    %t60 = convert trunc i32 i64 %t59
+    branch %t60, ^if_then_13, ^lor_rhs_15
+
+  block ^lor_rhs_15:
+    %t61 = load typed f80 $local
+    %t62 = cmp lt f80 %t61, 0L
+    %t63 = convert trunc i32 i64 %t62
+    %t64 = cmp eq i32 %t63, 0
+    %t65 = convert trunc i32 i64 %t64
+    branch %t65, ^if_then_13, ^if_else_14
+
+  block ^if_then_13:
+    return i32 4
+
+  block ^if_else_14:
+    jump ^if_end_16
+
+  block ^if_end_16:
+    %t66 = load volatile f32 @largest_float
+    %t67 = unary neg f32 INFINITYf
+    %t68 = cmp eq f32 %t66, INFINITYf
+    %t69 = convert trunc i32 i64 %t68
+    %t70 = cmp eq f32 %t66, %t67
+    %t71 = convert trunc i32 i64 %t70
+    %t72 = binary or i32 %t69, %t71
+    branch %t72, ^if_then_17, ^lor_rhs_19
+
+  block ^lor_rhs_19:
+    %t73 = load volatile f32 @smallest_float
+    %t74 = cmp gt f32 %t73, 0f
+    %t75 = convert trunc i32 i64 %t74
+    %t76 = cmp eq i32 %t75, 0
+    %t77 = convert trunc i32 i64 %t76
+    branch %t77, ^if_then_17, ^if_else_18
+
+  block ^if_then_17:
+    return i32 5
+
+  block ^if_else_18:
+    jump ^if_end_20
+
+  block ^if_end_20:
+    %t78 = load volatile f64 @negative_zero
+    %t79 = cmp ne f64 %t78, 0
+    %t80 = convert trunc i32 i64 %t79
+    branch %t80, ^lor_short_22, ^lor_rhs_21
+
+  block ^lor_rhs_21:
+    %t81 = load volatile f64 @negative_zero
+    store typed f64 %t81, $floating_signbit__2
+    %t82 = addr $floating_signbit__2
+    %t83 = load typed i64 %t82
+    %t84 = cmp lt i64 %t83, 0
+    %t85 = convert trunc i32 i64 %t84
+    %t86 = cmp eq i32 %t85, 0
+    %t87 = convert trunc i32 i64 %t86
+    %t88 = cmp ne i32 %t87, 0
+    store typed i64 %t88, $lor__1
+    jump ^lor_end_23
+
+  block ^lor_short_22:
+    store typed i64 1, $lor__1
+    jump ^lor_end_23
+
+  block ^lor_end_23:
+    %t89 = load typed i64 $lor__1
+    %t90 = convert trunc i32 i64 %t89
+    return i32 %t90
+}

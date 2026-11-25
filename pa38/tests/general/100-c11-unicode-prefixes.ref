@@ -1,0 +1,117 @@
+global @text [storage=readonly, linkage=c, binding=internal] = {
+  i8 118
+  i8 97
+  i8 108
+  i8 117
+  i8 101
+  i8 0
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+
+  block ^entry:
+    %t1 = const i64 6
+    %t2 = convert sext i64 i32 6
+    %t3 = cmp ne i64 %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t5 = addr @text
+    %t6 = index inbounds i8 [projection=array_element] %t5, 0
+    %t7 = load i8 %t6
+    %t8 = convert sext i32 i8 %t7
+    %t9 = cmp ne i32 %t8, 118
+    %t10 = convert trunc i32 i64 %t9
+    %t11 = cmp ne i32 %t10, 0
+    store typed i64 %t11, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t12 = load typed i64 $lor__1
+    branch %t12, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t13 = addr @text
+    %t14 = index inbounds i8 [projection=array_element] %t13, 4
+    %t15 = load i8 %t14
+    %t16 = convert sext i32 i8 %t15
+    %t17 = cmp ne i32 %t16, 101
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp ne i32 %t18, 0
+    store typed i64 %t19, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t20 = load typed i64 $lor__2
+    branch %t20, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t21 = const i64 4
+    %t22 = const i64 2
+    %t23 = convert sext i64 i32 2
+    %t24 = binary mul i64 %t23, %t22
+    %t25 = cmp ne i64 %t21, %t24
+    %t26 = convert trunc i32 i64 %t25
+    %t27 = cmp ne i32 %t26, 0
+    store typed i64 %t27, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t28 = load typed i64 $lor__3
+    branch %t28, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t29 = const i64 8
+    %t30 = const i64 4
+    %t31 = convert sext i64 i32 2
+    %t32 = binary mul i64 %t31, %t30
+    %t33 = cmp ne i64 %t29, %t32
+    %t34 = convert trunc i32 i64 %t33
+    %t35 = cmp ne i32 %t34, 0
+    store typed i64 %t35, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t36 = load typed i64 $lor__4
+    branch %t36, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t37 = const i64 2
+    %t38 = convert sext i64 i32 2
+    %t39 = cmp ne i64 %t37, %t38
+    %t40 = convert trunc i32 i64 %t39
+    %t41 = cmp ne i32 %t40, 0
+    store typed i64 %t41, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t42 = load typed i64 $lor__5
+    %t43 = convert trunc i32 i64 %t42
+    return i32 %t43
+}

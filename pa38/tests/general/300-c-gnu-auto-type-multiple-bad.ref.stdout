@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-gnu-auto-type-multiple-bad.t:1:33: an inferred C type requires a single declarator

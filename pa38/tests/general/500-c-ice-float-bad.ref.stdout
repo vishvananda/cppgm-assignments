@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-ice-float-bad.t:1:16: a C integer constant expression is required

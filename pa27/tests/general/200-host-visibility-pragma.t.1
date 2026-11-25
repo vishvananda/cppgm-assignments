@@ -1,0 +1,19 @@
+#pragma GCC visibility push(hidden)
+extern "C" int hidden_data;
+extern "C" int hidden_call();
+
+#define SAVE_DEFAULT_VISIBILITY _Pragma("GCC visibility push(default)")
+SAVE_DEFAULT_VISIBILITY
+extern "C" int inner_default;
+#pragma GCC visibility pop
+extern "C" int outer_hidden;
+extern "C" int override_default __attribute__((visibility("default")));
+#pragma GCC visibility pop
+extern "C" int after_pop;
+
+int main()
+{
+    int (*volatile callback)() = &hidden_call;
+    return hidden_data + inner_default + outer_hidden + override_default +
+        after_pop + callback() != 39;
+}

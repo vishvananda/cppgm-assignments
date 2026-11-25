@@ -1,0 +1,58 @@
+global @object [linkage=c, binding=internal] = {
+  i32 6
+  u32 2
+}
+global @blob [linkage=c, binding=internal] = {
+  i32 8
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $inner : obj<4x4>
+  slot $end : obj<16x8>
+  slot $first : obj<16x8>
+
+  block ^entry:
+    %t1 = addr $inner
+    %t2 = addr @object
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    %t4 = load obj<4x4> %t3
+    store obj<4x4> %t4, %t1
+    %t5 = addr $end
+    %t6 = copy ptr 0
+    %t7 = addr $end
+    %t8 = index inbounds i8 [projection=field] %t7, 0
+    store typed ptr %t6, %t8
+    %t9 = addr $inner
+    %t10 = index inbounds i8 [projection=field] %t9, 0
+    %t11 = load typed i32 %t10
+    %t12 = addr $end
+    %t13 = index inbounds i8 [projection=field] %t12, 8
+    store typed i32 %t11, %t13
+    %t14 = addr $first
+    %t15 = addr $end
+    %t16 = addr $first
+    %t17 = index inbounds i8 [projection=field] %t16, 0
+    store typed ptr %t15, %t17
+    %t18 = addr @object
+    %t19 = index inbounds i8 [projection=field] %t18, 4
+    %t20 = load typed u32 %t19
+    %t21 = copy i32 %t20
+    %t22 = addr $first
+    %t23 = index inbounds i8 [projection=field] %t22, 8
+    store typed i32 %t21, %t23
+    %t24 = addr $first
+    %t25 = index inbounds i8 [projection=field] %t24, 0
+    %t26 = load typed ptr %t25
+    %t27 = index inbounds i8 [projection=field] %t26, 8
+    %t28 = load typed i32 %t27
+    %t29 = addr $first
+    %t30 = index inbounds i8 [projection=field] %t29, 8
+    %t31 = load typed i32 %t30
+    %t32 = binary add nowrap i32 %t28, %t31
+    %t33 = addr @blob
+    %t34 = index inbounds i8 [projection=field] %t33, 0
+    %t35 = load typed i32 %t34
+    %t36 = cmp ne i32 %t32, %t35
+    %t37 = convert trunc i32 i64 %t36
+    return i32 %t37
+}

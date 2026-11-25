@@ -1,0 +1,86 @@
+global @local : obj<16x16> [linkage=c, binding=internal] = {
+  i8 2
+}
+global @item : obj<32x32> [linkage=c, binding=strong] = {
+  i8 7
+}
+
+function @check_local() -> i32 [linkage=c, binding=internal] {
+  slot $land__1 : i64
+
+  block ^entry:
+    %t1 = load i8 @local
+    %t2 = convert sext i32 i8 %t1
+    %t3 = cmp eq i32 %t2, 2
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t5 = addr @local
+    %t6 = copy i64 %t5
+    %t7 = convert sext i64 i32 16
+    %t8 = binary umod i64 %t6, %t7
+    %t9 = convert sext i64 i32 0
+    %t10 = cmp eq i64 %t8, %t9
+    %t11 = convert trunc i32 i64 %t10
+    %t12 = cmp ne i32 %t11, 0
+    store typed i64 %t12, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t13 = load typed i64 $land__1
+    %t14 = convert trunc i32 i64 %t13
+    return i32 %t14
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $land__1 : i64
+  slot $land__2 : i64
+
+  block ^entry:
+    %t1 = load i8 @item
+    %t2 = convert sext i32 i8 %t1
+    %t3 = cmp eq i32 %t2, 7
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t5 = addr @item
+    %t6 = copy i64 %t5
+    %t7 = convert sext i64 i32 32
+    %t8 = binary umod i64 %t6, %t7
+    %t9 = convert sext i64 i32 0
+    %t10 = cmp eq i64 %t8, %t9
+    %t11 = convert trunc i32 i64 %t10
+    %t12 = cmp ne i32 %t11, 0
+    store typed i64 %t12, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t13 = load typed i64 $land__1
+    branch %t13, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t14 = call i32 @check_local()
+    %t15 = cmp ne i32 %t14, 0
+    store typed i64 %t15, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t16 = load typed i64 $land__2
+    %t17 = convert trunc i32 i64 %t16
+    %t18 = cmp eq i32 %t17, 0
+    %t19 = convert trunc i32 i64 %t18
+    return i32 %t19
+}

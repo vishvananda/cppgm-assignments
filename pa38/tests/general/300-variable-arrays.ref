@@ -52,7 +52,6 @@ function @sizes(%n : i32) -> i32 [linkage=c, binding=strong] {
   slot $i : i32
   slot $cleanup_return__2 : i32
   slot $cond__3 : i32
-  slot $call__4 : i32
 
   block ^entry:
     store typed i32 %n, $n
@@ -211,30 +210,16 @@ function @sizes(%n : i32) -> i32 [linkage=c, binding=strong] {
     jump ^if_end_24
 
   block ^if_end_24:
-    eh_try ^cleanup_action_29
     %t68 = load typed i32 $original
     %t69 = call i32 @consume(%t6, %t68)
-    store typed i32 %t69, $call__4
-    %t70 = load typed i32 $call__4
+    %t70 = load typed i32 $original
     %t71 = load typed i32 $original
-    %t72 = load typed i32 $original
-    %t73 = binary add nowrap i32 %t72, 1
-    %t74 = binary mul nowrap i32 %t71, %t73
-    %t75 = binary div i32 %t74, 2
-    %t76 = cmp eq i32 %t70, %t75
-    %t77 = convert trunc i32 i64 %t76
-    eh_end
-    jump ^call_unwind_end_30
-
-  block ^cleanup_resume_28:
-    resume
-
-  block ^cleanup_action_29:
-    stack_restore %t5
-    jump ^cleanup_resume_28
-
-  block ^call_unwind_end_30:
-    branch %t77, ^cond_then_25, ^cond_else_26
+    %t72 = binary add nowrap i32 %t71, 1
+    %t73 = binary mul nowrap i32 %t70, %t72
+    %t74 = binary div i32 %t73, 2
+    %t75 = cmp eq i32 %t69, %t74
+    %t76 = convert trunc i32 i64 %t75
+    branch %t76, ^cond_then_25, ^cond_else_26
 
   block ^cond_then_25:
     store typed i32 0, $cond__3
@@ -245,8 +230,8 @@ function @sizes(%n : i32) -> i32 [linkage=c, binding=strong] {
     jump ^cond_end_27
 
   block ^cond_end_27:
-    %t78 = load typed i32 $cond__3
-    store typed i32 %t78, $cleanup_return__2
+    %t77 = load typed i32 $cond__3
+    store typed i32 %t77, $cleanup_return__2
     jump ^return_cleanup_action_9
 }
 function @pointers(%argc : i32) -> i32 [linkage=c, binding=strong] {

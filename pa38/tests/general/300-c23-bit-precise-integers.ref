@@ -1,0 +1,241 @@
+global @fields [linkage=c, binding=internal] = {
+  u32 871
+}
+global @negative : i128 [linkage=c, binding=internal] = -34
+
+function @divide(%a : i8, %b : i8) -> i8 [linkage=c, binding=internal] {
+  slot $a : i8
+  slot $b : i8
+
+  block ^entry:
+    store i8 %a, $a
+    store i8 %b, $b
+    %t1 = load i8 $a
+    %t2 = binary shl i8 %t1, 1
+    %t3 = binary shr i8 %t2, 1
+    %t4 = load i8 $b
+    %t5 = binary shl i8 %t4, 1
+    %t6 = binary shr i8 %t5, 1
+    %t7 = binary div i8 %t3, %t6
+    %t8 = binary shl i8 %t7, 1
+    %t9 = binary shr i8 %t8, 1
+    return i8 %t9
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $two : i32
+  slot $bit : u8
+  slot $a : u16
+  slot $b : i8
+  slot $c : i32
+  slot $top : i128
+
+  block ^entry:
+    store volatile i32 2, $two
+    %t1 = load volatile i32 $two
+    %t2 = convert trunc u8 i32 %t1
+    %t3 = binary and u8 %t2, 1
+    store volatile u8 %t3, $bit
+    store volatile u16 511, $a
+    %t4 = unary neg i32 17
+    %t5 = convert trunc i8 i32 %t4
+    %t6 = binary shl i8 %t5, 1
+    %t7 = binary shr i8 %t6, 1
+    store volatile i8 %t7, $b
+    %t8 = unary neg i32 130
+    %t9 = binary shl i32 %t8, 15
+    %t10 = binary shr i32 %t9, 15
+    store volatile i32 %t10, $c
+    store volatile i128 18446744073709551616, $top
+    %t11 = load volatile u8 $bit
+    %t12 = binary and u8 %t11, 1
+    %t13 = binary add u8 %t12, 1
+    %t14 = binary and u8 %t13, 1
+    store volatile u8 %t14, $bit
+    %t15 = convert zext i32 u8 %t12
+    %t16 = cmp ne i32 %t15, 0
+    %t17 = convert trunc i32 i64 %t16
+    branch %t17, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t18 = load volatile u8 $bit
+    %t19 = binary and u8 %t18, 1
+    %t20 = convert zext i32 u8 %t19
+    %t21 = cmp ne i32 %t20, 1
+    %t22 = convert trunc i32 i64 %t21
+    branch %t22, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t23 = load volatile u8 $bit
+    %t24 = binary and u8 %t23, 1
+    %t25 = binary add u8 %t24, 1
+    %t26 = binary and u8 %t25, 1
+    store volatile u8 %t26, $bit
+    %t27 = convert zext i32 u8 %t26
+    %t28 = cmp ne i32 %t27, 0
+    %t29 = convert trunc i32 i64 %t28
+    branch %t29, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t30 = load volatile u16 $a
+    %t31 = binary and u16 %t30, 511
+    %t32 = binary add u16 %t31, 1
+    %t33 = binary and u16 %t32, 511
+    %t34 = convert zext i32 u16 %t33
+    %t35 = cmp ne i32 %t34, 0
+    %t36 = convert trunc i32 i64 %t35
+    branch %t36, ^if_then_6, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t37 = load volatile u16 $a
+    %t38 = binary and u16 %t37, 511
+    %t39 = binary add u16 %t38, 1
+    %t40 = binary and u16 %t39, 511
+    store volatile u16 %t40, $a
+    %t41 = unary bitnot u16 %t38
+    %t42 = binary and u16 %t41, 511
+    %t43 = convert zext i32 u16 %t42
+    %t44 = cmp ne i32 %t43, 0
+    %t45 = convert trunc i32 i64 %t44
+    branch %t45, ^if_then_6, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t46 = load volatile u16 $a
+    %t47 = binary and u16 %t46, 511
+    %t48 = convert zext i32 u16 %t47
+    %t49 = cmp ne i32 %t48, 0
+    %t50 = convert trunc i32 i64 %t49
+    branch %t50, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_10
+
+  block ^if_end_10:
+    %t51 = load volatile i8 $b
+    %t52 = binary shl i8 %t51, 1
+    %t53 = binary shr i8 %t52, 1
+    %t54 = call i8 @divide(%t53, 3)
+    %t55 = binary shl i8 %t54, 1
+    %t56 = binary shr i8 %t55, 1
+    %t57 = unary neg i32 5
+    %t58 = convert sext i32 i8 %t56
+    %t59 = cmp ne i32 %t58, %t57
+    %t60 = convert trunc i32 i64 %t59
+    branch %t60, ^if_then_11, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t61 = load volatile i32 $c
+    %t62 = binary shl i32 %t61, 15
+    %t63 = binary shr i32 %t62, 15
+    %t64 = binary div i32 %t63, 7
+    %t65 = binary shl i32 %t64, 15
+    %t66 = binary shr i32 %t65, 15
+    store volatile i32 %t66, $c
+    %t67 = unary neg i32 18
+    %t68 = cmp ne i32 %t66, %t67
+    %t69 = convert trunc i32 i64 %t68
+    branch %t69, ^if_then_11, ^if_else_12
+
+  block ^if_then_11:
+    return i32 3
+
+  block ^if_else_12:
+    jump ^if_end_14
+
+  block ^if_end_14:
+    %t70 = load volatile i128 $top
+    %t71 = binary and i128 %t70, 36893488147419103231
+    %t72 = load volatile i128 $top
+    %t73 = binary and i128 %t72, 36893488147419103231
+    %t74 = binary add i128 %t71, %t73
+    %t75 = binary and i128 %t74, 36893488147419103231
+    %t76 = convert sext i128 i32 0
+    %t77 = binary and i128 %t76, 36893488147419103231
+    %t78 = cmp ne i128 %t75, %t77
+    %t79 = convert trunc i32 i64 %t78
+    branch %t79, ^if_then_15, ^lor_rhs_17
+
+  block ^lor_rhs_17:
+    %t80 = load typed i128 @negative
+    %t81 = binary shl i128 %t80, 63
+    %t82 = binary shr i128 %t81, 63
+    %t83 = unary neg i32 34
+    %t84 = convert sext i128 i32 %t83
+    %t85 = binary shl i128 %t84, 63
+    %t86 = binary shr i128 %t85, 63
+    %t87 = cmp ne i128 %t82, %t86
+    %t88 = convert trunc i32 i64 %t87
+    branch %t88, ^if_then_15, ^if_else_16
+
+  block ^if_then_15:
+    return i32 4
+
+  block ^if_else_16:
+    jump ^if_end_18
+
+  block ^if_end_18:
+    %t89 = addr @fields
+    %t90 = index inbounds i8 [projection=field] %t89, 0
+    %t91 = load i32 %t90
+    %t92 = binary shl i32 %t91, 15
+    %t93 = binary shr i32 %t92, 15
+    %t94 = binary shr i32 %t93, 4
+    %t95 = binary and i32 %t94, 63
+    %t96 = binary shl i32 %t95, 26
+    %t97 = binary shr i32 %t96, 26
+    %t98 = unary neg i32 10
+    %t99 = cmp ne i32 %t97, %t98
+    %t100 = convert trunc i32 i64 %t99
+    branch %t100, ^if_then_19, ^lor_rhs_22
+
+  block ^lor_rhs_22:
+    %t101 = addr @fields
+    %t102 = index inbounds i8 [projection=field] %t101, 0
+    %t103 = load i32 %t102
+    %t104 = binary and i32 %t103, 511
+    %t105 = binary and i32 %t104, 15
+    %t106 = convert trunc u16 i32 %t105
+    %t107 = binary add u16 %t106, 1
+    %t108 = binary and u16 %t107, 511
+    %t109 = convert zext i32 u16 %t108
+    %t110 = binary and i32 %t109, 15
+    %t111 = convert trunc u16 i32 %t110
+    %t112 = load i32 %t102
+    %t113 = binary and i32 %t112, 511
+    %t114 = binary and i32 %t113, -16
+    %t115 = binary or i32 %t114, %t110
+    store i32 %t115, %t102
+    %t116 = convert zext i32 u16 %t106
+    %t117 = cmp ne i32 %t116, 7
+    %t118 = convert trunc i32 i64 %t117
+    branch %t118, ^if_then_19, ^lor_rhs_21
+
+  block ^lor_rhs_21:
+    %t119 = addr @fields
+    %t120 = index inbounds i8 [projection=field] %t119, 0
+    %t121 = load i32 %t120
+    %t122 = binary and i32 %t121, 511
+    %t123 = binary and i32 %t122, 15
+    %t124 = convert trunc u16 i32 %t123
+    %t125 = convert zext i32 u16 %t124
+    %t126 = cmp ne i32 %t125, 8
+    %t127 = convert trunc i32 i64 %t126
+    branch %t127, ^if_then_19, ^if_else_20
+
+  block ^if_then_19:
+    return i32 5
+
+  block ^if_else_20:
+    jump ^if_end_23
+
+  block ^if_end_23:
+    return i32 0
+}

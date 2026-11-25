@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c11-alignas-after-declarator-bad.t:1:12: an alignment specifier is not permitted here

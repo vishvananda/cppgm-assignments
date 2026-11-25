@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-ice-comma-bad.t:1:17: an evaluated comma operator in a C constant expression

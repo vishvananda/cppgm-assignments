@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-function-linkage-bad.t:3:16: a C function with linkage cannot have variably modified type

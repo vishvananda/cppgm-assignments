@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c17-vla-empty-bad.t:1:25: a variable-length array initializer must be empty and requires C23

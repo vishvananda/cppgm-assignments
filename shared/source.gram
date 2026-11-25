@@ -136,13 +136,14 @@ class-member:
 	special-member-definition
 
 bit-field-declaration:
-	decl-specifier-seq bit-field-declarator-list OP_SEMICOLON
+	decl-specifier-seq (init-declarator OP_COMMA)* bit-field-declarator (OP_COMMA member-declarator)* OP_SEMICOLON
 
-bit-field-declarator-list:
-	bit-field-declarator (OP_COMMA bit-field-declarator)*
+member-declarator:
+	init-declarator
+	bit-field-declarator
 
 bit-field-declarator:
-	declarator? OP_COLON assignment-expression
+	declarator? OP_COLON conditional-expression
 
 access-specifier:
 	KW_PUBLIC

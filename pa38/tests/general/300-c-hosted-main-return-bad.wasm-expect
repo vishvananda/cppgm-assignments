@@ -1,0 +1,1 @@
+{"source":true,"target":"wasm32-wasip1","flags":["-x","c","-std=c17","-fhosted","-pedantic-errors"],"reject":true}

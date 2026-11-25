@@ -1,0 +1,6 @@
+/* leading */
+37 /* trailing */
+/* inside argument */ 37
+ID /* through macro spelling */ ( 2 )
+first // end
+second

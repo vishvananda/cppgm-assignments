@@ -1,0 +1,4 @@
+extern "C" int select_number(int x) { return x + 1; }
+extern "C" __attribute__((overloadable)) int select_number(double x) {
+  return static_cast<int>(x) + 2;
+}

@@ -1,0 +1,30 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $first : i32
+  slot $second : i32
+  slot $row : obj<16x8>
+  slot $p : ptr
+
+  block ^entry:
+    store typed i32 4, $first
+    store typed i32 9, $second
+    %t1 = addr $row
+    %t2 = addr $first
+    store typed ptr %t2, %t1
+    %t3 = index i8 %t1, 8
+    %t4 = addr $second
+    store typed ptr %t4, %t3
+    %t5 = addr $row
+    store typed ptr %t5, $p
+    %t6 = load typed ptr $p
+    %t7 = index inbounds ptr [projection=array_element] %t6, 0
+    %t8 = load typed ptr %t7
+    %t9 = load typed i32 %t8
+    %t10 = load typed ptr $p
+    %t11 = index inbounds ptr [projection=array_element] %t10, 1
+    %t12 = load typed ptr %t11
+    %t13 = load typed i32 %t12
+    %t14 = binary add nowrap i32 %t9, %t13
+    %t15 = cmp ne i32 %t14, 13
+    %t16 = convert trunc i32 i64 %t15
+    return i32 %t16
+}

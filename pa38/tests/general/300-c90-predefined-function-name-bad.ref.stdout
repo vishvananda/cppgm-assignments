@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-predefined-function-name-bad.t:3:24: __func__ requires C99

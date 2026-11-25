@@ -1,0 +1,106 @@
+global @row [linkage=c, binding=internal] = {
+  i32 2
+  i32 5
+  i32 8
+}
+global @unknown : ptr [linkage=c, binding=internal] = addr @row
+global @complete : ptr [linkage=c, binding=internal] = addr @row
+global @left : i32 [storage=readonly, linkage=c, binding=internal] = 7
+global @right : i32 [linkage=c, binding=internal] = 9
+
+function @choose(%use_unknown : i32, %visits : ptr, %from : ptr, %to : ptr) -> ptr [linkage=c, binding=internal] {
+  slot $use_unknown : i32
+  slot $visits : ptr
+  slot $from : ptr
+  slot $to : ptr
+  slot $cond__1 : ptr
+
+  block ^entry:
+    store typed i32 %use_unknown, $use_unknown
+    store typed ptr %visits, $visits
+    store typed ptr %from, $from
+    store typed ptr %to, $to
+    %t1 = load typed i32 $use_unknown
+    branch %t1, ^cond_then_1, ^cond_else_2
+
+  block ^cond_then_1:
+    %t2 = load typed ptr $visits
+    %t3 = load typed i32 %t2
+    %t4 = binary add nowrap i32 %t3, 1
+    store typed i32 %t4, %t2
+    %t5 = load typed ptr $from
+    store typed ptr %t5, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_else_2:
+    %t6 = load typed ptr $to
+    store typed ptr %t6, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_end_3:
+    %t7 = load typed ptr $cond__1
+    return ptr %t7
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $visits : i32
+  slot $a : i32
+  slot $b : i32
+  slot $land__1 : i64
+  slot $land__2 : i64
+
+  block ^entry:
+    store typed i32 0, $visits
+    %t1 = addr $visits
+    %t2 = load typed ptr @unknown
+    %t3 = load typed ptr @complete
+    %t4 = call ptr @choose(1, %t1, %t2, %t3)
+    %t5 = index inbounds i32 [projection=array_element] %t4, 1
+    %t6 = load typed i32 %t5
+    store typed i32 %t6, $a
+    %t7 = addr $visits
+    %t8 = load typed ptr @unknown
+    %t9 = load typed ptr @complete
+    %t10 = call ptr @choose(0, %t7, %t8, %t9)
+    %t11 = index inbounds i32 [projection=array_element] %t10, 2
+    %t12 = load typed i32 %t11
+    store typed i32 %t12, $b
+    %t13 = load typed i32 $a
+    %t14 = cmp eq i32 %t13, 5
+    %t15 = convert trunc i32 i64 %t14
+    branch %t15, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t16 = load typed i32 $b
+    %t17 = cmp eq i32 %t16, 8
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp ne i32 %t18, 0
+    store typed i64 %t19, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t20 = load typed i64 $land__1
+    branch %t20, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t21 = load typed i32 $visits
+    %t22 = cmp eq i32 %t21, 1
+    %t23 = convert trunc i32 i64 %t22
+    %t24 = cmp ne i32 %t23, 0
+    store typed i64 %t24, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t25 = load typed i64 $land__2
+    %t26 = convert trunc i32 i64 %t25
+    %t27 = cmp eq i32 %t26, 0
+    %t28 = convert trunc i32 i64 %t27
+    return i32 %t28
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-vla-compound-empty-bad.t:1:25: a C compound literal cannot have variable length array type

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-flexible-positional-initializer-bad.t:2:29: initializing a flexible array member is a GNU C extension

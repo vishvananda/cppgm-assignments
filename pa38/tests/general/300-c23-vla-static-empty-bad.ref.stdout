@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-vla-static-empty-bad.t:1:27: a variable-length array requires automatic storage

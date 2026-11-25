@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-enum-no-compatible-type-bad.t:1:1: no integer type can represent all enumeration values

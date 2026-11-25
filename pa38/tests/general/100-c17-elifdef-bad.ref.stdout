@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c17-elifdef-bad.t:2:2: #elifdef and #elifndef require C23

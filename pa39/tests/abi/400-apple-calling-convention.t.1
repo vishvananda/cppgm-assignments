@@ -1,5 +1,7 @@
 struct Empty {};
 struct Floats { double x, y, z; };
+union FloatWithBits { float value; unsigned : 1; };
+extern "C" FloatWithBits add_to_float_with_bits(FloatWithBits);
 extern "C" long fixed(int, __int128, Empty, int, int, int, int, int, signed char, signed char, short, long double);
 extern "C" long varied(int, ...);
 int bias = 11;
@@ -7,6 +9,7 @@ struct Word { long value; };
 struct SingleFloat { double value; };
 extern "C" Word packed_word(long, long, long, long, long, long, long, long, char, Word, char, SingleFloat);
 int main() {
+    if (add_to_float_with_bits(FloatWithBits{6.25f}).value != 8.75f) return 4;
     if (packed_word(0,1,2,3,4,5,6,7, -3, Word{21}, 7, SingleFloat{2.0}).value != 27) return 3;
     __int128 wide = (__int128(bias) << 64) + 3;
     if (fixed(1, wide, Empty(), 2, 3, 4, 5, 6, -7, -8, -9, 10.L) != 21) return 1;

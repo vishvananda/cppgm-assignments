@@ -1,1 +1,1 @@
-ERROR: tests/general/500-generic-incomplete-record-bad.t:2:40: syntax error
+ERROR: tests/general/500-generic-incomplete-record-bad.t:2:25: generic association requires a complete object type

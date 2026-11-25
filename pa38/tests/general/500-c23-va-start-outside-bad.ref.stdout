@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c23-va-start-outside-bad.t:4:5: __builtin_va_start outside a variadic function

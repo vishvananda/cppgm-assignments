@@ -1,0 +1,1 @@
+ERROR: tests/general/300-designator-overridden-static-bad.t:2:31: a C static initializer requires a constant expression

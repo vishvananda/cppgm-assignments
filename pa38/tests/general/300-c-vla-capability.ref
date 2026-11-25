@@ -1,0 +1,57 @@
+function @check(%n : i32) -> i32 [linkage=c, binding=internal] {
+  slot $n : i32
+  slot $tmpobj__1 : i64
+  slot $lor__2 : i64
+
+  block ^entry:
+    store typed i32 %n, $n
+    %t1 = load typed i32 $n
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = stack_save
+    %t5 = stack_alloc %t3
+    %t6 = load typed i32 $n
+    %t7 = binary sub nowrap i32 %t6, 1
+    %t8 = index inbounds i32 [projection=array_element] %t5, %t7
+    store volatile i32 21, %t8
+    %t9 = load typed i64 $tmpobj__1
+    %t10 = load typed i32 $n
+    %t11 = copy u32 %t10
+    %t12 = const i64 4
+    %t13 = convert zext i64 u32 %t11
+    %t14 = binary mul i64 %t13, %t12
+    %t15 = cmp ne i64 %t9, %t14
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t17 = load typed i32 $n
+    %t18 = binary sub nowrap i32 %t17, 1
+    %t19 = index inbounds i32 [projection=array_element] %t5, %t18
+    %t20 = load volatile i32 %t19
+    %t21 = cmp ne i32 %t20, 21
+    %t22 = convert trunc i32 i64 %t21
+    %t23 = cmp ne i32 %t22, 0
+    store typed i64 %t23, $lor__2
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__2
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t24 = load typed i64 $lor__2
+    %t25 = convert trunc i32 i64 %t24
+    stack_restore %t4
+    return i32 %t25
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $size : i32
+
+  block ^entry:
+    store volatile i32 3, $size
+    %t1 = load volatile i32 $size
+    %t2 = call i32 @check(%t1)
+    return i32 %t2
+}

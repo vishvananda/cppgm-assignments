@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-overloadable-unmarked-bad.t:3:5: at most one overload may omit the overloadable attribute

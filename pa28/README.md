@@ -277,7 +277,8 @@ hosted source/header compatibility.
 
 Advertise the supported `pure`, `const`, `malloc` and `returns_nonnull`
 attribute spellings through `__has_attribute`, including their reserved
-underscore aliases. This is the probe surface needed by these function-effect
+underscore aliases. Expand the GNU probe in ordinary source expressions as
+well as preprocessing conditions. This is the probe surface needed by these function-effect
 contracts; full vendor feature probing and predefined macro import remain
 PA30. Apply the same promises to ordinary calls, redeclarations and indirect
 calls where their typed contracts establish them.

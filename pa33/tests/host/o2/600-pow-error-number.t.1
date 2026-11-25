@@ -1,0 +1,61 @@
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+
+static volatile double huge = DBL_MAX;
+static volatile double tiny = DBL_MIN * DBL_EPSILON;
+static volatile double negative_zero = -0.0;
+static volatile float huge_float = FLT_MAX;
+
+__attribute__((noinline)) static double square(double x) {
+  return pow(x, 2.0);
+}
+
+__attribute__((noinline)) static double reciprocal(double x) {
+  return pow(x, -1.0);
+}
+
+__attribute__((noinline)) static float square_f(float x) {
+  return powf(x, 2.0f);
+}
+
+__attribute__((noinline)) static double pair(bool compute, double x, double y) {
+  double result = y;
+  if (compute) {
+    const double first = pow(x, 2.0);
+    const double second = pow(y, -1.0);
+    result = first + second;
+  }
+  return result + 1.0;
+}
+
+int main() {
+  if (!(math_errhandling & MATH_ERRNO))
+    return 0;
+  errno = EILSEQ;
+  if (square(huge) != INFINITY || errno != ERANGE)
+    return 1;
+  errno = EILSEQ;
+  if (reciprocal(negative_zero) != -INFINITY || errno != ERANGE)
+    return 2;
+  errno = EILSEQ;
+  if (reciprocal(tiny) != INFINITY || errno != ERANGE)
+    return 3;
+  errno = EILSEQ;
+  if (square_f(huge_float) != INFINITY || errno != ERANGE)
+    return 4;
+
+  double (*volatile libm)(double, double) = pow;
+  errno = EILSEQ;
+  const double expected = libm(tiny, 2.0);
+  const int expected_error = errno;
+  errno = EILSEQ;
+  if (square(tiny) != expected || errno != expected_error)
+    return 5;
+  errno = EILSEQ;
+  if (pair(true, 3.0, 0.5) != 12.0 || pair(false, huge, 0.5) != 1.5 || errno != EILSEQ)
+    return 6;
+  if (pair(true, huge, 0.5) != INFINITY || errno != ERANGE)
+    return 7;
+  return 0;
+}

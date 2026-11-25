@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c17-compound-storage-bad.t:3:13: compound literal storage-class specifiers require C23

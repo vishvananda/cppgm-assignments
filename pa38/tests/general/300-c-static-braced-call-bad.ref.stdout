@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-static-braced-call-bad.t:2:21: a C static initializer requires a constant expression

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c99-unicode-identifier-paste-bad.t:2:8: token pasting does not form one preprocessing token

@@ -1,0 +1,5 @@
+# explicit-outcomes
+
+# The invalid-at-runtime call is in an uncalled function. The optimized
+# module must remain valid and keep the independent entry point runnable.
+instructions <= 8 in @indirect_literal

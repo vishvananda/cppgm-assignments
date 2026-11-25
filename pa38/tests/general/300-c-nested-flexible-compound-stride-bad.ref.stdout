@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-nested-flexible-compound-stride-bad.t:2:31: initialization of a flexible array member in a nested context

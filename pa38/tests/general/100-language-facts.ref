@@ -44,7 +44,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   slot $raw : ptr
   slot $p : ptr
   slot $text : ptr
-  slot $flag : i32
+  slot $flag : u32
   slot $active : u8
   slot $counter : i32
   slot $assigned : i32
@@ -77,7 +77,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     store typed ptr %t2, $p
     %t3 = addr @__strlit__1
     store typed ptr %t3, $text
-    store typed i32 1, $flag
+    store typed u32 1, $flag
     %t4 = load typed ptr $p
     %t5 = load typed i32 %t4
     %t6 = cmp ne i32 %t5, 0
@@ -192,8 +192,8 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     branch %t48, ^land_rhs_16, ^land_short_17
 
   block ^land_rhs_16:
-    %t49 = load typed i32 $flag
-    %t50 = cmp eq i32 %t49, 1
+    %t49 = load typed u32 $flag
+    %t50 = cmp eq u32 %t49, 1
     %t51 = convert trunc i32 i64 %t50
     %t52 = cmp ne i32 %t51, 0
     store typed i64 %t52, $land__6

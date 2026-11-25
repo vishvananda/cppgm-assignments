@@ -1,0 +1,34 @@
+global @empty : obj<4x4> [linkage=c, binding=internal] = {
+  zero 1
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $local : obj<4x4>
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = addr $local
+    %t2 = const i64 0
+    %t3 = convert sext i64 i32 0
+    %t4 = cmp ne i64 %t2, %t3
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t6 = const i64 0
+    %t7 = convert sext i64 i32 0
+    %t8 = cmp ne i64 %t6, %t7
+    %t9 = convert trunc i32 i64 %t8
+    %t10 = cmp ne i32 %t9, 0
+    store typed i64 %t10, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t11 = load typed i64 $lor__1
+    %t12 = convert trunc i32 i64 %t11
+    return i32 %t12
+}

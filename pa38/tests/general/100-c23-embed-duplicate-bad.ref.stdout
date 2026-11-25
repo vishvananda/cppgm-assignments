@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c23-embed-duplicate-bad.t:1:5: duplicate embed parameter

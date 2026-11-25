@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c23-unicode-nfc-singleton-bad.t:1:9: identifier is not in Unicode Normalization Form C

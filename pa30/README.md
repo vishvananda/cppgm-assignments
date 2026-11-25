@@ -48,8 +48,16 @@ hosted headers depend on:
   namespace-scope `void()` function and run it once before program entry.
   Priorities range from 0 through 65535, with smaller values running first;
   the omitted priority is 65535. Preserve the priority through ordinary LowIR
-  function-address tables and object startup records. Reject conflicting
-  priorities and unsupported function signatures
+  function-address tables and object startup records. For host-linked
+  Mach-O, preserve priority within each object and use the linker's order
+  between objects. Reject conflicting priorities and unsupported function
+  signatures.
+- GNU `destructor` and `destructor(priority)` attributes retain a
+  namespace-scope `void()` function for normal program termination.
+  Larger priorities run first and the omitted priority is 65535.
+  Preserve attributes on an earlier declaration, merge repeated
+  declarations with the same priority, and diagnose conflicting
+  priorities. A function can carry both attributes.
 - hosted source-file comments may contain opaque legacy 8-bit bytes; line
   splicing, trigraphs and comment delimiters retain their usual behavior.
   This does not relax UTF-8 diagnostics for tokens or literals, or the strict
@@ -102,11 +110,20 @@ hosted headers depend on:
   callers that omit frame pointers cannot be traversed reliably. Inlining
   uses the containing activation's frame. The query is not a C++ constant
   expression, and `__has_builtin` advertises it through the builtin registry
+- `__builtin_return_address(level)` reads the return address for the
+  selected native activation. It uses the same constant level and frame
+  chain as `__builtin_frame_address`. Level zero reports the continuation
+  in the caller of the physical activation.
+  `__builtin_extract_return_addr(pointer)` converts its argument to `void*`,
+  evaluates it once and returns that address on the supported targets.
 - `__builtin_alloca_with_align(size, alignment)` allocates stack storage with
   the requested alignment. Evaluate `size` once. The alignment is a power of
   two in bits and must be an integral constant expression of at least eight.
   The allocated object is usable within the block that calls the builtin.
   [GCC stack allocation builtins](https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Stack-Allocation.html)
+- Accept the fortified memory and formatted-output builtins used by hosted
+  headers. Use their typed signatures and forward the buffer size and flags
+  to the corresponding checked libc functions.
 - Expose `__builtin_source_location()` through `__has_builtin`. Read
   the four named fields of the record in the
   [builtin contract](https://clang.llvm.org/docs/LanguageExtensions.html#source-location-builtins). Honor `#line`
@@ -195,6 +212,11 @@ Previously required:
 New or newly required in PA30:
 
 - hosted preprocess mode: `-E`
+  - `-E -P` writes expanded preprocessing tokens as source text without line
+    markers. Preserve token boundaries and use `-o -` for standard output.
+  - `-E -x assembler-with-cpp` also writes source text. In this mode a paste
+    such as `. ## text` may leave separate preprocessing tokens that appear
+    adjacent in the resulting assembly.
   - `-E -dM` writes the active object-like and function-like definitions
     after reading the input, including command-line and header definitions.
     It omits computed builtins such as `__LINE__`. Use `-` as the input to
@@ -206,6 +228,8 @@ New or newly required in PA30:
     The default output is standard output. Use `-MF <file>` to select a file.
   - `-MD` and `-MMD` also write a make rule during compilation. The default
     depfile is named for the output, with a `.d` suffix.
+    `-Wp,-MD,<file>` and `-Wp,-MMD,<file>` select the corresponding mode and
+    dependency file together.
   - `-M` and `-MD` include system headers. `-MM` and `-MMD` omit system
     headers and headers reached solely through them. A system-header pragma
     also excludes subsequent includes from that file. The file itself keeps
@@ -214,7 +238,9 @@ New or newly required in PA30:
     quotes make-special characters. `-MP` adds an empty rule for each
     header so a removed header does not break an older dependency file.
   - The active include search determines the rule's physical source paths,
-    including forced headers. Preprocessing should run once in each route.
+    including forced headers. When reading from standard input, list the
+    headers and omit the standard input stream from the prerequisites.
+    Preprocessing should run once in each route.
 - hosted preprocessor-control flags:
   - `-D <macro>` and `-D<macro>`
   - `-U <macro>` and `-U<macro>`
@@ -371,6 +397,19 @@ it in the hosted environment. Libraries use it to discover the GNU
 `__float128` type even in ISO C++ mode, where the GNU literal suffixes are
 disabled.
 
+Support GNU `__builtin_classify_type` with both a type-name and an
+expression. Report the type-name's category directly and adjust array and
+function expressions to pointers. A single expression has no effects during
+ordinary execution. In C++ constant evaluation, check the expression as
+required by the GNU builtin. The legacy form with several expression
+arguments evaluates each for effects and reports the category of the first.
+[GCC builtin reference](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
+
+Honor Clang's `overloadable` attribute on a function with C language
+linkage. Give that function an Itanium signature-specific symbol, while
+an unmarked function in the same overload set keeps its C name.
+[Clang overloadable declarations](https://clang.llvm.org/docs/AttributeReference.html#overloadable)
+
 Support `-fconstexpr-ops-limit=<n>` when compiling hosted C++. It sets the
 work limit for one constant evaluation. Use a finite default and reset the
 work counter between evaluations. A required evaluation that exceeds the
@@ -381,6 +420,11 @@ In constant expressions, support the GNU builtins `__builtin_fmaf`,
 `__builtin_fma`, and `__builtin_fmal` for finite operands. Evaluate the
 product and sum with one rounding to the result type. An overflow or an
 inexact underflow cannot produce a constant expression.
+
+Fold `__builtin_strcmp` and `__builtin_strncmp` when both strings and any
+length argument are literals. Compare unsigned bytes through the first
+terminator or the length bound. A folded result supplies the sign of the
+comparison and needs no library call.
 
 Support `__builtin_sinf`, `__builtin_sin`, and `__builtin_sinl` in constant
 expressions for finite operands. Compute the sine in the target floating-point
@@ -397,10 +441,11 @@ diagnose constant arithmetic overflow and out-of-range integer conversions.
 List-initialization applies the same representability rules as other arithmetic
 types, including integer constants wider than 64 bits.
 
-Support `__builtin_signbitl` for hosted headers that use the GNU floating-point
-builtins. Convert the argument to the target's `long double` type and return
-a nonzero `int` if the sign bit is set, including for negative zero and
-negative NaNs.
+Support `__builtin_signbitf` and `__builtin_signbitl` for hosted headers
+that use the GNU floating-point builtins. Convert the argument once to
+`float` or `long double`, respectively. Return a nonzero `int` if the sign
+bit is set, including for negative zero and negative NaNs. Advertise the
+typed builtins through `__has_builtin`.
 
 Runtime checks that require libgcc's binary128 or bfloat16 helpers run on
 Linux; the Darwin runtime does not supply those interfaces. Binary16 checks
@@ -465,7 +510,12 @@ To complete PA30, implement hosted compatibility for:
   specialization's arguments, including when the result determines an
   array bound. A C++20 argument that designates a named member includes
   the member's name in the string.
+- `-E -C` retains active-source comments in preprocessed text. Comments
+  in directives and skipped groups remain absent. Use the retained comments
+  as tokens when determining whether a directive or a function-like macro starts.
 - predefined macro import, `__COUNTER__`, the GNU comma paste, `_Pragma`,
+  and `__BASE_FILE__`. The latter expands to the primary input file
+  name from both the primary file and its includes, regardless of `#line`.
   `__has_*`, `#include_next`, `#warning`, ignored unknown pragmas, and hosted
   hex-float preprocessing forms such as `0x1p+4`. Hosted preprocessing also
   executes conditional and macro-definition directives encountered while
@@ -501,6 +551,13 @@ To complete PA30, implement hosted compatibility for:
   `section`, `vector_size`, `mode`, `gnu_inline`, `abi_tag`, `may_alias`, `using_if_exists` and
   `exclude_from_explicit_instantiation`, each also spelled `__name__`) and
   `0` for any other.
+  GNU `aligned` on a bit-field may follow its width. Preserve the field's
+  placement and its contribution to the record alignment, including when
+  the alignment depends on a template argument.
+  Keep reads and writes of a packed union bit-field within its storage.
+  An enumeration marked `packed` without a fixed base uses the smallest
+  integer type that can represent its members. Use a signed type if a
+  member is negative and an unsigned type otherwise.
   Directories added with `-iquote` are searched for quoted includes after
   the including file's directory and before `-I`. Angle-bracket lookups
   start at the ordinary include chain. `#include_next` continues from the
@@ -535,6 +592,10 @@ To complete PA30, implement hosted compatibility for:
   `__has_declspec_attribute`, answer no rather than failing
 - GNU `always_inline` direct calls in host objects substitute the available
   body at every optimization level, including constructors and destructors.
+  An assembly operand that needs a constant or symbol address can use
+  a parameter if substitution provides a valid operand for its constraint,
+  including through a chain of `always_inline` calls. Discard private copies
+  used only for substitution after their direct calls are expanded.
   A defaulted member of a class template still follows the rules for the
   location of its original `= default`. Instantiating a call preserves the
   special-member semantics of an in-class default.
@@ -589,7 +650,9 @@ To complete PA30, implement hosted compatibility for:
   to a call to the C function of the same name, except `__builtin_fabsf`
   and `__builtin_fabs`, which clear only the sign bit inline, preserving
   NaN payloads and evaluating the converted argument once.
-  `__builtin_fabsl` retains the C-library call.  A builtin is a
+  `__builtin_fabsl` retains the C-library call. Report the active native
+  rounding mode from `__builtin_flt_rounds()`. Its result is 0 for toward
+  zero, 1 for nearest, 2 for upward, and 3 for downward. A builtin is a
   global-namespace name, so `::__builtin_x` names the same one as
   `__builtin_x`, which is how a hosted library keeps a user's macro from
   intercepting the call; any deeper qualification names something else.  It
@@ -744,7 +807,7 @@ exceptions. Evaluate the input once and leave unused result bits zero.
 ### Atomic memory orders
 
 A memory order of the `__atomic` and `__c11_atomic` builtins that is not a
-constant is `seq_cst`, as GCC takes it, except at a store or thread fence
+constant is `seq_cst`, as GCC takes it, except at an inline store or thread fence
 (`__atomic_store_n`, `__atomic_store`, `__atomic_clear`,
 `__atomic_thread_fence`, `__c11_atomic_store` and
 `__c11_atomic_thread_fence`). There the lowering branches on `cmp ult` of
@@ -753,7 +816,7 @@ the order and 5 to two copies of the operation: below 5 the store is
 caller's constant order, such as one a `std::atomic` member passes on, then
 decides the branch. `tests/lowir/` checks the rule.
 
-### Generic GNU atomic runtime operations
+### Generic GNU and C11 atomic operations
 
 The pointer-based `__atomic_load`, `__atomic_store`, `__atomic_exchange` and
 `__atomic_compare_exchange` support complete objects beyond the inline
@@ -761,14 +824,37 @@ The pointer-based `__atomic_load`, `__atomic_store`, `__atomic_exchange` and
 call facts and use the generic runtime ABI in host object mode: prepend
 the object byte size; pass pointers and integer memory orders; omit the
 compare-exchange weak parameter while evaluating its expression once.
-Keep const-destination and operand-size checks. Other builtin forms retain
-their existing size restrictions. Linking needs a compatible runtime
-provider (`libatomic` on Linux, supplied by the host link command).
+Keep const-destination and operand-size checks. Clang's by-value
+`__c11_atomic_load`, `__c11_atomic_store`, `__c11_atomic_exchange` and
+compare-exchange forms also support complete objects. Only the atomic
+object has the size and alignment of `_Atomic(T)`. Read desired values and
+write results using the ordinary size of `T`. When these sizes differ,
+initialize the added padding in the atomic representation and copy the
+observed ordinary value to the caller's expected object only when
+compare-exchange fails. Use an inline operation where the atomic storage
+width allows it. The generic runtime receives the atomic storage width
+and needs a compatible provider such as Linux's `libatomic`, supplied by
+the host link command. The modern GNU scalar builtins and Clang's
+arithmetic builtins also accept 128-bit integers. Use the same runtime
+protocol for their loads, stores, exchange, and compare-exchange.
+For arithmetic, evaluate the operands once and use a compare-exchange
+loop with the requested success order. The failure order drops any
+release component. Integer arithmetic wraps at the object's width,
+and the builtin spelling selects the old or new value.
 
 The weak argument's value does not change the runtime ABI. cppgm preserves
 its expression's side effects once, as Clang does; GCC 15 discards that
 expression in the generic form. The required evaluation control records
 this host-oracle difference separately from the common ABI protocol.
+
+`__atomic_always_lock_free` takes a constant size and reports the
+target's inline instruction support. Use natural alignment for a
+null pointer argument. An ordinary `__atomic_is_lock_free` query can
+take a runtime size and address. Keep a constant result for a proven
+inline case. For dynamic cases on Linux, retain the size and address
+and call the runtime's `bool __atomic_is_lock_free(size_t, const void *)`.
+The size-only `__c11_atomic_is_lock_free` query uses a null address in
+that ABI. Evaluate runtime operands once.
 
 ### GNU vector permutations
 

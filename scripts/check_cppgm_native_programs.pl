@@ -1,16 +1,18 @@
 #!/usr/bin/perl
-# Run self-checking C++ fixtures through the native driver at every PA34 level.
+# Run self-checking source fixtures through the native driver.
 # Each program must exit successfully and write no stdout, both when built
 # directly, through object link paths, and through the supplied LowIR backend.
 use strict;
 use warnings;
 use File::Temp qw(tempdir);
 use FindBin;
+use Getopt::Long qw(GetOptions);
 use lib $FindBin::Bin;
-use CppgmBatchWorker qw(collect_tests read_word_list resolve_host_command run_command_capture);
+use CppgmBatchWorker qw(app_args_for collect_tests read_word_list resolve_host_command run_command_capture source_args_for);
 
-die "Usage: check_cppgm_native_programs.pl <cppgm> <test-or-directory> [lowir2native]\n"
-	if @ARGV != 2 && @ARGV != 3;
+my $levels = '1,2,3';
+die "Usage: check_cppgm_native_programs.pl [--levels=0,2] <cppgm> <test-or-directory> [lowir2native]\n"
+	unless GetOptions('levels=s' => \$levels) && $levels =~ /\A[0-3](?:,[0-3])*\z/ && (@ARGV == 2 || @ARGV == 3);
 my ($app, $root, $backend) = @ARGV;
 my @tests = collect_tests($root, qr/\.t$/);
 die "No native driver tests found under $root\n" if !@tests;
@@ -23,11 +25,12 @@ push @routes, 'lowir' if defined $backend;
 for my $test (@tests)
 {
 	(my $base = $test) =~ s/\.t$//;
-	my @flags = read_word_list("$base.flags");
+	my @source_args = source_args_for($test);
+	my @flags = (app_args_for($app), @source_args ? @source_args : read_word_list("$base.flags"));
 	my $directory = tempdir('cppgm-native-program-XXXXXX', TMPDIR => 1, CLEANUP => 1);
 	my $stdout = "$directory/stdout";
 	my $stderr = "$directory/stderr";
-	for my $level (qw(-O1 -O2 -O3))
+	for my $level (map { "-O$_" } split /,/, $levels)
 	{
 		for my $route (@routes)
 		{

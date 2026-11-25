@@ -101,7 +101,7 @@ typedef struct CppgmDataItem
 	CppgmLiteral bits;
 	int64_t amount; /* address addend or zero byte count */
 	uint32_t symbol;
-	uint32_t kind; /* CPPGM_DATA_SCALAR, _ADDRESS or _ZERO; float uses type.kind */
+	uint32_t kind; /* CPPGM_DATA_SCALAR, _ADDRESS, _UNALIGNED_ADDRESS or _ZERO */
 } CppgmDataItem;
 
 /* The ABI version of this library (its CPPGM_LOWIR_ABI_VERSION) and the

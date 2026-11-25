@@ -1,0 +1,1 @@
+ERROR: tests/general/500-builtin-choose-condition-bad.t:3:34: __builtin_choose_expr requires an integer constant condition

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c17-bit-precise-specifier-bad.t:1:10: the _BitInt type specifier is a C23 extension

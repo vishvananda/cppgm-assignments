@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-auto-typed-parameter-bad.t:1:15: invalid storage or function specifier in a C parameter

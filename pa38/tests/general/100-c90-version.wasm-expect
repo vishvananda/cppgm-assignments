@@ -1,0 +1,1 @@
+{"source":true,"wasi":true,"target":"wasm32-wasip1","flags":["-x","c","-std=iso9899:1990","-pedantic-errors"],"commands":[{"exit":0,"stdout":""}]}

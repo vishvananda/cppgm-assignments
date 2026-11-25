@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c17-record-redefinition-bad.t:2:8: class redefinition

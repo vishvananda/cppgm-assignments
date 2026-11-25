@@ -1,0 +1,1 @@
+-pedantic-errors --embed-dir=tests/general/100-c23-embed.inc/resources -Itests/general/100-c23-embed.inc/headers

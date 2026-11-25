@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-auto-parameter-bad.t:1:15: parameter without a type

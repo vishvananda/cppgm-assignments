@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c90-mixed-declarations-bad.t:5:5: a declaration after a statement requires C99

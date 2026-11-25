@@ -1,0 +1,28 @@
+#if __GNUC_GNU_INLINE__ != 1 || defined(__GNUC_STDC_INLINE__)
+#error C95 must advertise the legacy inline rules
+#endif
+
+#ifdef __APPLE__
+#define PROVIDER_NAME "_legacy_value"
+#else
+#define PROVIDER_NAME "legacy_value"
+#endif
+
+extern int external_value(int input) __asm__(PROVIDER_NAME);
+
+extern __inline__ int legacy_value(int input)
+{
+    return external_value(input);
+}
+
+__inline__ int supplied_value(int input)
+{
+    return input * 2;
+}
+
+extern int host_call(int input);
+
+int main(void)
+{
+    return legacy_value(23) != 42 || host_call(21) != 42;
+}

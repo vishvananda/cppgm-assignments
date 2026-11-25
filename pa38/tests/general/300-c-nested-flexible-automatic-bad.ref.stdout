@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-nested-flexible-automatic-bad.t:3:44: a flexible array member initialized outside the initializer of an object of static storage duration

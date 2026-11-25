@@ -1,0 +1,14 @@
+#include "300-flexible-array-boundary.h"
+
+static union Envelope update(union Envelope value, unsigned increment) {
+    value.slot.packet.count += increment * 2;
+    return value;
+}
+
+int main(void) {
+    struct Packet value = { .count = 19 };
+    struct Packet advanced = host_advance(value, 23);
+    if (advanced.count != 42 || value.count != 19)
+        return 1;
+    return host_call(update, 24) != 56;
+}

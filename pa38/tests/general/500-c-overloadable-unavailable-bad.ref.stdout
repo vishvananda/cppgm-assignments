@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-overloadable-unavailable-bad.t:6:19: use of an unavailable function

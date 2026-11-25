@@ -510,6 +510,7 @@ sub build_wrapped_text_request
 		$test_base =~ s/\.t$//;
 		my @mode_args = ($suffix eq CppgmBatchWorker::result_suffix('pp'))
 			? ('-E', CppgmBatchWorker::read_word_list("$test_base.flags")) : ();
+		my $stdin = grep { $_ eq '-' } @mode_args;
 		my $env = read_env_file("$test_base.env");
 		my @include_args;
 		if (exists($env->{CPPGM_STDINC_PATHS}))
@@ -520,14 +521,14 @@ sub build_wrapped_text_request
 		}
 		return ("$test_out.stdout",
 		        "$test_out.stdout",
-		        "-",
+		        $stdin ? $test : "-",
 		        $env,
 		        @mode_args,
 		        @language_args,
 		        @include_args,
 		        "-o",
 		        $test_out,
-		        $test);
+		        $stdin ? () : $test);
 	}
 
 	if ($mode eq "text_t1")

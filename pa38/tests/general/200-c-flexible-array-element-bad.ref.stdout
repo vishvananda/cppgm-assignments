@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c-flexible-array-element-bad.t:4:24: an array element containing a flexible array is a GNU C extension

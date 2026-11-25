@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-inline-static-bad.t:3:16: an external C inline definition defines a modifiable object with static or thread storage duration

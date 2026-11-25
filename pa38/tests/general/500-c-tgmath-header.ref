@@ -1,0 +1,66 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $variable : f32
+  slot $number : obj<8x4>
+  slot $complex__1 : obj<8x4>
+  slot $complex__2 : obj<8x4>
+  slot $complex__3 : obj<8x4>
+  slot $complex__4 : obj<8x4>
+  slot $complex__5 : obj<8x4>
+  slot $effects : i32
+  slot $lor__6 : i64
+
+  block ^entry:
+    store typed f32 4f, $variable
+    %t1 = addr $complex__1
+    store typed f32 0f, %t1
+    %t2 = index i8 [projection=field] %t1, 4
+    store typed f32 1f, %t2
+    %t3 = load obj<8x4> $complex__1
+    store obj<8x4> %t3, $complex__2
+    %t4 = addr $complex__2
+    %t5 = load typed f32 %t4
+    %t6 = index i8 [projection=field] %t4, 4
+    %t7 = load typed f32 %t6
+    %t8 = binary mul f32 4f, %t5
+    %t9 = binary mul f32 4f, %t7
+    %t10 = addr $complex__3
+    store typed f32 %t8, %t10
+    %t11 = index i8 [projection=field] %t10, 4
+    store typed f32 %t9, %t11
+    %t12 = load obj<8x4> $complex__3
+    store obj<8x4> %t12, $complex__4
+    %t13 = addr $complex__4
+    %t14 = load typed f32 %t13
+    %t15 = index i8 [projection=field] %t13, 4
+    %t16 = load typed f32 %t15
+    %t17 = binary add f32 3f, %t14
+    %t18 = addr $complex__5
+    store typed f32 %t17, %t18
+    %t19 = index i8 [projection=field] %t18, 4
+    store typed f32 %t16, %t19
+    %t20 = load obj<8x4> $complex__5
+    store obj<8x4> %t20, $number
+    store typed i32 0, $effects
+    %t21 = const i64 4
+    %t22 = const i64 4
+    %t23 = cmp ne i64 %t21, %t22
+    %t24 = convert trunc i32 i64 %t23
+    branch %t24, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t25 = load typed i32 $effects
+    %t26 = cmp ne i32 %t25, 0
+    %t27 = convert trunc i32 i64 %t26
+    %t28 = cmp ne i32 %t27, 0
+    store typed i64 %t28, $lor__6
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__6
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t29 = load typed i64 $lor__6
+    %t30 = convert trunc i32 i64 %t29
+    return i32 %t30
+}

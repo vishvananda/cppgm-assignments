@@ -1,0 +1,39 @@
+global @bool : i32 [linkage=c, binding=internal] = 1
+global @true : i32 [linkage=c, binding=internal] = 2
+global @false : i32 [linkage=c, binding=internal] = 3
+global @static_assert : i32 [linkage=c, binding=internal] = 4
+global @typeof : i32 [linkage=c, binding=internal] = 5
+global @typeof_unqual : i32 [linkage=c, binding=internal] = 6
+global @a : i32 [linkage=c, binding=strong] = zero
+global @b : i32 [linkage=c, binding=strong] = zero
+global @void_pointer : ptr [linkage=c, binding=internal] = zero
+
+function @no_args() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    return i32 1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    store typed i32 40, @a
+    store typed i32 2, @b
+    %t1 = load typed i32 @a
+    %t2 = load typed i32 @b
+    %t3 = binary add nowrap i32 %t1, %t2
+    %t4 = load typed i32 @bool
+    %t5 = binary add nowrap i32 %t3, %t4
+    %t6 = load typed i32 @true
+    %t7 = binary add nowrap i32 %t5, %t6
+    %t8 = load typed i32 @false
+    %t9 = binary add nowrap i32 %t7, %t8
+    %t10 = load typed i32 @static_assert
+    %t11 = binary add nowrap i32 %t9, %t10
+    %t12 = load typed i32 @typeof
+    %t13 = binary add nowrap i32 %t11, %t12
+    %t14 = load typed i32 @typeof_unqual
+    %t15 = binary add nowrap i32 %t13, %t14
+    %t16 = call i32 @no_args()
+    %t17 = binary add nowrap i32 %t15, %t16
+    %t18 = cmp ne i32 %t17, 64
+    %t19 = convert trunc i32 i64 %t18
+    return i32 %t19
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-register-storage-combination-bad.t:3:5: register with an incompatible storage-class specifier

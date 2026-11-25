@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-mixed-function-member-bad.t:2:23: a C record member cannot have function type

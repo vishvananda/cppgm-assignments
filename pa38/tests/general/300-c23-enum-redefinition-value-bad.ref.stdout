@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-enum-redefinition-value-bad.t:2:13: enumerator redeclared with a different value

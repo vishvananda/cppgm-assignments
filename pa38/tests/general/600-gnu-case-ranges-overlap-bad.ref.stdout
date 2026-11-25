@@ -1,0 +1,1 @@
+ERROR: tests/general/600-gnu-case-ranges-overlap-bad.t:3:5: overlapping case values

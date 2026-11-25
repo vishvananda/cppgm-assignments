@@ -1,0 +1,219 @@
+global @effect : i32 [linkage=c, binding=internal] = zero
+global @items [linkage=c, binding=internal] = {
+  i16 2
+  i16 3
+}
+global @last_item : ptr [linkage=c, binding=internal] = addr @items + 2
+
+function @make_pair() -> obj<8x4> [linkage=c, binding=internal] {
+  slot $value : obj<8x4>
+  slot $retobj__1 : obj<8x4>
+
+  block ^entry:
+    %t1 = addr $value
+    %t2 = addr $value
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    store typed i32 4, %t3
+    %t4 = addr $value
+    %t5 = index inbounds i8 [projection=field] %t4, 4
+    store typed i32 7, %t5
+    %t6 = addr $retobj__1
+    %t7 = addr $value
+    copyobj 8x4 %t7, %t6
+    return obj<8x4> $retobj__1
+}
+function @increment(%value : i32) -> i32 [linkage=c, binding=internal] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = binary add nowrap i32 %t1, 1
+    return i32 %t2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $left : i32
+  slot $right : i32
+  slot $other : obj<8x4>
+  slot $result : obj<8x4>
+  slot $bits : obj<4x4>
+  slot $lor__1 : i64
+
+  block ^entry:
+    store typed i32 2, $left
+    store typed i32 7, $right
+    %t1 = addr $other
+    %t2 = addr $other
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    store typed i32 1, %t3
+    %t4 = addr $other
+    %t5 = index inbounds i8 [projection=field] %t4, 4
+    store typed i32 2, %t5
+    %t6 = addr $result
+    %t7 = call obj<8x4> @make_pair()
+    copyobj 8x4 %t7, %t6
+    %t8 = addr $bits
+    %t9 = addr $bits
+    %t10 = index inbounds i8 [projection=field] %t9, 0
+    %t11 = binary and u32 7, 1
+    store u32 %t11, %t10
+    %t12 = addr $bits
+    %t13 = index inbounds i8 [projection=field] %t12, 0
+    %t14 = binary and u32 7, 2
+    %t15 = binary shl u32 %t14, 3
+    %t16 = load u32 %t13
+    %t17 = binary and u32 %t16, 4294967239
+    %t18 = binary or u32 %t17, %t15
+    store u32 %t18, %t13
+    store typed i32 9, $left
+    %t19 = load typed i32 $left
+    %t20 = cmp ne i32 %t19, 9
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t22 = load typed i32 $right
+    %t23 = cmp ne i32 %t22, 7
+    %t24 = convert trunc i32 i64 %t23
+    branch %t24, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t25 = addr $right
+    %t26 = addr $right
+    %t27 = cmp ne ptr %t25, %t26
+    %t28 = convert trunc i32 i64 %t27
+    branch %t28, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t29 = cmp eq i32 1, 0
+    %t30 = convert trunc i32 i64 %t29
+    branch %t30, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t31 = const i64 4
+    %t32 = const i64 4
+    %t33 = cmp ne i64 %t31, %t32
+    %t34 = convert trunc i32 i64 %t33
+    branch %t34, ^if_then_9, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t35 = load typed ptr @last_item
+    %t36 = addr @items
+    %t37 = index inbounds i16 [projection=array_element] %t36, 1
+    %t38 = cmp ne ptr %t35, %t37
+    %t39 = convert trunc i32 i64 %t38
+    branch %t39, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 3
+
+  block ^if_else_10:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    %t40 = addr @increment
+    %t41 = call i32 %t40(2) as (%arg0 : i32) -> i32
+    %t42 = cmp ne i32 %t41, 3
+    %t43 = convert trunc i32 i64 %t42
+    branch %t43, ^if_then_13, ^lor_rhs_15
+
+  block ^lor_rhs_15:
+    %t44 = cmp ne i32 2, 2
+    %t45 = convert trunc i32 i64 %t44
+    branch %t45, ^if_then_13, ^if_else_14
+
+  block ^if_then_13:
+    return i32 4
+
+  block ^if_else_14:
+    jump ^if_end_16
+
+  block ^if_end_16:
+    %t46 = load typed i32 @effect
+    %t47 = binary add nowrap i32 %t46, 1
+    store typed i32 %t47, @effect
+    %t48 = cmp ne i32 %t47, 1
+    %t49 = convert trunc i32 i64 %t48
+    branch %t49, ^if_then_17, ^lor_rhs_19
+
+  block ^lor_rhs_19:
+    %t50 = load typed i32 @effect
+    %t51 = cmp ne i32 %t50, 1
+    %t52 = convert trunc i32 i64 %t51
+    branch %t52, ^if_then_17, ^if_else_18
+
+  block ^if_then_17:
+    return i32 5
+
+  block ^if_else_18:
+    jump ^if_end_20
+
+  block ^if_end_20:
+    %t53 = addr $result
+    %t54 = index inbounds i8 [projection=field] %t53, 4
+    %t55 = load typed i32 %t54
+    %t56 = cmp ne i32 %t55, 7
+    %t57 = convert trunc i32 i64 %t56
+    branch %t57, ^if_then_21, ^if_else_22
+
+  block ^if_then_21:
+    return i32 6
+
+  block ^if_else_22:
+    jump ^if_end_23
+
+  block ^if_end_23:
+    %t58 = addr $bits
+    %t59 = index inbounds i8 [projection=field] %t58, 0
+    %t60 = binary and i32 5, 7
+    %t61 = copy u32 %t60
+    %t62 = binary shl i32 %t60, 3
+    %t63 = load i32 %t59
+    %t64 = binary and i32 %t63, -57
+    %t65 = binary or i32 %t64, %t62
+    store i32 %t65, %t59
+    %t66 = addr $bits
+    %t67 = index inbounds i8 [projection=field] %t66, 0
+    %t68 = load i32 %t67
+    %t69 = binary and i32 %t68, 7
+    %t70 = copy u32 %t69
+    %t71 = copy i32 %t70
+    %t72 = cmp ne i32 %t71, 1
+    %t73 = convert trunc i32 i64 %t72
+    branch %t73, ^lor_short_25, ^lor_rhs_24
+
+  block ^lor_rhs_24:
+    %t74 = addr $bits
+    %t75 = index inbounds i8 [projection=field] %t74, 0
+    %t76 = load i32 %t75
+    %t77 = binary shr i32 %t76, 3
+    %t78 = binary and i32 %t77, 7
+    %t79 = copy u32 %t78
+    %t80 = copy i32 %t79
+    %t81 = cmp ne i32 %t80, 5
+    %t82 = convert trunc i32 i64 %t81
+    %t83 = cmp ne i32 %t82, 0
+    store typed i64 %t83, $lor__1
+    jump ^lor_end_26
+
+  block ^lor_short_25:
+    store typed i64 1, $lor__1
+    jump ^lor_end_26
+
+  block ^lor_end_26:
+    %t84 = load typed i64 $lor__1
+    %t85 = convert trunc i32 i64 %t84
+    return i32 %t85
+}

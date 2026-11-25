@@ -1,0 +1,5 @@
+# explicit-outcomes
+
+has(fenv_convert sitofp) in @round_integer
+has(fenv_convert fptrunc) in @narrow_double
+has(fenv_convert fptosi) in @discard_invalid_conversion

@@ -1,0 +1,13 @@
+pp-number 5 0x0'e
+preprocessing-op-or-punc 1 -
+pp-number 3 0xe
+whitespace-sequence 0 
+pp-number 5 0x0'E
+preprocessing-op-or-punc 1 +
+pp-number 3 0xE
+whitespace-sequence 0 
+pp-number 6 1'2e+3
+whitespace-sequence 0 
+pp-number 4 12'0
+new-line 0 
+eof

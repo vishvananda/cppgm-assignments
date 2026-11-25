@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-enum-redefinition-missing-bad.t:2:1: enumeration redeclared with a different list of members

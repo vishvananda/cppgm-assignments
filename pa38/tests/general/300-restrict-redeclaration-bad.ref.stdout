@@ -1,0 +1,1 @@
+ERROR: tests/general/300-restrict-redeclaration-bad.t:2:12: conflicting declaration of a variable

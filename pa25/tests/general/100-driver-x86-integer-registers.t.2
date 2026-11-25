@@ -1,0 +1,12 @@
+#include "100-driver-x86-integer-registers.shared.h"
+
+int main()
+{
+  Pair first{11, 13};
+  Pair second{2, 3};
+  copy_pair(&second, &first);
+  if (second.first != 11 || second.second != 13 || sum_pair(17, second) != 41)
+    return 1;
+  clear_pair(&second);
+  return second.first != 0 || second.second != 0;
+}

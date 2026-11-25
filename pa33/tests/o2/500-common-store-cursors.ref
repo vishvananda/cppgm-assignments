@@ -92,8 +92,7 @@ function @nowrap_choice(%flag : i1, %output : ptr, %value : u8) -> u8 [no_inline
     %t2 = select i32 %flag, 19, 23
     %t3 = select u8 %flag, %advanced, %value
     store i32 %t2, %output
-    %next = copy u8 %t3
-    return u8 %next
+    return u8 %t3
 }
 function @main() -> i32 [role=entry] {
   slot $result : obj<24x4>

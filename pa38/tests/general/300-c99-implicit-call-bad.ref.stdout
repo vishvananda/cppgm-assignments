@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c99-implicit-call-bad.t:3:12: undeclared function name

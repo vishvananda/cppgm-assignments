@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c-flexible-struct-member-bad.t:3:39: a struct member containing a flexible array is a GNU C extension

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-record-redefinition-pack-bad.t:4:8: incompatible record redefinition

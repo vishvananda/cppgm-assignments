@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-composite-linked-bounds-bad.t:9:12: conflicting declarations of a C object with linkage

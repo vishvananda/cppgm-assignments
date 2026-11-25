@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-imaginary-system-warnings.t:5:12: imaginary numeric literals are a GNU C extension

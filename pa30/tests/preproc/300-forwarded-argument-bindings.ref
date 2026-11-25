@@ -1,0 +1,296 @@
+preproc 1
+sof tests/preproc/300-forwarded-argument-bindings.t
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+literal 1 int 01000000
+simple + OP_PLUS
+literal 2 int 02000000
+simple + OP_PLUS
+literal 3 int 03000000
+simple + OP_PLUS
+literal 4 int 04000000
+simple + OP_PLUS
+literal 5 int 05000000
+simple + OP_PLUS
+literal 6 int 06000000
+simple + OP_PLUS
+literal 7 int 07000000
+simple + OP_PLUS
+literal 8 int 08000000
+simple + OP_PLUS
+literal 9 int 09000000
+simple + OP_PLUS
+literal 10 int 0A000000
+simple + OP_PLUS
+literal 11 int 0B000000
+simple + OP_PLUS
+literal 12 int 0C000000
+simple + OP_PLUS
+literal 13 int 0D000000
+simple + OP_PLUS
+literal 14 int 0E000000
+simple + OP_PLUS
+literal 15 int 0F000000
+simple + OP_PLUS
+literal 16 int 10000000
+simple + OP_PLUS
+literal 17 int 11000000
+simple + OP_PLUS
+literal 18 int 12000000
+simple + OP_PLUS
+literal 19 int 13000000
+simple + OP_PLUS
+literal 20 int 14000000
+simple + OP_PLUS
+identifier VALUE
+simple + OP_PLUS
+literal 0 int 00000000
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple , OP_COMMA
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+literal 1 int 01000000
+simple + OP_PLUS
+literal 2 int 02000000
+simple + OP_PLUS
+literal 3 int 03000000
+simple + OP_PLUS
+literal 4 int 04000000
+simple + OP_PLUS
+literal 5 int 05000000
+simple + OP_PLUS
+literal 6 int 06000000
+simple + OP_PLUS
+literal 7 int 07000000
+simple + OP_PLUS
+literal 8 int 08000000
+simple + OP_PLUS
+literal 9 int 09000000
+simple + OP_PLUS
+literal 10 int 0A000000
+simple + OP_PLUS
+literal 11 int 0B000000
+simple + OP_PLUS
+literal 12 int 0C000000
+simple + OP_PLUS
+literal 13 int 0D000000
+simple + OP_PLUS
+literal 14 int 0E000000
+simple + OP_PLUS
+literal 15 int 0F000000
+simple + OP_PLUS
+literal 16 int 10000000
+simple + OP_PLUS
+literal 17 int 11000000
+simple + OP_PLUS
+literal 18 int 12000000
+simple + OP_PLUS
+literal 19 int 13000000
+simple + OP_PLUS
+literal 20 int 14000000
+simple + OP_PLUS
+identifier VALUE
+simple + OP_PLUS
+literal 0 int 00000000
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+literal 1 int 01000000
+simple + OP_PLUS
+literal 2 int 02000000
+simple + OP_PLUS
+literal 3 int 03000000
+simple + OP_PLUS
+literal 4 int 04000000
+simple + OP_PLUS
+literal 5 int 05000000
+simple + OP_PLUS
+literal 6 int 06000000
+simple + OP_PLUS
+literal 7 int 07000000
+simple + OP_PLUS
+literal 8 int 08000000
+simple + OP_PLUS
+literal 9 int 09000000
+simple + OP_PLUS
+literal 10 int 0A000000
+simple + OP_PLUS
+literal 11 int 0B000000
+simple + OP_PLUS
+literal 12 int 0C000000
+simple + OP_PLUS
+literal 13 int 0D000000
+simple + OP_PLUS
+literal 14 int 0E000000
+simple + OP_PLUS
+literal 15 int 0F000000
+simple + OP_PLUS
+literal 16 int 10000000
+simple + OP_PLUS
+literal 17 int 11000000
+simple + OP_PLUS
+literal 18 int 12000000
+simple + OP_PLUS
+literal 19 int 13000000
+simple + OP_PLUS
+literal 20 int 14000000
+simple + OP_PLUS
+literal 23 int 17000000
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+literal 1 int 01000000
+simple + OP_PLUS
+literal 2 int 02000000
+simple + OP_PLUS
+literal 3 int 03000000
+simple + OP_PLUS
+literal 4 int 04000000
+simple + OP_PLUS
+literal 5 int 05000000
+simple + OP_PLUS
+literal 6 int 06000000
+simple + OP_PLUS
+literal 7 int 07000000
+simple + OP_PLUS
+literal 8 int 08000000
+simple + OP_PLUS
+literal 9 int 09000000
+simple + OP_PLUS
+literal 10 int 0A000000
+simple + OP_PLUS
+literal 11 int 0B000000
+simple + OP_PLUS
+literal 12 int 0C000000
+simple + OP_PLUS
+literal 13 int 0D000000
+simple + OP_PLUS
+literal 14 int 0E000000
+simple + OP_PLUS
+literal 15 int 0F000000
+simple + OP_PLUS
+literal 16 int 10000000
+simple + OP_PLUS
+literal 17 int 11000000
+simple + OP_PLUS
+literal 18 int 12000000
+simple + OP_PLUS
+literal 19 int 13000000
+simple + OP_PLUS
+literal 20 int 14000000
+simple + OP_PLUS
+literal 23 int 17000000
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+literal 1 int 01000000
+simple + OP_PLUS
+literal 2 int 02000000
+simple + OP_PLUS
+literal 3 int 03000000
+simple + OP_PLUS
+literal 4 int 04000000
+simple + OP_PLUS
+literal 5 int 05000000
+simple + OP_PLUS
+literal 6 int 06000000
+simple + OP_PLUS
+literal 7 int 07000000
+simple + OP_PLUS
+literal 8 int 08000000
+simple + OP_PLUS
+literal 9 int 09000000
+simple + OP_PLUS
+literal 10 int 0A000000
+simple + OP_PLUS
+literal 11 int 0B000000
+simple + OP_PLUS
+literal 12 int 0C000000
+simple + OP_PLUS
+literal 13 int 0D000000
+simple + OP_PLUS
+literal 14 int 0E000000
+simple + OP_PLUS
+literal 15 int 0F000000
+simple + OP_PLUS
+literal 16 int 10000000
+simple + OP_PLUS
+literal 17 int 11000000
+simple + OP_PLUS
+literal 18 int 12000000
+simple + OP_PLUS
+literal 19 int 13000000
+simple + OP_PLUS
+literal 20 int 14000000
+simple + OP_PLUS
+literal 41 int 29000000
+simple + OP_PLUS
+literal 1 int 01000000
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple , OP_COMMA
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+literal 1 int 01000000
+simple + OP_PLUS
+literal 2 int 02000000
+simple + OP_PLUS
+literal 3 int 03000000
+simple + OP_PLUS
+literal 4 int 04000000
+simple + OP_PLUS
+literal 5 int 05000000
+simple + OP_PLUS
+literal 6 int 06000000
+simple + OP_PLUS
+literal 7 int 07000000
+simple + OP_PLUS
+literal 8 int 08000000
+simple + OP_PLUS
+literal 9 int 09000000
+simple + OP_PLUS
+literal 10 int 0A000000
+simple + OP_PLUS
+literal 11 int 0B000000
+simple + OP_PLUS
+literal 12 int 0C000000
+simple + OP_PLUS
+literal 13 int 0D000000
+simple + OP_PLUS
+literal 14 int 0E000000
+simple + OP_PLUS
+literal 15 int 0F000000
+simple + OP_PLUS
+literal 16 int 10000000
+simple + OP_PLUS
+literal 17 int 11000000
+simple + OP_PLUS
+literal 18 int 12000000
+simple + OP_PLUS
+literal 19 int 13000000
+simple + OP_PLUS
+literal 20 int 14000000
+simple + OP_PLUS
+literal 41 int 29000000
+simple + OP_PLUS
+literal 1 int 01000000
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+literal 2 int 02000000
+eof

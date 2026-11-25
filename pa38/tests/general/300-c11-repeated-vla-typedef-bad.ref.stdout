@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c11-repeated-vla-typedef-bad.t:4:17: a typedef for a variably modified type cannot be redefined

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c90-hex-float-bad.t:3:12: hexadecimal floating constants require C99

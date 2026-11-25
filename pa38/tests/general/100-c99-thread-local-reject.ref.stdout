@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c99-thread-local-reject.t:1:8: _Thread_local is a C11 extension

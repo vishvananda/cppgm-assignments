@@ -1,0 +1,189 @@
+global @global : u32 [linkage=c, binding=internal] = 11
+global @__constexpr_template__1 [storage=readonly, binding=internal] = {
+  i32 2
+  i32 3
+  i32 5
+  i32 7
+}
+
+function @twice(%value : i32) -> i32 [linkage=c, binding=internal] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    %t2 = binary mul nowrap i32 2, %t1
+    return i32 %t2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $once : i32
+  slot $Index : i32
+  slot $value : i32
+  slot $copy : i32
+  slot $qualified : i32
+  slot $data : obj<16x4>
+  slot $element : ptr
+  slot $callback : ptr
+  slot $length : i32
+  slot $row : ptr
+  slot $tmpobj__1 : i64
+  slot $sum : i32
+  slot $i : u32
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+
+  block ^entry:
+    store typed i32 0, $once
+    %t1 = load typed i32 $once
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, $once
+    store typed i32 %t2, $Index
+    %t3 = load typed i32 $Index
+    %t4 = cmp ne i32 %t3, 1
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t6 = load typed i32 $once
+    %t7 = cmp ne i32 %t6, 1
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    store typed i32 7, $value
+    store typed i32 7, $copy
+    %t9 = binary add nowrap i32 7, 2
+    store typed i32 %t9, $qualified
+    %t10 = addr $data
+    copyobj 16x4 @__constexpr_template__1, %t10
+    %t11 = addr $data
+    store typed ptr %t11, $element
+    %t12 = addr @twice
+    store typed ptr %t12, $callback
+    store typed i32 3, $length
+    %t13 = load typed i32 $length
+    %t14 = binary add nowrap i32 %t13, 1
+    store typed i32 %t14, $length
+    %t15 = convert sext i64 i32 %t14
+    %t16 = binary mul i64 %t15, 4
+    store typed i64 %t16, $tmpobj__1
+    %t17 = addr $data
+    store typed ptr %t17, $row
+    %t18 = load typed i32 $length
+    %t19 = cmp ne i32 %t18, 4
+    %t20 = convert trunc i32 i64 %t19
+    branch %t20, ^if_then_5, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t21 = load typed ptr $row
+    %t22 = load typed i64 $tmpobj__1
+    %t23 = const i64 16
+    %t24 = cmp ne i64 %t22, %t23
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 2
+
+  block ^if_else_6:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    store typed i32 1, $length
+    store typed i32 0, $sum
+    store typed u32 0, $i
+    jump ^for_cond_9
+
+  block ^for_cond_9:
+    %t26 = load typed u32 $i
+    %t27 = load typed ptr $row
+    %t28 = load typed i64 $tmpobj__1
+    %t29 = const i64 4
+    %t30 = binary udiv i64 %t28, %t29
+    %t31 = convert zext i64 u32 %t26
+    %t32 = cmp ult i64 %t31, %t30
+    %t33 = convert trunc i32 i64 %t32
+    branch %t33, ^for_body_10, ^for_end_12
+
+  block ^for_body_10:
+    %t34 = load typed ptr $row
+    %t35 = load typed u32 $i
+    %t36 = index inbounds i32 [projection=array_element] %t34, %t35
+    %t37 = load typed i32 %t36
+    %t38 = load typed i32 $sum
+    %t39 = binary add nowrap i32 %t38, %t37
+    store typed i32 %t39, $sum
+    jump ^for_iter_11
+
+  block ^for_iter_11:
+    %t40 = load typed u32 $i
+    %t41 = binary add u32 %t40, 1
+    store typed u32 %t41, $i
+    jump ^for_cond_9
+
+  block ^for_end_12:
+    %t42 = load typed u32 @global
+    %t43 = cmp ne u32 %t42, 11
+    %t44 = convert trunc i32 i64 %t43
+    branch %t44, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t45 = load typed i32 $qualified
+    %t46 = cmp ne i32 %t45, 9
+    %t47 = convert trunc i32 i64 %t46
+    %t48 = cmp ne i32 %t47, 0
+    store typed i64 %t48, $lor__2
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__2
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t49 = load typed i64 $lor__2
+    branch %t49, ^lor_short_17, ^lor_rhs_16
+
+  block ^lor_rhs_16:
+    %t50 = load typed i32 $sum
+    %t51 = cmp ne i32 %t50, 17
+    %t52 = convert trunc i32 i64 %t51
+    %t53 = cmp ne i32 %t52, 0
+    store typed i64 %t53, $lor__3
+    jump ^lor_end_18
+
+  block ^lor_short_17:
+    store typed i64 1, $lor__3
+    jump ^lor_end_18
+
+  block ^lor_end_18:
+    %t54 = load typed i64 $lor__3
+    branch %t54, ^lor_short_20, ^lor_rhs_19
+
+  block ^lor_rhs_19:
+    %t55 = load typed ptr $element
+    %t56 = index inbounds i32 [projection=array_element] %t55, 1
+    %t57 = load typed i32 %t56
+    %t58 = load typed ptr $callback
+    %t59 = call i32 %t58(%t57) as (%arg0 : i32) -> i32
+    %t60 = cmp ne i32 %t59, 6
+    %t61 = convert trunc i32 i64 %t60
+    %t62 = cmp ne i32 %t61, 0
+    store typed i64 %t62, $lor__4
+    jump ^lor_end_21
+
+  block ^lor_short_20:
+    store typed i64 1, $lor__4
+    jump ^lor_end_21
+
+  block ^lor_end_21:
+    %t63 = load typed i64 $lor__4
+    %t64 = convert trunc i32 i64 %t63
+    return i32 %t64
+}

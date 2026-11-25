@@ -1,0 +1,1 @@
+ERROR: splice-warning.c:70:14: backslash and newline separated by space [-Wbackslash-newline-escape]

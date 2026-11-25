@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-block-function-bounds-bad.t:8:5: conflicting declarations of a C function with linkage

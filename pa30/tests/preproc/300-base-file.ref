@@ -1,0 +1,4 @@
+original_file "tests/preproc/300-base-file.t" "tests/preproc/300-base-file.t"
+inside_include "tests/preproc/300-base-file.t"
+inside_logical_include "tests/preproc/300-base-file.t" "presumed.h"
+changed_file "tests/preproc/300-base-file.t" "presumed.cpp"

@@ -230,6 +230,7 @@ sub count_linux_relocation_class
 	my ($obj, $class, $needle) = @_;
 	my %type_re = (
 		data_pcrel => qr/\bR_X86_64_PC32\b/,
+		data_absolute_signed32 => qr/\bR_X86_64_32S\b/,
 		branch_call => qr/\bR_X86_64_PLT32\b/,
 		imported_data_got => qr/\bR_X86_64_(?:REX_)?GOTPCREL(?:X)?\b/,
 		# Any reference to data: PC-relative, through the GOT, or absolute

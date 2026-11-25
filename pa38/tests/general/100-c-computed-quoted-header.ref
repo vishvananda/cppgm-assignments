@@ -1,0 +1,27 @@
+global @utils_value : i32 [storage=readonly, linkage=c, binding=internal] = 11
+global @escape_value : i32 [storage=readonly, linkage=c, binding=internal] = 19
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = cmp ne i32 11, 11
+    %t2 = convert trunc i32 i64 %t1
+    branch %t2, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t3 = cmp ne i32 19, 19
+    %t4 = convert trunc i32 i64 %t3
+    %t5 = cmp ne i32 %t4, 0
+    store typed i64 %t5, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t6 = load typed i64 $lor__1
+    %t7 = convert trunc i32 i64 %t6
+    return i32 %t7
+}

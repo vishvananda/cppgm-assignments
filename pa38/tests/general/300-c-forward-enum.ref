@@ -1,0 +1,70 @@
+global @selected : ptr [linkage=c, binding=internal] = zero
+global @current : i32 [linkage=c, binding=strong] = 7
+
+function @get() -> i32 [linkage=c, binding=strong] {
+  block ^entry:
+    %t1 = load typed i32 @current
+    return i32 %t1
+}
+function @read(%value : i32) -> i32 [linkage=c, binding=internal] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    return i32 %t1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $box : obj<16x8>
+  slot $expected : i32
+
+  block ^entry:
+    %t1 = addr $box
+    %t2 = addr @current
+    %t3 = addr $box
+    %t4 = index inbounds i8 [projection=field] %t3, 0
+    store typed ptr %t2, %t4
+    %t5 = addr @read
+    %t6 = addr $box
+    %t7 = index inbounds i8 [projection=field] %t6, 8
+    store typed ptr %t5, %t7
+    store typed i32 7, $expected
+    %t8 = addr @current
+    store typed ptr %t8, @selected
+    %t9 = call i32 @get()
+    %t10 = load typed i32 $expected
+    %t11 = cmp ne i32 %t9, %t10
+    %t12 = convert trunc i32 i64 %t11
+    branch %t12, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t13 = addr $box
+    %t14 = index inbounds i8 [projection=field] %t13, 0
+    %t15 = load typed ptr %t14
+    %t16 = load typed i32 %t15
+    %t17 = addr $box
+    %t18 = index inbounds i8 [projection=field] %t17, 8
+    %t19 = load typed ptr %t18
+    %t20 = call i32 %t19(%t16) as (%arg0 : i32) -> i32
+    %t21 = load typed i32 $expected
+    %t22 = cmp ne i32 %t20, %t21
+    %t23 = convert trunc i32 i64 %t22
+    branch %t23, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t24 = addr $box
+    %t25 = index inbounds i8 [projection=field] %t24, 0
+    %t26 = load typed ptr %t25
+    store typed i32 -1, %t26
+    %t27 = load typed ptr @selected
+    %t28 = load typed i32 %t27
+    %t29 = cmp ne i32 %t28, -1
+    %t30 = convert trunc i32 i64 %t29
+    return i32 %t30
+}

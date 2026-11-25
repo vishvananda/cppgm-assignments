@@ -1,0 +1,21 @@
+int classify(int n)
+{
+    switch (n) {
+    case -1000000000 ... 3:
+        return 1;
+    case 4:
+        return 2;
+    case 12 ... 42:
+        return 3;
+    default:
+        return 4;
+    }
+}
+
+int main(void)
+{
+    return classify(-1000000001) != 4 || classify(-1000000000) != 1 ||
+           classify(0) != 1 || classify(3) != 1 || classify(4) != 2 ||
+           classify(11) != 4 || classify(12) != 3 || classify(42) != 3 ||
+           classify(43) != 4;
+}

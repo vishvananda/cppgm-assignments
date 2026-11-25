@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-block-labels-goto-vla-bad.t:3:5: goto bypasses a variable's initialization

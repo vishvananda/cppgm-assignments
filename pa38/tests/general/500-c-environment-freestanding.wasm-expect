@@ -1,0 +1,1 @@
+{"source":true,"units":["500-c-environment-freestanding.t.1"],"target":"wasm32-unknown-unknown","flags":["-x","c","-std=c17","-ffreestanding","-pedantic-errors"],"calls":[{"export":"freestanding_probe","result":"0"}]}

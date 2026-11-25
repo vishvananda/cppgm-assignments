@@ -1,0 +1,232 @@
+preproc 1
+sof tests/macros/600-long-forwarded-argument-rescans.t
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+identifier a01
+simple + OP_PLUS
+identifier a02
+simple + OP_PLUS
+identifier a03
+simple + OP_PLUS
+identifier a04
+simple + OP_PLUS
+identifier a05
+simple + OP_PLUS
+identifier a06
+simple + OP_PLUS
+identifier a07
+simple + OP_PLUS
+identifier a08
+simple + OP_PLUS
+identifier a09
+simple + OP_PLUS
+identifier a10
+simple + OP_PLUS
+identifier a11
+simple + OP_PLUS
+identifier a12
+simple + OP_PLUS
+identifier a13
+simple + OP_PLUS
+identifier a14
+simple + OP_PLUS
+identifier a15
+simple + OP_PLUS
+identifier a16
+simple + OP_PLUS
+identifier a17
+simple + OP_PLUS
+identifier a18
+simple + OP_PLUS
+identifier a19
+simple + OP_PLUS
+identifier a20
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple , OP_COMMA
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+identifier a01
+simple + OP_PLUS
+identifier a02
+simple + OP_PLUS
+identifier a03
+simple + OP_PLUS
+identifier a04
+simple + OP_PLUS
+identifier a05
+simple + OP_PLUS
+identifier a06
+simple + OP_PLUS
+identifier a07
+simple + OP_PLUS
+identifier a08
+simple + OP_PLUS
+identifier a09
+simple + OP_PLUS
+identifier a10
+simple + OP_PLUS
+identifier a11
+simple + OP_PLUS
+identifier a12
+simple + OP_PLUS
+identifier a13
+simple + OP_PLUS
+identifier a14
+simple + OP_PLUS
+identifier a15
+simple + OP_PLUS
+identifier a16
+simple + OP_PLUS
+identifier a17
+simple + OP_PLUS
+identifier a18
+simple + OP_PLUS
+identifier a19
+simple + OP_PLUS
+identifier a20
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple ( OP_LPAREN
+simple [ OP_LSQUARE
+simple ( OP_LPAREN
+identifier a01
+simple + OP_PLUS
+identifier a02
+simple + OP_PLUS
+identifier a03
+simple + OP_PLUS
+identifier a04
+simple + OP_PLUS
+identifier a05
+simple + OP_PLUS
+identifier a06
+simple + OP_PLUS
+identifier a07
+simple + OP_PLUS
+identifier a08
+simple + OP_PLUS
+identifier a09
+simple + OP_PLUS
+identifier a10
+simple + OP_PLUS
+identifier a11
+simple + OP_PLUS
+identifier a12
+simple + OP_PLUS
+identifier a13
+simple + OP_PLUS
+identifier a14
+simple + OP_PLUS
+identifier a15
+simple + OP_PLUS
+identifier a16
+simple + OP_PLUS
+identifier a17
+simple + OP_PLUS
+identifier a18
+simple + OP_PLUS
+identifier a19
+simple + OP_PLUS
+identifier a20
+simple ) OP_RPAREN
+simple ] OP_RSQUARE
+simple ) OP_RPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+identifier a01
+simple + OP_PLUS
+identifier a02
+simple + OP_PLUS
+identifier a03
+simple + OP_PLUS
+identifier a04
+simple + OP_PLUS
+identifier a05
+simple + OP_PLUS
+identifier a06
+simple + OP_PLUS
+identifier a07
+simple + OP_PLUS
+identifier a08
+simple + OP_PLUS
+identifier a09
+simple + OP_PLUS
+identifier a10
+simple + OP_PLUS
+identifier a11
+simple + OP_PLUS
+identifier a12
+simple + OP_PLUS
+identifier a13
+simple + OP_PLUS
+identifier a14
+simple + OP_PLUS
+identifier a15
+simple + OP_PLUS
+identifier a16
+simple + OP_PLUS
+identifier a17
+simple + OP_PLUS
+identifier a18
+simple + OP_PLUS
+identifier a19
+simple + OP_PLUS
+identifier a20
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+simple [ OP_LSQUARE
+identifier after
+simple ] OP_RSQUARE
+simple ) OP_RPAREN
+literal "( ( ( a01 + a02 + a03 + a04 + a05 + a06 + a07 + a08 + a09 + a10 + a11 + a12 + a13 + a14 + a15 + a16 + a17 + a18 + a19 + a20 ) ) )" array of 130 char 282028202820613031202B20613032202B20613033202B20613034202B20613035202B20613036202B20613037202B20613038202B20613039202B20613130202B20613131202B20613132202B20613133202B20613134202B20613135202B20613136202B20613137202B20613138202B20613139202B2061323020292029202900
+identifier prefix_suffix
+simple ( OP_LPAREN
+simple ( OP_LPAREN
+identifier a01
+simple + OP_PLUS
+identifier a02
+simple + OP_PLUS
+identifier a03
+simple + OP_PLUS
+identifier a04
+simple + OP_PLUS
+identifier a05
+simple + OP_PLUS
+identifier a06
+simple + OP_PLUS
+identifier a07
+simple + OP_PLUS
+identifier a08
+simple + OP_PLUS
+identifier a09
+simple + OP_PLUS
+identifier a10
+simple + OP_PLUS
+identifier a11
+simple + OP_PLUS
+identifier a12
+simple + OP_PLUS
+identifier a13
+simple + OP_PLUS
+identifier a14
+simple + OP_PLUS
+identifier a15
+simple + OP_PLUS
+identifier a16
+simple + OP_PLUS
+identifier a17
+simple + OP_PLUS
+identifier a18
+simple + OP_PLUS
+identifier a19
+simple + OP_PLUS
+identifier a20
+simple ) OP_RPAREN
+simple ) OP_RPAREN
+eof

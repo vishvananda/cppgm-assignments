@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-array-pointer-incompatible-bounds-bad.t:3:28: invalid implicit conversion

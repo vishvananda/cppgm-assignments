@@ -34,6 +34,18 @@ extern "C" double sum_samples(const float* a, const double* b, int n) {
 }
 
 struct Fields { unsigned long tag : 8, length : 8, payload : 48; };
+struct SeparatedBits { unsigned char first : 3; unsigned : 0; unsigned char last : 5; };
+#if defined(__APPLE__)
+static_assert(sizeof(SeparatedBits) == 5 && alignof(SeparatedBits) == 1, "Darwin Arm64 bit-field container alignment");
+#else
+static_assert(sizeof(SeparatedBits) == 8 && alignof(SeparatedBits) == 4, "AAPCS64 bit-field container alignment");
+#endif
+union FloatWithBits { float value; unsigned : 1; };
+extern "C" FloatWithBits add_to_float_with_bits(FloatWithBits input) {
+    input.value += 2.5f;
+    return input;
+}
+
 struct Pair { unsigned long a, b; };
 struct alignas(16) EvenPair { unsigned long a, b; };
 struct TwoFloats { float a, b; };

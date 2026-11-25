@@ -1,0 +1,10 @@
+asm(".section .text.assembly_characters\n"
+    ".macro marker first, second, third\n"
+    ".byte \\first, \\second, \\third /* quotes, # and ; inside comments: \" */\n"
+    ".endm\n"
+    "marker ' ', ',', '#'\n"
+    "marker ':', ';', '\\n'\n"
+    ".if !1\n.error \"unreachable\"\n.else\n.byte !0, 1!2\n.endif\n"
+    "inb $0x80, %al; inw (%dx), %ax; inl %dx, %eax\n"
+    "outl %eax, (%dx); outw %ax, %dx\n"
+    ".ascii \"/* preserved string */\"\n");

@@ -1,0 +1,537 @@
+declare function @__cppgm_generic_atomic_load(%arg0 : i64, %arg1 : ptr, %arg2 : ptr, %arg3 : i32) -> void [unwind=no, linkage=c, binding=strong, object=__atomic_load]
+declare function @__cppgm_generic_atomic_compare_exchange(%arg0 : i64, %arg1 : ptr, %arg2 : ptr, %arg3 : ptr, %arg4 : i32, %arg5 : i32) -> i1 [unwind=no, linkage=c, binding=strong, object=__atomic_compare_exchange]
+declare function @__cppgm_generic_atomic_store(%arg0 : i64, %arg1 : ptr, %arg2 : ptr, %arg3 : i32) -> void [unwind=no, linkage=c, binding=strong, object=__atomic_store]
+
+global @number : f80 [linkage=c, binding=strong] = zero
+global @address_visits : u32 [linkage=c, binding=internal] = zero
+global @argument_visits : u32 [linkage=c, binding=internal] = zero
+
+function @select_number() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed u32 @address_visits
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, @address_visits
+    %t3 = addr @number
+    return ptr %t3
+}
+function @increment() -> f80 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed u32 @argument_visits
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, @argument_visits
+    return f80 2L
+}
+function @post() -> f80 [linkage=c, binding=strong] {
+  slot $atomic_expected__1 : f80
+  slot $atomic_arg__2 : f80
+
+  block ^entry:
+    %t1 = addr @number
+    %t2 = addr $atomic_expected__1
+    %t3 = addr $atomic_arg__2
+    call void @__cppgm_generic_atomic_load(16, %t1, %t2, 0)
+    jump ^atomic_retry_1
+
+  block ^atomic_retry_1:
+    %t4 = load typed f80 $atomic_expected__1
+    %t5 = binary add f80 %t4, 1L
+    copyobj 16x16 %t2, %t3
+    store f80 %t5, %t3
+    %t6 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t1, %t2, %t3, 5, 5)
+    branch %t6, ^atomic_done_2, ^atomic_retry_1
+
+  block ^atomic_done_2:
+    return f80 %t4
+}
+function @add_once() -> f80 [linkage=c, binding=strong] {
+  slot $result : f80
+  slot $atomic_expected__1 : f80
+  slot $atomic_arg__2 : f80
+  slot $cond__3 : f80
+  slot $land__4 : i64
+
+  block ^entry:
+    store typed u32 0, @argument_visits
+    store typed u32 0, @address_visits
+    %t1 = call f80 @increment()
+    %t2 = call ptr @select_number()
+    %t3 = addr $atomic_expected__1
+    %t4 = addr $atomic_arg__2
+    call void @__cppgm_generic_atomic_load(16, %t2, %t3, 0)
+    jump ^atomic_retry_1
+
+  block ^atomic_retry_1:
+    %t5 = load typed f80 $atomic_expected__1
+    %t6 = binary add f80 %t5, %t1
+    copyobj 16x16 %t3, %t4
+    store f80 %t6, %t4
+    %t7 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t2, %t3, %t4, 5, 5)
+    branch %t7, ^atomic_done_2, ^atomic_retry_1
+
+  block ^atomic_done_2:
+    store typed f80 %t6, $result
+    %t8 = load typed u32 @address_visits
+    %t9 = cmp eq u32 %t8, 1
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^land_rhs_6, ^land_short_7
+
+  block ^land_rhs_6:
+    %t11 = load typed u32 @argument_visits
+    %t12 = cmp eq u32 %t11, 1
+    %t13 = convert trunc i32 i64 %t12
+    %t14 = cmp ne i32 %t13, 0
+    store typed i64 %t14, $land__4
+    jump ^land_end_8
+
+  block ^land_short_7:
+    store typed i64 0, $land__4
+    jump ^land_end_8
+
+  block ^land_end_8:
+    %t15 = load typed i64 $land__4
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^cond_then_3, ^cond_else_4
+
+  block ^cond_then_3:
+    %t17 = load typed f80 $result
+    store typed f80 %t17, $cond__3
+    jump ^cond_end_5
+
+  block ^cond_else_4:
+    %t18 = unary neg f80 1L
+    store typed f80 %t18, $cond__3
+    jump ^cond_end_5
+
+  block ^cond_end_5:
+    %t19 = load typed f80 $cond__3
+    return f80 %t19
+}
+function @complex_update() -> i32 [linkage=c, binding=internal] {
+  slot $value : obj<32x16>
+  slot $complex__1 : obj<32x16>
+  slot $result : obj<32x16>
+  slot $complex__2 : obj<32x16>
+  slot $atomic_expected__3 : obj<32x16>
+  slot $atomic_arg__4 : obj<32x16>
+  slot $complex__5 : obj<32x16>
+  slot $complex__6 : obj<32x16>
+  slot $complex__7 : obj<32x16>
+  slot $land__8 : i64
+  slot $land__9 : i64
+  slot $atomic_result__10 : obj<32x16>
+  slot $complex__11 : obj<32x16>
+  slot $complex__12 : obj<32x16>
+
+  block ^entry:
+    %t1 = addr $complex__1
+    store typed f80 1L, %t1
+    %t2 = index i8 [projection=field] %t1, 16
+    store typed f80 2L, %t2
+    %t3 = load obj<32x16> $complex__1
+    store obj<32x16> %t3, $value
+    %t4 = addr $complex__2
+    store typed f80 2L, %t4
+    %t5 = index i8 [projection=field] %t4, 16
+    store typed f80 3L, %t5
+    %t6 = load obj<32x16> $complex__2
+    %t7 = addr $value
+    %t8 = addr $atomic_expected__3
+    %t9 = addr $atomic_arg__4
+    call void @__cppgm_generic_atomic_load(32, %t7, %t8, 0)
+    jump ^atomic_retry_1
+
+  block ^atomic_retry_1:
+    %t10 = load obj<32x16> $atomic_expected__3
+    store obj<32x16> %t10, $complex__5
+    %t11 = addr $complex__5
+    %t12 = load typed f80 %t11
+    %t13 = index i8 [projection=field] %t11, 16
+    %t14 = load typed f80 %t13
+    store obj<32x16> %t6, $complex__6
+    %t15 = addr $complex__6
+    %t16 = load typed f80 %t15
+    %t17 = index i8 [projection=field] %t15, 16
+    %t18 = load typed f80 %t17
+    %t19 = binary add f80 %t12, %t16
+    %t20 = binary add f80 %t14, %t18
+    %t21 = addr $complex__7
+    store typed f80 %t19, %t21
+    %t22 = index i8 [projection=field] %t21, 16
+    store typed f80 %t20, %t22
+    %t23 = load obj<32x16> $complex__7
+    store obj<32x16> %t23, %t9
+    %t24 = call i1 @__cppgm_generic_atomic_compare_exchange(32, %t7, %t8, %t9, 5, 5)
+    branch %t24, ^atomic_done_2, ^atomic_retry_1
+
+  block ^atomic_done_2:
+    store obj<32x16> %t23, $result
+    %t25 = addr $result
+    %t26 = load typed f80 %t25
+    %t27 = cmp eq f80 %t26, 3L
+    %t28 = convert trunc i32 i64 %t27
+    branch %t28, ^land_rhs_3, ^land_short_4
+
+  block ^land_rhs_3:
+    %t29 = addr $result
+    %t30 = index i8 [projection=field] %t29, 16
+    %t31 = load typed f80 %t30
+    %t32 = cmp eq f80 %t31, 5L
+    %t33 = convert trunc i32 i64 %t32
+    %t34 = cmp ne i32 %t33, 0
+    store typed i64 %t34, $land__8
+    jump ^land_end_5
+
+  block ^land_short_4:
+    store typed i64 0, $land__8
+    jump ^land_end_5
+
+  block ^land_end_5:
+    %t35 = load typed i64 $land__8
+    branch %t35, ^land_rhs_6, ^land_short_7
+
+  block ^land_rhs_6:
+    %t36 = addr $atomic_result__10
+    %t37 = addr $value
+    call void @__cppgm_generic_atomic_load(32, %t37, %t36, 5)
+    %t38 = load obj<32x16> %t36
+    %t39 = load obj<32x16> $result
+    store obj<32x16> %t38, $complex__11
+    %t40 = addr $complex__11
+    %t41 = load typed f80 %t40
+    %t42 = index i8 [projection=field] %t40, 16
+    %t43 = load typed f80 %t42
+    store obj<32x16> %t39, $complex__12
+    %t44 = addr $complex__12
+    %t45 = load typed f80 %t44
+    %t46 = index i8 [projection=field] %t44, 16
+    %t47 = load typed f80 %t46
+    %t48 = cmp eq f80 %t41, %t45
+    %t49 = cmp eq f80 %t43, %t47
+    %t50 = binary and i64 %t48, %t49
+    %t51 = convert trunc i32 i64 %t50
+    %t52 = cmp ne i32 %t51, 0
+    store typed i64 %t52, $land__9
+    jump ^land_end_8
+
+  block ^land_short_7:
+    store typed i64 0, $land__9
+    jump ^land_end_8
+
+  block ^land_end_8:
+    %t53 = load typed i64 $land__9
+    %t54 = convert trunc i32 i64 %t53
+    return i32 %t54
+}
+function @integer_update() -> i32 [linkage=c, binding=internal] {
+  slot $base : i128
+  slot $local : i128
+  slot $holder : obj<16x16>
+  slot $atomic_expected__1 : i128
+  slot $atomic_arg__2 : i128
+  slot $atomic_expected__3 : i128
+  slot $atomic_arg__4 : i128
+  slot $atomic_expected__5 : i128
+  slot $atomic_arg__6 : i128
+  slot $atomic_result__7 : i128
+  slot $value : i128
+  slot $atomic_arg__8 : i128
+  slot $atomic_expected__9 : i128
+  slot $atomic_arg__10 : i128
+  slot $atomic_expected__11 : i128
+  slot $atomic_arg__12 : i128
+  slot $expected : i128
+  slot $land__13 : i64
+  slot $atomic_arg__14 : i128
+  slot $atomic_result__15 : i128
+  slot $land__16 : i64
+  slot $atomic_result__17 : i128
+
+  block ^entry:
+    %t1 = convert sext i128 i32 80
+    %t2 = binary shl i128 1, %t1
+    store typed i128 %t2, $base
+    %t3 = load typed i128 $base
+    store typed i128 %t3, $local
+    %t4 = addr $holder
+    %t5 = load typed i128 $base
+    %t6 = addr $holder
+    %t7 = index inbounds i8 [projection=field] %t6, 0
+    store typed i128 %t5, %t7
+    %t8 = addr $local
+    %t9 = addr $atomic_expected__1
+    %t10 = addr $atomic_arg__2
+    call void @__cppgm_generic_atomic_load(16, %t8, %t9, 0)
+    jump ^atomic_retry_6
+
+  block ^atomic_retry_6:
+    %t11 = load typed i128 $atomic_expected__1
+    %t12 = binary add i128 %t11, 1
+    store i128 %t12, %t10
+    %t13 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t8, %t9, %t10, 5, 5)
+    branch %t13, ^atomic_done_7, ^atomic_retry_6
+
+  block ^atomic_done_7:
+    %t14 = load typed i128 $base
+    %t15 = cmp ne i128 %t11, %t14
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^if_then_1, ^lor_rhs_5
+
+  block ^lor_rhs_5:
+    %t17 = addr $holder
+    %t18 = index inbounds i8 [projection=field] %t17, 0
+    %t19 = addr $atomic_expected__3
+    %t20 = addr $atomic_arg__4
+    call void @__cppgm_generic_atomic_load(16, %t18, %t19, 0)
+    jump ^atomic_retry_8
+
+  block ^atomic_retry_8:
+    %t21 = load typed i128 $atomic_expected__3
+    %t22 = binary add i128 %t21, 1
+    store i128 %t22, %t20
+    %t23 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t18, %t19, %t20, 5, 5)
+    branch %t23, ^atomic_done_9, ^atomic_retry_8
+
+  block ^atomic_done_9:
+    %t24 = load typed i128 $base
+    %t25 = binary add i128 %t24, 1
+    %t26 = cmp ne i128 %t22, %t25
+    %t27 = convert trunc i32 i64 %t26
+    branch %t27, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t28 = load typed i128 $base
+    %t29 = addr $local
+    %t30 = addr $atomic_expected__5
+    %t31 = addr $atomic_arg__6
+    call void @__cppgm_generic_atomic_load(16, %t29, %t30, 0)
+    jump ^atomic_retry_10
+
+  block ^atomic_retry_10:
+    %t32 = load typed i128 $atomic_expected__5
+    %t33 = binary add i128 %t32, %t28
+    store i128 %t33, %t31
+    %t34 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t29, %t30, %t31, 5, 5)
+    branch %t34, ^atomic_done_11, ^atomic_retry_10
+
+  block ^atomic_done_11:
+    %t35 = load typed i128 $base
+    %t36 = convert sext i128 i32 2
+    %t37 = binary mul i128 %t36, %t35
+    %t38 = binary add i128 %t37, 1
+    %t39 = cmp ne i128 %t33, %t38
+    %t40 = convert trunc i32 i64 %t39
+    branch %t40, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t41 = addr $atomic_result__7
+    %t42 = addr $local
+    call void @__cppgm_generic_atomic_load(16, %t42, %t41, 5)
+    %t43 = load i128 %t41
+    %t44 = load typed i128 $base
+    %t45 = convert sext i128 i32 2
+    %t46 = binary mul i128 %t45, %t44
+    %t47 = binary add i128 %t46, 1
+    %t48 = cmp ne i128 %t43, %t47
+    %t49 = convert trunc i32 i64 %t48
+    branch %t49, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 0
+
+  block ^if_else_2:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    %t50 = addr $value
+    %t51 = addr $atomic_arg__8
+    %t52 = load typed i128 $base
+    store typed i128 %t52, %t51
+    call void @__cppgm_generic_atomic_store(16, %t50, %t51, 5)
+    %t53 = addr $local
+    %t54 = addr $atomic_expected__9
+    %t55 = addr $atomic_arg__10
+    call void @__cppgm_generic_atomic_load(16, %t53, %t54, 0)
+    jump ^atomic_retry_16
+
+  block ^atomic_retry_16:
+    %t56 = load typed i128 $atomic_expected__9
+    %t57 = binary add i128 %t56, 1
+    store i128 %t57, %t55
+    %t58 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t53, %t54, %t55, 5, 5)
+    branch %t58, ^atomic_done_17, ^atomic_retry_16
+
+  block ^atomic_done_17:
+    %t59 = load typed i128 $base
+    %t60 = convert sext i128 i32 2
+    %t61 = binary mul i128 %t60, %t59
+    %t62 = binary add i128 %t61, 1
+    %t63 = cmp ne i128 %t56, %t62
+    %t64 = convert trunc i32 i64 %t63
+    branch %t64, ^if_then_13, ^lor_rhs_15
+
+  block ^lor_rhs_15:
+    %t65 = addr $value
+    %t66 = addr $atomic_expected__11
+    %t67 = addr $atomic_arg__12
+    call void @__cppgm_generic_atomic_load(16, %t65, %t66, 0)
+    jump ^atomic_retry_18
+
+  block ^atomic_retry_18:
+    %t68 = load typed i128 $atomic_expected__11
+    %t69 = binary add i128 %t68, 7
+    store i128 %t69, %t67
+    %t70 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t65, %t66, %t67, 5, 5)
+    branch %t70, ^atomic_done_19, ^atomic_retry_18
+
+  block ^atomic_done_19:
+    %t71 = load typed i128 $base
+    %t72 = cmp ne i128 %t68, %t71
+    %t73 = convert trunc i32 i64 %t72
+    branch %t73, ^if_then_13, ^if_else_14
+
+  block ^if_then_13:
+    return i32 0
+
+  block ^if_else_14:
+    jump ^if_end_20
+
+  block ^if_end_20:
+    %t74 = load typed i128 $base
+    %t75 = binary add i128 %t74, 7
+    store typed i128 %t75, $expected
+    %t76 = addr $value
+    %t77 = addr $expected
+    %t78 = addr $atomic_arg__14
+    %t79 = load typed i128 $base
+    store typed i128 %t79, %t78
+    %t80 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t76, %t77, %t78, 5, 2)
+    branch %t80, ^land_rhs_21, ^land_short_22
+
+  block ^land_rhs_21:
+    %t81 = addr $value
+    %t82 = addr $atomic_result__15
+    call void @__cppgm_generic_atomic_load(16, %t81, %t82, 5)
+    %t83 = load typed i128 %t82
+    %t84 = load typed i128 $base
+    %t85 = cmp eq i128 %t83, %t84
+    %t86 = convert trunc i32 i64 %t85
+    %t87 = cmp ne i32 %t86, 0
+    store typed i64 %t87, $land__13
+    jump ^land_end_23
+
+  block ^land_short_22:
+    store typed i64 0, $land__13
+    jump ^land_end_23
+
+  block ^land_end_23:
+    %t88 = load typed i64 $land__13
+    branch %t88, ^land_rhs_24, ^land_short_25
+
+  block ^land_rhs_24:
+    %t89 = addr $atomic_result__17
+    %t90 = addr $local
+    call void @__cppgm_generic_atomic_load(16, %t90, %t89, 5)
+    %t91 = load i128 %t89
+    %t92 = load typed i128 $base
+    %t93 = convert sext i128 i32 2
+    %t94 = binary mul i128 %t93, %t92
+    %t95 = binary add i128 %t94, 2
+    %t96 = cmp eq i128 %t91, %t95
+    %t97 = convert trunc i32 i64 %t96
+    %t98 = cmp ne i32 %t97, 0
+    store typed i64 %t98, $land__16
+    jump ^land_end_26
+
+  block ^land_short_25:
+    store typed i64 0, $land__16
+    jump ^land_end_26
+
+  block ^land_end_26:
+    %t99 = load typed i64 $land__16
+    %t100 = convert trunc i32 i64 %t99
+    return i32 %t100
+}
+function @run_updates() -> i32 [linkage=c, binding=strong] {
+  slot $atomic_arg__1 : f80
+  slot $atomic_expected__2 : f80
+  slot $atomic_arg__3 : f80
+  slot $atomic_result__4 : f80
+
+  block ^entry:
+    %t1 = addr $atomic_arg__1
+    store f80 3L, %t1
+    %t2 = addr @number
+    call void @__cppgm_generic_atomic_store(16, %t2, %t1, 5)
+    %t3 = call f80 @post()
+    %t4 = cmp ne f80 %t3, 3L
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^if_then_1, ^lor_rhs_5
+
+  block ^lor_rhs_5:
+    %t6 = addr @number
+    %t7 = addr $atomic_expected__2
+    %t8 = addr $atomic_arg__3
+    call void @__cppgm_generic_atomic_load(16, %t6, %t7, 0)
+    jump ^atomic_retry_6
+
+  block ^atomic_retry_6:
+    %t9 = load typed f80 $atomic_expected__2
+    %t10 = binary sub f80 %t9, 1L
+    copyobj 16x16 %t7, %t8
+    store f80 %t10, %t8
+    %t11 = call i1 @__cppgm_generic_atomic_compare_exchange(16, %t6, %t7, %t8, 5, 5)
+    branch %t11, ^atomic_done_7, ^atomic_retry_6
+
+  block ^atomic_done_7:
+    %t12 = cmp ne f80 %t10, 3L
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t14 = call f80 @add_once()
+    %t15 = cmp ne f80 %t14, 5L
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t17 = addr $atomic_result__4
+    %t18 = addr @number
+    call void @__cppgm_generic_atomic_load(16, %t18, %t17, 5)
+    %t19 = load f80 %t17
+    %t20 = cmp ne f80 %t19, 5L
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t22 = call i32 @complex_update()
+    %t23 = cmp eq i32 %t22, 0
+    %t24 = convert trunc i32 i64 %t23
+    branch %t24, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 2
+
+  block ^if_else_10:
+    jump ^if_end_11
+
+  block ^if_end_11:
+    %t25 = call i32 @integer_update()
+    %t26 = cmp eq i32 %t25, 0
+    %t27 = convert trunc i32 i64 %t26
+    branch %t27, ^if_then_12, ^if_else_13
+
+  block ^if_then_12:
+    return i32 3
+
+  block ^if_else_13:
+    jump ^if_end_14
+
+  block ^if_end_14:
+    return i32 0
+}

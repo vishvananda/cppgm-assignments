@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c99-macro-redefinition-param-bad.t:2:2: macro redefined differently

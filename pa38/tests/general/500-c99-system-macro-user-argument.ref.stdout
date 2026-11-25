@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c99-system-macro-user-argument.t:5:30: _Generic is a C11 extension

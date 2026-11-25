@@ -1,0 +1,4 @@
+# explicit-outcomes
+
+# The native and Wasm controls check surviving values and once-only evaluation.
+has(return) in @main

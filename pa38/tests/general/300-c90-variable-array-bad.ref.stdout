@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-variable-array-bad.t:3:17: variable-length arrays require C99

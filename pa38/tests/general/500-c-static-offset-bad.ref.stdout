@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-static-offset-bad.t:2:16: a C static initializer requires a constant expression

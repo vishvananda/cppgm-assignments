@@ -1,0 +1,120 @@
+function @select_value(%choice : i32) -> i32 [linkage=c, binding=internal] {
+  slot $choice : i32
+  slot $result : i32
+  slot $next : i32
+  slot $adjustment : i32
+
+  block ^entry:
+    store typed i32 %choice, $choice
+    store typed i32 7, $result
+    %t1 = load typed i32 $choice
+    jump ^switch_dispatch_1
+
+  block ^switch_dispatch_1:
+    switch %t1, ^switch_end_2, 0:^switch_case_3, 1:^switch_case_4, 2:^switch_case_5, 3:^switch_case_6
+
+  block ^switch_case_3:
+    jump ^switch_case_4
+
+  block ^switch_case_4:
+    %t2 = load typed i32 $choice
+    %t3 = binary add nowrap i32 %t2, 2
+    store typed i32 %t3, $next
+    %t4 = load typed i32 $next
+    store typed i32 %t4, $result
+    jump ^switch_end_2
+
+  block ^switch_case_5:
+    jump ^goto_7
+
+  block ^goto_7:
+    store typed i32 5, $result
+    jump ^switch_end_2
+
+  block ^switch_case_6:
+    jump ^goto_8
+
+  block ^goto_8:
+    jump ^switch_end_2
+
+  block ^switch_end_2:
+    %t5 = load typed i32 $choice
+    jump ^switch_dispatch_9
+
+  block ^switch_dispatch_9:
+    switch %t5, ^switch_default_11, 3:^switch_case_12
+
+  block ^switch_default_11:
+    store typed i32 1, $adjustment
+    %t6 = load typed i32 $adjustment
+    %t7 = load typed i32 $result
+    %t8 = binary add nowrap i32 %t7, %t6
+    store typed i32 %t8, $result
+    jump ^switch_end_10
+
+  block ^switch_case_12:
+    jump ^goto_13
+
+  block ^switch_end_10:
+    %t9 = load typed i32 $choice
+    %t10 = cmp eq i32 %t9, 2
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^if_then_14, ^if_else_15
+
+  block ^if_then_14:
+    jump ^goto_13
+
+  block ^if_else_15:
+    jump ^if_end_16
+
+  block ^if_end_16:
+    %t12 = load typed i32 $result
+    return i32 %t12
+
+  block ^goto_13:
+    %t13 = load typed i32 $result
+    return i32 %t13
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @select_value(0)
+    %t2 = cmp ne i32 %t1, 3
+    %t3 = convert trunc i32 i64 %t2
+    branch %t3, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t4 = call i32 @select_value(1)
+    %t5 = cmp ne i32 %t4, 4
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t7 = call i32 @select_value(2)
+    %t8 = cmp ne i32 %t7, 6
+    %t9 = convert trunc i32 i64 %t8
+    branch %t9, ^if_then_5, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t10 = call i32 @select_value(3)
+    %t11 = cmp ne i32 %t10, 7
+    %t12 = convert trunc i32 i64 %t11
+    branch %t12, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 2
+
+  block ^if_else_6:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    jump ^goto_9
+
+  block ^goto_9:
+    return i32 0
+}

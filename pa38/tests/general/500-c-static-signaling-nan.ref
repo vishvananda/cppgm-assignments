@@ -1,0 +1,85 @@
+declare function @__builtin_memcpy(%arg0 : ptr [alias=noalias], %arg1 : ptr [alias=noalias], %arg2 : i64) -> ptr [unwind=no, binding=strong, object=cppgm_builtin_memcpy]
+
+global @f : f32 [linkage=c, binding=internal] = -snanf(0x123)
+global @d : f64 [linkage=c, binding=internal] = snan(0x456)
+global @ld : f80 [linkage=c, binding=internal] = -snanL(0x789)
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $f_value : f32
+  slot $d_value : f64
+  slot $f_bits : u32
+  slot $d_bits : i64
+  slot $floating_signbit__1 : f80
+  slot $floating_signbit__2 : f80
+
+  block ^entry:
+    %t1 = load volatile f32 @f
+    store typed f32 %t1, $f_value
+    %t2 = load volatile f64 @d
+    store typed f64 %t2, $d_value
+    store typed u32 0, $f_bits
+    %t3 = convert sext i64 i32 0
+    store typed i64 %t3, $d_bits
+    %t4 = addr $f_bits
+    %t5 = addr $f_value
+    %t6 = const i64 4
+    %t7 = call ptr @__builtin_memcpy(%t4, %t5, %t6)
+    %t8 = addr $d_bits
+    %t9 = addr $d_value
+    %t10 = const i64 8
+    %t11 = call ptr @__builtin_memcpy(%t8, %t9, %t10)
+    %t12 = load typed u32 $f_bits
+    %t13 = cmp ne u32 %t12, 4286578979
+    %t14 = convert trunc i32 i64 %t13
+    branch %t14, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t15 = load typed i64 $d_bits
+    %t16 = cmp ne i64 %t15, 9218868437227406422
+    %t17 = convert trunc i32 i64 %t16
+    branch %t17, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t18 = load volatile f80 @ld
+    store typed f80 %t18, $floating_signbit__1
+    %t19 = addr $floating_signbit__1
+    %t20 = load typed i64 %t19
+    %t21 = binary ushr i64 %t20, 62
+    %t22 = binary and i64 %t21, 1
+    %t23 = convert trunc i32 i64 %t22
+    %t24 = binary xor i32 %t23, 1
+    %t25 = cmp ne f80 %t18, %t18
+    %t26 = convert trunc i32 i64 %t25
+    %t27 = binary and i32 %t26, %t24
+    %t28 = cmp eq i32 %t27, 0
+    %t29 = convert trunc i32 i64 %t28
+    branch %t29, ^if_then_5, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t30 = load volatile f80 @ld
+    store typed f80 %t30, $floating_signbit__2
+    %t31 = addr $floating_signbit__2
+    %t32 = binary mul i64 4, 2
+    %t33 = index i8 [projection=array_element] %t31, %t32
+    %t34 = load typed i16 %t33
+    %t35 = cmp lt i16 %t34, 0
+    %t36 = convert trunc i32 i64 %t35
+    %t37 = cmp eq i32 %t36, 0
+    %t38 = convert trunc i32 i64 %t37
+    branch %t38, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 2
+
+  block ^if_else_6:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    return i32 0
+}

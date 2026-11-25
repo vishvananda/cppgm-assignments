@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-constexpr-projected-union-inactive-bad.t:15:28: a union initializer that preserves bytes of a different member

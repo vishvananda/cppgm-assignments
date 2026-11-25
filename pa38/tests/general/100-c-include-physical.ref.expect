@@ -1,0 +1,4 @@
+# explicit-outcomes
+
+# The native and Wasm controls check the headers selected by their paths.
+has(return) in @main

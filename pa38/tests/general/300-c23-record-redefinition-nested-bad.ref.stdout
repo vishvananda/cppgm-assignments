@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-record-redefinition-nested-bad.t:2:24: nested record redefinition

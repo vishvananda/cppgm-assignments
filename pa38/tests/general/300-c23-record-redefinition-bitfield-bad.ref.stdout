@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-record-redefinition-bitfield-bad.t:2:8: incompatible record redefinition

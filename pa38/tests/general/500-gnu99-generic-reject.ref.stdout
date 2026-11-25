@@ -1,0 +1,1 @@
+ERROR: tests/general/500-gnu99-generic-reject.t:1:25: _Generic is a C11 extension

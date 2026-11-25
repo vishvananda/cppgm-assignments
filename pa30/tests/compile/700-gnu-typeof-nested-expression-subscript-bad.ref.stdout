@@ -1,0 +1,1 @@
+ERROR: tests/compile/700-gnu-typeof-nested-expression-subscript-bad.t:2:30: invalid subscript operands

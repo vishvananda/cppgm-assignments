@@ -1,0 +1,276 @@
+function @boundary(%a : i64, %b : i64, %c : i64, %d : i64, %e : i64, %f : i64, %g : i64, %n : i128, %tail : i64) -> i128 [linkage=c, binding=internal] {
+  slot $a : i64
+  slot $b : i64
+  slot $c : i64
+  slot $d : i64
+  slot $e : i64
+  slot $f : i64
+  slot $g : i64
+  slot $n : i128
+  slot $tail : i64
+
+  block ^entry:
+    store typed i64 %a, $a
+    store typed i64 %b, $b
+    store typed i64 %c, $c
+    store typed i64 %d, $d
+    store typed i64 %e, $e
+    store typed i64 %f, $f
+    store typed i64 %g, $g
+    store typed i128 %n, $n
+    store typed i64 %tail, $tail
+    %t1 = load typed i128 $n
+    %t2 = binary shl i128 %t1, 63
+    %t3 = binary shr i128 %t2, 63
+    %t4 = load typed i64 $a
+    %t5 = convert sext i128 i64 %t4
+    %t6 = binary shl i128 %t5, 63
+    %t7 = binary shr i128 %t6, 63
+    %t8 = binary add i128 %t3, %t7
+    %t9 = binary shl i128 %t8, 63
+    %t10 = binary shr i128 %t9, 63
+    %t11 = load typed i64 $g
+    %t12 = convert sext i128 i64 %t11
+    %t13 = binary shl i128 %t12, 63
+    %t14 = binary shr i128 %t13, 63
+    %t15 = binary add i128 %t10, %t14
+    %t16 = binary shl i128 %t15, 63
+    %t17 = binary shr i128 %t16, 63
+    %t18 = load typed i64 $tail
+    %t19 = convert sext i128 i64 %t18
+    %t20 = binary shl i128 %t19, 63
+    %t21 = binary shr i128 %t20, 63
+    %t22 = binary add i128 %t17, %t21
+    %t23 = binary shl i128 %t22, 63
+    %t24 = binary shr i128 %t23, 63
+    return i128 %t24
+}
+function @variadic(%tag : i32) -> i32 [arity=variadic, linkage=c, binding=internal] {
+  slot $tag : i32
+  slot $ap : obj<24x8>
+  slot $first : i16
+  slot $second : i128
+  slot $third : i128
+  slot $cond__1 : i32
+  slot $land__2 : i64
+  slot $land__3 : i64
+
+  block ^entry:
+    store typed i32 %tag, $tag
+    %t1 = addr $ap
+    va_start %t1
+    %t2 = addr $ap
+    %t3 = va_arg i16 %t2
+    %t4 = binary shl i16 %t3, 7
+    %t5 = binary shr i16 %t4, 7
+    store typed i16 %t5, $first
+    %t6 = addr $ap
+    %t7 = va_arg i128 %t6
+    %t8 = binary shl i128 %t7, 63
+    %t9 = binary shr i128 %t8, 63
+    store typed i128 %t9, $second
+    %t10 = addr $ap
+    %t11 = va_arg i128 %t10
+    %t12 = binary and i128 %t11, 36893488147419103231
+    store typed i128 %t12, $third
+    %t13 = addr $ap
+    %t14 = load typed i16 $first
+    %t15 = binary shl i16 %t14, 7
+    %t16 = binary shr i16 %t15, 7
+    %t17 = unary neg i32 106
+    %t18 = convert sext i32 i16 %t16
+    %t19 = cmp eq i32 %t18, %t17
+    %t20 = convert trunc i32 i64 %t19
+    branch %t20, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t21 = load typed i128 $second
+    %t22 = binary shl i128 %t21, 63
+    %t23 = binary shr i128 %t22, 63
+    %t24 = unary neg i32 34
+    %t25 = convert sext i128 i32 %t24
+    %t26 = binary shl i128 %t25, 63
+    %t27 = binary shr i128 %t26, 63
+    %t28 = cmp eq i128 %t23, %t27
+    %t29 = convert trunc i32 i64 %t28
+    %t30 = cmp ne i32 %t29, 0
+    store typed i64 %t30, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t31 = load typed i64 $land__2
+    branch %t31, ^land_rhs_7, ^land_short_8
+
+  block ^land_rhs_7:
+    %t32 = load typed i128 $third
+    %t33 = binary and i128 %t32, 36893488147419103231
+    %t34 = convert sext i128 i32 64
+    %t35 = binary ushr i128 %t33, %t34
+    %t36 = binary and i128 %t35, 36893488147419103231
+    %t37 = convert sext i128 i32 1
+    %t38 = binary and i128 %t37, 36893488147419103231
+    %t39 = cmp eq i128 %t36, %t38
+    %t40 = convert trunc i32 i64 %t39
+    %t41 = cmp ne i32 %t40, 0
+    store typed i64 %t41, $land__3
+    jump ^land_end_9
+
+  block ^land_short_8:
+    store typed i64 0, $land__3
+    jump ^land_end_9
+
+  block ^land_end_9:
+    %t42 = load typed i64 $land__3
+    %t43 = convert trunc i32 i64 %t42
+    branch %t43, ^cond_then_1, ^cond_else_2
+
+  block ^cond_then_1:
+    %t44 = load typed i32 $tag
+    store typed i32 %t44, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_else_2:
+    store typed i32 0, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_end_3:
+    %t45 = load typed i32 $cond__1
+    return i32 %t45
+}
+function @select(%value : i128) -> i32 [linkage=c, binding=internal] {
+  slot $value : i128
+
+  block ^entry:
+    store typed i128 %value, $value
+    %t1 = load typed i128 $value
+    %t2 = binary and i128 %t1, 36893488147419103231
+    jump ^switch_dispatch_1
+
+  block ^switch_dispatch_1:
+    %t3 = cmp eq i128 %t2, 3
+    branch %t3, ^switch_case_3, ^switch_dispatch_7
+
+  block ^switch_dispatch_7:
+    %t4 = cmp eq i128 %t2, 18446744073709551619
+    branch %t4, ^switch_case_4, ^switch_dispatch_8
+
+  block ^switch_dispatch_8:
+    %t5 = cmp eq i128 %t2, 36893488147419103231
+    branch %t5, ^switch_case_5, ^switch_dispatch_9
+
+  block ^switch_dispatch_9:
+    jump ^switch_default_6
+
+  block ^switch_case_3:
+    return i32 1
+
+  block ^switch_case_4:
+    return i32 2
+
+  block ^switch_case_5:
+    return i32 3
+
+  block ^switch_default_6:
+    return i32 0
+
+  block ^switch_end_2:
+    return i32 0
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $n : i128
+  slot $high : i128
+
+  block ^entry:
+    %t1 = unary neg i32 34
+    %t2 = convert sext i128 i32 %t1
+    %t3 = binary shl i128 %t2, 63
+    %t4 = binary shr i128 %t3, 63
+    store volatile i128 %t4, $n
+    store volatile i128 18446744073709551619, $high
+    %t5 = load volatile i128 $n
+    %t6 = binary shl i128 %t5, 63
+    %t7 = binary shr i128 %t6, 63
+    %t8 = call i128 @boundary(1, 2, 3, 4, 5, 6, 7, %t7, 20)
+    %t9 = binary shl i128 %t8, 63
+    %t10 = binary shr i128 %t9, 63
+    %t11 = unary neg i32 6
+    %t12 = convert sext i128 i32 %t11
+    %t13 = binary shl i128 %t12, 63
+    %t14 = binary shr i128 %t13, 63
+    %t15 = cmp ne i128 %t10, %t14
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    %t17 = unary neg i32 106
+    %t18 = convert trunc i16 i32 %t17
+    %t19 = binary shl i16 %t18, 7
+    %t20 = binary shr i16 %t19, 7
+    %t21 = load volatile i128 $n
+    %t22 = binary shl i128 %t21, 63
+    %t23 = binary shr i128 %t22, 63
+    %t24 = load volatile i128 $high
+    %t25 = binary and i128 %t24, 36893488147419103231
+    %t26 = call i32 @variadic(9, %t20, %t23, %t25)
+    %t27 = cmp ne i32 %t26, 9
+    %t28 = convert trunc i32 i64 %t27
+    branch %t28, ^if_then_4, ^if_else_5
+
+  block ^if_then_4:
+    return i32 2
+
+  block ^if_else_5:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t29 = convert sext i128 i32 3
+    %t30 = binary and i128 %t29, 36893488147419103231
+    %t31 = call i32 @select(%t30)
+    %t32 = cmp ne i32 %t31, 1
+    %t33 = convert trunc i32 i64 %t32
+    branch %t33, ^if_then_7, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t34 = load volatile i128 $high
+    %t35 = binary and i128 %t34, 36893488147419103231
+    %t36 = call i32 @select(%t35)
+    %t37 = cmp ne i32 %t36, 2
+    %t38 = convert trunc i32 i64 %t37
+    branch %t38, ^if_then_7, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t39 = unary neg i32 1
+    %t40 = convert sext i128 i32 %t39
+    %t41 = binary and i128 %t40, 36893488147419103231
+    %t42 = call i32 @select(%t41)
+    %t43 = cmp ne i32 %t42, 3
+    %t44 = convert trunc i32 i64 %t43
+    branch %t44, ^if_then_7, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t45 = convert sext i128 i32 4
+    %t46 = binary and i128 %t45, 36893488147419103231
+    %t47 = call i32 @select(%t46)
+    %t48 = cmp ne i32 %t47, 0
+    %t49 = convert trunc i32 i64 %t48
+    branch %t49, ^if_then_7, ^if_else_8
+
+  block ^if_then_7:
+    return i32 3
+
+  block ^if_else_8:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    return i32 0
+}

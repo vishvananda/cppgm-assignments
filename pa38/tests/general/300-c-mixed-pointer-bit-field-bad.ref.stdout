@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-mixed-pointer-bit-field-bad.t:2:5: bit-field of non-integral type

@@ -1,0 +1,5 @@
+relocation_class_canonical 1 data_absolute_signed32 .data.rel.ro.dispatch_targets 1
+relocation_class_canonical 1 data_any external_counter 1
+absent_relocation_class_canonical 1 imported_data_got external_counter
+relocation_class_canonical 1 data_any external_observer 1
+absent_relocation_class_canonical 1 imported_data_got external_observer

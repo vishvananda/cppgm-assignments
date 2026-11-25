@@ -1,0 +1,69 @@
+function @after_do() -> i32 [linkage=c, binding=internal] {
+  slot $value : i32
+
+  block ^entry:
+    jump ^do_body_1
+
+  block ^do_body_1:
+    jump ^do_cond_2
+
+  block ^do_cond_2:
+    %t1 = const i64 4
+    %t2 = convert sext i64 i32 0
+    %t3 = cmp eq i64 %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^do_body_1, ^do_end_3
+
+  block ^do_end_3:
+    store typed i32 17, $value
+    %t5 = load typed i32 $value
+    return i32 %t5
+}
+function @other_branch(%condition : i32) -> i32 [linkage=c, binding=internal] {
+  slot $condition : i32
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %condition, $condition
+    %t1 = load typed i32 $condition
+    branch %t1, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    jump ^if_end_3
+
+  block ^if_else_2:
+    store typed i32 25, $value
+    %t2 = load typed i32 $value
+    return i32 %t2
+
+  block ^if_end_3:
+    return i32 0
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = call i32 @after_do()
+    %t2 = call i32 @other_branch(0)
+    %t3 = binary add nowrap i32 %t1, %t2
+    %t4 = cmp ne i32 %t3, 42
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t6 = call i32 @other_branch(1)
+    %t7 = cmp ne i32 %t6, 0
+    %t8 = convert trunc i32 i64 %t7
+    %t9 = cmp ne i32 %t8, 0
+    store typed i64 %t9, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t10 = load typed i64 $lor__1
+    %t11 = convert trunc i32 i64 %t10
+    return i32 %t11
+}

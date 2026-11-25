@@ -1,0 +1,1 @@
+ERROR: tests/general/300-bool-bitfield-width-bad.t:3:18: bit-field width exceeds the width of its type

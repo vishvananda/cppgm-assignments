@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c23-attribute-probe-context-bad.t:1:13: __has_c_attribute is only allowed in a preprocessing condition

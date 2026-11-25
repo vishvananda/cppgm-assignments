@@ -1,0 +1,1 @@
+ERROR: tests/general/300-array-star-generic-association-bad.t:1:41: a variably modified type name is unsupported in this context

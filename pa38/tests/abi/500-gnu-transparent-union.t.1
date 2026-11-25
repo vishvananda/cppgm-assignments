@@ -1,0 +1,21 @@
+#include "500-gnu-transparent-union.h"
+
+static unsigned long read_argument(Argument value, int member)
+{
+    return member == 1 ? value.record->value : value.bits;
+}
+
+int main(void)
+{
+    int number = 11;
+    const struct Record record = {23};
+    Argument value = {.record = &record};
+    unsigned long (*volatile indirect)(Argument, int) = host_read;
+    if (host_read(&number, 0) != 11 || host_read(&record, 1) != 23 || host_read(0, 0) != 17)
+        return 1;
+    if (host_read(value, 1) != 23 || host_read(41UL, 2) != 41)
+        return 2;
+    if (indirect(&record, 1) != 23 || indirect((void *)&number, 0) != 11)
+        return 3;
+    return host_call(read_argument) != 38;
+}

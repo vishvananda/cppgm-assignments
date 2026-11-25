@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c17-bit-precise-suffix-bad.t:1:13: wb and WB literal suffixes require C23

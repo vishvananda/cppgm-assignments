@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-unprototyped-compatibility-bad.t:7:45: compatible types in two generic associations

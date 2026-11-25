@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-enum-int-range.t:1:39: an enumeration constant outside the range of int is a GNU C extension

@@ -1,0 +1,1 @@
+int (*restrict callback)(void);

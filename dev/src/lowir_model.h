@@ -262,10 +262,17 @@ enum class Opcode : std::uint8_t
 	Unreachable,
 	// PA37's single wasm32 memory: size in pages, or grow by u32 pages.
 	MemorySize,
-	MemoryGrow
+	MemoryGrow,
+	// Scalar floating operations with observable environment effects.
+	FenvBinary,
+	FenvCompare,
+	FenvCompareSignal,
+	FenvConvert,
+	// A single rounding of a floating product plus an addend.
+	FusedMultiplyAdd
 };
 
-const unsigned kOpcodeCount = static_cast<unsigned>(Opcode::MemoryGrow) + 1;
+const unsigned kOpcodeCount = static_cast<unsigned>(Opcode::FusedMultiplyAdd) + 1;
 
 inline bool is_stack_instruction(Opcode op)
 {
@@ -281,7 +288,22 @@ inline bool is_terminator(Opcode op)
 // non-void result type).
 inline bool defines_value(Opcode op)
 {
-	return op <= Opcode::ExceptionSelector || op == Opcode::MemorySize || op == Opcode::MemoryGrow;
+	return op <= Opcode::ExceptionSelector || (op >= Opcode::MemorySize && op <= Opcode::FusedMultiplyAdd);
+}
+
+inline bool is_fenv_compare(Opcode op)
+{
+	return op == Opcode::FenvCompare || op == Opcode::FenvCompareSignal;
+}
+
+inline bool is_compare(Opcode op)
+{
+	return op == Opcode::Compare || is_fenv_compare(op);
+}
+
+inline bool is_conversion(Opcode op)
+{
+	return op == Opcode::Convert || op == Opcode::FenvConvert;
 }
 
 // The handler-stack markers eh_try ... eh_end.
@@ -299,7 +321,8 @@ inline const char* spelling(Opcode op)
 		"exception", "exception_selector", "asm", "store", "atomic_store", "atomic_thread_fence", "atomic_signal_fence",
 		"va_start", "stack_restore", "write_mxcsr", "copyobj", "zeroinit", "eh_try", "eh_cleanup", "eh_catch",
 		"eh_filter", "eh_catch_all", "eh_end", "throw", "resume", "jump", "branch", "switch", "indirect_jump", "return",
-		"unreachable", "memory_size", "memory_grow" };
+		"unreachable", "memory_size", "memory_grow", "fenv_binary", "fenv_cmp", "fenv_cmp_signal", "fenv_convert",
+		"fma" };
 	return kOpcodes[static_cast<unsigned>(op)];
 }
 
@@ -322,10 +345,11 @@ enum class UnaryOp : std::uint8_t
 	CountTrailingZeros,
 	CountLeadingZeros,
 	Sqrt,
-	CountOnes
+	CountOnes,
+	IsConstant
 };
 
-const unsigned kUnaryOpCount = static_cast<unsigned>(UnaryOp::CountOnes) + 1;
+const unsigned kUnaryOpCount = static_cast<unsigned>(UnaryOp::IsConstant) + 1;
 
 enum class BinaryOp : std::uint8_t
 {
@@ -378,6 +402,11 @@ enum class ConvertOp : std::uint8_t
 };
 
 const unsigned kConvertOpCount = static_cast<unsigned>(ConvertOp::FPTrunc) + 1;
+
+inline bool is_floating_conversion(ConvertOp op)
+{
+	return op >= ConvertOp::SIToFP;
+}
 
 // The memory order operand of the atomic instructions, written as its
 // number: the GNU/Clang __ATOMIC_* encoding (pa8/lowir.md "Memory and
@@ -775,7 +804,7 @@ inline Type vector_result_type(VectorOp op)
 inline const char* spelling(UnaryOp op)
 {
 	static const char* const kUnaryOps[kUnaryOpCount] = { "neg", "not", "bitnot", "bswap", "ctz", "clz", "sqrt",
-		"popcount" };
+		"popcount", "isconstant" };
 	return kUnaryOps[static_cast<unsigned>(op)];
 }
 
@@ -1082,16 +1111,18 @@ enum class Keyword : std::uint8_t
 	ExceptionAbi,     // target header exception_abi=<protocol>
 	Import,           // import @function "module" "field"
 	Export,           // export @function "field"
-	Tail              // call tail void ...
+	Tail,             // call tail void ...
+	Unaligned         // ptr addr unaligned @symbol in structured data
 };
 
-const unsigned kKeywordCount = static_cast<unsigned>(Keyword::Tail) + 1;
+const unsigned kKeywordCount = static_cast<unsigned>(Keyword::Unaligned) + 1;
 
 inline const char* spelling(Keyword keyword)
 {
 	static const char* const kKeywords[kKeywordCount] = { "declare", "global", "function", "alias", "object", "slot",
 		"block", "zero", "as", "debug_type", "debug_scope", "debug_local", "assembly", "equivalent_entry",
-		"assembly_function", "assembly_global", "code_label", "target", "exception_abi", "import", "export", "tail" };
+		"assembly_function", "assembly_global", "code_label", "target", "exception_abi", "import", "export", "tail",
+		"unaligned" };
 	return kKeywords[static_cast<unsigned>(keyword)];
 }
 
@@ -1112,12 +1143,13 @@ enum class GlobalInit : std::uint8_t
 };
 
 // A structured global's data item: `<type> <constant>`, `ptr addr @symbol
-// [+ n]`, `zero <bytes>`.
+// [+ n]`, `ptr addr unaligned @symbol [+ n]`, `zero <bytes>`.
 enum class DataItemKind : std::uint8_t
 {
 	Scalar,
 	Address,
-	Zero
+	Zero,
+	UnalignedAddress
 };
 
 } // namespace lowir_model

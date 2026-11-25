@@ -1,0 +1,25 @@
+struct Image { unsigned tag; unsigned values[8]; };
+
+constexpr struct Image evaluation_seed_image = { .tag = 42, .values[3] = 19 };
+constexpr struct Image from_initializer_image = evaluation_seed_image;
+constexpr struct Image from_function_image = evaluation_seed_image;
+__attribute__((used)) constexpr struct Image explicitly_retained_image = evaluation_seed_image;
+constexpr struct Image labelled_image __asm__("labelled_image") = evaluation_seed_image;
+
+static_assert(evaluation_seed_image.tag == 42);
+
+static const struct Image *pointer_from_initializer = &from_initializer_image;
+
+static const struct Image *address_from_function(void)
+{
+    return &from_function_image;
+}
+
+int main(void)
+{
+    const struct Image *first = pointer_from_initializer;
+    const struct Image *second = address_from_function();
+    volatile unsigned i = 3;
+    return first == second || first->tag != 42 || second->tag != 42 ||
+        first->values[i] != 19 || second->values[i] != 19;
+}

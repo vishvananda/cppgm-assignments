@@ -1,0 +1,4 @@
+preproc 1
+sof tests/preproc/300-gnu-shutdown-attribute-probe.t
+identifier shutdown_attribute_available
+eof

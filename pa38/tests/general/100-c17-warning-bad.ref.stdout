@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c17-warning-bad.t:1:2: #warning requires C23

@@ -328,10 +328,11 @@ enum class MetadataKey : std::uint8_t
 	ArgumentType,
 	ArgumentShape,
 	ThisReturn,
-	Visibility
+	Visibility,
+	NoBuiltin
 };
 
-const unsigned kMetadataKeyCount = static_cast<unsigned>(MetadataKey::Visibility) + 1;
+const unsigned kMetadataKeyCount = static_cast<unsigned>(MetadataKey::NoBuiltin) + 1;
 
 inline bool is_boundary_key(MetadataKey key)
 {
@@ -340,7 +341,8 @@ inline bool is_boundary_key(MetadataKey key)
 
 inline bool is_symbol_key(MetadataKey key)
 {
-	return (key >= MetadataKey::Storage && key <= MetadataKey::Cold) || key == MetadataKey::Visibility;
+	return (key >= MetadataKey::Storage && key <= MetadataKey::Cold) || key == MetadataKey::Visibility ||
+		key == MetadataKey::NoBuiltin;
 }
 
 inline bool is_parameter_key(MetadataKey key)
@@ -472,7 +474,7 @@ inline const char* spelling(MetadataKey key)
 		"noalias_result", "result_classes", "result_shape", "storage", "section", "role", "linkage", "binding",
 		"object", "tls_for", "keep_alias", "prefer_local", "object_root", "force_inline", "inline_hint", "no_inline",
 		"replaceable", "cold", "pass", "alias", "object_bytes", "classes", "shape", "elision", "projection",
-		"argument_type", "argument_shape", "this_return", "visibility" };
+		"argument_type", "argument_shape", "this_return", "visibility", "no_builtin" };
 	return kKeys[static_cast<unsigned>(key)];
 }
 
@@ -723,7 +725,8 @@ struct SymbolFacts
 	SymbolBindingMode binding = SBM_DEFAULT;
 	GlobalStorageMode storage = GSM_DEFAULT;
 	SymbolVisibility visibility = SV_DEFAULT;
-	std::uint8_t flags = 0; // SymbolFlag bits
+	std::uint8_t flags = 0;  // SymbolFlag bits
+	bool no_builtin = false; // Do not infer library semantics from the symbol's name.
 };
 
 struct FunctionBoundaryMetadata

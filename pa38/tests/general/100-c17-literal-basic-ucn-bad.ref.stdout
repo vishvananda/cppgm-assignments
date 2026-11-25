@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c17-literal-basic-ucn-bad.t:1:19: a universal character name for a basic or control character in a literal requires C23

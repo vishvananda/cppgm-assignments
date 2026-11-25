@@ -523,9 +523,10 @@ Compare a few source lines with `/tmp/pptoken.my` to check the tokens.
 ### Language modes and numeric token boundaries
 
 The default input remains C++11. Also accept `-std=c++14`, `-std=c++17` and
-`-std=c++20` before reading standard input. C++14 pp-numbers can contain an apostrophe
-followed by a digit or nondigit; this is a token-boundary rule, not a check
-that the resulting number has a value. In C++17, hexadecimal floating
+`-std=c++20` before reading standard input. C++14 pp-numbers can contain an
+apostrophe followed by a digit or nondigit. Consume both characters together.
+For example, the minus in `0x0'e-0xe` begins a separate token. PA2 checks
+the resulting number's value. In C++17, hexadecimal floating
 pp-numbers also retain a sign after `p` or `P`. Keep character literals and
 user-defined suffix boundaries distinct. See N4140/N4659 `[lex.ppnumber]`
 in the [offline references](../doc/REFERENCES.md). The `.cxx-standard` sidecar

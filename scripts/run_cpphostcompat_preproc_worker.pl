@@ -45,17 +45,19 @@ sub process_one_test
 			grep { $_ ne '' } split(/:/, $paths));
 	}
 	my @flags = read_word_list("$test_base.flags");
-	my @inputs = CppgmBatchWorker::input_files_with_prefix($test);
+	my $stdin = grep { $_ eq '-' } @flags;
+	my @inputs = $stdin ? () : CppgmBatchWorker::input_files_with_prefix($test);
 	my $status;
 	my $build_timeout = get_timeout_from_env("CPPGM_BUILD_TEST_TIMEOUT_SEC", 30);
 	my %worker_env = %{$env};
 	$worker_env{CPPGM_BATCH_TIMEOUT_SEC} = $build_timeout;
-	if (scalar(keys %{$env}) != 0)
+	if ($stdin || scalar(keys %{$env}) != 0)
 	{
 		$status = run_command_capture(
 			cmd => [$app, '-E', @include_args, @flags, '-o', $test_out, @inputs],
 			stdout => "$test_out.stdout",
 			stderr => "$test_out.stdout",
+			stdin => $stdin ? $test : undef,
 			env => \%worker_env,
 			timeout => $build_timeout,
 		);

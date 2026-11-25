@@ -1,16 +1,16 @@
-function @read_context(%context : ptr, %mode : i32) -> i32 [linkage=c, binding=strong] {
+function @read_context(%context : ptr, %mode : u32) -> i32 [linkage=c, binding=strong] {
   slot $context : ptr
-  slot $mode : i32
+  slot $mode : u32
   slot $cond__1 : i32
 
   block ^entry:
     store typed ptr %context, $context
-    store typed i32 %mode, $mode
+    store typed u32 %mode, $mode
     %t1 = load typed ptr $context
     %t2 = index inbounds i8 [projection=field] %t1, 4
-    %t3 = load typed i32 %t2
-    %t4 = load typed i32 $mode
-    %t5 = cmp eq i32 %t3, %t4
+    %t3 = load typed u32 %t2
+    %t4 = load typed u32 $mode
+    %t5 = cmp eq u32 %t3, %t4
     %t6 = convert trunc i32 i64 %t5
     branch %t6, ^cond_then_1, ^cond_else_2
 
@@ -44,7 +44,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     store typed i32 19, %t3
     %t4 = addr $tail
     %t5 = index inbounds i8 [projection=field] %t4, 4
-    store typed i32 0, %t5
+    store typed u32 0, %t5
     %t6 = addr $tail
     %t7 = index inbounds i8 [projection=field] %t6, 8
     store typed ptr 0, %t7
@@ -54,7 +54,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     store typed i32 17, %t10
     %t11 = addr $context
     %t12 = index inbounds i8 [projection=field] %t11, 4
-    store typed i32 1, %t12
+    store typed u32 1, %t12
     %t13 = addr $tail
     %t14 = addr $context
     %t15 = index inbounds i8 [projection=field] %t14, 8

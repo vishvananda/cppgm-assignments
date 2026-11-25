@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c99-static-assert-reject.t:1:1: _Static_assert is a C11 extension

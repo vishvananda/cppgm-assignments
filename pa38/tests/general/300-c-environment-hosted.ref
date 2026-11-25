@@ -1,0 +1,34 @@
+function @main(%argc : i32, %argv : ptr) -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $argc : i32
+  slot $argv : ptr
+
+  block ^entry:
+    store typed i32 %argc, $argc
+    store typed ptr %argv, $argv
+    %t1 = cmp ne i32 1, 1
+    %t2 = convert trunc i32 i64 %t1
+    branch %t2, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t3 = load typed i32 $argc
+    %t4 = cmp lt i32 %t3, 1
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t6 = load typed ptr $argv
+    %t7 = index inbounds ptr [projection=array_element] %t6, 0
+    %t8 = load typed ptr %t7
+    %t9 = cmp eq ptr %t8, 0
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    return i32 0
+}

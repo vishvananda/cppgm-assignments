@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-constexpr-complex-to-real-bad.t:1:26: a C constexpr initializer requires an exactly representable constant

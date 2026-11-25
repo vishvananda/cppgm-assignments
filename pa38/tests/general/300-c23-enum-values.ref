@@ -1,0 +1,35 @@
+global @stored : i64 [linkage=c, binding=internal] = 4398046511104
+
+function @read_value() -> i64 [linkage=c, binding=strong] {
+  block ^entry:
+    %t1 = load volatile i64 @stored
+    return i64 %t1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = call i64 @read_value()
+    %t2 = convert sext i64 i32 42
+    %t3 = binary shl i64 1, %t2
+    %t4 = copy i64 %t1
+    %t5 = cmp ne i64 %t4, %t3
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t7 = cmp ule i64 4294967296, 2147483648
+    %t8 = convert trunc i32 i64 %t7
+    %t9 = cmp ne i32 %t8, 0
+    store typed i64 %t9, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t10 = load typed i64 $lor__1
+    %t11 = convert trunc i32 i64 %t10
+    return i32 %t11
+}

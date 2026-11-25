@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c11-alignas-bit-field-bad.t:1:15: an alignment-specifier on a bit-field

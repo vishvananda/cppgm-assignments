@@ -1,0 +1,112 @@
+global @flag : u8 [linkage=c, binding=internal] = zero
+global @object : i32 [linkage=c, binding=internal] = zero
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $real : f64
+  slot $converted : u8
+
+  block ^entry:
+    store volatile f64 42.75, $real
+    %t1 = load volatile f64 $real
+    %t2 = convert fptoui u8 f64 %t1
+    store u8 %t2, $converted
+    %t3 = load u8 $converted
+    %t4 = convert zext i32 u8 %t3
+    %t5 = cmp ne i32 %t4, 42
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    %t7 = addr @object
+    %t8 = cmp ne ptr %t7, 0
+    store volatile u8 %t8, @flag
+    %t9 = load volatile u8 @flag
+    store volatile u8 1, @flag
+    %t10 = convert zext i32 u8 %t9
+    %t11 = convert zext i32 u8 1
+    %t12 = cmp ne i32 %t10, %t11
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_4, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t14 = load volatile u8 @flag
+    %t15 = cmp eq u8 %t14, 0
+    %t16 = convert trunc u8 i64 %t15
+    store volatile u8 %t16, @flag
+    %t17 = convert zext i32 u8 %t14
+    %t18 = convert zext i32 u8 1
+    %t19 = cmp ne i32 %t17, %t18
+    %t20 = convert trunc i32 i64 %t19
+    branch %t20, ^if_then_4, ^lor_rhs_6
+
+  block ^lor_rhs_6:
+    %t21 = load volatile u8 @flag
+    %t22 = convert zext i32 u8 %t21
+    %t23 = convert zext i32 u8 0
+    %t24 = cmp ne i32 %t22, %t23
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_4, ^if_else_5
+
+  block ^if_then_4:
+    return i32 2
+
+  block ^if_else_5:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t26 = load volatile u8 @flag
+    %t27 = cmp eq u8 %t26, 0
+    %t28 = convert trunc u8 i64 %t27
+    store volatile u8 %t28, @flag
+    %t29 = convert zext i32 u8 %t28
+    %t30 = convert zext i32 u8 1
+    %t31 = cmp ne i32 %t29, %t30
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_9, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t33 = load volatile u8 @flag
+    %t34 = convert zext i32 u8 %t33
+    %t35 = convert zext i32 u8 1
+    %t36 = cmp ne i32 %t34, %t35
+    %t37 = convert trunc i32 i64 %t36
+    branch %t37, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 3
+
+  block ^if_else_10:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    %t38 = cmp ne i32 8, 0
+    store volatile u8 %t38, @flag
+    %t39 = load volatile u8 @flag
+    %t40 = convert zext i32 u8 %t39
+    %t41 = convert zext i32 u8 1
+    %t42 = cmp ne i32 %t40, %t41
+    %t43 = convert trunc i32 i64 %t42
+    branch %t43, ^if_then_13, ^if_else_14
+
+  block ^if_then_13:
+    return i32 4
+
+  block ^if_else_14:
+    jump ^if_end_15
+
+  block ^if_end_15:
+    %t44 = cmp ne ptr 0, 0
+    store volatile u8 %t44, @flag
+    %t45 = load volatile u8 @flag
+    %t46 = convert zext i32 u8 %t45
+    %t47 = convert zext i32 u8 0
+    %t48 = cmp ne i32 %t46, %t47
+    %t49 = convert trunc i32 i64 %t48
+    return i32 %t49
+}

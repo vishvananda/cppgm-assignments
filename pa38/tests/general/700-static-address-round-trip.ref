@@ -1,0 +1,35 @@
+global @storage [linkage=c, binding=internal] = {
+  i32 37
+  i32 42
+}
+global @first : ptr [linkage=c, binding=internal] = addr @storage
+global @second : ptr [linkage=c, binding=internal] = addr @storage + 4
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = load typed ptr @first
+    %t2 = load typed i32 %t1
+    %t3 = cmp ne i32 %t2, 37
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t5 = load typed ptr @second
+    %t6 = load typed i32 %t5
+    %t7 = cmp ne i32 %t6, 42
+    %t8 = convert trunc i32 i64 %t7
+    %t9 = cmp ne i32 %t8, 0
+    store typed i64 %t9, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t10 = load typed i64 $lor__1
+    %t11 = convert trunc i32 i64 %t10
+    return i32 %t11
+}

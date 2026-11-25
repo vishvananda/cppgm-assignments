@@ -1,1 +1,1 @@
-ERROR: tests/general/300-variable-array-extern-bad.t:1:40: a variable-length array requires automatic storage and no initializer
+ERROR: tests/general/300-variable-array-extern-bad.t:1:40: a variable-length array requires automatic storage

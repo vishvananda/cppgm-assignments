@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-register-function-bad.t:3:18: register storage on a function declaration

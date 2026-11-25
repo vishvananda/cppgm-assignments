@@ -58,7 +58,7 @@ identity. Overlapping pairs are invalid. GNU immediate constraints see the
 operand's machine-mode bits, including sign extension of narrow constants.
 GNU `i` accepts link-time symbol addresses; `n` requires a numeric constant.
 Transport symbol identities and byte addends through LowIR. Support
-RIP-relative symbol addresses/loads, GOT-relative addresses and direct symbol
+RIP-relative addresses with numeric or symbol displacements, GOT-relative addresses and direct symbol
 calls. Preserve declared stack effects and ABI alignment at assembly calls;
 the producer must declare all registers and machine state its call can change.
 Output places include scalar/vector lvalues and bit-fields. Capture each
@@ -72,6 +72,13 @@ effects through the [documented LowIR records](assembly.md).
 Evaluate each memory address once. A register alternative may load from that
 captured address; a memory alternative names its storage directly. Do not add an
 unrequested read of an output-only memory operand.
+With the x86-64 kernel code model, spell a memory operand for a fixed static
+address as a RIP-relative reference to its symbol with the byte addend. This
+keeps the instruction width stable for code that records it in assembly.
+An x86-64 local `register` declaration with an `asm` register name binds
+that variable's extended-assembly operand to the named general register.
+Select a compatible constraint column and preserve matching operands.
+Normal code may allocate the variable's value in any storage.
 
 The C++ adapter accepts GNU `vector_size` payload types and `target` annotations
 needed by the supplied assembly operands, plus `naked` and its incompatible
@@ -93,10 +100,19 @@ Preserve scalar SSE move bits and memory widths, including NaN payloads.
 Distinguish scalar-double `movsd` from its zero-operand 32-bit string form.
 Both dialects' string spellings are supported. Immediate moves preserve flags;
 explicit `movabs` accepts numeric and typed symbol addresses, including addends.
+Relocatable symbol operands use the encoding's field width. Preserve the
+distinction between sign-extended 32-bit immediates and displacements and
+32-bit fields that are used without sign extension.
 Nonreturning packets have no outputs and use an explicit `unreachable`
 continuation in LowIR. Validate `lock` against a lockable memory destination and
 repeat prefixes against string instructions. Implicit register operands and
 their clobbers remain the producer's responsibility.
+Use the width of the address registers to select 32-bit or 64-bit addressing.
+Support explicit control, debug and segment register transfers, descriptor-table
+operations, port I/O, state save/restore and non-temporal memory forms. Inspect privileged
+instructions in the object; execute only the user-mode paths in test drivers.
+Store x87 control and status words with `fnstcw` and `fnstsw`. The status
+form also accepts `%ax`. The `fstcw` and `fstsw` forms wait before storing.
 The VEX form tables in `x86_asm_model.h` add XMM/YMM moves, packed and scalar
 arithmetic, comparisons, shuffles, variable/immediate shifts, lane
 insertion/extraction, broadcasts, mask extraction and fused arithmetic. Preserve
@@ -109,7 +125,8 @@ every output byte before assigning output places. Preserve XMM/YMM aliases,
 ties, early writes, volatile places and over-aligned local storage. This adds
 assembly transfers, not a general wide-vector call ABI.
 
-Within a packet, support numeric `.byte`/`.short`/`.word`/`.long`/`.quad` data,
+Within a packet, support absolute integer expressions in immediate operands,
+AT&T displacements, and numeric `.byte`/`.short`/`.word`/`.long`/`.quad` data,
 `.zero`/`.space`/`.skip` fills and `.p2align`/`.balign`/`.align`, including fill and
 maximum-padding arguments. Preserve alignment in objects and standalone output.
 Local RIP-relative addresses can refer to embedded data.
@@ -156,6 +173,11 @@ after binding its placeholders, then emit bytes and fixups directly. Production
 compilation must not invoke an external assembler or depend on an encoding
 library. A compiler memory barrier must not introduce a hardware fence.
 
+In ELF module assembly, an unadorned name can refer to a matching file-local
+C-linkage function. Bind the reference to its existing local symbol and
+keep the definition private to the object. A local definition referred to
+solely by untyped assembly text needs `__attribute__((used))`.
+
 ### Addressed control flow
 
 Support GNU label addresses (`&&label`) and computed goto
@@ -173,6 +195,12 @@ observe dispatch and lifetime behavior; they do not prescribe register choices
 or instruction sequences.
 
 Dataflow optimizations must include every declared indirect destination.
+
+For non-PIC x86-64 ELF output, `-mcmodel=kernel` allows signed 32-bit
+absolute displacements for directly addressed static data. Use the section
+symbol and byte addend for such references to a local dispatch table so an
+object reader can identify the table and follow its label targets. Keep the
+default model's RIP-relative references for position-independent output.
 A value available on one incoming path need not be available at an addressed
 entry reached from another path.
 Addressed entries need not prevent ordinary value and storage optimizations.
@@ -186,13 +214,88 @@ Use all incoming paths when deciding whether a shared block is cold.
 Namespace asm uses the shared `assembly_global` boundary.
 For a standalone native `.S` file, run the preprocessor before passing the
 source to the same integrated module assembler. The driver also accepts
-`-x assembler-with-cpp` to select that input language explicitly.
+`-x assembler-with-cpp` to select that input language explicitly. An AT&T
+immediate prefix is separate from the macro name that follows it.
+Use `-` as that input to read from standard input. `-fintegrated-as`
+explicitly selects the integrated assembler, and `-Wa,--version`
+reports its version.
 Keep module invocations ordered and preserve their symbol/section state. Emit
 code, scalar data, pointer relocations, BSS, strings and alignment directly.
 Support `.text`, `.data`, `.bss`, `.rodata`, `.section`, the section stack and
 `.previous`; `.byte`/`.short`/`.word`/`.long`/`.quad`, `.zero`/`.space`/`.skip`,
 `.ascii`/`.asciz`/`.string`, and `.p2align`/`.balign`/`.align`/`.align`. Respect target
-alignment and section spelling differences.
+alignment and section spelling differences. Accept `.2byte`, `.4byte` and
+`.8byte` as explicit-width scalar data directives. `.octa` accepts 128-bit integer literals.
+Adjacent quoted pieces in one string operand concatenate before an optional
+string terminator is emitted. For ELF symbol types, also accept `STT_FUNC`,
+`STT_OBJECT`, and `STT_NOTYPE`, including the space-separated
+`.type symbol STT_FUNC` form. An assembly label without `.type` has ELF type
+`STT_NOTYPE`. Preserve ELF merge flags `M` and `MS`
+and their entry sizes, with or without allocation. `.incbin` reads
+bytes from a named file, with optional byte offset and count.
+`.fill repeat, size, value` emits a repeated little-endian pattern. A
+byte-sized pattern can use the same deferred repeat count as `.space`.
+Each element is at most eight bytes and only its low four bytes come from
+`value`.
+On ELF, `@note` selects a note section. Instructions can supply byte
+sequences in a file-backed data section while preserving its section flags.
+When an ELF `.section` omits flags, keep an existing section's attributes.
+New `.text.*`, `.data.*`, `.rodata.*` and `.bss.*` sections take the matching
+standard section attributes. Other names without standard attributes start
+as nonloaded data.
+ELF data fields can hold a symbol address or a symbol difference. Fold a
+difference within one section and use a place-relative relocation when
+the subtracted address is in the data field's section.
+AT&T absolute instruction immediates and base-index displacements on ELF
+can also use symbol differences. Resolve them after section layout, using
+the instruction address for `.` and preserving full ELF relocation addends.
+These expressions can use absolute symbols defined by assembly assignments,
+and accept C integer suffixes retained after preprocessing.
+Numbered labels can be reused. Suffix `b` selects the preceding definition
+of that number and `f` the next one, even across section changes. ELF symbol
+immediates can refer to a local label in the same assembly block.
+`.set`, `.equ` and `symbol = expression` accept an absolute expression or
+a symbol address with an addend. A register name or an existing register
+alias on the right of an assignment creates a register alias usable in an
+operand or addressing tuple. A difference of defined labels in one
+section is absolute and can serve as a symbol's `.size`. Scalar data
+expressions can group symbol terms in parentheses. `.org` fills up to a
+fixed or already defined same-section position. A space count may use
+arithmetic on label differences, including forward differences in another
+section. Determine the padding before finalizing symbol values, relocations,
+alignment, and unwind information. Reject circular dependencies between
+variable-size directives.
+In an ELF x86-64 object, `.code32` and `.code64` select the encoding mode of
+subsequent instructions. Use the current mode's register and address widths,
+including indirect control transfers and far pointers in mixed-mode code.
+
+In inline assembly, `.ascii` emits the bytes of its string operands.
+`.asciz` and `.string` append a zero byte to each operand. Adjacent
+quoted fragments form one operand. They can contain GNU operand
+substitutions, escapes, and embedded zero bytes.
+
+A function designator, static array or string literal can supply a symbol address to an
+immediate constraint. Check constraints against the operands that will be
+encoded, after any substitution or propagation.
+The GNU `%a` modifier uses a register or constant as a memory address.
+An x86 memory operand can carry a segment override. An instruction can also
+use a GNU segment prefix such as `ds wrmsr`.
+Accept whitespace between the AT&T register prefix and name, including
+`% rip` after macro expansion. A symbol displacement and its constant
+addend can be grouped in parentheses before the addressing tuple.
+C records with a size of one, two, four, or eight bytes can use an
+integer register constraint. Preserve their complete representation.
+
+On x86-64 ELF, inline assembly can put data in other sections using the
+same section directives as module assembly. References to code labels
+within the template follow the final placement of the function. Preserve
+the section's data, alignment, and relocations, including symbol operands
+supplied by the C or C++ source. Outgoing `asm goto` operands can be used
+in branches and section metadata. This form uses host object output.
+For x86-64 ELF object output, a literal external name in an inline
+instruction can also name a linker symbol, including a direct
+`call symbol@PLT` or a RIP-relative memory operand. Resolve local labels
+within the template before creating any external reference.
 
 Preserve global/weak/local binding, hidden visibility, `.type`, `.size` and
 symbol aliases with `.set`/`.equ`. Support symbol addresses and constant addends,
@@ -215,10 +318,23 @@ the current macro or repetition. Include `.if`/`.ifne`, `.ifeq`, signed
 `.ifge`/`.ifgt`/`.ifle`/`.iflt`, blank `.ifb`/`.ifnb` and string
 `.ifc`/`.ifnc`/`.ifeqs`/`.ifnes` conditions, with `.elseif`, `.else` and `.endif`.
 Numeric conditions and repetition counts accept absolute integer expressions,
-using GNU assembler precedence and truth values. Expansion must have bounded
+using GNU assembler precedence and truth values. Numeric conditions also accept
+register equality and inequality, comparing the full register views.
+Character constants can supply integer operands or macro arguments, including
+whitespace and punctuation. Honor GNU assembly block comments outside strings.
+For port instructions accept GNU AT&T's parenthesized DX spelling alongside
+the plain register operand. Encode `loop`, `loope` and `loopne` with a signed
+byte displacement to their local target. A location-counter assignment such
+as `. = label + 16` advances the current section and zero-fills the gap.
+In a section laid out by these assignments, choose the short encoding for a
+local `jmp` when its signed byte displacement fits the final layout. Recompute
+affected branch offsets and relocations when their instruction widths change.
+Expansion must have bounded
 nesting, work and output size; malformed blocks and runaway recursion fail.
 
 Namespace macro definitions are available to later inline and naked assembly.
+An absolute symbol assignment can supply a macro conditional or repetition
+count. A keyword argument can contain an unquoted arithmetic expression.
 Capture the source environment at each statement: subsequent redefinition or
 purging must not change earlier code, including deferred members, template
 instances and inlined copies. Preserve typed operands and outgoing labels
@@ -248,8 +364,11 @@ and personality indirection. Respect the target's relocation rules; on Darwin
 an indirect PC-relative personality uses its GOT slot. Native Darwin unwind tests
 use personality encoding `0x9b`; direct absolute and 64-bit PC-relative
 personality tests require Linux because Darwin linkers do not support them.
-`.cfi_sections .eh_frame`
-selects the supported runtime-unwind section. Reject malformed procedure/state
+`.cfi_sections .eh_frame` selects the runtime-unwind section. On ELF,
+`.cfi_sections .debug_frame` selects the DWARF call-frame section for debugging,
+and `.cfi_sections .eh_frame, .debug_frame` emits both. Use absolute code-address
+relocations and section-relative CIE references in `.debug_frame`.
+Reject malformed procedure/state
 nesting, impossible offsets and unsupported encodings or sections clearly.
 Native tests unwind host exceptions through both module and raw frames and
 observe personality and exception-data addresses.
@@ -292,7 +411,9 @@ Tests check native behavior, complete value bits, guard bytes, ABI preservation,
 output ordering and LowIR roundtrips. Portable source cases also run with the host
 compiler. A `gnu-native` profile uses the supplied observer directly when host
 compiler behavior does not provide an independent oracle; it still checks
-source compilation and LowIR roundtrips at every optimization level. Allocation choices and surrounding instructions are unconstrained;
+source compilation and LowIR roundtrips at every optimization level.
+On Linux, the `gnu-text` profile also reassembles `cppgm -S` output with
+GNU `as` and checks that string directives survive. Allocation choices and surrounding instructions are unconstrained;
 assembly instructions explicitly requested by the source must be emitted.
 Reject malformed syntax, inconsistent constraints and type errors with failure.
 Report unsupported native capabilities clearly. Exact diagnostic text is not

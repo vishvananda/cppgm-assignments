@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-register-retained-parameter-address-bad.t:3:13: taking the address of a register object or its subobject

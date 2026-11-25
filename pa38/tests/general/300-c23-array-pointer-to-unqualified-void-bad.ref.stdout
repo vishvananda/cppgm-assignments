@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-array-pointer-to-unqualified-void-bad.t:3:12: invalid implicit conversion

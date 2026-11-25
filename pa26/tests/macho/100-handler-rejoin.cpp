@@ -1,4 +1,4 @@
-volatile int limit = 9;
+alignas(128) volatile int limit = 9;
 
 int thrower(int value) {
   if (value > 5) throw value;

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c11-alignof-incomplete-array-bad.t:1:16: alignof of an incomplete or function type

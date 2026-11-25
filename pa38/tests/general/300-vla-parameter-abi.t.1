@@ -1,0 +1,6 @@
+int last_column(int columns, int data[static 2][columns])
+{
+    if (sizeof *data != (unsigned)columns * sizeof(int))
+        return -1;
+    return data[0][0] + data[1][columns - 1];
+}

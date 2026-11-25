@@ -1,0 +1,60 @@
+global @counter : i32 [storage=readonly, linkage=c, binding=strong] = 0
+global @plain : i32 [linkage=c, binding=strong] = zero
+global @selected : ptr [storage=readonly, linkage=c, binding=strong] = addr @plain
+global @pointer : ptr [linkage=c, binding=strong] = zero
+global @atomic_matrix : obj<24x4> [linkage=c, binding=strong] = {
+  zero 24
+}
+global @values [storage=readonly, linkage=c, binding=strong] = {
+  i32 1
+  i32 2
+  i32 3
+  i32 4
+  i32 5
+  i32 6
+}
+global @copy : obj<24x4> [linkage=c, binding=strong] = {
+  zero 24
+}
+global @operation : ptr [linkage=c, binding=strong] = addr @add
+
+function @add(%a : i32, %b : i32) -> i32 [linkage=c, binding=internal] {
+  slot $a : i32
+  slot $b : i32
+
+  block ^entry:
+    store typed i32 %a, $a
+    store typed i32 %b, $b
+    %t1 = load typed i32 $a
+    %t2 = load typed i32 $b
+    %t3 = binary add nowrap i32 %t1, %t2
+    return i32 %t3
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    store typed i32 40, @plain
+    %t1 = addr @plain
+    store typed ptr %t1, @pointer
+    %t2 = addr @values
+    %t3 = binary mul i64 0, 12
+    %t4 = index inbounds i8 [projection=array_element] %t2, %t3
+    %t5 = index inbounds i32 [projection=array_element] %t4, 1
+    %t6 = load typed i32 %t5
+    %t7 = addr @copy
+    %t8 = binary mul i64 0, 12
+    %t9 = index inbounds i8 [projection=array_element] %t7, %t8
+    %t10 = index inbounds i32 [projection=array_element] %t9, 1
+    store typed i32 %t6, %t10
+    %t11 = load typed ptr @pointer
+    %t12 = load typed i32 %t11
+    %t13 = addr @copy
+    %t14 = binary mul i64 0, 12
+    %t15 = index inbounds i8 [projection=array_element] %t13, %t14
+    %t16 = index inbounds i32 [projection=array_element] %t15, 1
+    %t17 = load typed i32 %t16
+    %t18 = load typed ptr @operation
+    %t19 = call i32 %t18(%t12, %t17) as (%arg0 : i32, %arg1 : i32) -> i32
+    %t20 = cmp ne i32 %t19, 42
+    %t21 = convert trunc i32 i64 %t20
+    return i32 %t21
+}

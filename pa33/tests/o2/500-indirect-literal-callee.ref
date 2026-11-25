@@ -1,0 +1,10 @@
+function @indirect_literal() -> void [linkage=c, binding=strong] {
+  block ^entry:
+    %t1 = const ptr 0
+    call void %t1() as () -> void
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    return i32 0
+}

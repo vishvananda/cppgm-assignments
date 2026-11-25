@@ -1,0 +1,2 @@
+relocation_class_canonical 1 data_any .debug_frame 1
+relocation_class_canonical 1 data_any debug_frame_personality 1

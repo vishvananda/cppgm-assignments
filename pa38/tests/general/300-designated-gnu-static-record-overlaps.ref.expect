@@ -1,0 +1,4 @@
+# explicit-outcomes
+
+# The native and WASI controls check static fields, padding and relocations.
+has(return) in @main

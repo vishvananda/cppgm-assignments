@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c90-array-parameter-qualifiers-bad.t:1:21: array parameter declarator modifiers require C99

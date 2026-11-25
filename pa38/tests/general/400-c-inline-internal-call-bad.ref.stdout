@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-inline-internal-call-bad.t:2:31: an external C inline definition refers to an identifier with internal linkage

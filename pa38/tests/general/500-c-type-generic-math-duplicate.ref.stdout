@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-type-generic-math-duplicate.t:7:35: duplicate type-generic candidate type

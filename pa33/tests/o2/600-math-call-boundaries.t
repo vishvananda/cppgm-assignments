@@ -1,0 +1,12 @@
+# A direct call with an explicit boundary can have observable effects even
+# when its symbol has the name of a standard math function.
+declare function @sqrt(%x : f64) -> f64 [linkage=c, binding=strong, object=sqrt]
+declare function @pow(%x : f64, %y : f64) -> f64 [linkage=c, binding=strong, object=pow]
+
+function @observe(%x : f64) -> void {
+  block ^entry:
+    %square = binary mul f64 %x, %x
+    %root = call f64 @sqrt(%square) as (%arg : f64) -> f64
+    %power = call f64 @pow(%x, -1.0) as (%base : f64, %exponent : f64) -> f64
+    return void
+}

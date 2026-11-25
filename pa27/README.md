@@ -155,6 +155,10 @@ token must reach the LowIR as `section=` and the object as a section of that
 name, and an unsafe or conflicting section attribute must be rejected.
 `make check TEST=tests/controls/<name>.t` runs one.
 
+For x86-64 ELF, honor `-fno-asynchronous-unwind-tables` when neither
+exception support nor `-funwind-tables` needs the compiler's `.eh_frame`.
+An explicit assembly unwind directive still belongs to the assembly input.
+
 ### Symbol visibility
 
 Keep visibility independent of linkage and weak binding. The GNU
@@ -164,6 +168,13 @@ variables, or classes. A class's member functions and data, vtable, and
 RTTI inherit its visibility where applicable. An explicit attribute on
 a member overrides the class. Preserve effective visibility across
 redeclarations and when instantiating templates and their specializations.
+
+`#pragma GCC visibility push(value)` sets the visibility for subsequent
+namespace-scope declarations until the matching `pop`. A push saves the
+previous setting. An explicit declaration attribute takes precedence.
+The `_Pragma` spelling uses the same stack. On x86-64 ELF, a strong hidden
+reference in position-independent code can use PC-relative addressing
+because the link provides its definition.
 
 `-fvisibility=<value>` sets the default for externally linked definitions.
 Unannotated imports retain default visibility. C++'s
@@ -193,6 +204,17 @@ Optional sidecars control or check the host flow:
 - `x.inspect.cmd`, `x.inspect.expect`, or `x.inspect.plan`: object-inspection
   checks that use the host symbol tools
 
+On ELF x86-64, `-mindirect-branch=thunk-extern` changes indirect calls
+and jumps to direct transfers to a link-provided `__x86_indirect_thunk_<reg>`.
+The register names the target, including one loaded from memory before the
+transfer. With `-mindirect-branch-cs-prefix`, prefix transfers through
+`r8` to `r15` with the CS prefix. With `-mindirect-branch-register`,
+use a register target even for ordinary indirect transfers.
+`-fno-jump-tables` suppresses switch jump tables.
+`-mindirect-branch=thunk-inline` emits the thunk in the calling function.
+Preserve the original call or jump's stack behavior and describe the thunk's
+temporary stack changes in unwind information.
+
 The checked-in PA27 tests cover:
 
 - DWARF 4 source-line tables and function ranges in hosted objects requested
@@ -215,7 +237,9 @@ The checked-in PA27 tests cover:
 - host linking against static archives and shared libraries
 - import/export of host-built `thread_local` variables in the tested subset
 - GNU `section` attributes on global objects whose nonempty ELF section name
-  contains only ASCII letters, digits, `_`, and `.`
+  contains only ASCII letters, digits, `_`, and `.`. For ELF functions the
+  same attribute places the definition in an executable section and takes
+  precedence over compiler-selected text sections.
 - explicit GNU weak function/global declarations remain weak undefined ELF
   references: absent definitions have a null address, while host definitions
   satisfy the same references. Ordinary vague-linkage declarations still

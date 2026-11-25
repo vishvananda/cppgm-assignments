@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-type-generic-math-no-match.t:6:12: no matching function for type-generic call

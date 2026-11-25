@@ -1,0 +1,7 @@
+# explicit-outcomes
+
+has(fenv_binary add) in @add_tie
+has(fenv_binary add) in @raise_inexact
+none(fenv_binary) in @ordinary
+has(fenv_binary add) in @nested_scope
+has(binary add) in @nested_scope

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-compound-thread-without-static-bad.t:3:13: invalid thread storage class for a compound literal

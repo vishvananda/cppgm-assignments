@@ -1,0 +1,40 @@
+global @shape : i32 [linkage=c, binding=internal] = -1
+global @byte : u8 [linkage=c, binding=internal] = 8
+
+function @identity(%value : i32) -> i32 [linkage=c, binding=internal] {
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %value, $value
+    %t1 = load typed i32 $value
+    return i32 %t1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = load volatile i32 @shape
+    %t2 = call i32 @identity(%t1)
+    %t3 = unary neg i32 1
+    %t4 = cmp ne i32 %t2, %t3
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t6 = load volatile u8 @byte
+    %t7 = convert zext i32 u8 %t6
+    %t8 = cmp ne i32 %t7, 8
+    %t9 = convert trunc i32 i64 %t8
+    %t10 = cmp ne i32 %t9, 0
+    store typed i64 %t10, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t11 = load typed i64 $lor__1
+    %t12 = convert trunc i32 i64 %t11
+    return i32 %t12
+}

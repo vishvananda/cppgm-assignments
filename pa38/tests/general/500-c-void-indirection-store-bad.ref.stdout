@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-void-indirection-store-bad.t:3:5: assignment to something that is not a modifiable lvalue

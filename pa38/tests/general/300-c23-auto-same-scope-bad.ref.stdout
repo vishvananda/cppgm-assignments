@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-auto-same-scope-bad.t:2:6: an inferred C declaration repeats a name in the same scope

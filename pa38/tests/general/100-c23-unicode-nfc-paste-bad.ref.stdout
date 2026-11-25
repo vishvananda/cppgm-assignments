@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c23-unicode-nfc-paste-bad.t:2:5: token pasting does not form a valid preprocessing token

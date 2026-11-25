@@ -1,0 +1,6 @@
+preproc 1
+sof tests/directives/200-include-empty-suffix.t
+simple int KW_INT
+identifier included_once
+simple ; OP_SEMICOLON
+eof

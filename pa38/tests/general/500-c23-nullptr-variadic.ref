@@ -1,0 +1,151 @@
+global @evaluated : i32 [linkage=c, binding=internal] = zero
+
+function @from_ellipsis() -> i32 [arity=variadic, linkage=c, binding=internal] {
+  slot $arguments : obj<24x8>
+  slot $first : i32
+  slot $second : f64
+  slot $end : ptr
+  slot $land__1 : i64
+  slot $land__2 : i64
+
+  block ^entry:
+    %t1 = addr $arguments
+    va_start %t1
+    %t2 = addr $arguments
+    %t3 = va_arg i32 %t2
+    store typed i32 %t3, $first
+    %t4 = addr $arguments
+    %t5 = va_arg f64 %t4
+    store typed f64 %t5, $second
+    %t6 = addr $arguments
+    %t7 = va_arg ptr %t6
+    store typed ptr %t7, $end
+    %t8 = addr $arguments
+    %t9 = load typed i32 $first
+    %t10 = cmp eq i32 %t9, 17
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t12 = load typed f64 $second
+    %t13 = cmp eq f64 %t12, 1.5
+    %t14 = convert trunc i32 i64 %t13
+    %t15 = cmp ne i32 %t14, 0
+    store typed i64 %t15, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t16 = load typed i64 $land__1
+    branch %t16, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t17 = load typed ptr $end
+    %t18 = copy ptr 0
+    %t19 = cmp eq ptr %t17, %t18
+    %t20 = convert trunc i32 i64 %t19
+    %t21 = cmp ne i32 %t20, 0
+    store typed i64 %t21, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t22 = load typed i64 $land__2
+    %t23 = convert trunc i32 i64 %t22
+    return i32 %t23
+}
+function @from_named(%first : i32) -> i32 [arity=variadic, linkage=c, binding=internal] {
+  slot $first : i32
+  slot $arguments : obj<24x8>
+  slot $end : ptr
+  slot $land__1 : i64
+
+  block ^entry:
+    store typed i32 %first, $first
+    %t1 = addr $arguments
+    va_start %t1
+    %t2 = addr $arguments
+    %t3 = va_arg ptr %t2
+    store typed ptr %t3, $end
+    %t4 = addr $arguments
+    %t5 = load typed i32 $first
+    %t6 = cmp eq i32 %t5, 22
+    %t7 = convert trunc i32 i64 %t6
+    branch %t7, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t8 = load typed ptr $end
+    %t9 = copy ptr 0
+    %t10 = cmp eq ptr %t8, %t9
+    %t11 = convert trunc i32 i64 %t10
+    %t12 = cmp ne i32 %t11, 0
+    store typed i64 %t12, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t13 = load typed i64 $land__1
+    %t14 = convert trunc i32 i64 %t13
+    return i32 %t14
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $read : ptr
+  slot $end : i64
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+
+  block ^entry:
+    %t1 = addr @from_ellipsis
+    store volatile ptr %t1, $read
+    store typed i64 0, $end
+    %t2 = copy ptr 0
+    %t3 = load volatile ptr $read
+    %t4 = call i32 %t3(17, 1.5, %t2) as () -> i32 [arity=variadic]
+    %t5 = cmp eq i32 %t4, 0
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t7 = load typed i64 $end
+    %t8 = copy ptr %t7
+    %t9 = call i32 @from_named(22, %t8)
+    %t10 = cmp eq i32 %t9, 0
+    %t11 = convert trunc i32 i64 %t10
+    %t12 = cmp ne i32 %t11, 0
+    store typed i64 %t12, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t13 = load typed i64 $lor__1
+    branch %t13, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t14 = load volatile i32 @evaluated
+    %t15 = cmp ne i32 %t14, 0
+    %t16 = convert trunc i32 i64 %t15
+    %t17 = cmp ne i32 %t16, 0
+    store typed i64 %t17, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t18 = load typed i64 $lor__2
+    %t19 = convert trunc i32 i64 %t18
+    return i32 %t19
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c11-alignof-expression-reject.t:2:20: _Alignof applied to an expression is a GNU extension

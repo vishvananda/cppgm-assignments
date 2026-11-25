@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c17-binary-literal-pedantic-bad.t:1:29: binary integer constants require C23

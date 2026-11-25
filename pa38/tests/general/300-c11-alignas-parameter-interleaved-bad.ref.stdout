@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c11-alignas-parameter-interleaved-bad.t:1:12: an alignment specifier is not permitted here

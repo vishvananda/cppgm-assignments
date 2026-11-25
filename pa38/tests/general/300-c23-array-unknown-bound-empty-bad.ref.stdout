@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-array-unknown-bound-empty-bad.t:1:25: deducing a zero-length array from an empty initializer is a GNU C extension

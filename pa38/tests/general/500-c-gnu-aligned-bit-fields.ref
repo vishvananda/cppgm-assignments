@@ -1,0 +1,449 @@
+global @packed_byte [linkage=c, binding=internal] = {
+  u8 7
+}
+global @packed_triple [linkage=c, binding=internal] = {
+  u8 86
+  u8 52
+  u8 18
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $separator_alignment : u32
+  slot $packed_tail : u32
+  slot $value : obj<16x8>
+  slot $bits : obj<4x2>
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+  slot $lor__6 : i64
+  slot $lor__7 : i64
+
+  block ^entry:
+    %t1 = const i64 16
+    %t2 = convert sext i64 i32 16
+    %t3 = cmp ne i64 %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t5 = const i64 8
+    %t6 = convert sext i64 i32 8
+    %t7 = cmp ne i64 %t5, %t6
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t9 = convert sext i64 i32 9
+    %t10 = cmp ne i64 9, %t9
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t12 = const i64 8
+    %t13 = convert sext i64 i32 8
+    %t14 = cmp ne i64 %t12, %t13
+    %t15 = convert trunc i32 i64 %t14
+    branch %t15, ^if_then_6, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t16 = convert sext i64 i32 1
+    %t17 = cmp ne i64 1, %t16
+    %t18 = convert trunc i32 i64 %t17
+    branch %t18, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_9
+
+  block ^if_end_9:
+    store typed u32 1, $separator_alignment
+    %t19 = const i64 1
+    %t20 = convert zext i64 u32 1
+    %t21 = cmp ne i64 %t19, %t20
+    %t22 = convert trunc i32 i64 %t21
+    branch %t22, ^if_then_10, ^lor_rhs_14
+
+  block ^lor_rhs_14:
+    %t23 = const i64 1
+    %t24 = convert zext i64 u32 1
+    %t25 = cmp ne i64 %t23, %t24
+    %t26 = convert trunc i32 i64 %t25
+    branch %t26, ^if_then_10, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t27 = convert sext i64 i32 8
+    %t28 = cmp ne i64 8, %t27
+    %t29 = convert trunc i32 i64 %t28
+    branch %t29, ^if_then_10, ^lor_rhs_12
+
+  block ^lor_rhs_12:
+    %t30 = convert sext i64 i32 8
+    %t31 = cmp ne i64 8, %t30
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_10, ^if_else_11
+
+  block ^if_then_10:
+    return i32 3
+
+  block ^if_else_11:
+    jump ^if_end_15
+
+  block ^if_end_15:
+    %t33 = const i64 2
+    %t34 = convert sext i64 i32 2
+    %t35 = cmp ne i64 %t33, %t34
+    %t36 = convert trunc i32 i64 %t35
+    branch %t36, ^if_then_16, ^lor_rhs_18
+
+  block ^lor_rhs_18:
+    %t37 = convert sext i64 i32 3
+    %t38 = cmp ne i64 3, %t37
+    %t39 = convert trunc i32 i64 %t38
+    branch %t39, ^if_then_16, ^if_else_17
+
+  block ^if_then_16:
+    return i32 4
+
+  block ^if_else_17:
+    jump ^if_end_19
+
+  block ^if_end_19:
+    store typed u32 2, $packed_tail
+    %t40 = const i64 1
+    %t41 = convert sext i64 i32 1
+    %t42 = cmp ne i64 %t40, %t41
+    %t43 = convert trunc i32 i64 %t42
+    branch %t43, ^if_then_20, ^lor_rhs_22
+
+  block ^lor_rhs_22:
+    %t44 = convert zext i64 u32 2
+    %t45 = cmp ne i64 2, %t44
+    %t46 = convert trunc i32 i64 %t45
+    branch %t46, ^if_then_20, ^if_else_21
+
+  block ^if_then_20:
+    return i32 5
+
+  block ^if_else_21:
+    jump ^if_end_23
+
+  block ^if_end_23:
+    %t47 = addr $value
+    %t48 = convert trunc u8 i32 1
+    %t49 = addr $value
+    %t50 = index inbounds i8 [projection=field] %t49, 0
+    store u8 %t48, %t50
+    %t51 = addr $value
+    %t52 = index inbounds i8 [projection=field] %t51, 8
+    %t53 = binary and u8 7, 5
+    store u8 %t53, %t52
+    %t54 = convert trunc u8 i32 7
+    %t55 = addr $value
+    %t56 = index inbounds i8 [projection=field] %t55, 9
+    store u8 %t54, %t56
+    %t57 = addr $value
+    %t58 = index inbounds i8 [projection=field] %t57, 8
+    %t59 = load u8 %t58
+    %t60 = binary and u8 %t59, 7
+    %t61 = convert zext u32 u8 %t60
+    %t62 = copy i32 %t61
+    %t63 = binary add nowrap i32 %t62, 1
+    %t64 = copy u32 %t63
+    %t65 = convert trunc u8 u32 %t64
+    %t66 = binary and u8 %t65, 7
+    %t67 = convert zext u32 u8 %t66
+    %t68 = load u8 %t58
+    %t69 = binary and u8 %t68, 248
+    %t70 = binary or u8 %t69, %t66
+    store u8 %t70, %t58
+    %t71 = addr $bits
+    %t72 = convert trunc u8 i32 4
+    %t73 = addr $bits
+    %t74 = index inbounds i8 [projection=field] %t73, 0
+    %t75 = binary and u8 7, %t72
+    store u8 %t75, %t74
+    %t76 = addr $bits
+    %t77 = index inbounds i8 [projection=field] %t76, 2
+    %t78 = binary and u8 7, 5
+    store u8 %t78, %t77
+    %t79 = convert trunc u8 i32 8
+    %t80 = addr $bits
+    %t81 = index inbounds i8 [projection=field] %t80, 3
+    store u8 %t79, %t81
+    %t82 = addr $bits
+    %t83 = index inbounds i8 [projection=field] %t82, 2
+    %t84 = load u8 %t83
+    %t85 = binary and u8 %t84, 7
+    %t86 = convert zext u32 u8 %t85
+    %t87 = copy i32 %t86
+    %t88 = binary sub nowrap i32 %t87, 2
+    %t89 = copy u32 %t88
+    %t90 = convert trunc u8 u32 %t89
+    %t91 = binary and u8 %t90, 7
+    %t92 = convert zext u32 u8 %t91
+    %t93 = load u8 %t83
+    %t94 = binary and u8 %t93, 248
+    %t95 = binary or u8 %t94, %t91
+    store u8 %t95, %t83
+    %t96 = const i64 1
+    %t97 = convert sext i64 i32 1
+    %t98 = cmp ne i64 %t96, %t97
+    %t99 = convert trunc i32 i64 %t98
+    branch %t99, ^if_then_24, ^lor_rhs_28
+
+  block ^lor_rhs_28:
+    %t100 = const i64 3
+    %t101 = convert sext i64 i32 3
+    %t102 = cmp ne i64 %t100, %t101
+    %t103 = convert trunc i32 i64 %t102
+    branch %t103, ^if_then_24, ^lor_rhs_27
+
+  block ^lor_rhs_27:
+    %t104 = addr @packed_byte
+    %t105 = index inbounds i8 [projection=field] %t104, 0
+    %t106 = load u8 %t105
+    %t107 = binary and u8 %t106, 7
+    %t108 = convert zext u32 u8 %t107
+    %t109 = copy i32 %t108
+    %t110 = cmp ne i32 %t109, 7
+    %t111 = convert trunc i32 i64 %t110
+    branch %t111, ^if_then_24, ^lor_rhs_26
+
+  block ^lor_rhs_26:
+    %t112 = addr @packed_triple
+    %t113 = index inbounds i8 [projection=field] %t112, 0
+    %t114 = load u16 %t113
+    %t115 = convert zext i64 u16 %t114
+    %t116 = index i8 %t113, 2
+    %t117 = load u8 %t116
+    %t118 = convert zext i64 u8 %t117
+    %t119 = binary shl i64 %t118, 16
+    %t120 = binary or i64 %t115, %t119
+    %t121 = binary and i64 %t120, 16777215
+    %t122 = convert trunc u32 i64 %t121
+    %t123 = copy i32 %t122
+    %t124 = cmp ne i32 %t123, 1193046
+    %t125 = convert trunc i32 i64 %t124
+    branch %t125, ^if_then_24, ^if_else_25
+
+  block ^if_then_24:
+    return i32 6
+
+  block ^if_else_25:
+    jump ^if_end_29
+
+  block ^if_end_29:
+    %t126 = addr @packed_byte
+    %t127 = index inbounds i8 [projection=field] %t126, 0
+    %t128 = load u8 %t127
+    %t129 = binary and u8 %t128, 7
+    %t130 = convert zext u32 u8 %t129
+    %t131 = copy i32 %t130
+    %t132 = binary sub nowrap i32 %t131, 2
+    %t133 = copy u32 %t132
+    %t134 = convert trunc u8 u32 %t133
+    %t135 = binary and u8 %t134, 7
+    %t136 = convert zext u32 u8 %t135
+    %t137 = load u8 %t127
+    %t138 = binary and u8 %t137, 248
+    %t139 = binary or u8 %t138, %t135
+    store u8 %t139, %t127
+    %t140 = addr @packed_triple
+    %t141 = index inbounds i8 [projection=field] %t140, 0
+    %t142 = load u16 %t141
+    %t143 = convert zext i64 u16 %t142
+    %t144 = index i8 %t141, 2
+    %t145 = load u8 %t144
+    %t146 = convert zext i64 u8 %t145
+    %t147 = binary shl i64 %t146, 16
+    %t148 = binary or i64 %t143, %t147
+    %t149 = binary and i64 %t148, 16777215
+    %t150 = convert trunc u32 i64 %t149
+    %t151 = copy i32 %t150
+    %t152 = binary add nowrap i32 %t151, 3
+    %t153 = copy u32 %t152
+    %t154 = convert zext i64 u32 %t153
+    %t155 = binary and i64 %t154, 16777215
+    %t156 = convert trunc u32 i64 %t155
+    %t157 = load u16 %t141
+    %t158 = convert zext i64 u16 %t157
+    %t159 = index i8 %t141, 2
+    %t160 = load u8 %t159
+    %t161 = convert zext i64 u8 %t160
+    %t162 = binary shl i64 %t161, 16
+    %t163 = binary or i64 %t158, %t162
+    %t164 = binary and i64 %t163, -16777216
+    %t165 = binary or i64 %t164, %t155
+    %t166 = convert trunc u16 i64 %t165
+    store u16 %t166, %t141
+    %t167 = binary ushr i64 %t165, 16
+    %t168 = convert trunc u8 i64 %t167
+    %t169 = index i8 %t141, 2
+    store u8 %t168, %t169
+    %t170 = addr $value
+    %t171 = index inbounds i8 [projection=field] %t170, 0
+    %t172 = load u8 %t171
+    %t173 = convert zext i32 u8 %t172
+    %t174 = cmp ne i32 %t173, 1
+    %t175 = convert trunc i32 i64 %t174
+    branch %t175, ^lor_short_31, ^lor_rhs_30
+
+  block ^lor_rhs_30:
+    %t176 = addr $value
+    %t177 = index inbounds i8 [projection=field] %t176, 8
+    %t178 = load u8 %t177
+    %t179 = binary and u8 %t178, 7
+    %t180 = convert zext u32 u8 %t179
+    %t181 = copy i32 %t180
+    %t182 = cmp ne i32 %t181, 6
+    %t183 = convert trunc i32 i64 %t182
+    %t184 = cmp ne i32 %t183, 0
+    store typed i64 %t184, $lor__1
+    jump ^lor_end_32
+
+  block ^lor_short_31:
+    store typed i64 1, $lor__1
+    jump ^lor_end_32
+
+  block ^lor_end_32:
+    %t185 = load typed i64 $lor__1
+    branch %t185, ^lor_short_34, ^lor_rhs_33
+
+  block ^lor_rhs_33:
+    %t186 = addr $value
+    %t187 = index inbounds i8 [projection=field] %t186, 9
+    %t188 = load u8 %t187
+    %t189 = convert zext i32 u8 %t188
+    %t190 = cmp ne i32 %t189, 7
+    %t191 = convert trunc i32 i64 %t190
+    %t192 = cmp ne i32 %t191, 0
+    store typed i64 %t192, $lor__2
+    jump ^lor_end_35
+
+  block ^lor_short_34:
+    store typed i64 1, $lor__2
+    jump ^lor_end_35
+
+  block ^lor_end_35:
+    %t193 = load typed i64 $lor__2
+    branch %t193, ^lor_short_37, ^lor_rhs_36
+
+  block ^lor_rhs_36:
+    %t194 = addr $bits
+    %t195 = index inbounds i8 [projection=field] %t194, 0
+    %t196 = load u8 %t195
+    %t197 = binary and u8 %t196, 7
+    %t198 = convert zext i32 u8 %t197
+    %t199 = cmp ne i32 %t198, 4
+    %t200 = convert trunc i32 i64 %t199
+    %t201 = cmp ne i32 %t200, 0
+    store typed i64 %t201, $lor__3
+    jump ^lor_end_38
+
+  block ^lor_short_37:
+    store typed i64 1, $lor__3
+    jump ^lor_end_38
+
+  block ^lor_end_38:
+    %t202 = load typed i64 $lor__3
+    branch %t202, ^lor_short_40, ^lor_rhs_39
+
+  block ^lor_rhs_39:
+    %t203 = addr $bits
+    %t204 = index inbounds i8 [projection=field] %t203, 2
+    %t205 = load u8 %t204
+    %t206 = binary and u8 %t205, 7
+    %t207 = convert zext u32 u8 %t206
+    %t208 = copy i32 %t207
+    %t209 = cmp ne i32 %t208, 3
+    %t210 = convert trunc i32 i64 %t209
+    %t211 = cmp ne i32 %t210, 0
+    store typed i64 %t211, $lor__4
+    jump ^lor_end_41
+
+  block ^lor_short_40:
+    store typed i64 1, $lor__4
+    jump ^lor_end_41
+
+  block ^lor_end_41:
+    %t212 = load typed i64 $lor__4
+    branch %t212, ^lor_short_43, ^lor_rhs_42
+
+  block ^lor_rhs_42:
+    %t213 = addr $bits
+    %t214 = index inbounds i8 [projection=field] %t213, 3
+    %t215 = load u8 %t214
+    %t216 = convert zext i32 u8 %t215
+    %t217 = cmp ne i32 %t216, 8
+    %t218 = convert trunc i32 i64 %t217
+    %t219 = cmp ne i32 %t218, 0
+    store typed i64 %t219, $lor__5
+    jump ^lor_end_44
+
+  block ^lor_short_43:
+    store typed i64 1, $lor__5
+    jump ^lor_end_44
+
+  block ^lor_end_44:
+    %t220 = load typed i64 $lor__5
+    branch %t220, ^lor_short_46, ^lor_rhs_45
+
+  block ^lor_rhs_45:
+    %t221 = addr @packed_byte
+    %t222 = index inbounds i8 [projection=field] %t221, 0
+    %t223 = load u8 %t222
+    %t224 = binary and u8 %t223, 7
+    %t225 = convert zext u32 u8 %t224
+    %t226 = copy i32 %t225
+    %t227 = cmp ne i32 %t226, 5
+    %t228 = convert trunc i32 i64 %t227
+    %t229 = cmp ne i32 %t228, 0
+    store typed i64 %t229, $lor__6
+    jump ^lor_end_47
+
+  block ^lor_short_46:
+    store typed i64 1, $lor__6
+    jump ^lor_end_47
+
+  block ^lor_end_47:
+    %t230 = load typed i64 $lor__6
+    branch %t230, ^lor_short_49, ^lor_rhs_48
+
+  block ^lor_rhs_48:
+    %t231 = addr @packed_triple
+    %t232 = index inbounds i8 [projection=field] %t231, 0
+    %t233 = load u16 %t232
+    %t234 = convert zext i64 u16 %t233
+    %t235 = index i8 %t232, 2
+    %t236 = load u8 %t235
+    %t237 = convert zext i64 u8 %t236
+    %t238 = binary shl i64 %t237, 16
+    %t239 = binary or i64 %t234, %t238
+    %t240 = binary and i64 %t239, 16777215
+    %t241 = convert trunc u32 i64 %t240
+    %t242 = copy i32 %t241
+    %t243 = cmp ne i32 %t242, 1193049
+    %t244 = convert trunc i32 i64 %t243
+    %t245 = cmp ne i32 %t244, 0
+    store typed i64 %t245, $lor__7
+    jump ^lor_end_50
+
+  block ^lor_short_49:
+    store typed i64 1, $lor__7
+    jump ^lor_end_50
+
+  block ^lor_end_50:
+    %t246 = load typed i64 $lor__7
+    %t247 = convert trunc i32 i64 %t246
+    return i32 %t247
+}

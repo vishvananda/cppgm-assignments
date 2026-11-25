@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c99-unicode-identifier-continue-bad.t:1:13: universal character name is outside the C99 identifier ranges

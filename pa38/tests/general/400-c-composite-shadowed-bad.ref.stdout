@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-composite-shadowed-bad.t:8:15: sizeof of an incomplete or function type

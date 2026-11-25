@@ -1,0 +1,139 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $n : i32
+  slot $tmpobj__1 : i64
+  slot $cleanup_return__2 : i32
+  slot $tmpobj__3 : i64
+  slot $nested : ptr
+  slot $pointer : ptr
+  slot $unevaluated : i32
+  slot $lor__4 : i64
+
+  block ^entry:
+    store typed i32 2, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, $n
+    %t3 = convert sext i64 i32 %t1
+    %t4 = binary mul i64 %t3, 4
+    store typed i64 %t4, $tmpobj__1
+    %t5 = load typed i64 $tmpobj__1
+    %t6 = stack_save
+    %t7 = stack_alloc %t5
+    %t8 = index inbounds i32 [projection=array_element] %t7, 1
+    store typed i32 42, %t8
+    %t9 = load typed i32 $n
+    %t10 = cmp ne i32 %t9, 3
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t12 = load typed i64 $tmpobj__1
+    %t13 = const i64 4
+    %t14 = convert sext i64 i32 2
+    %t15 = binary mul i64 %t14, %t13
+    %t16 = cmp ne i64 %t12, %t15
+    %t17 = convert trunc i32 i64 %t16
+    branch %t17, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    store typed i32 1, $cleanup_return__2
+    jump ^return_cleanup_action_5
+
+  block ^return_cleanup_terminal_4:
+    return i32 $cleanup_return__2
+
+  block ^return_cleanup_action_5:
+    stack_restore %t6
+    jump ^return_cleanup_terminal_4
+
+  block ^if_else_2:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t18 = load typed i32 $n
+    %t19 = binary add nowrap i32 %t18, 1
+    store typed i32 %t19, $n
+    %t20 = convert sext i64 i32 %t19
+    %t21 = binary mul i64 %t20, 4
+    store typed i64 %t21, $tmpobj__3
+    store typed ptr 0, $nested
+    %t22 = load typed i32 $n
+    %t23 = cmp ne i32 %t22, 4
+    %t24 = convert trunc i32 i64 %t23
+    branch %t24, ^if_then_7, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t25 = load typed ptr $nested
+    %t26 = load typed i64 $tmpobj__3
+    %t27 = const i64 4
+    %t28 = convert sext i64 i32 4
+    %t29 = binary mul i64 %t28, %t27
+    %t30 = cmp ne i64 %t26, %t29
+    %t31 = convert trunc i32 i64 %t30
+    branch %t31, ^if_then_7, ^if_else_8
+
+  block ^if_then_7:
+    store typed i32 2, $cleanup_return__2
+    jump ^return_cleanup_action_5
+
+  block ^if_else_8:
+    jump ^if_end_10
+
+  block ^if_end_10:
+    %t32 = load typed i32 $n
+    %t33 = binary add nowrap i32 %t32, 1
+    store typed i32 %t33, $n
+    store typed ptr %t7, $pointer
+    %t34 = load typed i32 $n
+    %t35 = cmp ne i32 %t34, 5
+    %t36 = convert trunc i32 i64 %t35
+    branch %t36, ^if_then_11, ^lor_rhs_14
+
+  block ^lor_rhs_14:
+    %t37 = load typed ptr $pointer
+    %t38 = index inbounds i32 [projection=array_element] %t37, 1
+    %t39 = load typed i32 %t38
+    %t40 = cmp ne i32 %t39, 42
+    %t41 = convert trunc i32 i64 %t40
+    branch %t41, ^if_then_11, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t42 = load typed ptr $pointer
+    %t43 = load typed i64 $tmpobj__1
+    %t44 = load typed i64 $tmpobj__1
+    %t45 = cmp ne i64 %t43, %t44
+    %t46 = convert trunc i32 i64 %t45
+    branch %t46, ^if_then_11, ^if_else_12
+
+  block ^if_then_11:
+    store typed i32 3, $cleanup_return__2
+    jump ^return_cleanup_action_5
+
+  block ^if_else_12:
+    jump ^if_end_15
+
+  block ^if_end_15:
+    store typed i32 42, $unevaluated
+    %t47 = load typed i32 $n
+    %t48 = cmp ne i32 %t47, 5
+    %t49 = convert trunc i32 i64 %t48
+    branch %t49, ^lor_short_17, ^lor_rhs_16
+
+  block ^lor_rhs_16:
+    %t50 = load typed i32 $unevaluated
+    %t51 = cmp ne i32 %t50, 42
+    %t52 = convert trunc i32 i64 %t51
+    %t53 = cmp ne i32 %t52, 0
+    store typed i64 %t53, $lor__4
+    jump ^lor_end_18
+
+  block ^lor_short_17:
+    store typed i64 1, $lor__4
+    jump ^lor_end_18
+
+  block ^lor_end_18:
+    %t54 = load typed i64 $lor__4
+    %t55 = convert trunc i32 i64 %t54
+    store typed i32 %t55, $cleanup_return__2
+    jump ^return_cleanup_action_5
+}

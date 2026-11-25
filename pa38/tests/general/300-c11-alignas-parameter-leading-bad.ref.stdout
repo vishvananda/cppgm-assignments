@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c11-alignas-parameter-leading-bad.t:1:8: an alignment specifier is not permitted here

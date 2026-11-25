@@ -1,0 +1,36 @@
+function @read_row(%select : i32, %length : i32, %row : ptr, %other : ptr) -> i32 [linkage=c, binding=strong] {
+  slot $select : i32
+  slot $length : i32
+  slot $row : ptr
+  slot $other : ptr
+  slot $tmpobj__1 : i64
+  slot $cond__2 : ptr
+
+  block ^entry:
+    store typed i32 %select, $select
+    store typed i32 %length, $length
+    store typed ptr %row, $row
+    store typed ptr %other, $other
+    %t1 = load typed i32 $length
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = load typed i32 $select
+    branch %t4, ^cond_then_1, ^cond_else_2
+
+  block ^cond_then_1:
+    %t5 = load typed ptr $row
+    store typed ptr %t5, $cond__2
+    jump ^cond_end_3
+
+  block ^cond_else_2:
+    %t6 = load typed ptr $other
+    store typed ptr %t6, $cond__2
+    jump ^cond_end_3
+
+  block ^cond_end_3:
+    %t7 = load typed ptr $cond__2
+    %t8 = index inbounds i32 [projection=array_element] %t7, 0
+    %t9 = load volatile i32 %t8
+    return i32 %t9
+}

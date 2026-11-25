@@ -1,0 +1,112 @@
+function @last(%row : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $row : ptr
+
+  block ^entry:
+    store typed ptr %row, $row
+    %t1 = load typed ptr $row
+    %t2 = const i64 4
+    %t3 = binary sub i64 %t2, 1
+    %t4 = index inbounds i32 [projection=array_element] %t1, %t3
+    %t5 = load typed i32 %t4
+    return i32 %t5
+}
+function @first(%values : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $values : ptr
+
+  block ^entry:
+    store typed ptr %values, $values
+    %t1 = load typed ptr $values
+    %t2 = index inbounds i32 [projection=array_element] %t1, 0
+    %t3 = load typed i32 %t2
+    return i32 %t3
+}
+function @pointer_last(%row : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $row : ptr
+
+  block ^entry:
+    store typed ptr %row, $row
+    %t1 = load typed ptr $row
+    %t2 = const i64 8
+    %t3 = binary sub i64 %t2, 1
+    %t4 = index inbounds i32 [projection=array_element] %t1, %t3
+    %t5 = load typed i32 %t4
+    return i32 %t5
+}
+function @invoke(%pick : ptr, %row : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $pick : ptr
+  slot $row : ptr
+
+  block ^entry:
+    store typed ptr %pick, $pick
+    store typed ptr %row, $row
+    %t1 = load typed ptr $row
+    %t2 = load typed ptr $pick
+    %t3 = call i32 %t2(%t1) as (%arg0 : ptr) -> i32
+    return i32 %t3
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $aligned : obj<16x4>
+  slot $width : obj<32x4>
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+
+  block ^entry:
+    %t1 = addr $aligned
+    zeroinit 16x4 %t1
+    %t2 = addr $width
+    zeroinit 32x4 %t2
+    %t3 = addr $aligned
+    %t4 = const i64 4
+    %t5 = binary sub i64 %t4, 1
+    %t6 = index inbounds i32 [projection=array_element] %t3, %t5
+    store typed i32 4, %t6
+    %t7 = addr $width
+    %t8 = const i64 8
+    %t9 = binary sub i64 %t8, 1
+    %t10 = index inbounds i32 [projection=array_element] %t7, %t9
+    store typed i32 9, %t10
+    %t11 = addr @last
+    %t12 = addr $aligned
+    %t13 = call i32 @invoke(%t11, %t12)
+    %t14 = cmp ne i32 %t13, 4
+    %t15 = convert trunc i32 i64 %t14
+    branch %t15, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t16 = addr $aligned
+    %t17 = call i32 @first(%t16)
+    %t18 = addr $aligned
+    %t19 = index inbounds i32 [projection=array_element] %t18, 0
+    %t20 = load typed i32 %t19
+    %t21 = cmp ne i32 %t17, %t20
+    %t22 = convert trunc i32 i64 %t21
+    %t23 = cmp ne i32 %t22, 0
+    store typed i64 %t23, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t24 = load typed i64 $lor__1
+    branch %t24, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t25 = addr $width
+    %t26 = call i32 @pointer_last(%t25)
+    %t27 = cmp ne i32 %t26, 9
+    %t28 = convert trunc i32 i64 %t27
+    %t29 = cmp ne i32 %t28, 0
+    store typed i64 %t29, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t30 = load typed i64 $lor__2
+    %t31 = convert trunc i32 i64 %t30
+    return i32 %t31
+}

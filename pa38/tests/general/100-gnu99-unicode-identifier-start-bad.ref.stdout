@@ -1,0 +1,1 @@
+ERROR: tests/general/100-gnu99-unicode-identifier-start-bad.t:1:12: universal character name cannot start a C99 identifier

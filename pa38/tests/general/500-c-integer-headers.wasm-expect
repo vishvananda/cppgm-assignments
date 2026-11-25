@@ -1,0 +1,1 @@
+{"source":true,"resource_headers":true,"flags":["-x","c","-std=c11","-pedantic-errors"],"calls":[{"export":"main","result":"0"}]}

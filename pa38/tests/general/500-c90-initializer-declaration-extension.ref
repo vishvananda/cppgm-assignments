@@ -1,0 +1,28 @@
+global @answer : i32 [linkage=c, binding=internal] = 42
+
+function @check(%argument : i32) -> i32 [linkage=c, binding=internal] {
+  slot $argument : i32
+  slot $initialized : obj<4x4>
+
+  block ^entry:
+    store typed i32 %argument, $argument
+    %t1 = addr $initialized
+    %t2 = load typed i32 $argument
+    %t3 = addr $initialized
+    %t4 = index inbounds i8 [projection=field] %t3, 0
+    store typed i32 %t2, %t4
+    %t5 = addr $initialized
+    %t6 = index inbounds i8 [projection=field] %t5, 0
+    %t7 = load typed i32 %t6
+    %t8 = load typed i32 @answer
+    %t9 = cmp eq i32 %t7, %t8
+    %t10 = convert trunc i32 i64 %t9
+    return i32 %t10
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @check(42)
+    %t2 = cmp eq i32 %t1, 0
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}

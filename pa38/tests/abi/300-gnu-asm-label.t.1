@@ -1,0 +1,19 @@
+#ifdef __APPLE__
+#define VALUE_SYMBOL "_kernel_probe_value"
+#else
+#define VALUE_SYMBOL "kernel_probe_value"
+#endif
+
+int value(void) asm(VALUE_SYMBOL);
+
+int value(void)
+{
+    return 37;
+}
+
+extern int kernel_probe_value(void);
+
+int main(void)
+{
+    return kernel_probe_value() != 37;
+}

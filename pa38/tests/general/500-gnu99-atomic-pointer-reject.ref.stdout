@@ -1,0 +1,1 @@
+ERROR: tests/general/500-gnu99-atomic-pointer-reject.t:1:7: the _Atomic qualifier is a C11 extension

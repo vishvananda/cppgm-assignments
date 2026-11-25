@@ -1,0 +1,2 @@
+ERROR: tests/general/c-universal-escape-system.h:2:37: a universal character name for a basic or control character in a literal requires C23
+note: included from tests/general/100-c17-universal-escape-system-bad.t:1

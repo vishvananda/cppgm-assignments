@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c23-constexpr-reserved-bad.t:1:1: constexpr requires an object definition in C

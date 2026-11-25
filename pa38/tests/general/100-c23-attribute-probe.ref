@@ -1,0 +1,32 @@
+function @die() -> void [return=noreturn, linkage=c, binding=internal] {
+  block ^entry:
+    jump ^for_cond_1
+
+  block ^for_cond_1:
+    jump ^for_body_2
+
+  block ^for_body_2:
+    jump ^for_iter_3
+
+  block ^for_iter_3:
+    jump ^for_cond_1
+
+  block ^for_end_4:
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = cmp ne i32 42, 42
+    %t2 = convert trunc i32 i64 %t1
+    branch %t2, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    call void @die()
+    jump ^if_end_3
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    return i32 0
+}

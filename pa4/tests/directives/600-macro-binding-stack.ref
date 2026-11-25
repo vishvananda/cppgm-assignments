@@ -1,0 +1,14 @@
+preproc 1
+sof tests/directives/600-macro-binding-stack.t
+literal 4 int 04000000
+literal 5 int 05000000
+literal 3 int 03000000
+literal 2 int 02000000
+simple ( OP_LPAREN
+literal 7 int 07000000
+simple + OP_PLUS
+literal 1 int 01000000
+simple ) OP_RPAREN
+literal 2 int 02000000
+literal 2 int 02000000
+eof

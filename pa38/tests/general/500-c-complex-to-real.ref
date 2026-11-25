@@ -1,0 +1,252 @@
+global @folded_real : f64 [linkage=c, binding=internal] = 2.5
+global @folded_integer : i32 [linkage=c, binding=internal] = -3
+
+function @make_value(%real : f32, %effects : ptr) -> obj<8x4> [linkage=c, binding=internal] {
+  slot $real : f32
+  slot $effects : ptr
+  slot $complex__1 : obj<8x4>
+  slot $complex__2 : obj<8x4>
+  slot $complex__3 : obj<8x4>
+
+  block ^entry:
+    store typed f32 %real, $real
+    store typed ptr %effects, $effects
+    %t1 = load typed ptr $effects
+    %t2 = load typed i32 %t1
+    %t3 = binary add nowrap i32 %t2, 1
+    store typed i32 %t3, %t1
+    %t4 = load typed f32 $real
+    %t5 = addr $complex__1
+    store typed f32 0f, %t5
+    %t6 = index i8 [projection=field] %t5, 4
+    store typed f32 4f, %t6
+    %t7 = load obj<8x4> $complex__1
+    store obj<8x4> %t7, $complex__2
+    %t8 = addr $complex__2
+    %t9 = load typed f32 %t8
+    %t10 = index i8 [projection=field] %t8, 4
+    %t11 = load typed f32 %t10
+    %t12 = binary add f32 %t4, %t9
+    %t13 = addr $complex__3
+    store typed f32 %t12, %t13
+    %t14 = index i8 [projection=field] %t13, 4
+    store typed f32 %t11, %t14
+    %t15 = load obj<8x4> $complex__3
+    return obj<8x4> %t15
+}
+function @scalar_argument(%value : f64) -> f64 [linkage=c, binding=internal] {
+  slot $value : f64
+
+  block ^entry:
+    store typed f64 %value, $value
+    %t1 = load typed f64 $value
+    return f64 %t1
+}
+function @scalar_return(%value : obj<8x4>) -> f32 [linkage=c, binding=internal] {
+  slot $value : obj<8x4>
+  slot $complex__1 : obj<8x4>
+
+  block ^entry:
+    store obj<8x4> %value, $value
+    %t1 = load obj<8x4> $value
+    store obj<8x4> %t1, $complex__1
+    %t2 = addr $complex__1
+    %t3 = load typed f32 %t2
+    return f32 %t3
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $effects : i32
+  slot $value : obj<8x4>
+  slot $widened : f64
+  slot $complex__1 : obj<8x4>
+  slot $integer : i32
+  slot $complex__2 : obj<8x4>
+  slot $truth : u8
+  slot $complex__3 : obj<8x4>
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+  slot $lor__6 : i64
+  slot $lor__7 : i64
+  slot $lor__8 : i64
+  slot $lor__9 : i64
+  slot $complex__10 : obj<8x4>
+  slot $lor__11 : i64
+  slot $complex__12 : obj<8x4>
+  slot $lor__13 : i64
+
+  block ^entry:
+    store typed i32 0, $effects
+    %t1 = addr $effects
+    %t2 = call obj<8x4> @make_value(3.5f, %t1)
+    store obj<8x4> %t2, $value
+    %t3 = load obj<8x4> $value
+    store obj<8x4> %t3, $complex__1
+    %t4 = addr $complex__1
+    %t5 = load typed f32 %t4
+    %t6 = convert fpext f64 f32 %t5
+    store typed f64 %t6, $widened
+    %t7 = unary neg f32 3.5f
+    %t8 = addr $effects
+    %t9 = call obj<8x4> @make_value(%t7, %t8)
+    store obj<8x4> %t9, $complex__2
+    %t10 = addr $complex__2
+    %t11 = load typed f32 %t10
+    %t12 = convert fptosi i32 f32 %t11
+    store typed i32 %t12, $integer
+    %t13 = addr $effects
+    %t14 = call obj<8x4> @make_value(0f, %t13)
+    store obj<8x4> %t14, $complex__3
+    %t15 = addr $complex__3
+    %t16 = load typed f32 %t15
+    %t17 = index i8 [projection=field] %t15, 4
+    %t18 = load typed f32 %t17
+    %t19 = cmp ne f32 %t16, 0f
+    %t20 = cmp ne f32 %t18, 0f
+    %t21 = binary or i64 %t19, %t20
+    %t22 = convert trunc u8 i64 %t21
+    store typed u8 %t22, $truth
+    %t23 = load typed f64 @folded_real
+    %t24 = cmp ne f64 %t23, 2.5
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t26 = load typed i32 @folded_integer
+    %t27 = unary neg i32 3
+    %t28 = cmp ne i32 %t26, %t27
+    %t29 = convert trunc i32 i64 %t28
+    %t30 = cmp ne i32 %t29, 0
+    store typed i64 %t30, $lor__4
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__4
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t31 = load typed i64 $lor__4
+    branch %t31, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t32 = load typed f64 $widened
+    %t33 = cmp ne f64 %t32, 3.5
+    %t34 = convert trunc i32 i64 %t33
+    %t35 = cmp ne i32 %t34, 0
+    store typed i64 %t35, $lor__5
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__5
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t36 = load typed i64 $lor__5
+    branch %t36, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t37 = load typed i32 $integer
+    %t38 = unary neg i32 3
+    %t39 = cmp ne i32 %t37, %t38
+    %t40 = convert trunc i32 i64 %t39
+    %t41 = cmp ne i32 %t40, 0
+    store typed i64 %t41, $lor__6
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__6
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t42 = load typed i64 $lor__6
+    branch %t42, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t43 = load typed u8 $truth
+    %t44 = cmp eq u8 %t43, 0
+    %t45 = convert trunc i32 i64 %t44
+    %t46 = cmp ne i32 %t45, 0
+    store typed i64 %t46, $lor__7
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__7
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t47 = load typed i64 $lor__7
+    branch %t47, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t48 = load typed i32 $effects
+    %t49 = cmp ne i32 %t48, 3
+    %t50 = convert trunc i32 i64 %t49
+    %t51 = cmp ne i32 %t50, 0
+    store typed i64 %t51, $lor__8
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__8
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t52 = load typed i64 $lor__8
+    branch %t52, ^lor_short_17, ^lor_rhs_16
+
+  block ^lor_rhs_16:
+    %t53 = load obj<8x4> $value
+    store obj<8x4> %t53, $complex__10
+    %t54 = addr $complex__10
+    %t55 = load typed f32 %t54
+    %t56 = cmp ne f32 %t55, 3.5f
+    %t57 = convert trunc i32 i64 %t56
+    %t58 = cmp ne i32 %t57, 0
+    store typed i64 %t58, $lor__9
+    jump ^lor_end_18
+
+  block ^lor_short_17:
+    store typed i64 1, $lor__9
+    jump ^lor_end_18
+
+  block ^lor_end_18:
+    %t59 = load typed i64 $lor__9
+    branch %t59, ^lor_short_20, ^lor_rhs_19
+
+  block ^lor_rhs_19:
+    %t60 = load obj<8x4> $value
+    store obj<8x4> %t60, $complex__12
+    %t61 = addr $complex__12
+    %t62 = load typed f32 %t61
+    %t63 = convert fpext f64 f32 %t62
+    %t64 = call f64 @scalar_argument(%t63)
+    %t65 = cmp ne f64 %t64, 3.5
+    %t66 = convert trunc i32 i64 %t65
+    %t67 = cmp ne i32 %t66, 0
+    store typed i64 %t67, $lor__11
+    jump ^lor_end_21
+
+  block ^lor_short_20:
+    store typed i64 1, $lor__11
+    jump ^lor_end_21
+
+  block ^lor_end_21:
+    %t68 = load typed i64 $lor__11
+    branch %t68, ^lor_short_23, ^lor_rhs_22
+
+  block ^lor_rhs_22:
+    %t69 = load obj<8x4> $value
+    %t70 = call f32 @scalar_return(%t69)
+    %t71 = cmp ne f32 %t70, 3.5f
+    %t72 = convert trunc i32 i64 %t71
+    %t73 = cmp ne i32 %t72, 0
+    store typed i64 %t73, $lor__13
+    jump ^lor_end_24
+
+  block ^lor_short_23:
+    store typed i64 1, $lor__13
+    jump ^lor_end_24
+
+  block ^lor_end_24:
+    %t74 = load typed i64 $lor__13
+    %t75 = convert trunc i32 i64 %t74
+    return i32 %t75
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-forward-enum-incomplete-object.t:5:18: variable of incomplete type

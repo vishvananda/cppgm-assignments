@@ -1,0 +1,130 @@
+global @neutral : i32 [linkage=c, binding=strong] = 1
+global @tentative : obj<32x32> [linkage=c, binding=strong] = {
+  zero 1
+}
+global @completed : obj<16x16> [linkage=c, binding=strong] = {
+  i8 5
+  zero 15
+}
+global @gnu_before : obj<16x16> [linkage=c, binding=strong] = {
+  i8 2
+}
+global @gnu_after : obj<16x16> [linkage=c, binding=strong] = {
+  i8 3
+}
+global @alias : obj<16x16> [linkage=c, binding=strong] = {
+  i32 4
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+
+  block ^entry:
+    %t1 = load typed i32 @neutral
+    %t2 = load i8 @gnu_before
+    %t3 = convert sext i32 i8 %t2
+    %t4 = binary add nowrap i32 %t1, %t3
+    %t5 = load i8 @gnu_after
+    %t6 = convert sext i32 i8 %t5
+    %t7 = binary add nowrap i32 %t4, %t6
+    %t8 = load typed i32 @alias
+    %t9 = binary add nowrap i32 %t7, %t8
+    %t10 = addr @completed
+    %t11 = index inbounds i8 [projection=field] %t10, 0
+    %t12 = load i8 %t11
+    %t13 = convert sext i32 i8 %t12
+    %t14 = binary add nowrap i32 %t9, %t13
+    %t15 = cmp ne i32 %t14, 15
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t17 = addr @tentative
+    %t18 = copy i64 %t17
+    %t19 = convert sext i64 i32 32
+    %t20 = binary umod i64 %t18, %t19
+    %t21 = cmp ne i64 %t20, 0
+    store typed i64 %t21, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t22 = load typed i64 $lor__1
+    branch %t22, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t23 = addr @gnu_before
+    %t24 = copy i64 %t23
+    %t25 = convert sext i64 i32 16
+    %t26 = binary umod i64 %t24, %t25
+    %t27 = cmp ne i64 %t26, 0
+    store typed i64 %t27, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t28 = load typed i64 $lor__2
+    branch %t28, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t29 = addr @gnu_after
+    %t30 = copy i64 %t29
+    %t31 = convert sext i64 i32 16
+    %t32 = binary umod i64 %t30, %t31
+    %t33 = cmp ne i64 %t32, 0
+    store typed i64 %t33, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t34 = load typed i64 $lor__3
+    branch %t34, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t35 = addr @alias
+    %t36 = copy i64 %t35
+    %t37 = convert sext i64 i32 16
+    %t38 = binary umod i64 %t36, %t37
+    %t39 = cmp ne i64 %t38, 0
+    store typed i64 %t39, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t40 = load typed i64 $lor__4
+    branch %t40, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t41 = addr @completed
+    %t42 = copy i64 %t41
+    %t43 = convert sext i64 i32 16
+    %t44 = binary umod i64 %t42, %t43
+    %t45 = cmp ne i64 %t44, 0
+    store typed i64 %t45, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t46 = load typed i64 $lor__5
+    %t47 = convert trunc i32 i64 %t46
+    return i32 %t47
+}

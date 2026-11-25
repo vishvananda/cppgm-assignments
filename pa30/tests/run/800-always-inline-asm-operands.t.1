@@ -1,0 +1,30 @@
+static int array[2];
+
+static inline __attribute__((always_inline)) const int* address(const int* object)
+{
+    const int* result;
+    asm("leaq %c1(%%rip), %0" : "=r"(result) : "i"(object));
+    return result;
+}
+
+static inline __attribute__((always_inline)) int literal(int value)
+{
+    int result;
+    asm("movl %1, %0" : "=r"(result) : "i"(value));
+    return result;
+}
+
+static inline __attribute__((always_inline)) const int* address_wrapper(const int* object)
+{
+    return address(object);
+}
+
+static inline __attribute__((always_inline)) int literal_wrapper(int value)
+{
+    return literal(value) + 1;
+}
+
+int main()
+{
+    return address_wrapper(&array[1]) != &array[1] || literal_wrapper(21) != 22;
+}

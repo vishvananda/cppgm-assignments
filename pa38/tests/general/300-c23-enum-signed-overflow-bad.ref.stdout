@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-enum-signed-overflow-bad.t:1:49: enumerator value overflows the largest integer type

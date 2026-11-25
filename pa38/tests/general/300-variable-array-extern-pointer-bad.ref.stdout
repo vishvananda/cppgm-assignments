@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-extern-pointer-bad.t:3:16: a variably modified object must be declared without linkage at block scope

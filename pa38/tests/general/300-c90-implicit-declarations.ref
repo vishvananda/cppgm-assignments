@@ -1,0 +1,71 @@
+global @marker : i32 [linkage=c, binding=internal] = 3
+global @initial : i32 [linkage=c, binding=strong] = 4
+
+function @product(%x : i32, %y : i32) -> i32 [linkage=c, binding=strong] {
+  slot $x : i32
+  slot $y : i32
+
+  block ^entry:
+    store typed i32 %x, $x
+    store typed i32 %y, $y
+    %t1 = load typed i32 $x
+    %t2 = load typed i32 $y
+    %t3 = binary mul nowrap i32 %t1, %t2
+    return i32 %t3
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $inline : i32
+  slot $restrict : i32
+  slot $result : i32
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = load typed i32 @initial
+    store typed i32 %t1, $inline
+    %t2 = load typed i32 @marker
+    store typed i32 %t2, $restrict
+    %t3 = load typed i32 $inline
+    %t4 = convert trunc u8 i32 %t3
+    %t5 = convert zext i32 u8 %t4
+    %t6 = load typed i32 $restrict
+    %t7 = convert sitofp f32 i32 %t6
+    %t8 = convert fpext f64 f32 %t7
+    %t9 = addr @sum
+    %t10 = call i32 %t9(%t5, %t8) as (%arg0 : i32, %arg1 : f64) -> i32
+    store typed i32 %t10, $result
+    %t11 = load typed i32 $result
+    %t12 = cmp ne i32 %t11, 7
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t14 = addr @product
+    %t15 = call i32 %t14(2, 3) as (%arg0 : i32, %arg1 : i32) -> i32
+    %t16 = cmp ne i32 %t15, 6
+    %t17 = convert trunc i32 i64 %t16
+    %t18 = cmp ne i32 %t17, 0
+    store typed i64 %t18, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t19 = load typed i64 $lor__1
+    %t20 = convert trunc i32 i64 %t19
+    return i32 %t20
+}
+function @sum(%value : i32, %extra : f64) -> i32 [linkage=c, binding=strong] {
+  slot $value : i32
+  slot $extra : f64
+
+  block ^entry:
+    store typed i32 %value, $value
+    store typed f64 %extra, $extra
+    %t1 = load typed i32 $value
+    %t2 = load typed f64 $extra
+    %t3 = convert fptosi i32 f64 %t2
+    %t4 = binary add nowrap i32 %t1, %t3
+    return i32 %t4
+}

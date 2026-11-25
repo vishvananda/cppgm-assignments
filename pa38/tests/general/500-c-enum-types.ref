@@ -1,0 +1,51 @@
+function @read_counter(%p : ptr) -> u32 [linkage=c, binding=internal] {
+  slot $p : ptr
+
+  block ^entry:
+    store typed ptr %p, $p
+    %t1 = load typed ptr $p
+    %t2 = load typed u32 %t1
+    return u32 %t2
+}
+function @read_delta(%p : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $p : ptr
+
+  block ^entry:
+    store typed ptr %p, $p
+    %t1 = load typed ptr $p
+    %t2 = load typed i32 %t1
+    return i32 %t2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $counter : u32
+  slot $delta : i32
+  slot $lor__1 : i64
+
+  block ^entry:
+    store typed u32 4, $counter
+    store typed i32 -5, $delta
+    %t1 = addr $counter
+    %t2 = call u32 @read_counter(%t1)
+    %t3 = cmp ne u32 %t2, 4
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t5 = addr $delta
+    %t6 = call i32 @read_delta(%t5)
+    %t7 = unary neg i32 5
+    %t8 = cmp ne i32 %t6, %t7
+    %t9 = convert trunc i32 i64 %t8
+    %t10 = cmp ne i32 %t9, 0
+    store typed i64 %t10, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t11 = load typed i64 $lor__1
+    %t12 = convert trunc i32 i64 %t11
+    return i32 %t12
+}

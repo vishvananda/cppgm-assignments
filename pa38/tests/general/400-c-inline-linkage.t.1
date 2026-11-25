@@ -2,7 +2,11 @@ int declared_first(int);
 int declared_last(int);
 int declared_with_extern(int);
 
-inline int inline_only(int n) { return n + 99; }
+inline int inline_only(int n)
+{
+  static const int offset[] = { 99 };
+  return n + offset[0];
+}
 static inline int local_inline(int n) { return n + 11; }
 
 int main(void)

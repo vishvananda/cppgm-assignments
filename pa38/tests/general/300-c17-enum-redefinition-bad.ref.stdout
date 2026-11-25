@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c17-enum-redefinition-bad.t:2:1: enumeration redefinition

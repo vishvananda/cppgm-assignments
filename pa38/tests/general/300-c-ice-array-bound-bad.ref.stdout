@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-ice-array-bound-bad.t:1:5: a variably modified type requires block or function prototype scope

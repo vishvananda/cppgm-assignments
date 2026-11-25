@@ -1,0 +1,75 @@
+global @joined [linkage=c, binding=strong] = {
+  i8 97
+  i8 98
+  i8 99
+  i8 100
+  i8 0
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+
+  block ^entry:
+    %t1 = const i64 5
+    %t2 = convert sext i64 i32 5
+    %t3 = cmp ne i64 %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t5 = addr @joined
+    %t6 = index inbounds i8 [projection=array_element] %t5, 1
+    %t7 = load i8 %t6
+    %t8 = convert sext i32 i8 %t7
+    %t9 = cmp ne i32 %t8, 98
+    %t10 = convert trunc i32 i64 %t9
+    %t11 = cmp ne i32 %t10, 0
+    store typed i64 %t11, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t12 = load typed i64 $lor__1
+    branch %t12, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t13 = addr @joined
+    %t14 = index inbounds i8 [projection=array_element] %t13, 3
+    %t15 = load i8 %t14
+    %t16 = convert sext i32 i8 %t15
+    %t17 = cmp ne i32 %t16, 100
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp ne i32 %t18, 0
+    store typed i64 %t19, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t20 = load typed i64 $lor__2
+    branch %t20, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t21 = binary add nowrap i32 97, 1
+    %t22 = cmp ne i32 %t21, 98
+    %t23 = convert trunc i32 i64 %t22
+    %t24 = cmp ne i32 %t23, 0
+    store typed i64 %t24, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t25 = load typed i64 $lor__3
+    %t26 = convert trunc i32 i64 %t25
+    return i32 %t26
+}

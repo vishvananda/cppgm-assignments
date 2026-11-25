@@ -146,9 +146,29 @@ constexpr bool is_aarch64(Target target)
 	return target == Target::AArch64Linux || target == Target::AArch64MacOS;
 }
 
+// C23 bit-precise integers fit the existing one- and two-word machines.
+constexpr unsigned bit_int_max_width = 128;
+
+constexpr unsigned bit_int_bytes(unsigned width)
+{
+	return width <= 8 ? 1 : width <= 16 ? 2 : width <= 32 ? 4 : width <= 64 ? 8 : 16;
+}
+
+constexpr unsigned bit_int_alignment(Target target, unsigned width)
+{
+	return width > 64 && !is_aarch64(target) ? 8 : bit_int_bytes(width);
+}
+
 constexpr bool is_darwin(Target target)
 {
 	return target == Target::MacOS || target == Target::AArch64MacOS;
+}
+
+constexpr unsigned inline_atomic_max_bytes = 8;
+
+constexpr bool is_inline_atomic_size(uint64_t bytes)
+{
+	return bytes != 0 && bytes <= inline_atomic_max_bytes && (bytes & (bytes - 1)) == 0;
 }
 
 constexpr bool pointer_va_list(Target target)

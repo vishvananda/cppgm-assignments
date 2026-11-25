@@ -1,0 +1,70 @@
+global @__constexpr_template__1 [storage=readonly, binding=internal] = {
+  i32 1
+  i32 2
+}
+
+function @system_order(%first : ptr, %second : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $first : ptr
+  slot $second : ptr
+
+  block ^entry:
+    store typed ptr %first, $first
+    store typed ptr %second, $second
+    %t1 = load typed ptr $first
+    %t2 = load typed ptr $second
+    %t3 = cmp ult ptr %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    return i32 %t4
+}
+function @callback() -> void [linkage=c, binding=internal] {
+  block ^entry:
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $values : obj<8x4>
+  slot $first : ptr
+  slot $second : ptr
+  slot $call : ptr
+  slot $same : ptr
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = addr $values
+    copyobj 8x4 @__constexpr_template__1, %t1
+    %t2 = addr $values
+    store typed ptr %t2, $first
+    %t3 = addr $values
+    %t4 = binary mul i64 1, 4
+    %t5 = index inbounds i8 %t3, %t4
+    store typed ptr %t5, $second
+    %t6 = addr @callback
+    store typed ptr %t6, $call
+    %t7 = addr @callback
+    store typed ptr %t7, $same
+    %t8 = load typed ptr $call
+    %t9 = load typed ptr $same
+    %t10 = cmp uge ptr %t8, %t9
+    %t11 = convert trunc i32 i64 %t10
+    %t12 = cmp eq i32 %t11, 0
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t14 = load typed ptr $first
+    %t15 = load typed ptr $second
+    %t16 = call i32 @system_order(%t14, %t15)
+    %t17 = cmp eq i32 %t16, 0
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp ne i32 %t18, 0
+    store typed i64 %t19, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t20 = load typed i64 $lor__1
+    %t21 = convert trunc i32 i64 %t20
+    return i32 %t21
+}

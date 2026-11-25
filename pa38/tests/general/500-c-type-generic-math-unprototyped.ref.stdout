@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-type-generic-math-unprototyped.t:6:29: type-generic candidate requires a nonvariadic function prototype with parameters

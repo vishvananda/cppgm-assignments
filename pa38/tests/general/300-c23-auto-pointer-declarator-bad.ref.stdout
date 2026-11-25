@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-auto-pointer-declarator-bad.t:1:6: an inferred C type requires an identifier declarator

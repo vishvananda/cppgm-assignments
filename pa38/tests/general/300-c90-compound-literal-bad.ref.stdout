@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-compound-literal-bad.t:3:17: compound literals require C99

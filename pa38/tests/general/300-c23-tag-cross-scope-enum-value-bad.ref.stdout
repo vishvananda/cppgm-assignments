@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-tag-cross-scope-enum-value-bad.t:9:26: invalid implicit conversion

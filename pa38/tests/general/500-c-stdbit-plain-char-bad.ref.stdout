@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-stdbit-plain-char-bad.t:3:12: a generic bit builtin of a type that is no unsigned integer type

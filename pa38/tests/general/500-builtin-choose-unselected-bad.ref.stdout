@@ -1,0 +1,1 @@
+ERROR: tests/general/500-builtin-choose-unselected-bad.t:1:41: undeclared name

@@ -23,7 +23,7 @@ function @unknown(%condition : u8, %tag_input : u8, %input : u32) -> u32 {
 }
 function @late_value(%condition : u8, %input : u32) -> u32 {
   block ^entry:
-    %t1 = select u8 %condition, 1, 0
+    %t1 = select u8 %condition, 1, %condition
     %computed = binary add u32 %input, 7
     %result = select u32 %t1, %computed, 3
     return u32 %result

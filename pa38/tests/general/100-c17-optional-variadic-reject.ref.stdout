@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c17-optional-variadic-reject.t:1:24: __VA_OPT__ requires C23

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-tag-cross-scope-generic-bad.t:9:24: compatible types in two generic associations

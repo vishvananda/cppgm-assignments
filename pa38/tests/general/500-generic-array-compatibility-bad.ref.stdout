@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-array-compatibility-bad.t:5:41: compatible types in two generic associations

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-nested-flexible-element-overlay-bad.t:3:26: initialization of a flexible array member in a nested context

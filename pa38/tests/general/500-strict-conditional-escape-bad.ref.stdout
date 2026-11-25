@@ -1,1 +1,1 @@
-ERROR: tests/general/500-strict-conditional-escape-bad.t:1:21: invalid escape sequence
+ERROR: tests/general/500-strict-conditional-escape-bad.t:1:24: invalid token

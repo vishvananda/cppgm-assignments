@@ -1,0 +1,84 @@
+global @cells [linkage=c, binding=internal] = {
+  i32 0
+  i32 0
+  i32 0
+  i32 19
+}
+global @calls : i32 [linkage=c, binding=internal] = zero
+
+function @read_row() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @calls
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, @calls
+    %t3 = addr @cells
+    return ptr %t3
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $n : i32
+  slot $tmpobj__1 : i64
+  slot $reader : ptr
+  slot $lor__2 : i64
+
+  block ^entry:
+    store typed i32 3, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, $n
+    %t3 = convert sext i64 i32 %t2
+    %t4 = binary mul i64 %t3, 4
+    store typed i64 %t4, $tmpobj__1
+    %t5 = addr @read_row
+    store typed ptr %t5, $reader
+    %t6 = load typed i32 $n
+    %t7 = cmp ne i32 %t6, 4
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t9 = load typed ptr $reader
+    %t10 = call ptr %t9() as () -> ptr
+    %t11 = load typed i64 $tmpobj__1
+    %t12 = const i64 16
+    %t13 = cmp ne i64 %t11, %t12
+    %t14 = convert trunc i32 i64 %t13
+    branch %t14, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t15 = load typed i32 @calls
+    %t16 = cmp ne i32 %t15, 1
+    %t17 = convert trunc i32 i64 %t16
+    branch %t17, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t18 = load typed ptr $reader
+    %t19 = call ptr %t18() as () -> ptr
+    %t20 = index inbounds i32 [projection=array_element] %t19, 3
+    %t21 = load typed i32 %t20
+    %t22 = cmp ne i32 %t21, 19
+    %t23 = convert trunc i32 i64 %t22
+    branch %t23, ^lor_short_7, ^lor_rhs_6
+
+  block ^lor_rhs_6:
+    %t24 = load typed i32 @calls
+    %t25 = cmp ne i32 %t24, 2
+    %t26 = convert trunc i32 i64 %t25
+    %t27 = cmp ne i32 %t26, 0
+    store typed i64 %t27, $lor__2
+    jump ^lor_end_8
+
+  block ^lor_short_7:
+    store typed i64 1, $lor__2
+    jump ^lor_end_8
+
+  block ^lor_end_8:
+    %t28 = load typed i64 $lor__2
+    %t29 = convert trunc i32 i64 %t28
+    return i32 %t29
+}

@@ -1,1 +1,1 @@
-ERROR: tests/general/300-variable-array-constant-bad.t:1:65: sizeof a variable-length array is not constant
+ERROR: tests/general/300-variable-array-constant-bad.t:1:65: a C integer constant expression is required

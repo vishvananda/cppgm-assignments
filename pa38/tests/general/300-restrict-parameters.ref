@@ -1,0 +1,109 @@
+global @__constexpr_template__1 [storage=readonly, binding=internal] = {
+  i32 1
+  i32 2
+}
+
+function @read(%count : i32, %values : ptr, %other : ptr, %third : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $count : i32
+  slot $values : ptr
+  slot $other : ptr
+  slot $third : ptr
+  slot $tmpobj__1 : i64
+  slot $row : ptr
+  slot $extra : ptr
+  slot $again : ptr
+  slot $callbacks : ptr
+  slot $unknown : ptr
+  slot $bytes : ptr
+
+  block ^entry:
+    store typed i32 %count, $count
+    store typed ptr %values, $values
+    store typed ptr %other, $other
+    store typed ptr %third, $third
+    %t1 = load typed i32 $count
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = addr $values
+    store typed ptr %t4, $row
+    %t5 = addr $other
+    store typed ptr %t5, $extra
+    %t6 = addr $third
+    store typed ptr %t6, $again
+    store typed ptr 0, $callbacks
+    store typed ptr 0, $unknown
+    store typed ptr 0, $bytes
+    %t7 = load typed ptr $row
+    %t8 = load typed ptr %t7
+    %t9 = index inbounds i32 [projection=array_element] %t8, 1
+    %t10 = load typed i32 %t9
+    %t11 = load typed ptr $extra
+    %t12 = load typed ptr %t11
+    %t13 = load typed i32 %t12
+    %t14 = binary add nowrap i32 %t10, %t13
+    %t15 = load typed ptr $again
+    %t16 = load typed ptr %t15
+    %t17 = load typed i32 %t16
+    %t18 = binary add nowrap i32 %t14, %t17
+    %t19 = load typed ptr $callbacks
+    %t20 = cmp ne ptr %t19, 0
+    %t21 = convert trunc i32 i64 %t20
+    %t22 = binary add nowrap i32 %t18, %t21
+    %t23 = load typed ptr $unknown
+    %t24 = cmp ne ptr %t23, 0
+    %t25 = convert trunc i32 i64 %t24
+    %t26 = binary add nowrap i32 %t22, %t25
+    %t27 = load typed ptr $bytes
+    %t28 = cmp ne ptr %t27, 0
+    %t29 = convert trunc i32 i64 %t28
+    %t30 = binary add nowrap i32 %t26, %t29
+    return i32 %t30
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $values : obj<8x4>
+  slot $other : i32
+  slot $third : i32
+  slot $p : ptr
+  slot $plain : ptr
+  slot $qualified : ptr
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = addr $values
+    copyobj 8x4 @__constexpr_template__1, %t1
+    store typed i32 4, $other
+    store typed i32 8, $third
+    %t2 = addr $third
+    store typed ptr %t2, $p
+    %t3 = addr $p
+    store typed ptr %t3, $plain
+    %t4 = load typed ptr $plain
+    store typed ptr %t4, $qualified
+    %t5 = load typed ptr $plain
+    %t6 = load typed ptr $qualified
+    %t7 = cmp ne ptr %t5, %t6
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t9 = addr $values
+    %t10 = addr $other
+    %t11 = load typed ptr $qualified
+    %t12 = load typed ptr %t11
+    %t13 = call i32 @read(2, %t9, %t10, %t12)
+    %t14 = cmp ne i32 %t13, 14
+    %t15 = convert trunc i32 i64 %t14
+    %t16 = cmp ne i32 %t15, 0
+    store typed i64 %t16, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t17 = load typed i64 $lor__1
+    %t18 = convert trunc i32 i64 %t17
+    return i32 %t18
+}

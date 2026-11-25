@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-multiple-matches-bad.t:3:21: generic controlling expression matches more than one association

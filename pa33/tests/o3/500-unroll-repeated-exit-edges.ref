@@ -9,19 +9,18 @@ function @scan(%selector : i64) -> i64 [no_inline=yes] {
     branch %t3, ^exit, ^unrolled_2
 
   block ^unrolled_2:
-    %t4 = binary add i64 %selector, 2
-    %t5 = cmp ult i64 %t4, 2
-    branch %t5, ^exit, ^unrolled_3
+    %t4 = cmp uge i64 %selector, -2
+    branch %t4, ^exit, ^unrolled_3
 
   block ^unrolled_3:
-    %t6 = binary add i64 %selector, 3
-    %t7 = cmp ult i64 %t6, 2
-    %t8 = select i64 %t7, 3, 4
+    %t5 = binary add i64 %selector, 3
+    %t6 = cmp ult i64 %t5, 2
+    %t7 = select i64 %t6, 3, 4
     jump ^exit
 
   block ^exit:
-    %t9 = phi i64 [^entry: 0, ^unrolled_1: 1, ^unrolled_2: 2, ^unrolled_3: %t8]
-    return i64 %t9
+    %t8 = phi i64 [^entry: 0, ^unrolled_1: 1, ^unrolled_2: 2, ^unrolled_3: %t7]
+    return i64 %t8
 }
 function @main() -> i32 [role=entry] {
   block ^entry:

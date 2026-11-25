@@ -1,0 +1,72 @@
+global @__constexpr_template__1 [storage=readonly, binding=internal] = {
+  i32 3
+  i32 5
+  i32 9
+}
+
+function @read_row(%length : i32, %row : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $length : i32
+  slot $row : ptr
+  slot $tmpobj__1 : i64
+  slot $erased : ptr
+  slot $tmpobj__2 : i64
+  slot $restored : ptr
+  slot $land__3 : i64
+
+  block ^entry:
+    store typed i32 %length, $length
+    store typed ptr %row, $row
+    %t1 = load typed i32 $length
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = load typed ptr $row
+    store typed ptr %t4, $erased
+    %t5 = load typed i32 $length
+    %t6 = convert sext i64 i32 %t5
+    %t7 = binary mul i64 %t6, 4
+    store typed i64 %t7, $tmpobj__2
+    %t8 = load typed ptr $erased
+    store typed ptr %t8, $restored
+    %t9 = load typed ptr $erased
+    %t10 = load typed ptr $row
+    %t11 = cmp eq ptr %t9, %t10
+    %t12 = convert trunc i32 i64 %t11
+    branch %t12, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t13 = load typed ptr $restored
+    %t14 = load typed i32 $length
+    %t15 = binary sub nowrap i32 %t14, 1
+    %t16 = index inbounds i32 [projection=array_element] %t13, %t15
+    %t17 = load typed i32 %t16
+    %t18 = cmp eq i32 %t17, 9
+    %t19 = convert trunc i32 i64 %t18
+    %t20 = cmp ne i32 %t19, 0
+    store typed i64 %t20, $land__3
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__3
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t21 = load typed i64 $land__3
+    %t22 = convert trunc i32 i64 %t21
+    return i32 %t22
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $row : obj<12x4>
+  slot $length : i32
+
+  block ^entry:
+    %t1 = addr $row
+    copyobj 12x4 @__constexpr_template__1, %t1
+    store volatile i32 3, $length
+    %t2 = load volatile i32 $length
+    %t3 = addr $row
+    %t4 = call i32 @read_row(%t2, %t3)
+    %t5 = cmp eq i32 %t4, 0
+    %t6 = convert trunc i32 i64 %t5
+    return i32 %t6
+}

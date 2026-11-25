@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-record-redefinition-shadowed-type-bad.t:7:12: incompatible record redefinition

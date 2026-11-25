@@ -1,0 +1,163 @@
+global @__cppgm_initlist_backing_1 [binding=internal, object=_ZGR13at_file_scope_] = {
+  i32 5
+  i32 9
+}
+global @at_file_scope : ptr [storage=readonly, linkage=c, binding=internal] = addr @__cppgm_initlist_backing_1
+global @width : i64 [linkage=c, binding=internal] = 4
+global @__ref_tmp__1 [binding=internal] = {
+  i32 13
+}
+
+function @static_cell() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @__ref_tmp__1
+    return ptr %t1
+}
+function @check_automatic() -> i32 [linkage=c, binding=internal] {
+  slot $calls : u32
+  slot $visit : i32
+  slot $value : ptr
+  slot $tmpobj__1 : i32
+  slot $tmpobj__2 : i32
+
+  block ^entry:
+    store typed u32 0, $calls
+    store typed i32 0, $visit
+    jump ^goto_1
+
+  block ^goto_1:
+    %t1 = load typed u32 $calls
+    %t2 = binary add u32 %t1, 1
+    store typed u32 %t2, $calls
+    %t3 = copy i32 %t2
+    store typed i32 %t3, $tmpobj__1
+    %t4 = addr $tmpobj__1
+    store typed ptr %t4, $value
+    %t5 = load typed ptr $value
+    %t6 = load typed i32 %t5
+    %t7 = load typed i32 $visit
+    %t8 = binary add nowrap i32 %t7, 1
+    %t9 = cmp ne i32 %t6, %t8
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^if_then_2, ^if_else_3
+
+  block ^if_then_2:
+    return i32 1
+
+  block ^if_else_3:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t11 = unary neg i32 1
+    %t12 = load typed ptr $value
+    store typed i32 %t11, %t12
+    %t13 = load typed i32 $visit
+    %t14 = binary add nowrap i32 %t13, 1
+    store typed i32 %t14, $visit
+    %t15 = cmp lt i32 %t14, 3
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    jump ^goto_1
+
+  block ^if_else_6:
+    jump ^if_end_7
+
+  block ^if_end_7:
+    %t17 = load typed u32 $calls
+    %t18 = cmp ne u32 %t17, 3
+    %t19 = convert trunc i32 i64 %t18
+    branch %t19, ^if_then_8, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t20 = load typed u32 $calls
+    %t21 = binary add u32 %t20, 1
+    store typed u32 %t21, $calls
+    %t22 = copy i32 %t21
+    store typed i32 %t22, $tmpobj__2
+    %t23 = load typed i32 $tmpobj__2
+    %t24 = cmp ne i32 %t23, 4
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_8, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t26 = load typed u32 $calls
+    %t27 = cmp ne u32 %t26, 4
+    %t28 = convert trunc i32 i64 %t27
+    branch %t28, ^if_then_8, ^if_else_9
+
+  block ^if_then_8:
+    return i32 2
+
+  block ^if_else_9:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    return i32 0
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $first : ptr
+
+  block ^entry:
+    %t1 = load typed i64 @width
+    %t2 = const i64 4
+    %t3 = cmp ne i64 %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t5 = load typed ptr @at_file_scope
+    %t6 = index inbounds i32 [projection=array_element] %t5, 1
+    %t7 = load typed i32 %t6
+    %t8 = cmp ne i32 %t7, 9
+    %t9 = convert trunc i32 i64 %t8
+    branch %t9, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t10 = call ptr @static_cell()
+    store typed ptr %t10, $first
+    %t11 = load typed ptr $first
+    %t12 = load typed i32 %t11
+    %t13 = cmp ne i32 %t12, 13
+    %t14 = convert trunc i32 i64 %t13
+    branch %t14, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 2
+
+  block ^if_else_6:
+    jump ^if_end_7
+
+  block ^if_end_7:
+    %t15 = load typed ptr $first
+    store typed i32 17, %t15
+    %t16 = load typed ptr $first
+    %t17 = call ptr @static_cell()
+    %t18 = cmp ne ptr %t16, %t17
+    %t19 = convert trunc i32 i64 %t18
+    branch %t19, ^if_then_8, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t20 = call ptr @static_cell()
+    %t21 = load typed i32 %t20
+    %t22 = cmp ne i32 %t21, 17
+    %t23 = convert trunc i32 i64 %t22
+    branch %t23, ^if_then_8, ^if_else_9
+
+  block ^if_then_8:
+    return i32 3
+
+  block ^if_else_9:
+    jump ^if_end_11
+
+  block ^if_end_11:
+    %t24 = call i32 @check_automatic()
+    return i32 %t24
+}

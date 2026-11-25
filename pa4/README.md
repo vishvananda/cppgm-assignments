@@ -137,6 +137,11 @@ that scales:
   kept as ranges of the invocation's tokens. Memory then follows the nesting
   depth, not the length of the output, and nothing rewrites a long token
   sequence in place.
+- A chain of forwarding macros can reuse an expanded argument's interior
+  when its tokens have no active macro to invoke. Keep the usual rescan at
+  boundaries that can bring a function-like name and an opening parenthesis
+  together. Preserve token origins and whitespace when the tokens are read
+  for stringizing or pasting.
 - Record leading whitespace and the start of a line as flags on the next
   token instead of keeping whitespace and new-line tokens.
 - Give each file one range in a single location space, so a token's position

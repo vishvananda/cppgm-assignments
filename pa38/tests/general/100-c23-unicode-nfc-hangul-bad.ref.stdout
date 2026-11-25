@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c23-unicode-nfc-hangul-bad.t:1:5: identifier is not in Unicode Normalization Form C

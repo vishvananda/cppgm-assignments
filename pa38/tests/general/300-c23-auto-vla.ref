@@ -1,0 +1,116 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $n : i32
+  slot $pointer : ptr
+  slot $tmpobj__1 : i64
+  slot $tmpobj__2 : i64
+  slot $row : ptr
+  slot $next : ptr
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+
+  block ^entry:
+    store typed i32 2, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, $n
+    %t3 = convert sext i64 i32 %t2
+    %t4 = binary mul i64 %t3, 4
+    store typed i64 %t4, $tmpobj__1
+    store typed ptr 0, $pointer
+    %t5 = load typed i32 $n
+    %t6 = cmp ne i32 %t5, 3
+    %t7 = convert trunc i32 i64 %t6
+    branch %t7, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t8 = load typed ptr $pointer
+    %t9 = load typed i64 $tmpobj__1
+    %t10 = const i64 4
+    %t11 = convert sext i64 i32 3
+    %t12 = binary mul i64 %t11, %t10
+    %t13 = cmp ne i64 %t9, %t12
+    %t14 = convert trunc i32 i64 %t13
+    branch %t14, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_4
+
+  block ^if_end_4:
+    %t15 = load typed i32 $n
+    %t16 = convert sext i64 i32 %t15
+    %t17 = binary mul i64 %t16, 4
+    store typed i64 %t17, $tmpobj__2
+    %t18 = load typed i64 $tmpobj__2
+    %t19 = binary mul i64 %t18, 2
+    %t20 = stack_save
+    %t21 = stack_alloc %t19
+    store typed ptr %t21, $row
+    %t22 = load typed ptr $row
+    %t23 = load typed i64 $tmpobj__2
+    %t24 = copy i64 %t23
+    %t25 = binary mul i64 1, %t24
+    %t26 = index inbounds i8 %t22, %t25
+    store typed ptr %t26, $row
+    store typed ptr %t26, $next
+    %t27 = load typed ptr $next
+    %t28 = load typed i64 $tmpobj__2
+    %t29 = copy i64 %t28
+    %t30 = binary mul i64 0, %t29
+    %t31 = index inbounds i8 [projection=array_element] %t27, %t30
+    %t32 = index inbounds i32 [projection=array_element] %t31, 2
+    store typed i32 19, %t32
+    %t33 = load typed ptr $row
+    %t34 = load typed i64 $tmpobj__2
+    %t35 = copy i64 %t34
+    %t36 = binary mul i64 1, %t35
+    %t37 = index inbounds i8 [projection=array_element] %t21, %t36
+    %t38 = cmp ne ptr %t33, %t37
+    %t39 = convert trunc i32 i64 %t38
+    branch %t39, ^lor_short_6, ^lor_rhs_5
+
+  block ^lor_rhs_5:
+    %t40 = load typed i64 $tmpobj__2
+    %t41 = copy i64 %t40
+    %t42 = binary mul i64 1, %t41
+    %t43 = index inbounds i8 [projection=array_element] %t21, %t42
+    %t44 = index inbounds i32 [projection=array_element] %t43, 2
+    %t45 = load typed i32 %t44
+    %t46 = cmp ne i32 %t45, 19
+    %t47 = convert trunc i32 i64 %t46
+    %t48 = cmp ne i32 %t47, 0
+    store typed i64 %t48, $lor__3
+    jump ^lor_end_7
+
+  block ^lor_short_6:
+    store typed i64 1, $lor__3
+    jump ^lor_end_7
+
+  block ^lor_end_7:
+    %t49 = load typed i64 $lor__3
+    branch %t49, ^lor_short_9, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t50 = load typed ptr $row
+    %t51 = load typed i64 $tmpobj__2
+    %t52 = const i64 4
+    %t53 = convert sext i64 i32 3
+    %t54 = binary mul i64 %t53, %t52
+    %t55 = cmp ne i64 %t51, %t54
+    %t56 = convert trunc i32 i64 %t55
+    %t57 = cmp ne i32 %t56, 0
+    store typed i64 %t57, $lor__4
+    jump ^lor_end_10
+
+  block ^lor_short_9:
+    store typed i64 1, $lor__4
+    jump ^lor_end_10
+
+  block ^lor_end_10:
+    %t58 = load typed i64 $lor__4
+    %t59 = convert trunc i32 i64 %t58
+    stack_restore %t20
+    return i32 %t59
+}

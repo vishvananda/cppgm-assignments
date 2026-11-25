@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-label-before-substatement-declaration-bad.t:5:9: a label before a declaration requires an enclosing compound statement

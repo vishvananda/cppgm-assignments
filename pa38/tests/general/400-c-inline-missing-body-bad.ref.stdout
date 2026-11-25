@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-inline-missing-body-bad.t:1:19: an external C inline function must have a definition in the same translation unit

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-nullptr-from-pointer-bad.t:2:38: invalid implicit conversion

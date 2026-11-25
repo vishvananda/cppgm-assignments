@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-invalid-shift-count-bad.t:1:16: a shift outside its defined range

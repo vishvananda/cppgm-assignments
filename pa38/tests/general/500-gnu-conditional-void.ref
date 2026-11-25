@@ -1,0 +1,79 @@
+global @state : i32 [linkage=c, binding=internal] = zero
+
+function @number() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @state
+    %t2 = binary add nowrap i32 %t1, 2
+    store typed i32 %t2, @state
+    return i32 %t2
+}
+function @action() -> void [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @state
+    %t2 = binary add nowrap i32 %t1, 5
+    store typed i32 %t2, @state
+    return void
+}
+function @run(%select : i32) -> void [linkage=c, binding=internal] {
+  slot $select : i32
+
+  block ^entry:
+    store typed i32 %select, $select
+    %t1 = load typed i32 $select
+    branch %t1, ^discard_cond_then_1, ^discard_cond_else_2
+
+  block ^discard_cond_then_1:
+    %t2 = call i32 @number()
+    jump ^discard_cond_end_3
+
+  block ^discard_cond_else_2:
+    call void @action()
+    jump ^discard_cond_end_3
+
+  block ^discard_cond_end_3:
+    %t3 = load typed i32 $select
+    branch %t3, ^discard_cond_then_4, ^discard_cond_else_5
+
+  block ^discard_cond_then_4:
+    call void @action()
+    jump ^discard_cond_end_6
+
+  block ^discard_cond_else_5:
+    %t4 = call i32 @number()
+    jump ^discard_cond_end_6
+
+  block ^discard_cond_end_6:
+    branch 1, ^discard_cond_then_7, ^discard_cond_else_8
+
+  block ^discard_cond_then_7:
+    %t5 = call i32 @number()
+    jump ^discard_cond_end_9
+
+  block ^discard_cond_else_8:
+    call void @action()
+    jump ^discard_cond_end_9
+
+  block ^discard_cond_end_9:
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    call void @run(1)
+    %t1 = load typed i32 @state
+    %t2 = cmp ne i32 %t1, 9
+    %t3 = convert trunc i32 i64 %t2
+    branch %t3, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    call void @run(0)
+    %t4 = load typed i32 @state
+    %t5 = cmp ne i32 %t4, 18
+    %t6 = convert trunc i32 i64 %t5
+    return i32 %t6
+}

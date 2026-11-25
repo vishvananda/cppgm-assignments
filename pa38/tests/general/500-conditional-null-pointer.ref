@@ -1,0 +1,105 @@
+function @callback() -> void [linkage=c, binding=internal] {
+  block ^entry:
+    return void
+}
+function @check(%flag : i32) -> i32 [linkage=c, binding=internal] {
+  slot $flag : i32
+  slot $p : ptr
+  slot $cond__1 : ptr
+  slot $q : ptr
+  slot $cond__2 : ptr
+  slot $land__3 : i64
+  slot $land__4 : i64
+
+  block ^entry:
+    store typed i32 %flag, $flag
+    %t1 = load typed i32 $flag
+    branch %t1, ^cond_then_1, ^cond_else_2
+
+  block ^cond_then_1:
+    store typed ptr 0, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_else_2:
+    store typed ptr 0, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_end_3:
+    %t2 = load typed ptr $cond__1
+    store typed ptr %t2, $p
+    %t3 = load typed i32 $flag
+    branch %t3, ^cond_then_4, ^cond_else_5
+
+  block ^cond_then_4:
+    store typed ptr 0, $cond__2
+    jump ^cond_end_6
+
+  block ^cond_else_5:
+    store typed ptr 0, $cond__2
+    jump ^cond_end_6
+
+  block ^cond_end_6:
+    %t4 = load typed ptr $cond__2
+    store typed ptr %t4, $q
+    %t5 = load typed ptr $p
+    %t6 = load typed ptr $q
+    %t7 = cmp eq ptr %t5, %t6
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^land_rhs_7, ^land_short_8
+
+  block ^land_rhs_7:
+    %t9 = load typed ptr $p
+    %t10 = cmp eq ptr %t9, 0
+    %t11 = convert trunc i32 i64 %t10
+    %t12 = cmp ne i32 %t11, 0
+    store typed i64 %t12, $land__3
+    jump ^land_end_9
+
+  block ^land_short_8:
+    store typed i64 0, $land__3
+    jump ^land_end_9
+
+  block ^land_end_9:
+    %t13 = load typed i64 $land__3
+    branch %t13, ^land_rhs_10, ^land_short_11
+
+  block ^land_rhs_10:
+    %t14 = cmp eq ptr 0, 0
+    %t15 = convert trunc i32 i64 %t14
+    %t16 = cmp ne i32 %t15, 0
+    store typed i64 %t16, $land__4
+    jump ^land_end_12
+
+  block ^land_short_11:
+    store typed i64 0, $land__4
+    jump ^land_end_12
+
+  block ^land_end_12:
+    %t17 = load typed i64 $land__4
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp eq i32 %t18, 0
+    %t20 = convert trunc i32 i64 %t19
+    return i32 %t20
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = call i32 @check(0)
+    branch %t1, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t2 = call i32 @check(1)
+    %t3 = cmp ne i32 %t2, 0
+    store typed i64 %t3, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t4 = load typed i64 $lor__1
+    %t5 = convert trunc i32 i64 %t4
+    return i32 %t5
+}

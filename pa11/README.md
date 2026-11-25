@@ -294,7 +294,9 @@ PA11 supports the following in addition to the PA10 procedural subset:
     declared type only rather than straddle one, so adjacent bit-fields of
     different declared types share storage (`struct { long a : 3; bool b : 1; }`
     is 8 bytes); a zero-width bit-field moves to its type's alignment, and an
-    unnamed bit-field does not align the class
+    unnamed bit-field does not align the class. A single member declaration
+    may mix ordinary declarators and named or unnamed bit-fields. Apply the
+    declaration specifiers once and preserve member order.
   - self-referential pointer members
   - previously completed class-type members
 - single inheritance with the direct base subobject at offset `0`; a base that is not

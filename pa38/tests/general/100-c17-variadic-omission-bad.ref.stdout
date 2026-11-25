@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c17-variadic-omission-bad.t:2:29: omitting a variadic macro argument requires C23

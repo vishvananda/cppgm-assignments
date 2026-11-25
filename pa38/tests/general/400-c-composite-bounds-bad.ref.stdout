@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-composite-bounds-bad.t:2:5: conflicting declaration of a variable

@@ -1,0 +1,46 @@
+#include <stddef.h>
+#include <sys/mman.h>
+#include <unistd.h>
+
+template <unsigned Alignment>
+struct RegisterValue {
+    unsigned char header;
+    unsigned field : 3 __attribute__((aligned(Alignment)));
+    unsigned char trailer;
+};
+
+union PackedPayload {
+    unsigned field : 24 __attribute__((packed));
+};
+
+struct Storage {
+    unsigned char* address;
+};
+
+void* operator new(size_t, Storage storage) noexcept {
+    return storage.address;
+}
+
+__attribute__((noinline)) unsigned increment(PackedPayload* payload) {
+    payload->field += 3;
+    return payload->field;
+}
+
+int main() {
+    RegisterValue<8> word = { 5, 3, 7 };
+    word.field += 2;
+    if (alignof(RegisterValue<8>) != 8 || sizeof(RegisterValue<8>) != 16 ||
+        __builtin_offsetof(RegisterValue<8>, trailer) != 9 ||
+        word.header != 5 || word.field != 5 || word.trailer != 7)
+        return 1;
+
+    const int page = getpagesize();
+    auto* storage = static_cast<unsigned char*>(
+        mmap(nullptr, 2u * page, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+    if (storage == MAP_FAILED || mprotect(storage + page, page, PROT_NONE) != 0)
+        return 2;
+    auto* payload = ::new (Storage{storage + page - sizeof(PackedPayload)}) PackedPayload{0x123456};
+    const bool passed = sizeof(PackedPayload) == 3 && increment(payload) == 0x123459;
+    munmap(storage, 2u * page);
+    return passed ? 0 : 3;
+}

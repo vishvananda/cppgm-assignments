@@ -1,0 +1,1 @@
+ERROR: tests/general/100-gnu17-binary-literal-pp-pedantic-bad.t:2:5: binary integer constants require C23

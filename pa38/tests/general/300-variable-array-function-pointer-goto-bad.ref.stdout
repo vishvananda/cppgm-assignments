@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-function-pointer-goto-bad.t:3:5: goto bypasses a variable's initialization

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-restrict-typedef-array-c17-bad.t:2:1: restrict on an array of pointers is a C23 extension

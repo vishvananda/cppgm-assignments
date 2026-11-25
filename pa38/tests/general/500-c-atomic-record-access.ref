@@ -1,0 +1,333 @@
+function @read_value(%source : ptr) -> obj<3x1> [linkage=c, binding=internal] {
+  slot $source : ptr
+  slot $retobj__1 : obj<3x1>
+  slot $atomic_result__2 : obj<4x4>
+
+  block ^entry:
+    store typed ptr %source, $source
+    %t1 = addr $retobj__1
+    %t2 = load typed ptr $source
+    %t3 = addr $atomic_result__2
+    %t4 = atomic_load i32 %t2, 5
+    store i32 %t4, %t3
+    %t5 = load obj<3x1> %t3
+    store obj<3x1> %t5, %t1
+    return obj<3x1> $retobj__1
+}
+function @first_byte(%value : obj<3x1>) -> u32 [linkage=c, binding=internal] {
+  slot $value : obj<3x1>
+
+  block ^entry:
+    %t1 = addr $value
+    copyobj 3x1 %value, %t1
+    %t2 = addr $value
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    %t4 = index inbounds u8 [projection=array_element] %t3, 0
+    %t5 = load u8 %t4
+    %t6 = convert zext u32 u8 %t5
+    return u32 %t6
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $first : obj<3x1>
+  slot $next : obj<3x1>
+  slot $object : obj<4x4>
+  slot $other : obj<4x4>
+  slot $tmpobj__1 : obj<4x4>
+  slot $atomic_result__2 : obj<4x4>
+  slot $initialized : obj<8x4>
+  slot $omitted : obj<8x4>
+  slot $result : obj<4x1>
+  slot $initial : obj<3x1>
+  slot $atomic_arg__3 : obj<4x4>
+  slot $atomic_result__4 : obj<4x4>
+  slot $atomic_arg__5 : obj<4x4>
+  slot $atomic_result__6 : obj<4x4>
+  slot $argobj__7 : obj<3x1>
+  slot $atomic_result__8 : obj<4x4>
+  slot $zero : obj<3x1>
+  slot $atomic_arg__9 : obj<4x4>
+  slot $atomic_expected__10 : obj<4x4>
+  slot $atomic_arg__11 : obj<4x4>
+  slot $atomic_expected__12 : obj<4x4>
+
+  block ^entry:
+    %t1 = addr $first
+    %t2 = addr $first
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    %t4 = index u8 [projection=array_element] %t3, 0
+    store u8 1, %t4
+    %t5 = addr $first
+    %t6 = index inbounds i8 [projection=field] %t5, 0
+    %t7 = index u8 [projection=array_element] %t6, 1
+    store u8 2, %t7
+    %t8 = addr $first
+    %t9 = index inbounds i8 [projection=field] %t8, 0
+    %t10 = index u8 [projection=array_element] %t9, 2
+    store u8 3, %t10
+    %t11 = addr $next
+    %t12 = addr $next
+    %t13 = index inbounds i8 [projection=field] %t12, 0
+    %t14 = index u8 [projection=array_element] %t13, 0
+    store u8 4, %t14
+    %t15 = addr $next
+    %t16 = index inbounds i8 [projection=field] %t15, 0
+    %t17 = index u8 [projection=array_element] %t16, 1
+    store u8 5, %t17
+    %t18 = addr $next
+    %t19 = index inbounds i8 [projection=field] %t18, 0
+    %t20 = index u8 [projection=array_element] %t19, 2
+    store u8 6, %t20
+    %t21 = addr $object
+    %t22 = index inbounds i8 [projection=field] %t21, 3
+    zeroinit 1x1 %t22
+    %t23 = load obj<3x1> $first
+    store obj<3x1> %t23, %t21
+    %t24 = addr $other
+    %t25 = index inbounds i8 [projection=field] %t24, 3
+    zeroinit 1x1 %t25
+    %t26 = addr $tmpobj__1
+    %t27 = addr $atomic_result__2
+    %t28 = addr $object
+    %t29 = atomic_load i32 %t28, 5
+    store i32 %t29, %t27
+    %t30 = load obj<3x1> %t27
+    store obj<3x1> %t30, %t26
+    %t31 = index i8 [projection=array_element] %t26, 0
+    %t32 = index i8 [projection=array_element] %t24, 0
+    %t33 = load u32 %t31
+    store volatile u32 %t33, %t32
+    %t34 = addr $initialized
+    %t35 = addr $initialized
+    %t36 = index inbounds i8 [projection=field] %t35, 0
+    %t37 = index inbounds i8 [projection=field] %t36, 3
+    zeroinit 1x1 %t37
+    %t38 = addr $initialized
+    %t39 = index inbounds i8 [projection=field] %t38, 0
+    %t40 = addr $first
+    copyobj 3x1 %t40, %t39
+    %t41 = convert trunc u8 i32 41
+    %t42 = addr $initialized
+    %t43 = index inbounds i8 [projection=field] %t42, 4
+    store u8 %t41, %t43
+    %t44 = addr $omitted
+    %t45 = addr $omitted
+    %t46 = index inbounds i8 [projection=field] %t45, 0
+    %t47 = index inbounds i8 [projection=field] %t46, 3
+    zeroinit 1x1 %t47
+    %t48 = addr $omitted
+    %t49 = index inbounds i8 [projection=field] %t48, 0
+    %t50 = index inbounds i8 [projection=field] %t49, 0
+    %t51 = index u8 [projection=array_element] %t50, 0
+    store u8 0, %t51
+    %t52 = addr $omitted
+    %t53 = index inbounds i8 [projection=field] %t52, 0
+    %t54 = index inbounds i8 [projection=field] %t53, 0
+    %t55 = index u8 [projection=array_element] %t54, 1
+    store u8 0, %t55
+    %t56 = addr $omitted
+    %t57 = index inbounds i8 [projection=field] %t56, 0
+    %t58 = index inbounds i8 [projection=field] %t57, 0
+    %t59 = index u8 [projection=array_element] %t58, 2
+    store u8 0, %t59
+    %t60 = convert trunc u8 i32 42
+    %t61 = addr $omitted
+    %t62 = index inbounds i8 [projection=field] %t61, 4
+    store u8 %t60, %t62
+    %t63 = addr $result
+    %t64 = addr $result
+    %t65 = index inbounds i8 [projection=field] %t64, 0
+    %t66 = index inbounds i8 [projection=field] %t65, 0
+    %t67 = index u8 [projection=array_element] %t66, 0
+    store u8 0, %t67
+    %t68 = addr $result
+    %t69 = index inbounds i8 [projection=field] %t68, 0
+    %t70 = index inbounds i8 [projection=field] %t69, 0
+    %t71 = index u8 [projection=array_element] %t70, 1
+    store u8 0, %t71
+    %t72 = addr $result
+    %t73 = index inbounds i8 [projection=field] %t72, 0
+    %t74 = index inbounds i8 [projection=field] %t73, 0
+    %t75 = index u8 [projection=array_element] %t74, 2
+    store u8 0, %t75
+    %t76 = convert trunc u8 i32 43
+    %t77 = addr $result
+    %t78 = index inbounds i8 [projection=field] %t77, 3
+    store u8 %t76, %t78
+    %t79 = addr $initial
+    %t80 = addr $other
+    %t81 = call obj<3x1> @read_value(%t80)
+    copyobj 3x1 %t81, %t79
+    %t82 = load obj<3x1> $next
+    %t83 = addr $atomic_arg__3
+    store obj<3x1> %t82, %t83
+    %t84 = index inbounds i8 [projection=field] %t83, 3
+    zeroinit 1x1 %t84
+    %t85 = addr $object
+    %t86 = load i32 %t83
+    atomic_store i32 %t86, %t85, 5
+    %t87 = addr $result
+    %t88 = index inbounds i8 [projection=field] %t87, 0
+    store obj<3x1> %t82, %t88
+    %t89 = addr $atomic_result__4
+    %t90 = addr $object
+    %t91 = atomic_load i32 %t90, 5
+    store i32 %t91, %t89
+    %t92 = load obj<3x1> %t89
+    %t93 = addr $atomic_arg__5
+    store obj<3x1> %t92, %t93
+    %t94 = index inbounds i8 [projection=field] %t93, 3
+    zeroinit 1x1 %t94
+    %t95 = addr $other
+    %t96 = load i32 %t93
+    atomic_store i32 %t96, %t95, 5
+    %t97 = addr $atomic_result__6
+    %t98 = addr $other
+    %t99 = atomic_load i32 %t98, 5
+    store i32 %t99, %t97
+    %t100 = load obj<3x1> %t97
+    %t101 = addr $initial
+    %t102 = index inbounds i8 [projection=field] %t101, 0
+    %t103 = index inbounds u8 [projection=array_element] %t102, 2
+    %t104 = load u8 %t103
+    %t105 = convert zext i32 u8 %t104
+    %t106 = cmp ne i32 %t105, 3
+    %t107 = convert trunc i32 i64 %t106
+    branch %t107, ^if_then_1, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t108 = addr $result
+    %t109 = index inbounds i8 [projection=field] %t108, 0
+    %t110 = index inbounds i8 [projection=field] %t109, 0
+    %t111 = index inbounds u8 [projection=array_element] %t110, 2
+    %t112 = load u8 %t111
+    %t113 = convert zext i32 u8 %t112
+    %t114 = cmp ne i32 %t113, 6
+    %t115 = convert trunc i32 i64 %t114
+    branch %t115, ^if_then_1, ^lor_rhs_6
+
+  block ^lor_rhs_6:
+    %t116 = addr $result
+    %t117 = index inbounds i8 [projection=field] %t116, 3
+    %t118 = load u8 %t117
+    %t119 = convert zext i32 u8 %t118
+    %t120 = cmp ne i32 %t119, 43
+    %t121 = convert trunc i32 i64 %t120
+    branch %t121, ^if_then_1, ^lor_rhs_5
+
+  block ^lor_rhs_5:
+    %t122 = addr $argobj__7
+    %t123 = addr $atomic_result__8
+    %t124 = addr $other
+    %t125 = atomic_load i32 %t124, 5
+    store i32 %t125, %t123
+    %t126 = load obj<3x1> %t123
+    store obj<3x1> %t126, %t122
+    %t127 = call u32 @first_byte($argobj__7)
+    %t128 = cmp ne u32 %t127, 4
+    %t129 = convert trunc i32 i64 %t128
+    branch %t129, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t130 = addr $initialized
+    %t131 = index inbounds i8 [projection=field] %t130, 4
+    %t132 = load u8 %t131
+    %t133 = convert zext i32 u8 %t132
+    %t134 = cmp ne i32 %t133, 41
+    %t135 = convert trunc i32 i64 %t134
+    branch %t135, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t136 = addr $omitted
+    %t137 = index inbounds i8 [projection=field] %t136, 4
+    %t138 = load u8 %t137
+    %t139 = convert zext i32 u8 %t138
+    %t140 = cmp ne i32 %t139, 42
+    %t141 = convert trunc i32 i64 %t140
+    branch %t141, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t142 = addr $zero
+    %t143 = addr $zero
+    %t144 = index inbounds i8 [projection=field] %t143, 0
+    %t145 = index u8 [projection=array_element] %t144, 0
+    store u8 0, %t145
+    %t146 = addr $zero
+    %t147 = index inbounds i8 [projection=field] %t146, 0
+    %t148 = index u8 [projection=array_element] %t147, 1
+    store u8 0, %t148
+    %t149 = addr $zero
+    %t150 = index inbounds i8 [projection=field] %t149, 0
+    %t151 = index u8 [projection=array_element] %t150, 2
+    store u8 0, %t151
+    %t152 = addr $initialized
+    %t153 = index inbounds i8 [projection=field] %t152, 0
+    %t154 = addr $first
+    %t155 = addr $atomic_arg__9
+    %t156 = addr $next
+    copyobj 3x1 %t156, %t155
+    %t157 = addr $atomic_expected__10
+    %t158 = index inbounds i8 [projection=field] %t155, 3
+    zeroinit 1x1 %t158
+    copyobj 3x1 %t154, %t157
+    %t159 = index inbounds i8 [projection=field] %t157, 3
+    zeroinit 1x1 %t159
+    %t160 = load i32 %t155
+    %t161 = atomic_compare_exchange i32 %t153, %t157, %t160, 5, 2
+    branch %t161, ^atomic_done_12, ^if_else_11
+
+  block ^if_else_11:
+    copyobj 3x1 %t157, %t154
+    jump ^atomic_done_12
+
+  block ^atomic_done_12:
+    %t162 = cmp eq i64 %t161, 0
+    %t163 = convert trunc i32 i64 %t162
+    branch %t163, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 2
+
+  block ^if_else_10:
+    jump ^if_end_13
+
+  block ^if_end_13:
+    %t164 = addr $omitted
+    %t165 = index inbounds i8 [projection=field] %t164, 0
+    %t166 = addr $zero
+    %t167 = addr $atomic_arg__11
+    %t168 = addr $next
+    copyobj 3x1 %t168, %t167
+    %t169 = addr $atomic_expected__12
+    %t170 = index inbounds i8 [projection=field] %t167, 3
+    zeroinit 1x1 %t170
+    copyobj 3x1 %t166, %t169
+    %t171 = index inbounds i8 [projection=field] %t169, 3
+    zeroinit 1x1 %t171
+    %t172 = load i32 %t167
+    %t173 = atomic_compare_exchange i32 %t165, %t169, %t172, 5, 2
+    branch %t173, ^atomic_done_17, ^if_else_16
+
+  block ^if_else_16:
+    copyobj 3x1 %t169, %t166
+    jump ^atomic_done_17
+
+  block ^atomic_done_17:
+    %t174 = cmp eq i64 %t173, 0
+    %t175 = convert trunc i32 i64 %t174
+    branch %t175, ^if_then_14, ^if_else_15
+
+  block ^if_then_14:
+    return i32 3
+
+  block ^if_else_15:
+    jump ^if_end_18
+
+  block ^if_end_18:
+    return i32 0
+}

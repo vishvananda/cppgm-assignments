@@ -1,0 +1,1 @@
+linux # Checks the ELF encoding of assembly instructions without executing them.

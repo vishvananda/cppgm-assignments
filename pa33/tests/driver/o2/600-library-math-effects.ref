@@ -40,8 +40,23 @@ function @guarded(%x : f64) -> f64 [binding=strong, object=_Z7guardedd, no_inlin
 }
 function @square(%x : f64) -> f64 [binding=strong, object=_Z6squared, no_inline=yes] {
   block ^entry:
-    %t1 = binary mul f64 %x, %x
-    return f64 %t1
+    %t1 = copy i64 %x
+    %t2 = binary and i64 %t1, 9223372036854775807
+    %t3 = binary sub i64 %t2, 2305843009213693952
+    %t4 = cmp uge i64 %t3, 4607182418800017408
+    branch %t4, ^split_3, ^split_1
+
+  block ^split_1:
+    %t5 = binary mul f64 %x, %x
+    jump ^split_2
+
+  block ^split_2:
+    %t6 = phi f64 [^split_1: %t5, ^split_3: %t7]
+    return f64 %t6
+
+  block ^split_3:
+    %t7 = call f64 @pow(%x, 2.0)
+    jump ^split_2
 }
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   slot $negative : f64

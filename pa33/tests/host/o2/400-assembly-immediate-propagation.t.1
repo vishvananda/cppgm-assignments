@@ -1,0 +1,7 @@
+int main()
+{
+  int value = 37;
+  int result;
+  asm("movl %1, %0" : "=r"(result) : "i"(value));
+  return result != 37;
+}

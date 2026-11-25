@@ -1,0 +1,1 @@
+-.o: tests/preproc/dependency/forced.h tests/preproc/dependency/local.h

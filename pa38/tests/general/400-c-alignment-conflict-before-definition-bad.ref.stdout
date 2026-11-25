@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-alignment-conflict-before-definition-bad.t:3:19: an alignment specifier disagrees with the object's explicit definition

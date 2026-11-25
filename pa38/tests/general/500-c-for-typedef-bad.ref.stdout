@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-for-typedef-bad.t:3:10: a for initializer declaration of an identifier other than an auto or register object

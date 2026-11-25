@@ -1,0 +1,299 @@
+global @stored [linkage=c, binding=internal] = {
+  f32 0f
+  f32 1.25f
+}
+global @extended [linkage=c, binding=internal] = {
+  f80 0L
+  f80 2.5L
+}
+global @count [linkage=c, binding=internal] = {
+  i64 0
+  i64 7
+}
+global @wide [linkage=c, binding=internal] = {
+  i64 0
+  i64 4294967299
+}
+
+function @make_value(%real : f64) -> obj<16x8> [linkage=c, binding=internal] {
+  slot $real : f64
+  slot $complex__1 : obj<16x8>
+  slot $complex__2 : obj<16x8>
+  slot $complex__3 : obj<16x8>
+
+  block ^entry:
+    store typed f64 %real, $real
+    %t1 = load typed f64 $real
+    %t2 = addr $complex__1
+    store typed f64 0, %t2
+    %t3 = index i8 [projection=field] %t2, 8
+    store typed f64 6, %t3
+    %t4 = load obj<16x8> $complex__1
+    store obj<16x8> %t4, $complex__2
+    %t5 = addr $complex__2
+    %t6 = load typed f64 %t5
+    %t7 = index i8 [projection=field] %t5, 8
+    %t8 = load typed f64 %t7
+    %t9 = binary add f64 %t1, %t6
+    %t10 = addr $complex__3
+    store typed f64 %t9, %t10
+    %t11 = index i8 [projection=field] %t10, 8
+    store typed f64 %t8, %t11
+    %t12 = load obj<16x8> $complex__3
+    return obj<16x8> %t12
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $value : obj<16x8>
+  slot $local : obj<8x4>
+  slot $complex__1 : obj<8x4>
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+  slot $lor__6 : i64
+  slot $lor__7 : i64
+  slot $lor__8 : i64
+  slot $lor__9 : i64
+  slot $lor__10 : i64
+  slot $lor__11 : i64
+  slot $lor__12 : i64
+  slot $lor__13 : i64
+  slot $lor__14 : i64
+
+  block ^entry:
+    %t1 = call obj<16x8> @make_value(3.0)
+    store obj<16x8> %t1, $value
+    %t2 = addr $complex__1
+    store typed f32 0f, %t2
+    %t3 = index i8 [projection=field] %t2, 4
+    store typed f32 2f, %t3
+    %t4 = load obj<8x4> $complex__1
+    store obj<8x4> %t4, $local
+    %t5 = cmp eq i32 1, 0
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t7 = cmp eq i32 1, 0
+    %t8 = convert trunc i32 i64 %t7
+    %t9 = cmp ne i32 %t8, 0
+    store typed i64 %t9, $lor__2
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__2
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t10 = load typed i64 $lor__2
+    branch %t10, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t11 = cmp eq i32 1, 0
+    %t12 = convert trunc i32 i64 %t11
+    %t13 = cmp ne i32 %t12, 0
+    store typed i64 %t13, $lor__3
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__3
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t14 = load typed i64 $lor__3
+    branch %t14, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t15 = addr @stored
+    %t16 = load typed f32 %t15
+    %t17 = cmp ne f32 %t16, 0f
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp ne i32 %t18, 0
+    store typed i64 %t19, $lor__4
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__4
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t20 = load typed i64 $lor__4
+    branch %t20, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t21 = addr @stored
+    %t22 = index i8 [projection=field] %t21, 4
+    %t23 = load typed f32 %t22
+    %t24 = cmp ne f32 %t23, 1.25f
+    %t25 = convert trunc i32 i64 %t24
+    %t26 = cmp ne i32 %t25, 0
+    store typed i64 %t26, $lor__5
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__5
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t27 = load typed i64 $lor__5
+    branch %t27, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t28 = addr @extended
+    %t29 = load typed f80 %t28
+    %t30 = cmp ne f80 %t29, 0L
+    %t31 = convert trunc i32 i64 %t30
+    %t32 = cmp ne i32 %t31, 0
+    store typed i64 %t32, $lor__6
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__6
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t33 = load typed i64 $lor__6
+    branch %t33, ^lor_short_17, ^lor_rhs_16
+
+  block ^lor_rhs_16:
+    %t34 = addr @extended
+    %t35 = index i8 [projection=field] %t34, 16
+    %t36 = load typed f80 %t35
+    %t37 = cmp ne f80 %t36, 2.5L
+    %t38 = convert trunc i32 i64 %t37
+    %t39 = cmp ne i32 %t38, 0
+    store typed i64 %t39, $lor__7
+    jump ^lor_end_18
+
+  block ^lor_short_17:
+    store typed i64 1, $lor__7
+    jump ^lor_end_18
+
+  block ^lor_end_18:
+    %t40 = load typed i64 $lor__7
+    branch %t40, ^lor_short_20, ^lor_rhs_19
+
+  block ^lor_rhs_19:
+    %t41 = addr @count
+    %t42 = load typed i64 %t41
+    %t43 = cmp ne i64 %t42, 0
+    %t44 = convert trunc i32 i64 %t43
+    %t45 = cmp ne i32 %t44, 0
+    store typed i64 %t45, $lor__8
+    jump ^lor_end_21
+
+  block ^lor_short_20:
+    store typed i64 1, $lor__8
+    jump ^lor_end_21
+
+  block ^lor_end_21:
+    %t46 = load typed i64 $lor__8
+    branch %t46, ^lor_short_23, ^lor_rhs_22
+
+  block ^lor_rhs_22:
+    %t47 = addr @count
+    %t48 = index i8 [projection=field] %t47, 8
+    %t49 = load typed i64 %t48
+    %t50 = cmp ne i64 %t49, 7
+    %t51 = convert trunc i32 i64 %t50
+    %t52 = cmp ne i32 %t51, 0
+    store typed i64 %t52, $lor__9
+    jump ^lor_end_24
+
+  block ^lor_short_23:
+    store typed i64 1, $lor__9
+    jump ^lor_end_24
+
+  block ^lor_end_24:
+    %t53 = load typed i64 $lor__9
+    branch %t53, ^lor_short_26, ^lor_rhs_25
+
+  block ^lor_rhs_25:
+    %t54 = addr @wide
+    %t55 = load typed i64 %t54
+    %t56 = cmp ne i64 %t55, 0
+    %t57 = convert trunc i32 i64 %t56
+    %t58 = cmp ne i32 %t57, 0
+    store typed i64 %t58, $lor__10
+    jump ^lor_end_27
+
+  block ^lor_short_26:
+    store typed i64 1, $lor__10
+    jump ^lor_end_27
+
+  block ^lor_end_27:
+    %t59 = load typed i64 $lor__10
+    branch %t59, ^lor_short_29, ^lor_rhs_28
+
+  block ^lor_rhs_28:
+    %t60 = addr @wide
+    %t61 = index i8 [projection=field] %t60, 8
+    %t62 = load typed i64 %t61
+    %t63 = cmp ne i64 %t62, 4294967299
+    %t64 = convert trunc i32 i64 %t63
+    %t65 = cmp ne i32 %t64, 0
+    store typed i64 %t65, $lor__11
+    jump ^lor_end_30
+
+  block ^lor_short_29:
+    store typed i64 1, $lor__11
+    jump ^lor_end_30
+
+  block ^lor_end_30:
+    %t66 = load typed i64 $lor__11
+    branch %t66, ^lor_short_32, ^lor_rhs_31
+
+  block ^lor_rhs_31:
+    %t67 = addr $value
+    %t68 = load typed f64 %t67
+    %t69 = cmp ne f64 %t68, 3
+    %t70 = convert trunc i32 i64 %t69
+    %t71 = cmp ne i32 %t70, 0
+    store typed i64 %t71, $lor__12
+    jump ^lor_end_33
+
+  block ^lor_short_32:
+    store typed i64 1, $lor__12
+    jump ^lor_end_33
+
+  block ^lor_end_33:
+    %t72 = load typed i64 $lor__12
+    branch %t72, ^lor_short_35, ^lor_rhs_34
+
+  block ^lor_rhs_34:
+    %t73 = addr $value
+    %t74 = index i8 [projection=field] %t73, 8
+    %t75 = load typed f64 %t74
+    %t76 = cmp ne f64 %t75, 6
+    %t77 = convert trunc i32 i64 %t76
+    %t78 = cmp ne i32 %t77, 0
+    store typed i64 %t78, $lor__13
+    jump ^lor_end_36
+
+  block ^lor_short_35:
+    store typed i64 1, $lor__13
+    jump ^lor_end_36
+
+  block ^lor_end_36:
+    %t79 = load typed i64 $lor__13
+    branch %t79, ^lor_short_38, ^lor_rhs_37
+
+  block ^lor_rhs_37:
+    %t80 = addr $local
+    %t81 = index i8 [projection=field] %t80, 4
+    %t82 = load typed f32 %t81
+    %t83 = cmp ne f32 %t82, 2f
+    %t84 = convert trunc i32 i64 %t83
+    %t85 = cmp ne i32 %t84, 0
+    store typed i64 %t85, $lor__14
+    jump ^lor_end_39
+
+  block ^lor_short_38:
+    store typed i64 1, $lor__14
+    jump ^lor_end_39
+
+  block ^lor_end_39:
+    %t86 = load typed i64 $lor__14
+    %t87 = convert trunc i32 i64 %t86
+    return i32 %t87
+}

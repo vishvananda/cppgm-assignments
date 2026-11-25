@@ -1,0 +1,1 @@
+ERROR: tests/general/300-restrict-function-pointer-bad.t:1:6: restrict requires a pointer to an object type

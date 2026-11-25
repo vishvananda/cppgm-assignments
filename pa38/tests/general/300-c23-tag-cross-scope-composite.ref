@@ -1,0 +1,149 @@
+global @left_values [linkage=c, binding=internal] = {
+  i32 1
+  i32 2
+  i32 3
+}
+global @right_values [linkage=c, binding=internal] = {
+  i32 4
+  i32 5
+  i32 6
+  i32 7
+}
+global @outer [linkage=c, binding=internal] = {
+  ptr addr @left_values
+  ptr addr @right_values
+  ptr addr @outer
+  i32 11
+  zero 4
+}
+global @choose : i32 [linkage=c, binding=internal] = zero
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $inner : obj<32x8>
+  slot $merged : ptr
+  slot $cond__1 : ptr
+  slot $copy : obj<32x8>
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+
+  block ^entry:
+    %t1 = addr $inner
+    %t2 = addr @left_values
+    %t3 = addr $inner
+    %t4 = index inbounds i8 [projection=field] %t3, 0
+    store typed ptr %t2, %t4
+    %t5 = addr @right_values
+    %t6 = addr $inner
+    %t7 = index inbounds i8 [projection=field] %t6, 8
+    store typed ptr %t5, %t7
+    %t8 = addr $inner
+    %t9 = addr $inner
+    %t10 = index inbounds i8 [projection=field] %t9, 16
+    store typed ptr %t8, %t10
+    %t11 = addr $inner
+    %t12 = index inbounds i8 [projection=field] %t11, 24
+    %t13 = index inbounds i8 [projection=field] %t12, 0
+    %t14 = index inbounds i8 [projection=field] %t13, 0
+    store i32 13, %t14
+    %t15 = load volatile i32 @choose
+    branch %t15, ^cond_then_1, ^cond_else_2
+
+  block ^cond_then_1:
+    %t16 = addr @outer
+    store typed ptr %t16, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_else_2:
+    %t17 = addr $inner
+    store typed ptr %t17, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_end_3:
+    %t18 = load typed ptr $cond__1
+    store typed ptr %t18, $merged
+    %t19 = addr $copy
+    %t20 = load volatile i32 @choose
+    branch %t20, ^condobj_then_4, ^condobj_else_5
+
+  block ^condobj_then_4:
+    %t21 = addr $inner
+    copyobj 32x8 %t21, %t19
+    jump ^condobj_end_6
+
+  block ^condobj_else_5:
+    %t22 = addr @outer
+    copyobj 32x8 %t22, %t19
+    jump ^condobj_end_6
+
+  block ^condobj_end_6:
+    %t23 = load typed ptr $merged
+    %t24 = index inbounds i8 [projection=field] %t23, 0
+    %t25 = load typed ptr %t24
+    %t26 = index inbounds i32 [projection=array_element] %t25, 2
+    %t27 = load typed i32 %t26
+    %t28 = cmp ne i32 %t27, 3
+    %t29 = convert trunc i32 i64 %t28
+    branch %t29, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t30 = load typed ptr $merged
+    %t31 = index inbounds i8 [projection=field] %t30, 16
+    %t32 = load typed ptr %t31
+    %t33 = index inbounds i8 [projection=field] %t32, 8
+    %t34 = load typed ptr %t33
+    %t35 = index inbounds i32 [projection=array_element] %t34, 3
+    %t36 = load typed i32 %t35
+    %t37 = cmp ne i32 %t36, 7
+    %t38 = convert trunc i32 i64 %t37
+    %t39 = cmp ne i32 %t38, 0
+    store typed i64 %t39, $lor__2
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__2
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t40 = load typed i64 $lor__2
+    branch %t40, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t41 = load typed ptr $merged
+    %t42 = index inbounds i8 [projection=field] %t41, 16
+    %t43 = load typed ptr %t42
+    %t44 = index inbounds i8 [projection=field] %t43, 24
+    %t45 = load i32 %t44
+    %t46 = cmp ne i32 %t45, 13
+    %t47 = convert trunc i32 i64 %t46
+    %t48 = cmp ne i32 %t47, 0
+    store typed i64 %t48, $lor__3
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__3
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t49 = load typed i64 $lor__3
+    branch %t49, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t50 = addr $copy
+    %t51 = index inbounds i8 [projection=field] %t50, 24
+    %t52 = load i32 %t51
+    %t53 = cmp ne i32 %t52, 11
+    %t54 = convert trunc i32 i64 %t53
+    %t55 = cmp ne i32 %t54, 0
+    store typed i64 %t55, $lor__4
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__4
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t56 = load typed i64 $lor__4
+    %t57 = convert trunc i32 i64 %t56
+    return i32 %t57
+}

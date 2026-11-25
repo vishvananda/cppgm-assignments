@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c11-alignas-incomplete-object-weaker-bad.t:1:8: an alignment-specifier weaker than the alignment of the entity's type

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-gnu-auto-type-missing-bad.t:1:28: an inferred C type requires an expression initializer

@@ -1,0 +1,17 @@
+declare function @impossible_state() -> void
+
+function @dispatch(%retry : i64) -> i32 {
+  block ^entry:
+    jump ^loop
+
+  block ^loop:
+    %state = phi u32 [^entry: 3, ^check: 2]
+    switch %state, ^check, 2:^done, 3:^check
+
+  block ^check:
+    branch %retry, ^loop, ^done
+
+  block ^done:
+    %result = copy i32 %state
+    return i32 %result
+}

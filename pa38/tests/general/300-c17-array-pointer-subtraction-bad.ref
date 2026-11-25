@@ -1,0 +1,21 @@
+function @distance(%length : i32, %row : ptr, %other : ptr) -> i64 [linkage=c, binding=strong] {
+  slot $length : i32
+  slot $row : ptr
+  slot $other : ptr
+  slot $tmpobj__1 : i64
+
+  block ^entry:
+    store typed i32 %length, $length
+    store typed ptr %row, $row
+    store typed ptr %other, $other
+    %t1 = load typed i32 $length
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = load typed ptr $row
+    %t5 = load typed ptr $other
+    %t6 = binary sub ptr %t4, %t5
+    %t7 = load typed i64 $tmpobj__1
+    %t8 = binary div exact i64 %t6, %t7
+    return i64 %t8
+}

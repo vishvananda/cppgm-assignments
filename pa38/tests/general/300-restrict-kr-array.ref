@@ -1,0 +1,32 @@
+global @__constexpr_template__1 [storage=readonly, binding=internal] = {
+  i32 0
+  i32 21
+}
+
+function @read(%values : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $values : ptr
+  slot $p : ptr
+
+  block ^entry:
+    store typed ptr %values, $values
+    %t1 = addr $values
+    store typed ptr %t1, $p
+    %t2 = load typed ptr $p
+    %t3 = load typed ptr %t2
+    %t4 = index inbounds i32 [projection=array_element] %t3, 1
+    %t5 = load typed i32 %t4
+    return i32 %t5
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $values : obj<8x4>
+
+  block ^entry:
+    %t1 = addr $values
+    copyobj 8x4 @__constexpr_template__1, %t1
+    %t2 = addr $values
+    %t3 = addr @read
+    %t4 = call i32 %t3(%t2) as (%arg0 : ptr) -> i32
+    %t5 = cmp ne i32 %t4, 21
+    %t6 = convert trunc i32 i64 %t5
+    return i32 %t6
+}

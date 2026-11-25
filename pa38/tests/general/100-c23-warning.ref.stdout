@@ -1,0 +1,1 @@
+tests/general/100-c23-warning.t:5:2: warning: #warning translation continues after a warning WORD

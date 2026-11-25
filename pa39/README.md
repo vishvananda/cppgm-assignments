@@ -13,6 +13,10 @@ Implement the little-endian Armv8-A targets in the existing compiler after PA34 
    and stack arguments, homogeneous floating records, variadic calls and
    indirect results. Add floating-point and NEON operations and check the
    signed and unsigned cases.
+   Use the Linux container alignment for unnamed bit-fields, including
+   the natural alignment of zero-width fields in packed records. On both
+   Arm targets, a nonzero unnamed integer bit-field makes an otherwise
+   floating-point union nonhomogeneous.
 3. Extend PA25 and PA26's link and object support to both Arm targets. Run
    the link fixtures, then the hosted runtime fixtures for exceptions,
    cleanups, and thread-local storage.
@@ -41,8 +45,11 @@ On Linux, advertise the GNU attribute syntax so glibc leaves `__attribute__`
 available when a C header precedes the C++ headers. ABI tags must survive that
 include order so separately compiled callers and definitions agree. Supply
 the signed and unsigned fixed-width type predefines for the target's data
-model and the corresponding 32-bit and 64-bit maximum values. Headers can
-use those macros without including `<stdint.h>`. In GNU dialects, also define
+model, including the limits and integer-constant spellings used by
+`<stdint.h>`. GCC's `<limits.h>` reads `__SCHAR_WIDTH__` and
+`__LONG_LONG_WIDTH__` for the C23 width macros. Clang's resource header
+uses `__CHAR_BIT__` and `__LLONG_WIDTH__`. On Darwin, the exact 64-bit type is `long long` and the
+maximum-width type is `long`. In GNU dialects, also define
 `__GLIBCXX_TYPE_INT_N_0` as `__int128` and `__GLIBCXX_BITSIZE_INT_N_0` as 128,
 as GCC does; libstdc++ reads them to treat `__int128` as an integer type. Unwind
 ranges describe the code in each object even when another shared library

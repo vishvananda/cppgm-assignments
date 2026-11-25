@@ -1,0 +1,1 @@
+ERROR: tests/general/300-array-parameter-atomic-c99-bad.t:1:25: the _Atomic qualifier is a C11 extension

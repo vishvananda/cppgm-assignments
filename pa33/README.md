@@ -500,6 +500,18 @@ pass:
 - A function that only forwards a call and returns its result may not need a
   separate call at each use. Preserve argument order, conversions, object
   materialization and cleanup when composing such boundaries.
+- For library math rewrites, use the effective call boundary. A direct
+  call with an explicit boundary can have effects beyond the result and
+  `errno`, including reads and writes of floating-point state. Preserve
+  reads of `errno` after a call, including direct symbol references and
+  reads of its object representation through a pointer.
+  When merging trigonometric calls, preserve the error each call can
+  set if a store or another call may change the error number between
+  them. Check every path through a control-flow join.
+  For a fixed-exponent `pow` or `powf`, prove that the replacement arithmetic
+  preserves the required error behavior, or leave a library call for inputs
+  that can raise a range or pole error. Evaluate the arithmetic only on a
+  path where it is safe.
 - A write fully replaced through the same address before any possible read
   need not reach memory. Address identity can prove this even when an array
   index is dynamic. Preserve alias reads, volatile and atomic accesses,

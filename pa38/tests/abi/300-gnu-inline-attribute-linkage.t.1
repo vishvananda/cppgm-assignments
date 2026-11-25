@@ -1,0 +1,22 @@
+static inline __attribute__((gnu_inline)) int local_value(int n)
+{
+    return n + 3;
+}
+
+inline __attribute__((gnu_inline)) int export_value(int n)
+{
+    return local_value(n) * 2;
+}
+
+extern inline __attribute__((gnu_inline)) int service(int n)
+{
+    return n - 1;
+}
+
+static int (*volatile callback)(int) = service;
+extern int host_call(int);
+
+int main(void)
+{
+    return export_value(18) != 42 || host_call(18) != 42 || callback(30) != 42;
+}

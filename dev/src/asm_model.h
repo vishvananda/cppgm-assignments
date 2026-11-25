@@ -70,7 +70,8 @@ enum class Format : uint8_t
 	Bare,
 	Negated,
 	Label,
-	Suffix
+	Suffix,
+	Address
 };
 enum class PieceKind : uint8_t
 {

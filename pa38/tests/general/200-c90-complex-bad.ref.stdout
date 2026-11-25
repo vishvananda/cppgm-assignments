@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c90-complex-bad.t:1:8: _Complex requires C99

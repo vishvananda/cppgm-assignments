@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c17-label-before-declaration-bad.t:4:5: a label before a declaration requires C23

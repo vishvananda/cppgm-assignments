@@ -1,0 +1,132 @@
+global @global : obj<32x32> [linkage=c, binding=strong] = {
+  i8 1
+}
+global @constant : obj<16x16> [storage=readonly, linkage=c, binding=internal] = {
+  i8 2
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $count : i32
+  slot $local : obj<2x2>
+  slot $strongest : obj<32x32>
+  slot $index : obj<16x16>
+
+  block ^entry:
+    store typed i32 2, $count
+    store i8 3, $local
+    store typed i32 4, $strongest
+    %t1 = load i8 @global
+    %t2 = binary add i8 %t1, 1
+    store i8 %t2, @global
+    %t3 = convert sext i32 i8 %t2
+    %t4 = cmp ne i32 %t3, 2
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^if_then_1, ^lor_rhs_5
+
+  block ^lor_rhs_5:
+    %t6 = convert sext i32 i8 2
+    %t7 = cmp ne i32 %t6, 2
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t9 = load i8 $local
+    %t10 = convert sext i32 i8 %t9
+    %t11 = cmp ne i32 %t10, 3
+    %t12 = convert trunc i32 i64 %t11
+    branch %t12, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t13 = load typed i32 $strongest
+    %t14 = cmp ne i32 %t13, 4
+    %t15 = convert trunc i32 i64 %t14
+    branch %t15, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t16 = addr @global
+    %t17 = copy i64 %t16
+    %t18 = convert sext i64 i32 32
+    %t19 = binary umod i64 %t17, %t18
+    branch %t19, ^if_then_7, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t20 = addr @constant
+    %t21 = copy i64 %t20
+    %t22 = convert sext i64 i32 16
+    %t23 = binary umod i64 %t21, %t22
+    branch %t23, ^if_then_7, ^if_else_8
+
+  block ^if_then_7:
+    return i32 2
+
+  block ^if_else_8:
+    jump ^if_end_10
+
+  block ^if_end_10:
+    %t24 = load typed i32 $count
+    %t25 = cmp ne i32 %t24, 2
+    %t26 = convert trunc i32 i64 %t25
+    branch %t26, ^if_then_11, ^lor_rhs_14
+
+  block ^lor_rhs_14:
+    %t27 = addr $local
+    %t28 = copy i64 %t27
+    %t29 = const i64 2
+    %t30 = binary umod i64 %t28, %t29
+    branch %t30, ^if_then_11, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t31 = addr $strongest
+    %t32 = copy i64 %t31
+    %t33 = convert sext i64 i32 32
+    %t34 = binary umod i64 %t32, %t33
+    branch %t34, ^if_then_11, ^if_else_12
+
+  block ^if_then_11:
+    return i32 3
+
+  block ^if_else_12:
+    jump ^if_end_15
+
+  block ^if_end_15:
+    store i8 0, $index
+    jump ^for_cond_16
+
+  block ^for_cond_16:
+    %t35 = load i8 $index
+    %t36 = convert sext i32 i8 %t35
+    %t37 = cmp lt i32 %t36, 1
+    %t38 = convert trunc i32 i64 %t37
+    branch %t38, ^for_body_17, ^for_end_19
+
+  block ^for_body_17:
+    %t39 = addr $index
+    %t40 = copy i64 %t39
+    %t41 = convert sext i64 i32 16
+    %t42 = binary umod i64 %t40, %t41
+    branch %t42, ^if_then_20, ^if_else_21
+
+  block ^if_then_20:
+    return i32 4
+
+  block ^if_else_21:
+    jump ^if_end_22
+
+  block ^if_end_22:
+    jump ^for_iter_18
+
+  block ^for_iter_18:
+    %t43 = load i8 $index
+    %t44 = binary add i8 %t43, 1
+    store i8 %t44, $index
+    jump ^for_cond_16
+
+  block ^for_end_19:
+    return i32 0
+}

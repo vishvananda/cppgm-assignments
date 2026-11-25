@@ -1,0 +1,16 @@
+#include "500-packed-address-initializers.header.h"
+
+int payload[4] = { 11, 22, 33, 44 };
+const struct Descriptor descriptors[2] = {
+    { 123, (unsigned long)&payload[1] },
+    { 456, (unsigned long)&payload[2] }
+};
+const struct Slot slots[2] = {
+    { 8, &payload[3], 7 },
+    { 6, payload, 5 }
+};
+
+int main(void)
+{
+    return check_addresses();
+}

@@ -1,0 +1,4 @@
+# explicit-outcomes
+
+has(call @sqrt) in @observe
+has(call @pow) in @observe

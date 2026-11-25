@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-constexpr-atomic-bad.t:1:23: invalid object or subobject type for a C constexpr definition

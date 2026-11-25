@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-compound-constexpr-address-bad.t:3:32: a C static initializer requires a constant expression

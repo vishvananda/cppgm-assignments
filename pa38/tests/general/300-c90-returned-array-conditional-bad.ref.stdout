@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-returned-array-conditional-bad.t:7:12: a non-lvalue array is not a conditional operand in C90

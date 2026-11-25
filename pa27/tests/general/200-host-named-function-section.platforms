@@ -1,0 +1,1 @@
+linux # Checks explicit ELF text section placement.

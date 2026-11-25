@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c11-alignas-incomplete-array-bad.t:1:1: alignas of an incomplete array type

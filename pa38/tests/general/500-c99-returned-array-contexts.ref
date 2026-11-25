@@ -1,0 +1,109 @@
+global @row [linkage=c, binding=internal] = {
+  i8 17
+  i8 25
+  zero 15
+}
+
+function @make_row(%ret : ptr [pass=indirect_result, alias=exclusive_result, object_bytes=17]) -> void [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @row
+    copyobj 17x1 %t1, %ret
+    return void
+}
+function @main(%argc : i32, %argv : ptr) -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $argc : i32
+  slot $argv : ptr
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $tmpobj__3 : obj<17x1>
+  slot $lor__4 : i64
+  slot $cond__5 : ptr
+  slot $tmpobj__6 : obj<17x1>
+
+  block ^entry:
+    store typed i32 %argc, $argc
+    store typed ptr %argv, $argv
+    %t1 = load typed ptr $argv
+    %t2 = const i64 17
+    %t3 = convert sext i64 i32 17
+    %t4 = cmp ne i64 %t2, %t3
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t6 = const i64 8
+    %t7 = const i64 8
+    %t8 = cmp ne i64 %t6, %t7
+    %t9 = convert trunc i32 i64 %t8
+    %t10 = cmp ne i32 %t9, 0
+    store typed i64 %t10, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t11 = load typed i64 $lor__1
+    branch %t11, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t12 = addr $tmpobj__3
+    call void @make_row(%t12)
+    %t13 = index inbounds i8 [projection=field] %t12, 0
+    %t14 = index inbounds i8 [projection=array_element] %t13, 0
+    %t15 = load i8 %t14
+    %t16 = convert sext i32 i8 %t15
+    %t17 = cmp ne i32 %t16, 17
+    %t18 = convert trunc i32 i64 %t17
+    %t19 = cmp ne i32 %t18, 0
+    store typed i64 %t19, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t20 = load typed i64 $lor__2
+    branch %t20, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t21 = load typed i32 $argc
+    %t22 = cmp gt i32 %t21, 1
+    %t23 = convert trunc i32 i64 %t22
+    branch %t23, ^cond_then_10, ^cond_else_11
+
+  block ^cond_then_10:
+    %t24 = addr @row
+    %t25 = index inbounds i8 [projection=field] %t24, 0
+    store typed ptr %t25, $cond__5
+    jump ^cond_end_12
+
+  block ^cond_else_11:
+    %t26 = addr $tmpobj__6
+    call void @make_row(%t26)
+    %t27 = index inbounds i8 [projection=field] %t26, 0
+    store typed ptr %t27, $cond__5
+    jump ^cond_end_12
+
+  block ^cond_end_12:
+    %t28 = load typed ptr $cond__5
+    %t29 = index inbounds i8 %t28, 1
+    %t30 = load i8 %t29
+    %t31 = convert sext i32 i8 %t30
+    %t32 = cmp ne i32 %t31, 25
+    %t33 = convert trunc i32 i64 %t32
+    %t34 = cmp ne i32 %t33, 0
+    store typed i64 %t34, $lor__4
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__4
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t35 = load typed i64 $lor__4
+    %t36 = convert trunc i32 i64 %t35
+    return i32 %t36
+}

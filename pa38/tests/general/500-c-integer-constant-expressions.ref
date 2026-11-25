@@ -1,0 +1,149 @@
+global @values [linkage=c, binding=internal] = {
+  zero 4
+  i32 7
+  zero 4
+}
+global @aligned : obj<8x8> [linkage=c, binding=internal] = {
+  zero 1
+}
+
+function @is_null(%p : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $p : ptr
+
+  block ^entry:
+    store typed ptr %p, $p
+    %t1 = load typed ptr $p
+    %t2 = const i64 1
+    %t3 = binary sub i64 %t2, 1
+    %t4 = copy ptr %t3
+    %t5 = cmp eq ptr %t1, %t4
+    %t6 = convert trunc i32 i64 %t5
+    return i32 %t6
+}
+function @returns_null() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    return ptr 0
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $size : i32
+  slot $tmpobj__1 : i64
+  slot $p : ptr
+  slot $q : ptr
+  slot $cond__2 : ptr
+  slot $land__3 : i64
+  slot $land__4 : i64
+  slot $land__5 : i64
+  slot $cleanup_return__6 : i32
+
+  block ^entry:
+    store typed i32 3, $size
+    %t1 = convert sext i64 i32 3
+    %t2 = binary mul i64 %t1, 4
+    store typed i64 %t2, $tmpobj__1
+    %t3 = stack_save
+    %t4 = stack_alloc %t2
+    %t5 = binary sub nowrap i32 2, 2
+    %t6 = copy ptr %t5
+    store typed ptr %t6, $p
+    %t7 = load u8 @aligned
+    branch %t7, ^cond_then_1, ^cond_else_2
+
+  block ^cond_then_1:
+    %t8 = addr @values
+    store typed ptr %t8, $cond__2
+    jump ^cond_end_3
+
+  block ^cond_else_2:
+    %t9 = binary and i32 1, 2
+    %t10 = copy ptr %t9
+    store typed ptr %t10, $cond__2
+    jump ^cond_end_3
+
+  block ^cond_end_3:
+    %t11 = load typed ptr $cond__2
+    store typed ptr %t11, $q
+    %t12 = addr @values
+    %t13 = index inbounds i32 [projection=array_element] %t12, 1
+    %t14 = load typed i32 %t13
+    %t15 = index inbounds i32 [projection=array_element] %t4, 2
+    store typed i32 %t14, %t15
+    %t16 = index inbounds i32 [projection=array_element] %t4, 2
+    %t17 = load typed i32 %t16
+    jump ^switch_dispatch_4
+
+  block ^switch_dispatch_4:
+    switch %t17, ^switch_default_7, 7:^switch_case_6
+
+  block ^switch_case_6:
+    %t18 = binary sub nowrap i32 1, 1
+    %t19 = copy ptr %t18
+    %t20 = call i32 @is_null(%t19)
+    branch %t20, ^land_rhs_8, ^land_short_9
+
+  block ^land_rhs_8:
+    %t21 = load typed ptr $p
+    %t22 = cmp eq ptr %t21, 0
+    %t23 = convert trunc i32 i64 %t22
+    %t24 = cmp ne i32 %t23, 0
+    store typed i64 %t24, $land__3
+    jump ^land_end_10
+
+  block ^land_short_9:
+    store typed i64 0, $land__3
+    jump ^land_end_10
+
+  block ^land_end_10:
+    %t25 = load typed i64 $land__3
+    branch %t25, ^land_rhs_11, ^land_short_12
+
+  block ^land_rhs_11:
+    %t26 = load typed ptr $q
+    %t27 = cmp eq ptr %t26, 0
+    %t28 = convert trunc i32 i64 %t27
+    %t29 = cmp ne i32 %t28, 0
+    store typed i64 %t29, $land__4
+    jump ^land_end_13
+
+  block ^land_short_12:
+    store typed i64 0, $land__4
+    jump ^land_end_13
+
+  block ^land_end_13:
+    %t30 = load typed i64 $land__4
+    branch %t30, ^land_rhs_14, ^land_short_15
+
+  block ^land_rhs_14:
+    %t31 = call ptr @returns_null()
+    %t32 = cmp eq ptr %t31, 0
+    %t33 = convert trunc i32 i64 %t32
+    %t34 = cmp ne i32 %t33, 0
+    store typed i64 %t34, $land__5
+    jump ^land_end_16
+
+  block ^land_short_15:
+    store typed i64 0, $land__5
+    jump ^land_end_16
+
+  block ^land_end_16:
+    %t35 = load typed i64 $land__5
+    %t36 = convert trunc i32 i64 %t35
+    %t37 = cmp eq i32 %t36, 0
+    %t38 = convert trunc i32 i64 %t37
+    store typed i32 %t38, $cleanup_return__6
+    jump ^return_cleanup_action_18
+
+  block ^return_cleanup_terminal_17:
+    return i32 $cleanup_return__6
+
+  block ^return_cleanup_action_18:
+    stack_restore %t3
+    jump ^return_cleanup_terminal_17
+
+  block ^switch_default_7:
+    store typed i32 1, $cleanup_return__6
+    jump ^return_cleanup_action_18
+
+  block ^switch_end_5:
+    stack_restore %t3
+    return i32 0
+}

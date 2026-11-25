@@ -4,7 +4,7 @@ global @Color : i32 [linkage=c, binding=strong] = 9
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   slot $second : obj<16x8>
   slot $first : obj<16x8>
-  slot $color : i32
+  slot $color : u32
   slot $alias : obj<4x4>
   slot $bits : obj<4x4>
   slot $assigned : i32
@@ -35,7 +35,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t10 = addr $first
     %t11 = index inbounds i8 [projection=field] %t10, 8
     store typed ptr %t9, %t11
-    store typed i32 1, $color
+    store typed u32 1, $color
     %t12 = addr $alias
     %t13 = addr $alias
     %t14 = index inbounds i8 [projection=field] %t13, 0
@@ -114,8 +114,8 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     branch %t66, ^land_rhs_4, ^land_short_5
 
   block ^land_rhs_4:
-    %t67 = load typed i32 $color
-    %t68 = cmp eq i32 %t67, 1
+    %t67 = load typed u32 $color
+    %t68 = cmp eq u32 %t67, 1
     %t69 = convert trunc i32 i64 %t68
     %t70 = cmp ne i32 %t69, 0
     store typed i64 %t70, $land__2

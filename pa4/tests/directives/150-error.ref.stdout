@@ -1,1 +1,1 @@
-ERROR: tests/directives/150-error.t:2:2: #error
+ERROR: tests/directives/150-error.t:2:2: #error error_msg

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c11-for-static-assert-false-bad.t:3:10: static assertion failed

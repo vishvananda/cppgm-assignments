@@ -1,0 +1,17 @@
+#define CELLS4 17, 26, 35, 44
+#define CELLS16 CELLS4, CELLS4, CELLS4, CELLS4
+#define CELLS64 CELLS16, CELLS16, CELLS16, CELLS16
+#define CELLS256 CELLS64, CELLS64, CELLS64, CELLS64
+#define CELLS1024 CELLS256, CELLS256, CELLS256, CELLS256
+#define CELLS4096 CELLS1024, CELLS1024, CELLS1024, CELLS1024
+
+static const int table[] = { CELLS4096, CELLS1024, 49, 52, 55, 58 };
+
+extern void lookup_failed();
+
+int main(int argc, char **)
+{
+    if (table[0] != 17 || table[4095] != 44 || table[5118] != 35 || table[5123] != 58)
+        lookup_failed();
+    return table[(unsigned)argc & 3] - 26;
+}

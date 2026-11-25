@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-alignment-missing-after-bad.t:2:6: an alignment specifier disagrees with the object's explicit definition

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c17-auto-inference-bad.t:1:1: declaration without a type

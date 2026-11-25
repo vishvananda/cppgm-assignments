@@ -1,0 +1,19 @@
+#if defined(__aarch64__)
+register unsigned long stack_pointer __asm__("sp");
+
+int main(void)
+{
+    unsigned char local;
+    unsigned long current = stack_pointer;
+    return current % 16 != 0 || (unsigned long)&local - current >= 4096;
+}
+#else
+register unsigned long stack_pointer __asm__("rsp");
+
+int main(void)
+{
+    unsigned long observed;
+    __asm__ volatile("movq %%rsp,%0" : "=r"(observed), "+r"(stack_pointer));
+    return stack_pointer != observed;
+}
+#endif

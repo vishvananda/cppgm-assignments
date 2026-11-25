@@ -1,0 +1,11 @@
+extern "C" int compute_at_startup(int) __attribute__((section(".init.text"), noinline));
+
+extern "C" int compute_at_startup(int value)
+{
+    return value * 5;
+}
+
+int main(int argc, char **)
+{
+    return compute_at_startup(argc) != 5;
+}

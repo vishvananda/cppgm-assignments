@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c-ice-bit-field-bad.t:1:45: an evaluated comma operator in a C constant expression

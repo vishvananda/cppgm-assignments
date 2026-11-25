@@ -1,0 +1,24 @@
+#include "100-driver-x86-integer-registers.shared.h"
+
+#if defined(__SSE__) || defined(__SSE2__) || defined(__MMX__)
+#error a disabled x86 feature is still advertised
+#endif
+
+extern "C" void copy_pair(Pair *dst, const Pair *src)
+{
+  *dst = *src;
+}
+
+extern "C" void clear_pair(Pair *dst)
+{
+  *dst = Pair{};
+}
+
+extern "C" unsigned long sum_pair(unsigned long first, ...)
+{
+  __builtin_va_list args;
+  __builtin_va_start(args, first);
+  Pair pair = __builtin_va_arg(args, Pair);
+  __builtin_va_end(args);
+  return first + pair.first + pair.second;
+}

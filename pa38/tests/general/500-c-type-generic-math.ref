@@ -1,0 +1,289 @@
+global @candidates : i32 [linkage=c, binding=internal] = zero
+global @arguments : i32 [linkage=c, binding=internal] = zero
+
+function @single(%x : f32) -> f32 [linkage=c, binding=internal] {
+  slot $x : f32
+
+  block ^entry:
+    store typed f32 %x, $x
+    %t1 = load typed f32 $x
+    %t2 = binary add f32 %t1, 1f
+    return f32 %t2
+}
+function @twice(%x : f64) -> f64 [linkage=c, binding=internal] {
+  slot $x : f64
+
+  block ^entry:
+    store typed f64 %x, $x
+    %t1 = load typed f64 $x
+    %t2 = binary mul f64 %t1, 2
+    return f64 %t2
+}
+function @triple(%x : f80) -> f80 [linkage=c, binding=internal] {
+  slot $x : f80
+
+  block ^entry:
+    store typed f80 %x, $x
+    %t1 = load typed f80 $x
+    %t2 = binary mul f80 %t1, 3L
+    return f80 %t2
+}
+function @single_candidate() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @candidates
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, @candidates
+    %t3 = addr @single
+    return ptr %t3
+}
+function @double_candidate() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @candidates
+    %t2 = binary add nowrap i32 %t1, 10
+    store typed i32 %t2, @candidates
+    %t3 = addr @twice
+    return ptr %t3
+}
+function @argument() -> f32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = load typed i32 @arguments
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, @arguments
+    return f32 2f
+}
+function @integral_single(%x : f32, %y : f32, %fixed : i32) -> i32 [linkage=c, binding=internal] {
+  slot $x : f32
+  slot $y : f32
+  slot $fixed : i32
+
+  block ^entry:
+    store typed f32 %x, $x
+    store typed f32 %y, $y
+    store typed i32 %fixed, $fixed
+    %t1 = load typed i32 $fixed
+    %t2 = binary add nowrap i32 10, %t1
+    return i32 %t2
+}
+function @integral_double(%x : f64, %y : f64, %fixed : i32) -> i32 [linkage=c, binding=internal] {
+  slot $x : f64
+  slot $y : f64
+  slot $fixed : i32
+
+  block ^entry:
+    store typed f64 %x, $x
+    store typed f64 %y, $y
+    store typed i32 %fixed, $fixed
+    %t1 = load typed i32 $fixed
+    %t2 = binary add nowrap i32 20, %t1
+    return i32 %t2
+}
+function @narrow_double(%x : f64) -> f32 [linkage=c, binding=internal] {
+  slot $x : f64
+
+  block ^entry:
+    store typed f64 %x, $x
+    return f32 31f
+}
+function @narrow_long(%x : f80) -> f32 [linkage=c, binding=internal] {
+  slot $x : f80
+
+  block ^entry:
+    store typed f80 %x, $x
+    return f32 47f
+}
+function @real_single(%x : obj<8x4>) -> f32 [linkage=c, binding=internal] {
+  slot $x : obj<8x4>
+
+  block ^entry:
+    store obj<8x4> %x, $x
+    %t1 = addr $x
+    %t2 = load typed f32 %t1
+    %t3 = addr $x
+    %t4 = index i8 [projection=field] %t3, 4
+    %t5 = load typed f32 %t4
+    %t6 = binary add f32 %t2, %t5
+    return f32 %t6
+}
+function @real_double(%x : obj<16x8>) -> f64 [linkage=c, binding=internal] {
+  slot $x : obj<16x8>
+
+  block ^entry:
+    store obj<16x8> %x, $x
+    %t1 = addr $x
+    %t2 = load typed f64 %t1
+    %t3 = addr $x
+    %t4 = index i8 [projection=field] %t3, 8
+    %t5 = load typed f64 %t4
+    %t6 = binary sub f64 %t2, %t5
+    return f64 %t6
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $complex__1 : obj<8x4>
+  slot $complex__2 : obj<16x8>
+  slot $complex__3 : obj<16x8>
+  slot $complex__4 : obj<16x8>
+
+  block ^entry:
+    %t1 = const i64 4
+    %t2 = const i64 4
+    %t3 = cmp ne i64 %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t5 = load typed i32 @candidates
+    %t6 = cmp ne i32 %t5, 0
+    %t7 = convert trunc i32 i64 %t6
+    branch %t7, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t8 = load typed i32 @arguments
+    %t9 = cmp ne i32 %t8, 0
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t11 = call f32 @argument()
+    %t12 = call ptr @single_candidate()
+    %t13 = call f32 %t12(%t11) as (%arg0 : f32) -> f32
+    %t14 = cmp ne f32 %t13, 3f
+    %t15 = convert trunc i32 i64 %t14
+    branch %t15, ^if_then_6, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t16 = load typed i32 @candidates
+    %t17 = cmp ne i32 %t16, 1
+    %t18 = convert trunc i32 i64 %t17
+    branch %t18, ^if_then_6, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t19 = load typed i32 @arguments
+    %t20 = cmp ne i32 %t19, 1
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_10
+
+  block ^if_end_10:
+    %t22 = call f32 @single(2f)
+    %t23 = call f32 @single(%t22)
+    %t24 = cmp ne f32 %t23, 4f
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_11, ^lor_rhs_15
+
+  block ^lor_rhs_15:
+    %t26 = convert sitofp f64 i32 2
+    %t27 = call f64 @twice(%t26)
+    %t28 = cmp ne f64 %t27, 4
+    %t29 = convert trunc i32 i64 %t28
+    branch %t29, ^if_then_11, ^lor_rhs_14
+
+  block ^lor_rhs_14:
+    %t30 = call f80 @triple(2L)
+    %t31 = cmp ne f80 %t30, 6L
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_11, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t33 = call f32 @single(2f)
+    %t34 = cmp ne f32 %t33, 3f
+    %t35 = convert trunc i32 i64 %t34
+    branch %t35, ^if_then_11, ^if_else_12
+
+  block ^if_then_11:
+    return i32 3
+
+  block ^if_else_12:
+    jump ^if_end_16
+
+  block ^if_end_16:
+    %t36 = call i32 @integral_single(1f, 2f, 3)
+    %t37 = cmp ne i32 %t36, 13
+    %t38 = convert trunc i32 i64 %t37
+    branch %t38, ^if_then_17, ^lor_rhs_19
+
+  block ^lor_rhs_19:
+    %t39 = convert fpext f64 f32 1f
+    %t40 = convert sitofp f64 i32 2
+    %t41 = call i32 @integral_double(%t39, %t40, 3)
+    %t42 = cmp ne i32 %t41, 23
+    %t43 = convert trunc i32 i64 %t42
+    branch %t43, ^if_then_17, ^if_else_18
+
+  block ^if_then_17:
+    return i32 4
+
+  block ^if_else_18:
+    jump ^if_end_20
+
+  block ^if_end_20:
+    %t44 = convert fpext f80 f32 2f
+    %t45 = call f32 @narrow_long(%t44)
+    %t46 = cmp ne f32 %t45, 47f
+    %t47 = convert trunc i32 i64 %t46
+    branch %t47, ^if_then_21, ^lor_rhs_23
+
+  block ^lor_rhs_23:
+    %t48 = call f32 @narrow_double(2.0)
+    %t49 = cmp ne f32 %t48, 31f
+    %t50 = convert trunc i32 i64 %t49
+    branch %t50, ^if_then_21, ^if_else_22
+
+  block ^if_then_21:
+    return i32 5
+
+  block ^if_else_22:
+    jump ^if_end_24
+
+  block ^if_end_24:
+    %t51 = addr $complex__1
+    store typed f32 2f, %t51
+    %t52 = index i8 [projection=field] %t51, 4
+    store typed f32 0f, %t52
+    %t53 = load obj<8x4> $complex__1
+    %t54 = call f32 @real_single(%t53)
+    %t55 = cmp ne f32 %t54, 2f
+    %t56 = convert trunc i32 i64 %t55
+    branch %t56, ^if_then_25, ^lor_rhs_27
+
+  block ^lor_rhs_27:
+    %t57 = addr $complex__2
+    store typed f64 0, %t57
+    %t58 = index i8 [projection=field] %t57, 8
+    store typed f64 1, %t58
+    %t59 = load obj<16x8> $complex__2
+    store obj<16x8> %t59, $complex__3
+    %t60 = addr $complex__3
+    %t61 = load typed f64 %t60
+    %t62 = index i8 [projection=field] %t60, 8
+    %t63 = load typed f64 %t62
+    %t64 = binary add f64 3, %t61
+    %t65 = addr $complex__4
+    store typed f64 %t64, %t65
+    %t66 = index i8 [projection=field] %t65, 8
+    store typed f64 %t63, %t66
+    %t67 = load obj<16x8> $complex__4
+    %t68 = call f64 @real_double(%t67)
+    %t69 = cmp ne f64 %t68, 2
+    %t70 = convert trunc i32 i64 %t69
+    branch %t70, ^if_then_25, ^if_else_26
+
+  block ^if_then_25:
+    return i32 6
+
+  block ^if_else_26:
+    jump ^if_end_28
+
+  block ^if_end_28:
+    return i32 0
+}

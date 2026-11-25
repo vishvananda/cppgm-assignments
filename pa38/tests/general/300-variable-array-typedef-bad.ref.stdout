@@ -1,1 +1,0 @@
-ERROR: tests/general/300-variable-array-typedef-bad.t:1:41: a variably modified typedef is outside the C profile

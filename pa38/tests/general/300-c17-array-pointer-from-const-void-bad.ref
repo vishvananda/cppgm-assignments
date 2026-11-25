@@ -1,0 +1,20 @@
+function @read_row(%length : i32, %address : ptr) -> i32 [linkage=c, binding=strong] {
+  slot $length : i32
+  slot $address : ptr
+  slot $tmpobj__1 : i64
+  slot $row : ptr
+
+  block ^entry:
+    store typed i32 %length, $length
+    store typed ptr %address, $address
+    %t1 = load typed i32 $length
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = load typed ptr $address
+    store typed ptr %t4, $row
+    %t5 = load typed ptr $row
+    %t6 = index inbounds i32 [projection=array_element] %t5, 0
+    %t7 = load typed i32 %t6
+    return i32 %t7
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-static-vla-bound-bad.t:4:26: a C static initializer requires a constant expression

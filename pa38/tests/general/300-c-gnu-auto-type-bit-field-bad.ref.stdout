@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-gnu-auto-type-bit-field-bad.t:2:50: __auto_type cannot deduce from a bit-field

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-nullptr-cast-int-bad.t:1:31: invalid explicit conversion

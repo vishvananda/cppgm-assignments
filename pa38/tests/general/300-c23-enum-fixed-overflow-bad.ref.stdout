@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-enum-fixed-overflow-bad.t:1:47: enumerator value is not representable in the underlying type

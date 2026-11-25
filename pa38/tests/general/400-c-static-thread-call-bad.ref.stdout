@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-static-thread-call-bad.t:2:34: a C static initializer requires a constant expression

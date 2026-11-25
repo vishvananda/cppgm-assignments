@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-block-labels-case-vla-bad.t:6:5: default label bypasses a variable's initialization

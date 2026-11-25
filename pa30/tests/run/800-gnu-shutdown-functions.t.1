@@ -1,0 +1,16 @@
+extern "C" int puts(const char*);
+
+__attribute__((__destructor__(201))) static void last()
+{
+    puts("last");
+}
+
+__attribute__((constructor(220), destructor(220))) static void both()
+{
+    puts("both");
+}
+
+int main()
+{
+    puts("main");
+}

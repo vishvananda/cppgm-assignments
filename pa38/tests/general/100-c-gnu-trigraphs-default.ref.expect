@@ -1,0 +1,4 @@
+# explicit-outcomes
+
+# The native and Wasm controls check translated source behavior.
+has(return) in @main

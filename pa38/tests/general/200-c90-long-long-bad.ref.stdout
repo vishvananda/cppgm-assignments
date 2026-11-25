@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c90-long-long-bad.t:1:15: long long requires C99

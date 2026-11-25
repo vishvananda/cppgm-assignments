@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-returned-array-pointer-bad.t:6:19: invalid implicit conversion

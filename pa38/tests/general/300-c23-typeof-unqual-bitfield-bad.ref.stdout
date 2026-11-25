@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-typeof-unqual-bitfield-bad.t:2:1: typeof cannot be applied to a bit-field

@@ -1,0 +1,3 @@
+ERROR: tests/general/c11-edition-syntax.h:1:1: _Static_assert is a C11 extension
+note: included from tests/general/c11-edition-syntax-system.h:3
+note: included from tests/general/500-gnu99-edition-system-diagnostics.t:1

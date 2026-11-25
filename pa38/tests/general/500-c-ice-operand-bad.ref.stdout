@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-ice-operand-bad.t:2:16: a C integer constant expression is required

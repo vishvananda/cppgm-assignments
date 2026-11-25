@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-constexpr-floating-narrowing-bad.t:1:25: a C constexpr initializer requires an exactly representable constant

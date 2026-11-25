@@ -1,0 +1,11 @@
+static const int original[] = { 12, 42, 91 };
+static __typeof__(original) named_alias __attribute__((used, alias("original")));
+static __typeof__(original) chained_alias __attribute__((used, alias("named_alias")));
+
+int main(void)
+{
+    const int *volatile first = named_alias;
+    const int *volatile second = chained_alias;
+    return first != original || second != original
+        || first[0] != 12 || second[1] != 42 || first[2] != 91;
+}

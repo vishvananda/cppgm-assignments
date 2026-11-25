@@ -1,0 +1,6 @@
+# explicit-outcomes
+
+has(fenv_cmp_signal lt) in @ordered_less
+has(fenv_cmp_signal ge) in @discard_ordered
+has(fenv_cmp eq) in @quiet_equal
+has(fenv_cmp lt) in @quiet_less

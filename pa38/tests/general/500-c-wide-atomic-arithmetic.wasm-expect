@@ -1,0 +1,1 @@
+{"source":true,"runtime":true,"flags":["-x","c","-std=gnu17"],"units":["500-c-wide-atomic-arithmetic.wasm.c"],"calls":[{"export":"probe","result":"0"}]}

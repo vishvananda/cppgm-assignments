@@ -1,0 +1,11 @@
+function @in_header() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    return i32 42
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call i32 @in_header()
+    %t2 = cmp ne i32 %t1, 42
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-array-kr-unspecified-star-bad.t:1:14: [*] is allowed only in C function prototype scope

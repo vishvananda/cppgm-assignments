@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-forward-enum-incomplete-function.t:4:1: a parameter or return type of a function definition is incomplete

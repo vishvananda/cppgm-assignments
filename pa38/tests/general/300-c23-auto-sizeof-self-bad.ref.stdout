@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-auto-sizeof-self-bad.t:1:20: an inferred C object is used in its own initializer

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-register-member-address-bad.t:7:12: taking the address of a register object or its subobject

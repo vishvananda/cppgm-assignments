@@ -1,0 +1,6 @@
+extern "C" int (*callback)(int);
+
+int main()
+{
+  return callback(34) != 42;
+}

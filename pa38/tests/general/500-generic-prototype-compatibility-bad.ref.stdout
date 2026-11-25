@@ -1,0 +1,1 @@
+ERROR: tests/general/500-generic-prototype-compatibility-bad.t:7:48: compatible types in two generic associations

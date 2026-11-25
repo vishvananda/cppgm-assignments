@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-parameter-conflict-bad.t:2:5: conflicting C function declarations

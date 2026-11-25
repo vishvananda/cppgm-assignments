@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-bit-precise-signed-one-bad.t:1:16: a _BitInt width is outside the supported range

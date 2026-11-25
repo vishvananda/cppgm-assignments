@@ -1,0 +1,139 @@
+global @saved [storage=readonly, linkage=c, binding=internal] = {
+  i32 9
+  f32 1.5f
+  i32 5
+}
+global @__cppgm_ref_temporary__global_0 [storage=readonly, binding=internal, object=_ZGR6global_] = {
+  i32 7
+}
+global @global : ptr [linkage=c, binding=internal] = addr @__cppgm_ref_temporary__global_0
+global @__ref_tmp__1 [storage=readonly, binding=internal] = {
+  i32 11
+  f32 0.75f
+}
+global @__ref_tmp__2 [storage=readonly, binding=internal] = {
+  f32 2.5f
+}
+global @__ref_tmp__3 [storage=readonly, binding=internal] = {
+  i32 5
+}
+global @__ref_tmp__4 [storage=readonly, binding=internal] = {
+  u8 97
+  u8 98
+  u8 0
+}
+global @__ref_tmp__5 [storage=readonly, binding=internal] = {
+  f64 1
+  f64 1.5
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $local : ptr
+  slot $tmpobj__1 : obj<8x4>
+  slot $persistent : ptr
+  slot $tmpobj__2 : i32
+  slot $tmpobj__3 : obj<3x1>
+  slot $complex_value : ptr
+  slot $tmpobj__4 : obj<16x8>
+
+  block ^entry:
+    %t1 = addr $tmpobj__1
+    copyobj 8x4 @__ref_tmp__1, %t1
+    %t2 = addr $tmpobj__1
+    store typed ptr %t2, $local
+    %t3 = addr @__ref_tmp__2
+    store typed ptr %t3, $persistent
+    %t4 = load typed ptr $local
+    %t5 = index inbounds i8 [projection=field] %t4, 0
+    %t6 = load typed i32 %t5
+    %t7 = cmp ne i32 %t6, 11
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t9 = load typed ptr $local
+    %t10 = index inbounds i8 [projection=field] %t9, 4
+    %t11 = load typed f32 %t10
+    %t12 = cmp ne f32 %t11, 0.75f
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t14 = load typed ptr $persistent
+    %t15 = load typed f32 %t14
+    %t16 = cmp ne f32 %t15, 2.5f
+    %t17 = convert trunc i32 i64 %t16
+    branch %t17, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t18 = load typed ptr @global
+    %t19 = load typed i32 %t18
+    %t20 = cmp ne i32 %t19, 7
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_6, ^lor_rhs_8
+
+  block ^lor_rhs_8:
+    %t22 = addr $tmpobj__2
+    copyobj 4x4 @__ref_tmp__3, %t22
+    %t23 = load typed i32 $tmpobj__2
+    %t24 = cmp ne i32 %t23, 5
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_9
+
+  block ^if_end_9:
+    %t26 = addr $tmpobj__3
+    copyobj 3x1 @__ref_tmp__4, %t26
+    %t27 = addr $tmpobj__3
+    %t28 = index inbounds u8 [projection=array_element] %t27, 1
+    %t29 = load u8 %t28
+    %t30 = convert zext i32 u8 %t29
+    %t31 = cmp ne i32 %t30, 98
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_10, ^if_else_11
+
+  block ^if_then_10:
+    return i32 3
+
+  block ^if_else_11:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    %t33 = addr $tmpobj__4
+    copyobj 16x8 @__ref_tmp__5, %t33
+    %t34 = addr $tmpobj__4
+    store typed ptr %t34, $complex_value
+    %t35 = load typed ptr $complex_value
+    %t36 = load typed f64 %t35
+    %t37 = cmp ne f64 %t36, 1
+    %t38 = convert trunc i32 i64 %t37
+    branch %t38, ^if_then_13, ^lor_rhs_15
+
+  block ^lor_rhs_15:
+    %t39 = load typed ptr $complex_value
+    %t40 = index i8 [projection=field] %t39, 8
+    %t41 = load typed f64 %t40
+    %t42 = cmp ne f64 %t41, 1.5
+    %t43 = convert trunc i32 i64 %t42
+    branch %t43, ^if_then_13, ^if_else_14
+
+  block ^if_then_13:
+    return i32 4
+
+  block ^if_else_14:
+    jump ^if_end_16
+
+  block ^if_end_16:
+    return i32 0
+}

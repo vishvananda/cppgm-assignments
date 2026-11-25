@@ -29,6 +29,9 @@ lowir2native --target=wasm32-wasip1 -O2 \
   --dump-machine-ir program.mir -o program.wasm source.lowir
 ```
 
+Define `__wasi__` to `1` for the WASI Preview 1 target. In C mode, also
+define `__wasip1__` to `1` so the SDK selects its Preview 1 declarations.
+
 The object that `-c` compiles from a source's object LowIR is byte-identical
 to the object that `-c` compiles from the source at the same level. This also
 holds after `lowiropt -O0` reads and writes that text. The object LowIR is
@@ -97,10 +100,14 @@ Implement the following at `-O0`, `-O1`, `-O2` and `-O3`:
 - The scalar Wasm `__builtin_wasm_min_f32/f64` and
   `__builtin_wasm_max_f32/f64` builtins, including NaN propagation and signed
   zero. Advertise these builtins only for Wasm targets.
+- `__builtin_flt_rounds()` returns 1, the code for round-to-nearest.
+  The query works in modules built with `-nostdlib`.
 - Scalar arithmetic and conversions, narrow integer behavior, pointers,
   aggregates, globals, volatile memory, alignment and address-taken locals.
   Preserve wide integer and floating types through valid legalization/helper
-  calls where Wasm has no corresponding value type.
+  calls where Wasm has no corresponding value type. Apply the Wasm call
+  convention to complex arithmetic helpers, including their indirect
+  aggregate results and the parts of binary128 operands.
 - Complete control flow, including phi transfers, switches, nested loops and
   irreducible graphs accepted by LowIR. Preserve every defined exit path.
 - C `setjmp` continuations and `longjmp` through direct or indirect calls, with
@@ -136,6 +143,10 @@ may use stronger ordering when the target requires it. Emit matching `atomics`
 feature metadata. `-mno-atomics` disables this instruction extension and must
 diagnose operations that require it; unsupported atomic widths must also be
 diagnosed.
+Lock-free queries use the same capability. Enabled queries cover naturally
+aligned objects of 1, 2, 4 or 8 bytes and accept a null pointer to ask about
+natural alignment. Disabled queries return false. A runtime query observes
+each operand once and can execute without an imported atomic runtime.
 
 Threads/shared memory, TLS, Emscripten glue, components, dynamic
 linking and wasm64 are outside this profile. Diagnose these and unsupported
@@ -152,7 +163,8 @@ alignment, literals, constant evaluation and calling conventions. Target
 headers and builtin macros must describe the target rather than the host.
 Keep language builtin templates available across targets while adapting types
 such as `va_list`. Numeric-limit and wide-character declarations must agree
-with the target headers, including binary128 `long double` limits.
+with the target headers, including binary128 `long double` limits and the
+integer types, limits and literal suffixes used by `<stdint.h>`.
 
 Carry target/layout metadata and sufficient typed ABI facts in LowIR. Reject
 incompatible inputs; do not reinterpret existing x86-layout LowIR as wasm32.

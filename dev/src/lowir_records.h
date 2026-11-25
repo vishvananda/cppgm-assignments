@@ -142,6 +142,8 @@ inline Type instruction_result_type(const Instruction& inst, Type pointer_type)
 	switch (inst.op)
 	{
 	case Opcode::Compare:
+	case Opcode::FenvCompare:
+	case Opcode::FenvCompareSignal:
 	case Opcode::AtomicCompareExchange:
 	case Opcode::ExceptionSelector:
 		return Type::scalar(TypeKind::I64);

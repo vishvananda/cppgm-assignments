@@ -1,0 +1,2 @@
+ERROR: tests/general/500-c99-system-macro-generic.t:7:18: _Generic is a C11 extension
+note: included from tests/general/500-c99-system-macro-generic-warnings.t:1

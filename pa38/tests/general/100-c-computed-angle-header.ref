@@ -1,0 +1,8 @@
+global @lead_value : i32 [storage=readonly, linkage=c, binding=internal] = 23
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = cmp ne i32 23, 23
+    %t2 = convert trunc i32 i64 %t1
+    return i32 %t2
+}

@@ -1,0 +1,15 @@
+static int fallback_value = 19;
+
+int * __attribute__((weak)) selected_pointer = &fallback_value;
+
+int *selected_function(void);
+
+int * __attribute__((__weak__)) selected_function(void)
+{
+    return &fallback_value;
+}
+
+int main(void)
+{
+    return *selected_pointer != 41 || *selected_function() != 67;
+}

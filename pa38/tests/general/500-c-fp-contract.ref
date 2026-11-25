@@ -1,0 +1,281 @@
+global @x : f64 [linkage=c, binding=internal] = 1.0000000074505805969
+global @y : f64 [linkage=c, binding=internal] = 0.99999999254941940308
+global @z : f64 [linkage=c, binding=internal] = -1
+global @xf : f32 [linkage=c, binding=internal] = 1.0001220703125f
+global @yf : f32 [linkage=c, binding=internal] = 0.9998779296875f
+global @zf : f32 [linkage=c, binding=internal] = -1f
+
+function @file_off(%a : f64, %b : f64, %c : f64) -> f64 [linkage=c, binding=internal] {
+  slot $a : f64
+  slot $b : f64
+  slot $c : f64
+
+  block ^entry:
+    store typed f64 %a, $a
+    store typed f64 %b, $b
+    store typed f64 %c, $c
+    %t1 = load typed f64 $a
+    %t2 = load typed f64 $b
+    %t3 = binary mul f64 %t1, %t2
+    %t4 = load typed f64 $c
+    %t5 = binary add f64 %t3, %t4
+    return f64 %t5
+}
+function @allowed(%result : f64, %fused : f64) -> i32 [linkage=c, binding=internal] {
+  slot $result : f64
+  slot $fused : f64
+  slot $lor__1 : i64
+
+  block ^entry:
+    store typed f64 %result, $result
+    store typed f64 %fused, $fused
+    %t1 = load typed f64 $result
+    %t2 = cmp eq f64 %t1, 0
+    %t3 = convert trunc i32 i64 %t2
+    branch %t3, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t4 = load typed f64 $result
+    %t5 = load typed f64 $fused
+    %t6 = cmp eq f64 %t4, %t5
+    %t7 = convert trunc i32 i64 %t6
+    %t8 = cmp ne i32 %t7, 0
+    store typed i64 %t8, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t9 = load typed i64 $lor__1
+    %t10 = convert trunc i32 i64 %t9
+    return i32 %t10
+}
+function @block_scope(%a : f64, %b : f64, %c : f64) -> i32 [linkage=c, binding=internal] {
+  slot $a : f64
+  slot $b : f64
+  slot $c : f64
+  slot $product : f64
+  slot $cond__1 : i32
+
+  block ^entry:
+    store typed f64 %a, $a
+    store typed f64 %b, $b
+    store typed f64 %c, $c
+    %t1 = load typed f64 $c
+    %t2 = load typed f64 $a
+    %t3 = load typed f64 $b
+    %t4 = binary mul f64 %t2, %t3
+    %t5 = binary add f64 %t1, %t4
+    %t6 = unary neg f64 5.5511151231257827021e-17
+    %t7 = call i32 @allowed(%t5, %t6)
+    %t8 = cmp eq i32 %t7, 0
+    %t9 = convert trunc i32 i64 %t8
+    branch %t9, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    %t10 = load typed f64 $a
+    %t11 = load typed f64 $b
+    %t12 = binary mul f64 %t10, %t11
+    %t13 = load typed f64 $c
+    %t14 = binary add f64 %t12, %t13
+    %t15 = cmp ne f64 %t14, 0
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^if_then_4, ^if_else_5
+
+  block ^if_then_4:
+    return i32 2
+
+  block ^if_else_5:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t17 = load typed f64 $a
+    %t18 = load typed f64 $b
+    %t19 = binary mul f64 %t17, %t18
+    %t20 = load typed f64 $c
+    %t21 = binary add f64 %t19, %t20
+    %t22 = unary neg f64 5.5511151231257827021e-17
+    %t23 = call i32 @allowed(%t21, %t22)
+    %t24 = cmp eq i32 %t23, 0
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_7, ^if_else_8
+
+  block ^if_then_7:
+    return i32 3
+
+  block ^if_else_8:
+    jump ^if_end_9
+
+  block ^if_end_9:
+    %t26 = load typed f64 $a
+    %t27 = load typed f64 $b
+    %t28 = binary mul f64 %t26, %t27
+    store typed f64 %t28, $product
+    %t29 = load typed f64 $product
+    %t30 = load typed f64 $c
+    %t31 = binary add f64 %t29, %t30
+    %t32 = cmp ne f64 %t31, 0
+    %t33 = convert trunc i32 i64 %t32
+    branch %t33, ^if_then_10, ^lor_rhs_12
+
+  block ^lor_rhs_12:
+    %t34 = load typed f64 $a
+    %t35 = load typed f64 $b
+    %t36 = binary mul f64 %t34, %t35
+    %t37 = load typed f64 $c
+    %t38 = binary add f64 %t36, %t37
+    %t39 = cmp ne f64 %t38, 0
+    %t40 = convert trunc i32 i64 %t39
+    branch %t40, ^if_then_10, ^if_else_11
+
+  block ^if_then_10:
+    return i32 4
+
+  block ^if_else_11:
+    jump ^if_end_13
+
+  block ^if_end_13:
+    %t41 = load typed f64 $a
+    %t42 = load typed f64 $b
+    %t43 = binary mul f64 %t41, %t42
+    %t44 = load typed f64 $c
+    %t45 = binary add f64 %t43, %t44
+    %t46 = cmp ne f64 %t45, 0
+    %t47 = convert trunc i32 i64 %t46
+    branch %t47, ^cond_then_14, ^cond_else_15
+
+  block ^cond_then_14:
+    store typed i32 5, $cond__1
+    jump ^cond_end_16
+
+  block ^cond_else_15:
+    store typed i32 0, $cond__1
+    jump ^cond_end_16
+
+  block ^cond_end_16:
+    %t48 = load typed i32 $cond__1
+    return i32 %t48
+}
+function @file_on(%a : f32, %b : f32, %c : f32) -> f32 [linkage=c, binding=internal] {
+  slot $a : f32
+  slot $b : f32
+  slot $c : f32
+
+  block ^entry:
+    store typed f32 %a, $a
+    store typed f32 %b, $b
+    store typed f32 %c, $c
+    %t1 = load typed f32 $a
+    %t2 = load typed f32 $b
+    %t3 = binary mul f32 %t1, %t2
+    %t4 = load typed f32 $c
+    %t5 = binary add f32 %t3, %t4
+    return f32 %t5
+}
+function @file_default(%a : f64, %b : f64, %c : f64) -> f64 [linkage=c, binding=internal] {
+  slot $a : f64
+  slot $b : f64
+  slot $c : f64
+
+  block ^entry:
+    store typed f64 %a, $a
+    store typed f64 %b, $b
+    store typed f64 %c, $c
+    %t1 = load typed f64 $a
+    %t2 = load typed f64 $b
+    %t3 = binary mul f64 %t1, %t2
+    %t4 = load typed f64 $c
+    %t5 = binary add f64 %t3, %t4
+    return f64 %t5
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $a : f64
+  slot $b : f64
+  slot $c : f64
+  slot $scope : i32
+  slot $cond__1 : i32
+
+  block ^entry:
+    %t1 = load volatile f64 @x
+    store typed f64 %t1, $a
+    %t2 = load volatile f64 @y
+    store typed f64 %t2, $b
+    %t3 = load volatile f64 @z
+    store typed f64 %t3, $c
+    %t4 = load typed f64 $a
+    %t5 = load typed f64 $b
+    %t6 = load typed f64 $c
+    %t7 = call f64 @file_off(%t4, %t5, %t6)
+    %t8 = cmp ne f64 %t7, 0
+    %t9 = convert trunc i32 i64 %t8
+    branch %t9, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 6
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    %t10 = load typed f64 $a
+    %t11 = load typed f64 $b
+    %t12 = load typed f64 $c
+    %t13 = call i32 @block_scope(%t10, %t11, %t12)
+    store typed i32 %t13, $scope
+    %t14 = load typed i32 $scope
+    branch %t14, ^if_then_4, ^if_else_5
+
+  block ^if_then_4:
+    %t15 = load typed i32 $scope
+    return i32 %t15
+
+  block ^if_else_5:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t16 = load volatile f32 @xf
+    %t17 = load volatile f32 @yf
+    %t18 = load volatile f32 @zf
+    %t19 = call f32 @file_on(%t16, %t17, %t18)
+    %t20 = convert fpext f64 f32 %t19
+    %t21 = unary neg f64 1.490116119384765625e-08
+    %t22 = call i32 @allowed(%t20, %t21)
+    %t23 = cmp eq i32 %t22, 0
+    %t24 = convert trunc i32 i64 %t23
+    branch %t24, ^if_then_7, ^if_else_8
+
+  block ^if_then_7:
+    return i32 7
+
+  block ^if_else_8:
+    jump ^if_end_9
+
+  block ^if_end_9:
+    %t25 = load typed f64 $a
+    %t26 = load typed f64 $b
+    %t27 = load typed f64 $c
+    %t28 = call f64 @file_default(%t25, %t26, %t27)
+    %t29 = cmp ne f64 %t28, 0
+    %t30 = convert trunc i32 i64 %t29
+    branch %t30, ^cond_then_10, ^cond_else_11
+
+  block ^cond_then_10:
+    store typed i32 8, $cond__1
+    jump ^cond_end_12
+
+  block ^cond_else_11:
+    store typed i32 0, $cond__1
+    jump ^cond_end_12
+
+  block ^cond_end_12:
+    %t31 = load typed i32 $cond__1
+    return i32 %t31
+}

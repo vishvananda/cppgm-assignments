@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-bit-precise-bit-field-width-bad.t:2:33: bit-field width exceeds the width of its type

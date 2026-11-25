@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-array-pointer-atomic-mismatch-bad.t:3:33: invalid implicit conversion

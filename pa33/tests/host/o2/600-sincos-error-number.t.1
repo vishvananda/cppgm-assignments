@@ -1,0 +1,50 @@
+#include <errno.h>
+#include <float.h>
+#include <math.h>
+
+static volatile double input = INFINITY;
+static volatile double large = DBL_MAX;
+static volatile bool take_write = true;
+
+__attribute__((noinline)) static void clear_error() {
+  errno = 0;
+}
+
+__attribute__((noinline)) static bool adjacent(double x) {
+  errno = 0;
+  const double sine = sin(x);
+  const int first = errno;
+  errno = 0;
+  const double cosine = cos(x);
+  return first == EDOM && errno == EDOM && isnan(sine) && isnan(cosine);
+}
+
+__attribute__((noinline)) static bool joined(double x, unsigned path) {
+  errno = 0;
+  const double sine = sin(x);
+  const int first = errno;
+  if (path == 1 && take_write)
+    errno = 0;
+  if (path == 2)
+    clear_error();
+  if (path == 3)
+    (void)exp(large);
+  if (path == 4) {
+    unsigned char* bytes = reinterpret_cast<unsigned char*>(&errno);
+    for (unsigned i = 0; i != sizeof errno; ++i)
+      bytes[i] = 0;
+  }
+  const double cosine = cos(x);
+  return first == EDOM && errno == EDOM && isnan(sine) && isnan(cosine);
+}
+
+int main() {
+  if (!(math_errhandling & MATH_ERRNO))
+    return 0;
+  if (!adjacent(input))
+    return 1;
+  for (unsigned path = 0; path != 5; ++path)
+    if (!joined(input, path))
+      return 2 + path;
+  return 0;
+}

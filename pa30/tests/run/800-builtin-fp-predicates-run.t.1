@@ -1,8 +1,10 @@
-#if !__has_builtin(__builtin_signbitl)
-#error __builtin_signbitl is missing
+#if !__has_builtin(__builtin_signbitf) || !__has_builtin(__builtin_signbitl)
+#error a typed signbit builtin is missing
 #endif
 
+static_assert(__is_same(decltype(__builtin_signbitf(0.0f)), int), "signbitf returns int");
 static_assert(__is_same(decltype(__builtin_signbitl(0.0L)), int), "signbitl returns int");
+static_assert(__builtin_signbitf(-0.0) && !__builtin_signbitf(0.0), "constant signbitf");
 
 inline bool negative_double(double value)
 {
@@ -18,13 +20,19 @@ int main()
   long double normal_long_double = 1.0L;
   long double zero_long_double = 0.0L;
   volatile double neg_zero_double = -0.0;
+  volatile double float_values[] = {-0.0, 0.0, -__builtin_nan(""), __builtin_nan("")};
   volatile long double signed_values[] = {-0.0L, 0.0L, -__builtin_nanl(""), __builtin_nanl("")};
   volatile int negative_int = -1;
   int next = 0;
+  int float_next = 0;
 
   return __builtin_signbit(neg_float) &&
          !__builtin_signbit(pos_double) &&
          negative_double(neg_zero_double) && !negative_double(pos_double) &&
+         __builtin_signbitf(float_values[float_next++]) && float_next == 1 &&
+         !__builtin_signbitf(float_values[1]) &&
+         __builtin_signbitf(float_values[2]) && !__builtin_signbitf(float_values[3]) &&
+         __builtin_signbitf(negative_int) &&
          __builtin_signbitl(signed_values[next++]) && next == 1 &&
          !__builtin_signbitl(signed_values[1]) &&
          __builtin_signbitl(signed_values[2]) &&

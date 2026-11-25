@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-auto-explicit-storage-bad.t:1:23: auto with a written type requires a block-scope object without another storage class

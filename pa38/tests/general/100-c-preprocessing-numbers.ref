@@ -1,0 +1,220 @@
+global @__strlit__1 [storage=readonly, binding=internal] = {
+  i8 48
+  i8 120
+  i8 101
+  i8 43
+  i8 116
+  i8 97
+  i8 105
+  i8 108
+  i8 0
+}
+global @__strlit__2 [storage=readonly, binding=internal] = {
+  i8 48
+  i8 120
+  i8 101
+  i8 32
+  i8 43
+  i8 32
+  i8 55
+  i8 0
+}
+global @__strlit__3 [storage=readonly, binding=internal] = {
+  i8 46
+  i8 55
+  i8 112
+  i8 43
+  i8 116
+  i8 97
+  i8 105
+  i8 108
+  i8 0
+}
+global @__strlit__4 [storage=readonly, binding=internal] = {
+  i8 49
+  i8 101
+  i8 45
+  i8 116
+  i8 97
+  i8 105
+  i8 108
+  i8 0
+}
+global @__strlit__5 [storage=readonly, binding=internal] = {
+  i8 48
+  i8 120
+  i8 49
+  i8 112
+  i8 43
+  i8 0
+}
+global @__strlit__6 [storage=readonly, binding=internal] = {
+  i8 49
+  i8 46
+  i8 53
+  i8 46
+  i8 50
+  i8 0
+}
+
+function @equal(%a : ptr, %b : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $a : ptr
+  slot $b : ptr
+
+  block ^entry:
+    store typed ptr %a, $a
+    store typed ptr %b, $b
+    jump ^for_cond_1
+
+  block ^for_cond_1:
+    %t1 = load typed ptr $a
+    %t2 = load i8 %t1
+    %t3 = load typed ptr $b
+    %t4 = load i8 %t3
+    %t5 = convert sext i32 i8 %t2
+    %t6 = convert sext i32 i8 %t4
+    %t7 = cmp eq i32 %t5, %t6
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^for_body_2, ^for_end_4
+
+  block ^for_body_2:
+    %t9 = load typed ptr $a
+    %t10 = load i8 %t9
+    %t11 = convert sext i32 i8 %t10
+    %t12 = cmp eq i32 %t11, 0
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 1
+
+  block ^if_else_6:
+    jump ^if_end_7
+
+  block ^if_end_7:
+    jump ^for_iter_3
+
+  block ^for_iter_3:
+    %t14 = load typed ptr $a
+    %t15 = index inbounds i8 %t14, 1
+    store typed ptr %t15, $a
+    %t16 = load typed ptr $b
+    %t17 = index inbounds i8 %t16, 1
+    store typed ptr %t17, $b
+    jump ^for_cond_1
+
+  block ^for_end_4:
+    return i32 0
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $land__1 : i64
+  slot $land__2 : i64
+  slot $land__3 : i64
+  slot $land__4 : i64
+  slot $land__5 : i64
+  slot $land__6 : i64
+
+  block ^entry:
+    %t1 = addr @__strlit__1
+    %t2 = addr @__strlit__1
+    %t3 = call i32 @equal(%t1, %t2)
+    branch %t3, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t4 = addr @__strlit__2
+    %t5 = addr @__strlit__2
+    %t6 = call i32 @equal(%t4, %t5)
+    %t7 = cmp ne i32 %t6, 0
+    store typed i64 %t7, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t8 = load typed i64 $land__1
+    branch %t8, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t9 = addr @__strlit__3
+    %t10 = addr @__strlit__3
+    %t11 = call i32 @equal(%t9, %t10)
+    %t12 = cmp ne i32 %t11, 0
+    store typed i64 %t12, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t13 = load typed i64 $land__2
+    branch %t13, ^land_rhs_7, ^land_short_8
+
+  block ^land_rhs_7:
+    %t14 = addr @__strlit__4
+    %t15 = addr @__strlit__4
+    %t16 = call i32 @equal(%t14, %t15)
+    %t17 = cmp ne i32 %t16, 0
+    store typed i64 %t17, $land__3
+    jump ^land_end_9
+
+  block ^land_short_8:
+    store typed i64 0, $land__3
+    jump ^land_end_9
+
+  block ^land_end_9:
+    %t18 = load typed i64 $land__3
+    branch %t18, ^land_rhs_10, ^land_short_11
+
+  block ^land_rhs_10:
+    %t19 = addr @__strlit__5
+    %t20 = addr @__strlit__5
+    %t21 = call i32 @equal(%t19, %t20)
+    %t22 = cmp ne i32 %t21, 0
+    store typed i64 %t22, $land__4
+    jump ^land_end_12
+
+  block ^land_short_11:
+    store typed i64 0, $land__4
+    jump ^land_end_12
+
+  block ^land_end_12:
+    %t23 = load typed i64 $land__4
+    branch %t23, ^land_rhs_13, ^land_short_14
+
+  block ^land_rhs_13:
+    %t24 = addr @__strlit__6
+    %t25 = addr @__strlit__6
+    %t26 = call i32 @equal(%t24, %t25)
+    %t27 = cmp ne i32 %t26, 0
+    store typed i64 %t27, $land__5
+    jump ^land_end_15
+
+  block ^land_short_14:
+    store typed i64 0, $land__5
+    jump ^land_end_15
+
+  block ^land_end_15:
+    %t28 = load typed i64 $land__5
+    branch %t28, ^land_rhs_16, ^land_short_17
+
+  block ^land_rhs_16:
+    %t29 = cmp eq f64 4, 4
+    %t30 = convert trunc i32 i64 %t29
+    %t31 = cmp ne i32 %t30, 0
+    store typed i64 %t31, $land__6
+    jump ^land_end_18
+
+  block ^land_short_17:
+    store typed i64 0, $land__6
+    jump ^land_end_18
+
+  block ^land_end_18:
+    %t32 = load typed i64 $land__6
+    %t33 = convert trunc i32 i64 %t32
+    %t34 = cmp eq i32 %t33, 0
+    %t35 = convert trunc i32 i64 %t34
+    return i32 %t35
+}

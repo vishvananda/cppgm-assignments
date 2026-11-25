@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-static-local-address-bad.t:4:27: a C static initializer requires a constant expression

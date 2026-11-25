@@ -1,0 +1,2 @@
+elf_section 1 .rodata.hook_call_sizes 2 0 0606
+relocation_class_canonical 1 data_pcrel hooks 2

@@ -1,0 +1,7 @@
+elf_section 1 .text.module_default 6 0 c3
+elf_section 1 .data.module_default 3 0 21
+elf_section 1 .rodata.module_default 2 0 22
+elf_section 1 .module_default 0 0 23
+elf_section 1 .module_reopened 2 0 2425
+elf_section 1 .module_pattern 0 0 547654765476547605040302000000000000
+elf_section 1 .text.module_math 6 0 9004b9140000008b42069090c3

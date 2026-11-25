@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-auto-aggregate-runtime-address-bad.t:6:31: a nonconstant automatic aggregate initializer requires C99

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-variable-array-atomic-direct-bad.t:3:5: _Atomic of an array, function, reference, void or qualified type

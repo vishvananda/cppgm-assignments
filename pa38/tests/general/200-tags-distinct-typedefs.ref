@@ -1,7 +1,7 @@
 function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
   slot $tag : obj<4x4>
   slot $alias : obj<4x4>
-  slot $state : i32
+  slot $state : u32
   slot $wide : i64
   slot $tag_union : obj<4x4>
   slot $real : f64
@@ -23,7 +23,7 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     %t5 = addr $alias
     %t6 = index inbounds i8 [projection=field] %t5, 0
     store typed i32 23, %t6
-    store typed i32 7, $state
+    store typed u32 7, $state
     store typed i64 3, $wide
     %t7 = addr $tag_union
     %t8 = addr $tag_union
@@ -89,8 +89,8 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     branch %t43, ^if_then_5, ^lor_rhs_8
 
   block ^lor_rhs_8:
-    %t44 = load typed i32 $state
-    %t45 = cmp ne i32 %t44, 7
+    %t44 = load typed u32 $state
+    %t45 = cmp ne u32 %t44, 7
     %t46 = convert trunc i32 i64 %t45
     branch %t46, ^if_then_5, ^lor_rhs_7
 

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-nested-flexible-strict-bad.t:3:26: initializing a flexible array member is a GNU C extension

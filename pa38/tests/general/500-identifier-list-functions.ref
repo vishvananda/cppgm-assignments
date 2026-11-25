@@ -163,16 +163,17 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
 
   block ^entry:
     %t1 = convert fpext f64 f32 4.75f
-    %t2 = call i32 @legacy(42, %t1)
-    %t3 = cmp ne i32 %t2, 46
-    %t4 = convert trunc i32 i64 %t3
-    branch %t4, ^if_then_1, ^lor_rhs_3
+    %t2 = addr @legacy
+    %t3 = call i32 %t2(42, %t1) as (%arg0 : i32, %arg1 : f64) -> i32
+    %t4 = cmp ne i32 %t3, 46
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^if_then_1, ^lor_rhs_3
 
   block ^lor_rhs_3:
-    %t5 = call i32 @narrowed(258, 4.75)
-    %t6 = cmp ne i32 %t5, 6
-    %t7 = convert trunc i32 i64 %t6
-    branch %t7, ^if_then_1, ^if_else_2
+    %t6 = call i32 @narrowed(258, 4.75)
+    %t7 = cmp ne i32 %t6, 6
+    %t8 = convert trunc i32 i64 %t7
+    branch %t8, ^if_then_1, ^if_else_2
 
   block ^if_then_1:
     return i32 1
@@ -181,13 +182,13 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^if_end_4
 
   block ^if_end_4:
-    %t8 = addr @legacy
-    store typed ptr %t8, $callback
-    %t9 = load typed ptr $callback
-    %t10 = call i32 %t9(42, 4.75) as (%arg0 : i32, %arg1 : f64) -> i32
-    %t11 = cmp ne i32 %t10, 46
-    %t12 = convert trunc i32 i64 %t11
-    branch %t12, ^if_then_5, ^if_else_6
+    %t9 = addr @legacy
+    store typed ptr %t9, $callback
+    %t10 = load typed ptr $callback
+    %t11 = call i32 %t10(42, 4.75) as (%arg0 : i32, %arg1 : f64) -> i32
+    %t12 = cmp ne i32 %t11, 46
+    %t13 = convert trunc i32 i64 %t12
+    branch %t13, ^if_then_5, ^if_else_6
 
   block ^if_then_5:
     return i32 2
@@ -196,24 +197,24 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^if_end_7
 
   block ^if_end_7:
-    %t13 = addr $array
-    copyobj 8x4 @__constexpr_template__1, %t13
-    store typed i32 13, $value
     %t14 = addr $array
-    %t15 = addr $value
-    %t16 = addr @twice
-    %t17 = addr @indirect
-    %t18 = call i32 %t17(%t14, %t15, %t16) as (%arg0 : ptr, %arg1 : ptr, %arg2 : ptr) -> i32
-    %t19 = cmp ne i32 %t18, 42
-    %t20 = convert trunc i32 i64 %t19
-    branch %t20, ^if_then_8, ^lor_rhs_10
+    copyobj 8x4 @__constexpr_template__1, %t14
+    store typed i32 13, $value
+    %t15 = addr $array
+    %t16 = addr $value
+    %t17 = addr @twice
+    %t18 = addr @indirect
+    %t19 = call i32 %t18(%t15, %t16, %t17) as (%arg0 : ptr, %arg1 : ptr, %arg2 : ptr) -> i32
+    %t20 = cmp ne i32 %t19, 42
+    %t21 = convert trunc i32 i64 %t20
+    branch %t21, ^if_then_8, ^lor_rhs_10
 
   block ^lor_rhs_10:
-    %t21 = addr @implicit
-    %t22 = call i32 %t21(20, 22) as (%arg0 : i32, %arg1 : i32) -> i32
-    %t23 = cmp ne i32 %t22, 42
-    %t24 = convert trunc i32 i64 %t23
-    branch %t24, ^if_then_8, ^if_else_9
+    %t22 = addr @implicit
+    %t23 = call i32 %t22(20, 22) as (%arg0 : i32, %arg1 : i32) -> i32
+    %t24 = cmp ne i32 %t23, 42
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_8, ^if_else_9
 
   block ^if_then_8:
     return i32 3
@@ -222,30 +223,30 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^if_end_11
 
   block ^if_end_11:
-    %t25 = addr @qualified
-    %t26 = call i32 %t25(42) as (%arg0 : i32) -> i32
-    %t27 = cmp ne i32 %t26, 42
-    %t28 = convert trunc i32 i64 %t27
-    branch %t28, ^if_then_12, ^lor_rhs_16
+    %t26 = addr @qualified
+    %t27 = call i32 %t26(42) as (%arg0 : i32) -> i32
+    %t28 = cmp ne i32 %t27, 42
+    %t29 = convert trunc i32 i64 %t28
+    branch %t29, ^if_then_12, ^lor_rhs_16
 
   block ^lor_rhs_16:
-    %t29 = call i32 @olddecl(42)
-    %t30 = cmp ne i32 %t29, 42
-    %t31 = convert trunc i32 i64 %t30
-    branch %t31, ^if_then_12, ^lor_rhs_15
+    %t30 = call i32 @olddecl(42)
+    %t31 = cmp ne i32 %t30, 42
+    %t32 = convert trunc i32 i64 %t31
+    branch %t32, ^if_then_12, ^lor_rhs_15
 
   block ^lor_rhs_15:
-    %t32 = call i32 @prototype(42)
-    %t33 = cmp ne i32 %t32, 42
-    %t34 = convert trunc i32 i64 %t33
-    branch %t34, ^if_then_12, ^lor_rhs_14
+    %t33 = call i32 @prototype(42)
+    %t34 = cmp ne i32 %t33, 42
+    %t35 = convert trunc i32 i64 %t34
+    branch %t35, ^if_then_12, ^lor_rhs_14
 
   block ^lor_rhs_14:
-    %t35 = addr @truth
-    %t36 = call i32 %t35(256) as (%arg0 : i32) -> i32
-    %t37 = cmp ne i32 %t36, 11
-    %t38 = convert trunc i32 i64 %t37
-    branch %t38, ^if_then_12, ^if_else_13
+    %t36 = addr @truth
+    %t37 = call i32 %t36(256) as (%arg0 : i32) -> i32
+    %t38 = cmp ne i32 %t37, 11
+    %t39 = convert trunc i32 i64 %t38
+    branch %t39, ^if_then_12, ^if_else_13
 
   block ^if_then_12:
     return i32 4
@@ -254,10 +255,10 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^if_end_17
 
   block ^if_end_17:
-    %t39 = call i32 @external_old(258, 4.75)
-    %t40 = cmp ne i32 %t39, 6
-    %t41 = convert trunc i32 i64 %t40
-    return i32 %t41
+    %t40 = call i32 @external_old(258, 4.75)
+    %t41 = cmp ne i32 %t40, 6
+    %t42 = convert trunc i32 i64 %t41
+    return i32 %t42
 }
 function @external_old(%a : i32, %b : f64) -> i32 [linkage=c, binding=strong] {
   slot $a : u8

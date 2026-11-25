@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c90-repeated-array-qualifier-bad.t:2:1: repeating a typedef's type qualifier requires C99

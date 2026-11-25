@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-undefined-static-function-bad.t:5:20: a C function with internal linkage is used but never defined

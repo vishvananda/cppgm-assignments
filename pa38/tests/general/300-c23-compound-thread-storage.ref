@@ -1,0 +1,131 @@
+global @width : i64 [linkage=c, binding=internal] = 4
+global @__ref_tmp__1 [storage=thread_local, binding=internal] = {
+  i32 4
+  i32 9
+}
+global @__ref_tmp__2 [storage=thread_local, binding=internal] = {
+  i32 11
+}
+
+function @first_cell() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @__ref_tmp__1
+    return ptr %t1
+}
+function @second_cell() -> ptr [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @__ref_tmp__2
+    return ptr %t1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $first : ptr
+  slot $second : ptr
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+
+  block ^entry:
+    %t1 = call ptr @first_cell()
+    store typed ptr %t1, $first
+    %t2 = call ptr @second_cell()
+    store typed ptr %t2, $second
+    %t3 = load typed i64 @width
+    %t4 = const i64 4
+    %t5 = cmp ne i64 %t3, %t4
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^if_then_1, ^lor_rhs_5
+
+  block ^lor_rhs_5:
+    %t7 = load typed ptr $first
+    %t8 = index inbounds i32 [projection=array_element] %t7, 0
+    %t9 = load typed i32 %t8
+    %t10 = cmp ne i32 %t9, 4
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t12 = load typed ptr $first
+    %t13 = index inbounds i32 [projection=array_element] %t12, 1
+    %t14 = load typed i32 %t13
+    %t15 = cmp ne i32 %t14, 9
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t17 = load typed ptr $second
+    %t18 = load typed i32 %t17
+    %t19 = cmp ne i32 %t18, 11
+    %t20 = convert trunc i32 i64 %t19
+    branch %t20, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t21 = load typed ptr $first
+    %t22 = index inbounds i32 [projection=array_element] %t21, 1
+    store typed i32 14, %t22
+    %t23 = load typed ptr $second
+    store typed i32 16, %t23
+    %t24 = load typed ptr $first
+    %t25 = call ptr @first_cell()
+    %t26 = cmp ne ptr %t24, %t25
+    %t27 = convert trunc i32 i64 %t26
+    branch %t27, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t28 = call ptr @first_cell()
+    %t29 = index inbounds i32 [projection=array_element] %t28, 1
+    %t30 = load typed i32 %t29
+    %t31 = cmp ne i32 %t30, 14
+    %t32 = convert trunc i32 i64 %t31
+    %t33 = cmp ne i32 %t32, 0
+    store typed i64 %t33, $lor__1
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__1
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t34 = load typed i64 $lor__1
+    branch %t34, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t35 = load typed ptr $second
+    %t36 = call ptr @second_cell()
+    %t37 = cmp ne ptr %t35, %t36
+    %t38 = convert trunc i32 i64 %t37
+    %t39 = cmp ne i32 %t38, 0
+    store typed i64 %t39, $lor__2
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__2
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t40 = load typed i64 $lor__2
+    branch %t40, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t41 = call ptr @second_cell()
+    %t42 = load typed i32 %t41
+    %t43 = cmp ne i32 %t42, 16
+    %t44 = convert trunc i32 i64 %t43
+    %t45 = cmp ne i32 %t44, 0
+    store typed i64 %t45, $lor__3
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__3
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t46 = load typed i64 $lor__3
+    %t47 = convert trunc i32 i64 %t46
+    return i32 %t47
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-imaginary-extension-scope-reject.t:3:36: imaginary numeric literals are a GNU C extension

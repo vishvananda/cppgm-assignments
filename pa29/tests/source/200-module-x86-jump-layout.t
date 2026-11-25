@@ -1,0 +1,13 @@
+asm(".section .text.jump_slots\n"
+    ".Lslots:\n"
+    ".macro slot number\n"
+    ". = .Lslots + (\\number * 6)\n"
+    "pushq $0; pushq $\\number; jmp .Ldispatch\n"
+    ".endm\n"
+    "slot 0; slot 1; slot 2; slot 3\n"
+    ".Ldispatch:\n"
+    "1: jmp 2f; loop 1b; 2: ret\n"
+    ".section .text.jump_distance\n"
+    ".Lstart: jmp .Lfar\n"
+    ". = .Lstart + 133\n"
+    ".Lfar: jmp .Lstart; ret\n");

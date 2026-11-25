@@ -1,0 +1,150 @@
+declare function @__cppgm_builtin_memset(%arg0 : ptr, %arg1 : i32, %arg2 : i64) -> ptr [unwind=no, binding=strong, object=cppgm_builtin_memset]
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $n : i32
+  slot $tmpobj__1 : i64
+  slot $cleanup_return__2 : i32
+  slot $bytes : ptr
+  slot $i : i64
+
+  block ^entry:
+    store typed i32 3, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, $n
+    %t3 = convert sext i64 i32 %t1
+    %t4 = binary mul i64 %t3, 32
+    store typed i64 %t4, $tmpobj__1
+    %t5 = load typed i64 $tmpobj__1
+    %t6 = binary mul i64 %t5, 2
+    %t7 = stack_save
+    %t8 = stack_alloc %t6
+    %t9 = call ptr @__cppgm_builtin_memset(%t8, 0, %t6)
+    %t10 = load typed i32 $n
+    %t11 = cmp ne i32 %t10, 4
+    %t12 = convert trunc i32 i64 %t11
+    branch %t12, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t13 = load typed i64 $tmpobj__1
+    %t14 = binary mul i64 %t13, 2
+    %t15 = const i64 32
+    %t16 = convert sext i64 i32 6
+    %t17 = binary mul i64 %t16, %t15
+    %t18 = cmp ne i64 %t14, %t17
+    %t19 = convert trunc i32 i64 %t18
+    branch %t19, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    store typed i32 1, $cleanup_return__2
+    jump ^return_cleanup_action_5
+
+  block ^return_cleanup_terminal_4:
+    return i32 $cleanup_return__2
+
+  block ^return_cleanup_action_5:
+    stack_restore %t7
+    jump ^return_cleanup_terminal_4
+
+  block ^if_else_2:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t20 = load typed i64 $tmpobj__1
+    %t21 = copy i64 %t20
+    %t22 = binary mul i64 1, %t21
+    %t23 = index inbounds i8 [projection=array_element] %t8, %t22
+    %t24 = binary mul i64 2, 32
+    %t25 = index inbounds i8 [projection=array_element] %t23, %t24
+    %t26 = index inbounds i8 [projection=field] %t25, 0
+    %t27 = load volatile i8 %t26
+    branch %t27, ^if_then_7, ^lor_rhs_11
+
+  block ^lor_rhs_11:
+    %t28 = load typed i64 $tmpobj__1
+    %t29 = copy i64 %t28
+    %t30 = binary mul i64 1, %t29
+    %t31 = index inbounds i8 [projection=array_element] %t8, %t30
+    %t32 = binary mul i64 2, 32
+    %t33 = index inbounds i8 [projection=array_element] %t31, %t32
+    %t34 = index inbounds i8 [projection=field] %t33, 8
+    %t35 = load volatile ptr %t34
+    branch %t35, ^if_then_7, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t36 = load typed i64 $tmpobj__1
+    %t37 = copy i64 %t36
+    %t38 = binary mul i64 1, %t37
+    %t39 = index inbounds i8 [projection=array_element] %t8, %t38
+    %t40 = binary mul i64 2, 32
+    %t41 = index inbounds i8 [projection=array_element] %t39, %t40
+    %t42 = index inbounds i8 [projection=field] %t41, 16
+    %t43 = load volatile f64 %t42
+    %t44 = cmp ne f64 %t43, 0
+    %t45 = convert trunc i32 i64 %t44
+    branch %t45, ^if_then_7, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t46 = load typed i64 $tmpobj__1
+    %t47 = copy i64 %t46
+    %t48 = binary mul i64 1, %t47
+    %t49 = index inbounds i8 [projection=array_element] %t8, %t48
+    %t50 = binary mul i64 2, 32
+    %t51 = index inbounds i8 [projection=array_element] %t49, %t50
+    %t52 = index inbounds i8 [projection=field] %t51, 24
+    %t53 = load volatile i32 %t52
+    %t54 = binary and i32 %t53, 7
+    %t55 = copy u32 %t54
+    branch %t55, ^if_then_7, ^if_else_8
+
+  block ^if_then_7:
+    store typed i32 2, $cleanup_return__2
+    jump ^return_cleanup_action_5
+
+  block ^if_else_8:
+    jump ^if_end_12
+
+  block ^if_end_12:
+    store typed ptr %t8, $bytes
+    %t56 = convert sext i64 i32 0
+    store typed i64 %t56, $i
+    jump ^for_cond_13
+
+  block ^for_cond_13:
+    %t57 = load typed i64 $i
+    %t58 = load typed i64 $tmpobj__1
+    %t59 = binary mul i64 %t58, 2
+    %t60 = cmp ult i64 %t57, %t59
+    %t61 = convert trunc i32 i64 %t60
+    branch %t61, ^for_body_14, ^for_end_16
+
+  block ^for_body_14:
+    %t62 = load typed ptr $bytes
+    %t63 = load typed i64 $i
+    %t64 = index inbounds u8 [projection=array_element] %t62, %t63
+    %t65 = load volatile u8 %t64
+    %t66 = convert zext i32 u8 %t65
+    %t67 = cmp ne i32 %t66, 0
+    %t68 = convert trunc i32 i64 %t67
+    branch %t68, ^if_then_17, ^if_else_18
+
+  block ^if_then_17:
+    store typed i32 3, $cleanup_return__2
+    jump ^return_cleanup_action_5
+
+  block ^if_else_18:
+    jump ^if_end_19
+
+  block ^if_end_19:
+    jump ^for_iter_15
+
+  block ^for_iter_15:
+    %t69 = load typed i64 $i
+    %t70 = binary add i64 %t69, 1
+    store typed i64 %t70, $i
+    jump ^for_cond_13
+
+  block ^for_end_16:
+    store typed i32 0, $cleanup_return__2
+    jump ^return_cleanup_action_5
+}

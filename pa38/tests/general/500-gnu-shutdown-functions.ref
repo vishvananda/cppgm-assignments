@@ -1,0 +1,76 @@
+declare function @puts(%arg0 : ptr) -> i32 [linkage=c, binding=strong]
+declare function @atexit(%arg0 : ptr) -> i32 [linkage=c, binding=strong]
+
+global @__strlit__1 [storage=readonly, binding=internal] = {
+  i8 108
+  i8 97
+  i8 115
+  i8 116
+  i8 0
+}
+global @__strlit__2 [storage=readonly, binding=internal] = {
+  i8 102
+  i8 105
+  i8 114
+  i8 115
+  i8 116
+  i8 0
+}
+global @__strlit__3 [storage=readonly, binding=internal] = {
+  i8 99
+  i8 97
+  i8 108
+  i8 108
+  i8 98
+  i8 97
+  i8 99
+  i8 107
+  i8 0
+}
+global @__strlit__4 [storage=readonly, binding=internal] = {
+  i8 109
+  i8 97
+  i8 105
+  i8 110
+  i8 0
+}
+global @__cppgm_shutdown : ptr [section=.fini_array.201, binding=internal, object_root=yes] = addr @final_low
+global @__cppgm_shutdown__2 : ptr [section=.fini_array.65535, binding=internal, object_root=yes] = addr @final_high
+
+function @final_low() -> void [linkage=c, binding=internal, object_root=yes] {
+  block ^entry:
+    %t1 = addr @__strlit__1
+    %t2 = call i32 @puts(%t1)
+    return void
+}
+function @final_high() -> void [linkage=c, binding=internal, object_root=yes] {
+  block ^entry:
+    %t1 = addr @__strlit__2
+    %t2 = call i32 @puts(%t1)
+    return void
+}
+function @exit_callback() -> void [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @__strlit__3
+    %t2 = call i32 @puts(%t1)
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = addr @exit_callback
+    %t2 = call i32 @atexit(%t1)
+    %t3 = cmp ne i32 %t2, 0
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    %t5 = addr @__strlit__4
+    %t6 = call i32 @puts(%t5)
+    return i32 0
+}

@@ -1,0 +1,188 @@
+declare function @malloc(%arg0 : i64) -> ptr [noalias_result=yes, linkage=c, binding=strong]
+declare function @free(%arg0 : ptr) -> void [linkage=c, binding=strong]
+
+global @initial : obj<8x8> [linkage=c, binding=internal] = {
+  u32 3
+  zero 4
+}
+global @pointers : obj<16x8> [linkage=c, binding=internal] = {
+  zero 16
+}
+global @flattened [linkage=c, binding=internal] = {
+  u32 7
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $ok : i32
+  slot $packet : ptr
+  slot $header : obj<4x4>
+  slot $land__1 : i64
+  slot $land__2 : i64
+  slot $land__3 : i64
+  slot $land__4 : i64
+  slot $land__5 : i64
+
+  block ^entry:
+    %t1 = addr @initial
+    %t2 = index inbounds i8 [projection=field] %t1, 0
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    %t4 = index inbounds i8 [projection=field] %t3, 0
+    %t5 = load u32 %t4
+    %t6 = cmp eq u32 %t5, 3
+    %t7 = convert trunc i32 i64 %t6
+    store typed i32 %t7, $ok
+    %t8 = const i64 4
+    %t9 = const i64 4
+    %t10 = convert sext i64 i32 3
+    %t11 = binary mul i64 %t10, %t9
+    %t12 = binary add i64 %t8, %t11
+    %t13 = call ptr @malloc(%t12)
+    store typed ptr %t13, $packet
+    %t14 = load typed ptr $packet
+    %t15 = cmp eq ptr %t14, 0
+    %t16 = convert trunc i32 i64 %t15
+    branch %t16, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    %t17 = addr @initial
+    %t18 = index inbounds i8 [projection=field] %t17, 0
+    %t19 = index inbounds i8 [projection=field] %t18, 0
+    %t20 = index inbounds i8 [projection=field] %t19, 0
+    %t21 = load u32 %t20
+    %t22 = load typed ptr $packet
+    %t23 = index inbounds i8 [projection=field] %t22, 0
+    store typed u32 %t21, %t23
+    %t24 = load typed ptr $packet
+    %t25 = index inbounds i8 [projection=field] %t24, 4
+    %t26 = index inbounds i32 [projection=array_element] %t25, 0
+    store typed i32 11, %t26
+    %t27 = load typed ptr $packet
+    %t28 = index inbounds i8 [projection=field] %t27, 4
+    %t29 = index inbounds i32 [projection=array_element] %t28, 1
+    store typed i32 22, %t29
+    %t30 = load typed ptr $packet
+    %t31 = index inbounds i8 [projection=field] %t30, 4
+    %t32 = index inbounds i32 [projection=array_element] %t31, 2
+    store typed i32 33, %t32
+    %t33 = load typed ptr $packet
+    %t34 = addr @pointers
+    %t35 = index inbounds ptr [projection=array_element] %t34, 1
+    store typed ptr %t33, %t35
+    %t36 = addr $header
+    %t37 = addr @pointers
+    %t38 = index inbounds ptr [projection=array_element] %t37, 1
+    %t39 = load typed ptr %t38
+    %t40 = load obj<4x4> %t39
+    store obj<4x4> %t40, %t36
+    %t41 = load typed i32 $ok
+    branch %t41, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t42 = addr $header
+    %t43 = index inbounds i8 [projection=field] %t42, 0
+    %t44 = load typed u32 %t43
+    %t45 = cmp eq u32 %t44, 3
+    %t46 = convert trunc i32 i64 %t45
+    %t47 = cmp ne i32 %t46, 0
+    store typed i64 %t47, $land__1
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__1
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t48 = load typed i64 $land__1
+    branch %t48, ^land_rhs_7, ^land_short_8
+
+  block ^land_rhs_7:
+    %t49 = load typed ptr $packet
+    %t50 = index inbounds i8 [projection=field] %t49, 4
+    %t51 = index inbounds i32 [projection=array_element] %t50, 0
+    %t52 = load typed i32 %t51
+    %t53 = cmp eq i32 %t52, 11
+    %t54 = convert trunc i32 i64 %t53
+    %t55 = cmp ne i32 %t54, 0
+    store typed i64 %t55, $land__2
+    jump ^land_end_9
+
+  block ^land_short_8:
+    store typed i64 0, $land__2
+    jump ^land_end_9
+
+  block ^land_end_9:
+    %t56 = load typed i64 $land__2
+    branch %t56, ^land_rhs_10, ^land_short_11
+
+  block ^land_rhs_10:
+    %t57 = load typed ptr $packet
+    %t58 = index inbounds i8 [projection=field] %t57, 4
+    %t59 = index inbounds i32 [projection=array_element] %t58, 1
+    %t60 = load typed i32 %t59
+    %t61 = cmp eq i32 %t60, 22
+    %t62 = convert trunc i32 i64 %t61
+    %t63 = cmp ne i32 %t62, 0
+    store typed i64 %t63, $land__3
+    jump ^land_end_12
+
+  block ^land_short_11:
+    store typed i64 0, $land__3
+    jump ^land_end_12
+
+  block ^land_end_12:
+    %t64 = load typed i64 $land__3
+    branch %t64, ^land_rhs_13, ^land_short_14
+
+  block ^land_rhs_13:
+    %t65 = load typed ptr $packet
+    %t66 = index inbounds i8 [projection=field] %t65, 4
+    %t67 = index inbounds i32 [projection=array_element] %t66, 2
+    %t68 = load typed i32 %t67
+    %t69 = cmp eq i32 %t68, 33
+    %t70 = convert trunc i32 i64 %t69
+    %t71 = cmp ne i32 %t70, 0
+    store typed i64 %t71, $land__4
+    jump ^land_end_15
+
+  block ^land_short_14:
+    store typed i64 0, $land__4
+    jump ^land_end_15
+
+  block ^land_end_15:
+    %t72 = load typed i64 $land__4
+    %t73 = convert trunc i32 i64 %t72
+    store typed i32 %t73, $ok
+    %t74 = load typed ptr $packet
+    call void @free(%t74)
+    %t75 = load typed i32 $ok
+    branch %t75, ^land_rhs_16, ^land_short_17
+
+  block ^land_rhs_16:
+    %t76 = addr @flattened
+    %t77 = index inbounds i8 [projection=field] %t76, 0
+    %t78 = load u32 %t77
+    %t79 = cmp eq u32 %t78, 7
+    %t80 = convert trunc i32 i64 %t79
+    %t81 = cmp ne i32 %t80, 0
+    store typed i64 %t81, $land__5
+    jump ^land_end_18
+
+  block ^land_short_17:
+    store typed i64 0, $land__5
+    jump ^land_end_18
+
+  block ^land_end_18:
+    %t82 = load typed i64 $land__5
+    %t83 = convert trunc i32 i64 %t82
+    store typed i32 %t83, $ok
+    %t84 = load typed i32 $ok
+    %t85 = cmp eq i32 %t84, 0
+    %t86 = convert trunc i32 i64 %t85
+    return i32 %t86
+}

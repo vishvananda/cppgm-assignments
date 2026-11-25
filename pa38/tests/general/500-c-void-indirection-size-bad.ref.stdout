@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-void-indirection-size-bad.t:3:12: sizeof of void or a function type is a GNU C extension

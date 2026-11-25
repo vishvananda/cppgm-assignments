@@ -1,6 +1,35 @@
 struct Value { unsigned char bytes[17]; };
 extern "C" int atomic_runtime_calls(int);
 extern "C" int atomic_runtime_protocol_ok();
+extern "C" void atomic_runtime_expect_width(decltype(sizeof(0)));
+extern "C" void atomic_runtime_replace_once(const void*);
+
+struct PaddedValue { unsigned char bytes[12]; };
+struct GuardedValue { PaddedValue value; unsigned char guard[4]; };
+int padded_atomic()
+{
+ _Atomic(PaddedValue) object;
+ PaddedValue first = {{11}};
+ GuardedValue next = {{{19}}, {101, 102, 103, 104}};
+ GuardedValue expected = {{{7}}, {81, 82, 83, 84}};
+ GuardedValue result = {{{0}}, {71, 72, 73, 74}};
+ atomic_runtime_expect_width(sizeof(object));
+ __c11_atomic_init(&object, first);
+ __atomic_exchange(&object, &next.value, &result.value, __ATOMIC_SEQ_CST);
+ if (result.value.bytes[0] != 11) return 1;
+ if (__c11_atomic_compare_exchange_strong(&object, &expected.value, first, __ATOMIC_SEQ_CST, __ATOMIC_ACQUIRE))
+  return 2;
+ if (expected.value.bytes[0] != 19) return 3;
+ if (!__c11_atomic_compare_exchange_strong(&object, &expected.value, first, __ATOMIC_SEQ_CST, __ATOMIC_ACQUIRE))
+  return 4;
+ __c11_atomic_store(&object, __c11_atomic_exchange(&object, next.value, __ATOMIC_ACQ_REL), __ATOMIC_RELEASE);
+ PaddedValue final_value = __c11_atomic_load(&object, __ATOMIC_ACQUIRE);
+ if (final_value.bytes[0] != 11 || expected.value.bytes[0] != 19) return 5;
+ for (int i = 0; i < 4; ++i)
+  if (next.guard[i] != 101 + i || expected.guard[i] != 81 + i || result.guard[i] != 71 + i) return 6;
+ return 0;
+}
+
 int pointer_calls,source_calls,output_calls,expected_calls,weak_calls,order_calls;
 Value* pointer(Value& v){++pointer_calls;return &v;}
 Value* source(Value& v){++source_calls;return &v;}
@@ -8,6 +37,47 @@ Value* output(Value& v){++output_calls;return &v;}
 Value* expected(Value& v){++expected_calls;return &v;}
 bool weak(){++weak_calls;return false;}
 int order(int value){++order_calls;return value;}
+
+int wide_integer()
+{
+ using Wide = unsigned __int128;
+ const Wide high = Wide(1) << 96;
+ Wide object;
+ atomic_runtime_expect_width(sizeof(object));
+ __atomic_store_n(&object, high + 7, __ATOMIC_RELEASE);
+ if (__atomic_load_n(&object, __ATOMIC_ACQUIRE) != high + 7) return 1;
+ if (__atomic_exchange_n(&object, 5, __ATOMIC_ACQ_REL) != high + 7) return 2;
+ Wide want = 7;
+ if (__atomic_compare_exchange_n(&object, &want, high, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) || want != 5)
+  return 3;
+ if (!__atomic_compare_exchange_n(&object, &want, high, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+  return 4;
+ const Wide replacement = high + 9;
+ atomic_runtime_replace_once(&replacement);
+ int addresses = 0;
+ int inputs = 0;
+ auto address = [&]() { ++addresses; return &object; };
+ auto input = [&]() { ++inputs; return Wide(2); };
+ int before = order_calls;
+ Wide prior = __atomic_fetch_add(address(), input(), order(__ATOMIC_ACQ_REL));
+ if (prior != replacement || addresses != 1 || inputs != 1 || order_calls != before + 1) return 5;
+ if (__atomic_sub_fetch(&object, 3, __ATOMIC_RELEASE) != high + 8) return 6;
+ if (__atomic_fetch_or(&object, 1, __ATOMIC_RELAXED) != high + 8) return 7;
+ if (__atomic_xor_fetch(&object, high, __ATOMIC_CONSUME) != 9) return 8;
+ if (__atomic_and_fetch(&object, 7, __ATOMIC_ACQUIRE) != 1) return 9;
+ if (__atomic_fetch_nand(&object, 1, __ATOMIC_SEQ_CST) != 1 ||
+     __atomic_load_n(&object, __ATOMIC_RELAXED) != ~Wide(1)) return 10;
+
+ using Signed = __int128;
+ Signed maximum = static_cast<Signed>((Wide(1) << 127) - 1);
+ _Atomic(Signed) signed_object;
+ __c11_atomic_init(&signed_object, maximum);
+ if (__c11_atomic_fetch_add(&signed_object, 1, __ATOMIC_RELAXED) != maximum) return 11;
+ if (static_cast<Wide>(__c11_atomic_load(&signed_object, __ATOMIC_ACQUIRE)) != (Wide(1) << 127))
+  return 12;
+ return 0;
+}
+
 int main(){Value object={},out={},desired={},old={},want={};for(int i=0;i<17;++i){object.bytes[i]=static_cast<unsigned char>(i+1);desired.bytes[i]=static_cast<unsigned char>(100+i);}
  __atomic_load(pointer(object),output(out),order(__ATOMIC_ACQUIRE));
  for(int i=0;i<17;++i)if(out.bytes[i]!=i+1)return 1;
@@ -21,5 +91,8 @@ int main(){Value object={},out={},desired={},old={},want={};for(int i=0;i<17;++i
  if(!__atomic_compare_exchange(pointer(object),expected(want),source(old),weak_value,order(__ATOMIC_SEQ_CST),order(__ATOMIC_RELAXED)))return 5;
  for(int i=0;i<17;++i)if(object.bytes[i]!=100+i)return 6;
  if(pointer_calls!=5||source_calls!=4||output_calls!=2||expected_calls!=2||weak_calls!=2||order_calls!=7)return 7;
- return !atomic_runtime_protocol_ok()||atomic_runtime_calls(0)!=1||atomic_runtime_calls(1)!=1||atomic_runtime_calls(2)!=1||atomic_runtime_calls(3)!=2;
+ if (!atomic_runtime_protocol_ok()||atomic_runtime_calls(0)!=1||atomic_runtime_calls(1)!=1||atomic_runtime_calls(2)!=1||atomic_runtime_calls(3)!=2) return 8;
+ if (int result = padded_atomic()) return 8 + result;
+ if (int result = wide_integer()) return 16 + result;
+ return !atomic_runtime_protocol_ok();
 }

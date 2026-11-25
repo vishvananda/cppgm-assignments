@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-returned-array-subscript-bad.t:6:12: subscripting a non-lvalue array requires C99

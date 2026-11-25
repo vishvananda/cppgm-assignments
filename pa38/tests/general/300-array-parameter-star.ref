@@ -1,0 +1,59 @@
+global @__constexpr_template__1 [storage=readonly, binding=internal] = {
+  i32 7
+  i32 9
+}
+
+function @first(%values : ptr) -> i32 [linkage=c, binding=strong] {
+  slot $values : ptr
+
+  block ^entry:
+    store typed ptr %values, $values
+    %t1 = load typed ptr $values
+    %t2 = index inbounds i32 [projection=array_element] %t1, 0
+    %t3 = load typed i32 %t2
+    return i32 %t3
+}
+function @callback(%fn : ptr, %values : ptr) -> i32 [linkage=c, binding=strong] {
+  slot $fn : ptr
+  slot $values : ptr
+
+  block ^entry:
+    store typed ptr %fn, $fn
+    store typed ptr %values, $values
+    %t1 = load typed ptr $values
+    %t2 = load typed ptr $fn
+    %t3 = call i32 %t2(%t1) as (%arg0 : ptr) -> i32
+    return i32 %t3
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $values : obj<8x4>
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = addr $values
+    copyobj 8x4 @__constexpr_template__1, %t1
+    %t2 = addr $values
+    %t3 = call i32 @first(%t2)
+    %t4 = cmp ne i32 %t3, 7
+    %t5 = convert trunc i32 i64 %t4
+    branch %t5, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t6 = addr @first
+    %t7 = addr $values
+    %t8 = call i32 @callback(%t6, %t7)
+    %t9 = cmp ne i32 %t8, 7
+    %t10 = convert trunc i32 i64 %t9
+    %t11 = cmp ne i32 %t10, 0
+    store typed i64 %t11, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t12 = load typed i64 $lor__1
+    %t13 = convert trunc i32 i64 %t12
+    return i32 %t13
+}

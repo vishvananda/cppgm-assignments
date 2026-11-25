@@ -1,0 +1,1 @@
+ERROR: tests/general/300-array-typedef-element-incomplete-bad.t:2:21: a C array has incomplete element type

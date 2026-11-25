@@ -1,0 +1,193 @@
+declare function @sqrt(%arg0 : f64) -> f64 [linkage=c, binding=strong]
+declare function @sqrtf(%arg0 : f32) -> f32 [linkage=c, binding=strong]
+declare function @sqrtl(%arg0 : f80) -> f80 [linkage=c, binding=strong]
+declare function @feclearexcept(%arg0 : i32) -> i32 [linkage=c, binding=strong]
+declare function @fetestexcept(%arg0 : i32) -> i32 [linkage=c, binding=strong]
+declare function @fegetround() -> i32 [effects=readonly, repeatable=yes, linkage=c, binding=strong]
+declare function @fesetround(%arg0 : i32) -> i32 [linkage=c, binding=strong]
+declare function @pow(%arg0 : f64, %arg1 : f64) -> f64 [linkage=c, binding=strong]
+declare function @sin(%arg0 : f64) -> f64 [linkage=c, binding=strong]
+declare function @cos(%arg0 : f64) -> f64 [linkage=c, binding=strong]
+
+global @two : f64 [linkage=c, binding=internal] = 2
+global @negative_zero : f64 [linkage=c, binding=internal] = -0
+global @infinity : f64 [linkage=c, binding=internal] = inf
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $entry : i32
+  slot $rounded : f64
+  slot $angle : f64
+  slot $cond__1 : i32
+
+  block ^entry:
+    %t1 = load volatile f64 @two
+    %t2 = call f64 @sqrt(%t1) as (%arg0 : f64) -> f64
+    %t3 = fenv_cmp ne f64 %t2, 1.4142135623730951455
+    %t4 = convert trunc i32 i64 %t3
+    branch %t4, ^if_then_1, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t5 = call f32 @sqrtf(4f) as (%arg0 : f32) -> f32
+    %t6 = fenv_cmp ne f32 %t5, 2f
+    %t7 = convert trunc i32 i64 %t6
+    branch %t7, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t8 = call f80 @sqrtl(4L)
+    %t9 = fenv_cmp ne f80 %t8, 2L
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_5
+
+  block ^if_end_5:
+    %t11 = binary or i32 32, 4
+    %t12 = binary or i32 %t11, 16
+    %t13 = binary or i32 %t12, 8
+    %t14 = binary or i32 %t13, 1
+    %t15 = call i32 @feclearexcept(%t14)
+    branch %t15, ^if_then_6, ^if_else_7
+
+  block ^if_then_6:
+    return i32 2
+
+  block ^if_else_7:
+    jump ^if_end_8
+
+  block ^if_end_8:
+    %t16 = load volatile f64 @two
+    %t17 = call f64 @sqrt(%t16) as (%arg0 : f64) -> f64
+    %t18 = call i32 @fetestexcept(32)
+    %t19 = cmp eq i32 %t18, 0
+    %t20 = convert trunc i32 i64 %t19
+    branch %t20, ^if_then_9, ^if_else_10
+
+  block ^if_then_9:
+    return i32 3
+
+  block ^if_else_10:
+    jump ^if_end_11
+
+  block ^if_end_11:
+    %t21 = call i32 @fegetround()
+    store typed i32 %t21, $entry
+    %t22 = call i32 @fesetround(1024)
+    branch %t22, ^if_then_12, ^if_else_13
+
+  block ^if_then_12:
+    return i32 4
+
+  block ^if_else_13:
+    jump ^if_end_14
+
+  block ^if_end_14:
+    %t23 = load volatile f64 @two
+    %t24 = call f64 @sqrt(%t23) as (%arg0 : f64) -> f64
+    store typed f64 %t24, $rounded
+    %t25 = load typed i32 $entry
+    %t26 = call i32 @fesetround(%t25)
+    branch %t26, ^if_then_15, ^lor_rhs_17
+
+  block ^lor_rhs_17:
+    %t27 = load typed f64 $rounded
+    %t28 = fenv_cmp ne f64 %t27, 1.4142135623730949234
+    %t29 = convert trunc i32 i64 %t28
+    branch %t29, ^if_then_15, ^if_else_16
+
+  block ^if_then_15:
+    return i32 5
+
+  block ^if_else_16:
+    jump ^if_end_18
+
+  block ^if_end_18:
+    %t30 = binary or i32 32, 4
+    %t31 = binary or i32 %t30, 16
+    %t32 = binary or i32 %t31, 8
+    %t33 = binary or i32 %t32, 1
+    %t34 = call i32 @feclearexcept(%t33)
+    branch %t34, ^if_then_19, ^if_else_20
+
+  block ^if_then_19:
+    return i32 6
+
+  block ^if_else_20:
+    jump ^if_end_21
+
+  block ^if_end_21:
+    %t35 = load volatile f64 @negative_zero
+    %t36 = unary neg f64 1
+    %t37 = call f64 @pow(%t35, %t36) as (%arg0 : f64, %arg1 : f64) -> f64
+    %t38 = call i32 @fetestexcept(4)
+    %t39 = cmp eq i32 %t38, 0
+    %t40 = convert trunc i32 i64 %t39
+    branch %t40, ^if_then_22, ^if_else_23
+
+  block ^if_then_22:
+    return i32 7
+
+  block ^if_else_23:
+    jump ^if_end_24
+
+  block ^if_end_24:
+    %t41 = load volatile f64 @infinity
+    store typed f64 %t41, $angle
+    %t42 = binary or i32 32, 4
+    %t43 = binary or i32 %t42, 16
+    %t44 = binary or i32 %t43, 8
+    %t45 = binary or i32 %t44, 1
+    %t46 = call i32 @feclearexcept(%t45)
+    branch %t46, ^if_then_25, ^if_else_26
+
+  block ^if_then_25:
+    return i32 8
+
+  block ^if_else_26:
+    jump ^if_end_27
+
+  block ^if_end_27:
+    %t47 = load typed f64 $angle
+    %t48 = call f64 @sin(%t47) as (%arg0 : f64) -> f64
+    %t49 = call i32 @fetestexcept(1)
+    %t50 = cmp eq i32 %t49, 0
+    %t51 = convert trunc i32 i64 %t50
+    branch %t51, ^if_then_28, ^lor_rhs_30
+
+  block ^lor_rhs_30:
+    %t52 = binary or i32 32, 4
+    %t53 = binary or i32 %t52, 16
+    %t54 = binary or i32 %t53, 8
+    %t55 = binary or i32 %t54, 1
+    %t56 = call i32 @feclearexcept(%t55)
+    branch %t56, ^if_then_28, ^if_else_29
+
+  block ^if_then_28:
+    return i32 9
+
+  block ^if_else_29:
+    jump ^if_end_31
+
+  block ^if_end_31:
+    %t57 = load typed f64 $angle
+    %t58 = call f64 @cos(%t57) as (%arg0 : f64) -> f64
+    %t59 = call i32 @fetestexcept(1)
+    %t60 = cmp eq i32 %t59, 0
+    %t61 = convert trunc i32 i64 %t60
+    branch %t61, ^cond_then_32, ^cond_else_33
+
+  block ^cond_then_32:
+    store typed i32 10, $cond__1
+    jump ^cond_end_34
+
+  block ^cond_else_33:
+    store typed i32 0, $cond__1
+    jump ^cond_end_34
+
+  block ^cond_end_34:
+    %t62 = load typed i32 $cond__1
+    return i32 %t62
+}

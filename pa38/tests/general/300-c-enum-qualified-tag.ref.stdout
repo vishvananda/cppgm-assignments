@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-enum-qualified-tag.t:2:6: a C enumeration tag must be an unqualified identifier

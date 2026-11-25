@@ -1,0 +1,76 @@
+declare global @padded [linkage=c, binding=strong]
+declare global @wide [linkage=c, binding=strong]
+
+declare function @__cppgm_generic_atomic_store(%arg0 : i64, %arg1 : ptr, %arg2 : ptr, %arg3 : i32) -> void [unwind=no, linkage=c, binding=strong, object=__atomic_store]
+declare function @__cppgm_generic_atomic_load(%arg0 : i64, %arg1 : ptr, %arg2 : ptr, %arg3 : i32) -> void [unwind=no, linkage=c, binding=strong, object=__atomic_load]
+declare function @pass(%arg0 : ptr [pass=indirect_result, alias=exclusive_result, object_bytes=17], %arg1 : obj<17x1>) -> void [linkage=c, binding=strong]
+
+function @write_padded(%data : obj<12x1>) -> obj<12x1> [linkage=c, binding=strong] {
+  slot $data : obj<12x1>
+  slot $retobj__1 : obj<12x1>
+  slot $atomic_arg__2 : obj<16x16>
+
+  block ^entry:
+    %t1 = addr $data
+    copyobj 12x1 %data, %t1
+    %t2 = addr $retobj__1
+    %t3 = load obj<12x1> $data
+    %t4 = addr $atomic_arg__2
+    store obj<12x1> %t3, %t4
+    %t5 = index inbounds i8 [projection=field] %t4, 12
+    zeroinit 4x1 %t5
+    %t6 = addr @padded
+    call void @__cppgm_generic_atomic_store(16, %t6, %t4, 5)
+    store obj<12x1> %t3, %t2
+    return obj<12x1> $retobj__1
+}
+function @read_padded() -> obj<12x1> [linkage=c, binding=strong] {
+  slot $retobj__1 : obj<12x1>
+  slot $atomic_result__2 : obj<16x16>
+
+  block ^entry:
+    %t1 = addr $retobj__1
+    %t2 = addr $atomic_result__2
+    %t3 = addr @padded
+    call void @__cppgm_generic_atomic_load(16, %t3, %t2, 5)
+    %t4 = load obj<12x1> %t2
+    store obj<12x1> %t4, %t1
+    return obj<12x1> $retobj__1
+}
+function @read_wide(%ret : ptr [pass=indirect_result, alias=exclusive_result, object_bytes=17]) -> void [linkage=c, binding=strong] {
+  slot $atomic_result__1 : obj<17x1>
+  slot $argobj__2 : obj<17x1>
+  slot $atomic_result__3 : obj<17x1>
+
+  block ^entry:
+    %t1 = addr $atomic_result__1
+    %t2 = addr @wide
+    call void @__cppgm_generic_atomic_load(17, %t2, %t1, 5)
+    %t3 = load obj<17x1> %t1
+    %t4 = addr $argobj__2
+    %t5 = addr $atomic_result__3
+    %t6 = addr @wide
+    call void @__cppgm_generic_atomic_load(17, %t6, %t5, 5)
+    %t7 = load obj<17x1> %t5
+    store obj<17x1> %t7, %t4
+    call void @pass(%ret, $argobj__2)
+    return void
+}
+function @return_local(%ret : ptr [pass=indirect_result, alias=exclusive_result, object_bytes=17], %data : obj<17x1>) -> void [linkage=c, binding=strong] {
+  slot $data : obj<17x1>
+  slot $local : obj<17x1>
+  slot $atomic_result__1 : obj<17x1>
+
+  block ^entry:
+    %t1 = addr $data
+    copyobj 17x1 %data, %t1
+    %t2 = addr $local
+    %t3 = load obj<17x1> $data
+    store obj<17x1> %t3, %t2
+    %t4 = addr $atomic_result__1
+    %t5 = addr $local
+    call void @__cppgm_generic_atomic_load(17, %t5, %t4, 5)
+    %t6 = load obj<17x1> %t4
+    store obj<17x1> %t6, %ret
+    return void
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c90-repeated-qualifier-bad.t:1:7: a repeated type qualifier requires C99

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c90-trailing-enum-comma-bad.t:1:38: a trailing comma in an enumeration requires C99

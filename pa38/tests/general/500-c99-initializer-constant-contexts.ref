@@ -1,0 +1,50 @@
+global @answer : i32 [linkage=c, binding=internal] = 42
+global @__strlit__1 [storage=readonly, binding=internal] = {
+  i8 109
+  i8 97
+  i8 105
+  i8 110
+  i8 0
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $local : i32
+  slot $value : obj<8x8>
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = load typed i32 @answer
+    store typed i32 %t1, $local
+    %t2 = addr $value
+    %t3 = addr $local
+    %t4 = addr $value
+    %t5 = index inbounds i8 [projection=field] %t4, 0
+    store typed ptr %t3, %t5
+    %t6 = addr $value
+    %t7 = index inbounds i8 [projection=field] %t6, 0
+    %t8 = load typed ptr %t7
+    %t9 = load typed i32 %t8
+    %t10 = cmp ne i32 %t9, 42
+    %t11 = convert trunc i32 i64 %t10
+    branch %t11, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t12 = addr @__strlit__1
+    %t13 = index inbounds i8 [projection=array_element] %t12, 0
+    %t14 = load i8 %t13
+    %t15 = convert sext i32 i8 %t14
+    %t16 = cmp ne i32 %t15, 109
+    %t17 = convert trunc i32 i64 %t16
+    %t18 = cmp ne i32 %t17, 0
+    store typed i64 %t18, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t19 = load typed i64 $lor__1
+    %t20 = convert trunc i32 i64 %t19
+    return i32 %t20
+}

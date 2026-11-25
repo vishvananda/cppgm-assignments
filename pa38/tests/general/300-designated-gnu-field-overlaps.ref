@@ -1,0 +1,1758 @@
+global @calls : obj<20x4> [linkage=c, binding=internal] = {
+  zero 20
+}
+global @table [storage=readonly, linkage=c, binding=internal] = {
+  zero 8
+  i32 3
+  i32 4
+  i32 3
+  i32 9
+  i32 7
+  zero 4
+  i32 6
+  i32 9
+  i32 3
+  i32 4
+}
+global @mask : obj<16x4> [storage=readonly, linkage=c, binding=internal] = {
+  u8 5
+  zero 3
+  u8 77
+  zero 3
+  u8 74
+  zero 3
+  u8 72
+  zero 3
+}
+global @literals [storage=readonly, linkage=c, binding=internal] = {
+  i32 1
+  i32 2
+  i32 3
+  i32 2
+  i32 4
+  zero 4
+}
+
+function @visit(%id : i32, %value : i32) -> i32 [linkage=c, binding=internal] {
+  slot $id : i32
+  slot $value : i32
+
+  block ^entry:
+    store typed i32 %id, $id
+    store typed i32 %value, $value
+    %t1 = addr @calls
+    %t2 = load typed i32 $id
+    %t3 = index inbounds i32 [projection=array_element] %t1, %t2
+    %t4 = load typed i32 %t3
+    %t5 = binary add nowrap i32 %t4, 1
+    store typed i32 %t5, %t3
+    %t6 = load typed i32 $value
+    return i32 %t6
+}
+function @make_pair() -> obj<8x4> [linkage=c, binding=internal] {
+  slot $retobj__1 : obj<8x4>
+  slot $tmpobj__2 : obj<8x4>
+
+  block ^entry:
+    %t1 = addr @calls
+    %t2 = index inbounds i32 [projection=array_element] %t1, 3
+    %t3 = load typed i32 %t2
+    %t4 = binary add nowrap i32 %t3, 1
+    store typed i32 %t4, %t2
+    %t5 = addr $retobj__1
+    %t6 = addr $tmpobj__2
+    %t7 = addr $tmpobj__2
+    %t8 = index inbounds i8 [projection=field] %t7, 0
+    store typed i32 7, %t8
+    %t9 = addr $tmpobj__2
+    %t10 = index inbounds i8 [projection=field] %t9, 4
+    store typed i32 8, %t10
+    %t11 = addr $tmpobj__2
+    copyobj 8x4 %t11, %t5
+    return obj<8x4> $retobj__1
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $points : obj<48x4>
+  slot $constructor_array_index__1 : i64
+  slot $copied : obj<40x4>
+  slot $tmpobj__2 : obj<8x4>
+  slot $constructor_array_index__3 : i64
+  slot $elided : obj<24x4>
+  slot $constructor_array_index__4 : i64
+  slot $flags : obj<16x4>
+  slot $constructor_array_index__5 : i64
+  slot $constructor_array_index__6 : i64
+  slot $base : obj<24x4>
+  slot $inherited : obj<24x4>
+  slot $tmpobj__7 : obj<8x4>
+  slot $land__8 : i64
+  slot $land__9 : i64
+  slot $land__10 : i64
+  slot $land__11 : i64
+  slot $land__12 : i64
+  slot $land__13 : i64
+  slot $land__14 : i64
+  slot $land__15 : i64
+  slot $land__16 : i64
+  slot $land__17 : i64
+  slot $land__18 : i64
+  slot $land__19 : i64
+  slot $land__20 : i64
+  slot $land__21 : i64
+  slot $land__22 : i64
+  slot $land__23 : i64
+  slot $land__24 : i64
+  slot $land__25 : i64
+  slot $land__26 : i64
+  slot $land__27 : i64
+  slot $land__28 : i64
+  slot $land__29 : i64
+  slot $land__30 : i64
+  slot $land__31 : i64
+  slot $land__32 : i64
+  slot $land__33 : i64
+  slot $land__34 : i64
+  slot $land__35 : i64
+  slot $land__36 : i64
+  slot $land__37 : i64
+  slot $land__38 : i64
+  slot $land__39 : i64
+  slot $land__40 : i64
+  slot $land__41 : i64
+  slot $land__42 : i64
+  slot $land__43 : i64
+  slot $land__44 : i64
+  slot $land__45 : i64
+  slot $land__46 : i64
+  slot $land__47 : i64
+  slot $land__48 : i64
+  slot $land__49 : i64
+  slot $land__50 : i64
+  slot $land__51 : i64
+  slot $land__52 : i64
+  slot $land__53 : i64
+  slot $land__54 : i64
+  slot $land__55 : i64
+  slot $land__56 : i64
+  slot $land__57 : i64
+  slot $land__58 : i64
+  slot $land__59 : i64
+  slot $land__60 : i64
+  slot $land__61 : i64
+  slot $land__62 : i64
+  slot $land__63 : i64
+  slot $land__64 : i64
+  slot $land__65 : i64
+  slot $land__66 : i64
+  slot $land__67 : i64
+  slot $land__68 : i64
+  slot $land__69 : i64
+  slot $land__70 : i64
+  slot $land__71 : i64
+  slot $land__72 : i64
+  slot $land__73 : i64
+  slot $land__74 : i64
+
+  block ^entry:
+    %t1 = addr $points
+    zeroinit 48x1 %t1
+    %t2 = call i32 @visit(0, 7)
+    store typed i64 1, $constructor_array_index__1
+    jump ^constructor_array_cond_1
+
+  block ^constructor_array_cond_1:
+    %t3 = load typed i64 $constructor_array_index__1
+    %t4 = cmp ult i64 %t3, 3
+    branch %t4, ^constructor_array_body_2, ^constructor_array_end_3
+
+  block ^constructor_array_body_2:
+    %t5 = binary mul i64 %t3, 8
+    %t6 = index i8 [projection=array_element] %t1, %t5
+    %t7 = index inbounds i8 [projection=field] %t6, 0
+    store typed i32 %t2, %t7
+    %t8 = binary add i64 %t3, 1
+    store typed i64 %t8, $constructor_array_index__1
+    jump ^constructor_array_cond_1
+
+  block ^constructor_array_end_3:
+    %t9 = index i8 %t1, 24
+    %t10 = index inbounds i8 [projection=field] %t9, 0
+    store typed i32 5, %t10
+    %t11 = index i8 %t1, 32
+    %t12 = index inbounds i8 [projection=field] %t11, 0
+    store typed i32 %t2, %t12
+    %t13 = index i8 %t1, 40
+    %t14 = index inbounds i8 [projection=field] %t13, 0
+    store typed i32 9, %t14
+    %t15 = call i32 @visit(1, 4)
+    %t16 = index i8 %t1, 16
+    %t17 = index inbounds i8 [projection=field] %t16, 4
+    store typed i32 %t15, %t17
+    %t18 = call i32 @visit(2, 6)
+    %t19 = index i8 %t1, 24
+    %t20 = index inbounds i8 [projection=field] %t19, 4
+    store typed i32 %t18, %t20
+    %t21 = index i8 %t1, 32
+    %t22 = index inbounds i8 [projection=field] %t21, 4
+    store typed i32 8, %t22
+    %t23 = addr $copied
+    zeroinit 8x1 %t23
+    %t24 = addr $tmpobj__2
+    %t25 = call obj<8x4> @make_pair()
+    copyobj 8x4 %t25, %t24
+    %t26 = addr $tmpobj__2
+    store typed i64 1, $constructor_array_index__3
+    jump ^constructor_array_cond_4
+
+  block ^constructor_array_cond_4:
+    %t27 = load typed i64 $constructor_array_index__3
+    %t28 = cmp ult i64 %t27, 3
+    branch %t28, ^constructor_array_body_5, ^constructor_array_end_6
+
+  block ^constructor_array_body_5:
+    %t29 = binary mul i64 %t27, 8
+    %t30 = index i8 [projection=array_element] %t23, %t29
+    copyobj 8x4 %t26, %t30
+    %t31 = binary add i64 %t27, 1
+    store typed i64 %t31, $constructor_array_index__3
+    jump ^constructor_array_cond_4
+
+  block ^constructor_array_end_6:
+    %t32 = index i8 %t23, 24
+    zeroinit 8x1 %t32
+    %t33 = index i8 %t23, 32
+    copyobj 8x4 %t26, %t33
+    %t34 = index i8 %t23, 16
+    %t35 = index inbounds i8 [projection=field] %t34, 0
+    store typed i32 3, %t35
+    %t36 = index i8 %t23, 24
+    %t37 = index inbounds i8 [projection=field] %t36, 0
+    store typed i32 5, %t37
+    %t38 = addr $elided
+    zeroinit 24x1 %t38
+    %t39 = call i32 @visit(4, 2)
+    store typed i64 0, $constructor_array_index__4
+    jump ^constructor_array_cond_7
+
+  block ^constructor_array_cond_7:
+    %t40 = load typed i64 $constructor_array_index__4
+    %t41 = cmp ult i64 %t40, 3
+    branch %t41, ^constructor_array_body_8, ^constructor_array_end_9
+
+  block ^constructor_array_body_8:
+    %t42 = binary mul i64 %t40, 8
+    %t43 = index i8 [projection=array_element] %t38, %t42
+    %t44 = index inbounds i8 [projection=field] %t43, 0
+    store typed i32 %t39, %t44
+    %t45 = binary add i64 %t40, 1
+    store typed i64 %t45, $constructor_array_index__4
+    jump ^constructor_array_cond_7
+
+  block ^constructor_array_end_9:
+    %t46 = index i8 %t38, 16
+    %t47 = index inbounds i8 [projection=field] %t46, 4
+    store typed i32 6, %t47
+    %t48 = addr $flags
+    zeroinit 16x1 %t48
+    store typed i64 0, $constructor_array_index__5
+    jump ^constructor_array_cond_10
+
+  block ^constructor_array_cond_10:
+    %t49 = load typed i64 $constructor_array_index__5
+    %t50 = cmp ult i64 %t49, 2
+    branch %t50, ^constructor_array_body_11, ^constructor_array_end_12
+
+  block ^constructor_array_body_11:
+    %t51 = binary mul i64 %t49, 4
+    %t52 = index i8 [projection=array_element] %t48, %t51
+    %t53 = index inbounds i8 [projection=field] %t52, 0
+    %t54 = binary and i32 5, 7
+    %t55 = load i32 %t53
+    %t56 = binary and i32 %t55, -8
+    %t57 = binary or i32 %t56, %t54
+    store i32 %t57, %t53
+    %t58 = binary add i64 %t49, 1
+    store typed i64 %t58, $constructor_array_index__5
+    jump ^constructor_array_cond_10
+
+  block ^constructor_array_end_12:
+    %t59 = index i8 %t48, 8
+    %t60 = index inbounds i8 [projection=field] %t59, 0
+    %t61 = binary and i32 2, 7
+    %t62 = load i32 %t60
+    %t63 = binary and i32 %t62, -8
+    %t64 = binary or i32 %t63, %t61
+    store i32 %t64, %t60
+    store typed i64 1, $constructor_array_index__6
+    jump ^constructor_array_cond_13
+
+  block ^constructor_array_cond_13:
+    %t65 = load typed i64 $constructor_array_index__6
+    %t66 = cmp ult i64 %t65, 4
+    branch %t66, ^constructor_array_body_14, ^constructor_array_end_15
+
+  block ^constructor_array_body_14:
+    %t67 = binary mul i64 %t65, 4
+    %t68 = index i8 [projection=array_element] %t48, %t67
+    %t69 = index inbounds i8 [projection=field] %t68, 0
+    %t70 = binary and i32 9, 15
+    %t71 = binary shl i32 %t70, 3
+    %t72 = load i32 %t69
+    %t73 = binary and i32 %t72, -121
+    %t74 = binary or i32 %t73, %t71
+    store i32 %t74, %t69
+    %t75 = binary add i64 %t65, 1
+    store typed i64 %t75, $constructor_array_index__6
+    jump ^constructor_array_cond_13
+
+  block ^constructor_array_end_15:
+    %t76 = addr $base
+    %t77 = addr $base
+    %t78 = index inbounds i8 [projection=field] %t77, 0
+    %t79 = index inbounds i8 [projection=field] %t78, 0
+    store typed i32 1, %t79
+    %t80 = index inbounds i8 [projection=field] %t78, 4
+    store typed i32 2, %t80
+    %t81 = index i8 %t78, 8
+    %t82 = index inbounds i8 [projection=field] %t81, 0
+    store typed i32 3, %t82
+    %t83 = index inbounds i8 [projection=field] %t81, 4
+    store typed i32 4, %t83
+    %t84 = index i8 %t78, 16
+    %t85 = index inbounds i8 [projection=field] %t84, 0
+    store typed i32 5, %t85
+    %t86 = index inbounds i8 [projection=field] %t84, 4
+    store typed i32 6, %t86
+    %t87 = addr $inherited
+    %t88 = addr $inherited
+    %t89 = index inbounds i8 [projection=field] %t88, 0
+    %t90 = addr $base
+    copyobj 24x4 %t90, %t89
+    %t91 = addr $inherited
+    %t92 = index inbounds i8 [projection=field] %t91, 0
+    %t93 = index inbounds i8 [projection=field] %t92, 0
+    %t94 = addr $tmpobj__7
+    %t95 = index inbounds i8 [projection=field] %t94, 0
+    store typed i32 0, %t95
+    %t96 = addr $tmpobj__7
+    %t97 = index inbounds i8 [projection=field] %t96, 4
+    store typed i32 0, %t97
+    %t98 = addr $tmpobj__7
+    %t99 = index i8 %t93, 8
+    copyobj 8x4 %t98, %t99
+    %t100 = index inbounds i8 [projection=field] %t93, 0
+    store typed i32 7, %t100
+    %t101 = index i8 %t93, 8
+    %t102 = index inbounds i8 [projection=field] %t101, 0
+    store typed i32 9, %t102
+    %t103 = index i8 %t93, 16
+    %t104 = index inbounds i8 [projection=field] %t103, 0
+    store typed i32 7, %t104
+    %t105 = addr $points
+    %t106 = binary mul i64 0, 8
+    %t107 = index inbounds i8 [projection=array_element] %t105, %t106
+    %t108 = index inbounds i8 [projection=field] %t107, 0
+    %t109 = load typed i32 %t108
+    %t110 = cmp eq i32 %t109, 0
+    %t111 = convert trunc i32 i64 %t110
+    branch %t111, ^land_rhs_16, ^land_short_17
+
+  block ^land_rhs_16:
+    %t112 = addr $points
+    %t113 = binary mul i64 0, 8
+    %t114 = index inbounds i8 [projection=array_element] %t112, %t113
+    %t115 = index inbounds i8 [projection=field] %t114, 4
+    %t116 = load typed i32 %t115
+    %t117 = cmp eq i32 %t116, 0
+    %t118 = convert trunc i32 i64 %t117
+    %t119 = cmp ne i32 %t118, 0
+    store typed i64 %t119, $land__8
+    jump ^land_end_18
+
+  block ^land_short_17:
+    store typed i64 0, $land__8
+    jump ^land_end_18
+
+  block ^land_end_18:
+    %t120 = load typed i64 $land__8
+    branch %t120, ^land_rhs_19, ^land_short_20
+
+  block ^land_rhs_19:
+    %t121 = addr $points
+    %t122 = binary mul i64 1, 8
+    %t123 = index inbounds i8 [projection=array_element] %t121, %t122
+    %t124 = index inbounds i8 [projection=field] %t123, 0
+    %t125 = load typed i32 %t124
+    %t126 = cmp eq i32 %t125, 7
+    %t127 = convert trunc i32 i64 %t126
+    %t128 = cmp ne i32 %t127, 0
+    store typed i64 %t128, $land__9
+    jump ^land_end_21
+
+  block ^land_short_20:
+    store typed i64 0, $land__9
+    jump ^land_end_21
+
+  block ^land_end_21:
+    %t129 = load typed i64 $land__9
+    branch %t129, ^land_rhs_22, ^land_short_23
+
+  block ^land_rhs_22:
+    %t130 = addr $points
+    %t131 = binary mul i64 1, 8
+    %t132 = index inbounds i8 [projection=array_element] %t130, %t131
+    %t133 = index inbounds i8 [projection=field] %t132, 4
+    %t134 = load typed i32 %t133
+    %t135 = cmp eq i32 %t134, 0
+    %t136 = convert trunc i32 i64 %t135
+    %t137 = cmp ne i32 %t136, 0
+    store typed i64 %t137, $land__10
+    jump ^land_end_24
+
+  block ^land_short_23:
+    store typed i64 0, $land__10
+    jump ^land_end_24
+
+  block ^land_end_24:
+    %t138 = load typed i64 $land__10
+    branch %t138, ^land_rhs_25, ^land_short_26
+
+  block ^land_rhs_25:
+    %t139 = addr $points
+    %t140 = binary mul i64 2, 8
+    %t141 = index inbounds i8 [projection=array_element] %t139, %t140
+    %t142 = index inbounds i8 [projection=field] %t141, 0
+    %t143 = load typed i32 %t142
+    %t144 = cmp eq i32 %t143, 7
+    %t145 = convert trunc i32 i64 %t144
+    %t146 = cmp ne i32 %t145, 0
+    store typed i64 %t146, $land__11
+    jump ^land_end_27
+
+  block ^land_short_26:
+    store typed i64 0, $land__11
+    jump ^land_end_27
+
+  block ^land_end_27:
+    %t147 = load typed i64 $land__11
+    branch %t147, ^land_rhs_28, ^land_short_29
+
+  block ^land_rhs_28:
+    %t148 = addr $points
+    %t149 = binary mul i64 2, 8
+    %t150 = index inbounds i8 [projection=array_element] %t148, %t149
+    %t151 = index inbounds i8 [projection=field] %t150, 4
+    %t152 = load typed i32 %t151
+    %t153 = cmp eq i32 %t152, 4
+    %t154 = convert trunc i32 i64 %t153
+    %t155 = cmp ne i32 %t154, 0
+    store typed i64 %t155, $land__12
+    jump ^land_end_30
+
+  block ^land_short_29:
+    store typed i64 0, $land__12
+    jump ^land_end_30
+
+  block ^land_end_30:
+    %t156 = load typed i64 $land__12
+    branch %t156, ^land_rhs_31, ^land_short_32
+
+  block ^land_rhs_31:
+    %t157 = addr $points
+    %t158 = binary mul i64 3, 8
+    %t159 = index inbounds i8 [projection=array_element] %t157, %t158
+    %t160 = index inbounds i8 [projection=field] %t159, 0
+    %t161 = load typed i32 %t160
+    %t162 = cmp eq i32 %t161, 5
+    %t163 = convert trunc i32 i64 %t162
+    %t164 = cmp ne i32 %t163, 0
+    store typed i64 %t164, $land__13
+    jump ^land_end_33
+
+  block ^land_short_32:
+    store typed i64 0, $land__13
+    jump ^land_end_33
+
+  block ^land_end_33:
+    %t165 = load typed i64 $land__13
+    branch %t165, ^land_rhs_34, ^land_short_35
+
+  block ^land_rhs_34:
+    %t166 = addr $points
+    %t167 = binary mul i64 3, 8
+    %t168 = index inbounds i8 [projection=array_element] %t166, %t167
+    %t169 = index inbounds i8 [projection=field] %t168, 4
+    %t170 = load typed i32 %t169
+    %t171 = cmp eq i32 %t170, 6
+    %t172 = convert trunc i32 i64 %t171
+    %t173 = cmp ne i32 %t172, 0
+    store typed i64 %t173, $land__14
+    jump ^land_end_36
+
+  block ^land_short_35:
+    store typed i64 0, $land__14
+    jump ^land_end_36
+
+  block ^land_end_36:
+    %t174 = load typed i64 $land__14
+    branch %t174, ^land_rhs_37, ^land_short_38
+
+  block ^land_rhs_37:
+    %t175 = addr $points
+    %t176 = binary mul i64 4, 8
+    %t177 = index inbounds i8 [projection=array_element] %t175, %t176
+    %t178 = index inbounds i8 [projection=field] %t177, 0
+    %t179 = load typed i32 %t178
+    %t180 = cmp eq i32 %t179, 7
+    %t181 = convert trunc i32 i64 %t180
+    %t182 = cmp ne i32 %t181, 0
+    store typed i64 %t182, $land__15
+    jump ^land_end_39
+
+  block ^land_short_38:
+    store typed i64 0, $land__15
+    jump ^land_end_39
+
+  block ^land_end_39:
+    %t183 = load typed i64 $land__15
+    branch %t183, ^land_rhs_40, ^land_short_41
+
+  block ^land_rhs_40:
+    %t184 = addr $points
+    %t185 = binary mul i64 4, 8
+    %t186 = index inbounds i8 [projection=array_element] %t184, %t185
+    %t187 = index inbounds i8 [projection=field] %t186, 4
+    %t188 = load typed i32 %t187
+    %t189 = cmp eq i32 %t188, 8
+    %t190 = convert trunc i32 i64 %t189
+    %t191 = cmp ne i32 %t190, 0
+    store typed i64 %t191, $land__16
+    jump ^land_end_42
+
+  block ^land_short_41:
+    store typed i64 0, $land__16
+    jump ^land_end_42
+
+  block ^land_end_42:
+    %t192 = load typed i64 $land__16
+    branch %t192, ^land_rhs_43, ^land_short_44
+
+  block ^land_rhs_43:
+    %t193 = addr $points
+    %t194 = binary mul i64 5, 8
+    %t195 = index inbounds i8 [projection=array_element] %t193, %t194
+    %t196 = index inbounds i8 [projection=field] %t195, 0
+    %t197 = load typed i32 %t196
+    %t198 = cmp eq i32 %t197, 9
+    %t199 = convert trunc i32 i64 %t198
+    %t200 = cmp ne i32 %t199, 0
+    store typed i64 %t200, $land__17
+    jump ^land_end_45
+
+  block ^land_short_44:
+    store typed i64 0, $land__17
+    jump ^land_end_45
+
+  block ^land_end_45:
+    %t201 = load typed i64 $land__17
+    branch %t201, ^land_rhs_46, ^land_short_47
+
+  block ^land_rhs_46:
+    %t202 = addr $points
+    %t203 = binary mul i64 5, 8
+    %t204 = index inbounds i8 [projection=array_element] %t202, %t203
+    %t205 = index inbounds i8 [projection=field] %t204, 4
+    %t206 = load typed i32 %t205
+    %t207 = cmp eq i32 %t206, 0
+    %t208 = convert trunc i32 i64 %t207
+    %t209 = cmp ne i32 %t208, 0
+    store typed i64 %t209, $land__18
+    jump ^land_end_48
+
+  block ^land_short_47:
+    store typed i64 0, $land__18
+    jump ^land_end_48
+
+  block ^land_end_48:
+    %t210 = load typed i64 $land__18
+    branch %t210, ^land_rhs_49, ^land_short_50
+
+  block ^land_rhs_49:
+    %t211 = addr $copied
+    %t212 = binary mul i64 1, 8
+    %t213 = index inbounds i8 [projection=array_element] %t211, %t212
+    %t214 = index inbounds i8 [projection=field] %t213, 0
+    %t215 = load typed i32 %t214
+    %t216 = cmp eq i32 %t215, 7
+    %t217 = convert trunc i32 i64 %t216
+    %t218 = cmp ne i32 %t217, 0
+    store typed i64 %t218, $land__19
+    jump ^land_end_51
+
+  block ^land_short_50:
+    store typed i64 0, $land__19
+    jump ^land_end_51
+
+  block ^land_end_51:
+    %t219 = load typed i64 $land__19
+    branch %t219, ^land_rhs_52, ^land_short_53
+
+  block ^land_rhs_52:
+    %t220 = addr $copied
+    %t221 = binary mul i64 1, 8
+    %t222 = index inbounds i8 [projection=array_element] %t220, %t221
+    %t223 = index inbounds i8 [projection=field] %t222, 4
+    %t224 = load typed i32 %t223
+    %t225 = cmp eq i32 %t224, 8
+    %t226 = convert trunc i32 i64 %t225
+    %t227 = cmp ne i32 %t226, 0
+    store typed i64 %t227, $land__20
+    jump ^land_end_54
+
+  block ^land_short_53:
+    store typed i64 0, $land__20
+    jump ^land_end_54
+
+  block ^land_end_54:
+    %t228 = load typed i64 $land__20
+    branch %t228, ^land_rhs_55, ^land_short_56
+
+  block ^land_rhs_55:
+    %t229 = addr $copied
+    %t230 = binary mul i64 2, 8
+    %t231 = index inbounds i8 [projection=array_element] %t229, %t230
+    %t232 = index inbounds i8 [projection=field] %t231, 0
+    %t233 = load typed i32 %t232
+    %t234 = cmp eq i32 %t233, 3
+    %t235 = convert trunc i32 i64 %t234
+    %t236 = cmp ne i32 %t235, 0
+    store typed i64 %t236, $land__21
+    jump ^land_end_57
+
+  block ^land_short_56:
+    store typed i64 0, $land__21
+    jump ^land_end_57
+
+  block ^land_end_57:
+    %t237 = load typed i64 $land__21
+    branch %t237, ^land_rhs_58, ^land_short_59
+
+  block ^land_rhs_58:
+    %t238 = addr $copied
+    %t239 = binary mul i64 2, 8
+    %t240 = index inbounds i8 [projection=array_element] %t238, %t239
+    %t241 = index inbounds i8 [projection=field] %t240, 4
+    %t242 = load typed i32 %t241
+    %t243 = cmp eq i32 %t242, 8
+    %t244 = convert trunc i32 i64 %t243
+    %t245 = cmp ne i32 %t244, 0
+    store typed i64 %t245, $land__22
+    jump ^land_end_60
+
+  block ^land_short_59:
+    store typed i64 0, $land__22
+    jump ^land_end_60
+
+  block ^land_end_60:
+    %t246 = load typed i64 $land__22
+    branch %t246, ^land_rhs_61, ^land_short_62
+
+  block ^land_rhs_61:
+    %t247 = addr $copied
+    %t248 = binary mul i64 3, 8
+    %t249 = index inbounds i8 [projection=array_element] %t247, %t248
+    %t250 = index inbounds i8 [projection=field] %t249, 0
+    %t251 = load typed i32 %t250
+    %t252 = cmp eq i32 %t251, 5
+    %t253 = convert trunc i32 i64 %t252
+    %t254 = cmp ne i32 %t253, 0
+    store typed i64 %t254, $land__23
+    jump ^land_end_63
+
+  block ^land_short_62:
+    store typed i64 0, $land__23
+    jump ^land_end_63
+
+  block ^land_end_63:
+    %t255 = load typed i64 $land__23
+    branch %t255, ^land_rhs_64, ^land_short_65
+
+  block ^land_rhs_64:
+    %t256 = addr $copied
+    %t257 = binary mul i64 3, 8
+    %t258 = index inbounds i8 [projection=array_element] %t256, %t257
+    %t259 = index inbounds i8 [projection=field] %t258, 4
+    %t260 = load typed i32 %t259
+    %t261 = cmp eq i32 %t260, 0
+    %t262 = convert trunc i32 i64 %t261
+    %t263 = cmp ne i32 %t262, 0
+    store typed i64 %t263, $land__24
+    jump ^land_end_66
+
+  block ^land_short_65:
+    store typed i64 0, $land__24
+    jump ^land_end_66
+
+  block ^land_end_66:
+    %t264 = load typed i64 $land__24
+    branch %t264, ^land_rhs_67, ^land_short_68
+
+  block ^land_rhs_67:
+    %t265 = addr $copied
+    %t266 = binary mul i64 4, 8
+    %t267 = index inbounds i8 [projection=array_element] %t265, %t266
+    %t268 = index inbounds i8 [projection=field] %t267, 0
+    %t269 = load typed i32 %t268
+    %t270 = cmp eq i32 %t269, 7
+    %t271 = convert trunc i32 i64 %t270
+    %t272 = cmp ne i32 %t271, 0
+    store typed i64 %t272, $land__25
+    jump ^land_end_69
+
+  block ^land_short_68:
+    store typed i64 0, $land__25
+    jump ^land_end_69
+
+  block ^land_end_69:
+    %t273 = load typed i64 $land__25
+    branch %t273, ^land_rhs_70, ^land_short_71
+
+  block ^land_rhs_70:
+    %t274 = addr $copied
+    %t275 = binary mul i64 4, 8
+    %t276 = index inbounds i8 [projection=array_element] %t274, %t275
+    %t277 = index inbounds i8 [projection=field] %t276, 4
+    %t278 = load typed i32 %t277
+    %t279 = cmp eq i32 %t278, 8
+    %t280 = convert trunc i32 i64 %t279
+    %t281 = cmp ne i32 %t280, 0
+    store typed i64 %t281, $land__26
+    jump ^land_end_72
+
+  block ^land_short_71:
+    store typed i64 0, $land__26
+    jump ^land_end_72
+
+  block ^land_end_72:
+    %t282 = load typed i64 $land__26
+    branch %t282, ^land_rhs_73, ^land_short_74
+
+  block ^land_rhs_73:
+    %t283 = addr $elided
+    %t284 = binary mul i64 0, 8
+    %t285 = index inbounds i8 [projection=array_element] %t283, %t284
+    %t286 = index inbounds i8 [projection=field] %t285, 0
+    %t287 = load typed i32 %t286
+    %t288 = cmp eq i32 %t287, 2
+    %t289 = convert trunc i32 i64 %t288
+    %t290 = cmp ne i32 %t289, 0
+    store typed i64 %t290, $land__27
+    jump ^land_end_75
+
+  block ^land_short_74:
+    store typed i64 0, $land__27
+    jump ^land_end_75
+
+  block ^land_end_75:
+    %t291 = load typed i64 $land__27
+    branch %t291, ^land_rhs_76, ^land_short_77
+
+  block ^land_rhs_76:
+    %t292 = addr $elided
+    %t293 = binary mul i64 0, 8
+    %t294 = index inbounds i8 [projection=array_element] %t292, %t293
+    %t295 = index inbounds i8 [projection=field] %t294, 4
+    %t296 = load typed i32 %t295
+    %t297 = cmp eq i32 %t296, 0
+    %t298 = convert trunc i32 i64 %t297
+    %t299 = cmp ne i32 %t298, 0
+    store typed i64 %t299, $land__28
+    jump ^land_end_78
+
+  block ^land_short_77:
+    store typed i64 0, $land__28
+    jump ^land_end_78
+
+  block ^land_end_78:
+    %t300 = load typed i64 $land__28
+    branch %t300, ^land_rhs_79, ^land_short_80
+
+  block ^land_rhs_79:
+    %t301 = addr $elided
+    %t302 = binary mul i64 1, 8
+    %t303 = index inbounds i8 [projection=array_element] %t301, %t302
+    %t304 = index inbounds i8 [projection=field] %t303, 0
+    %t305 = load typed i32 %t304
+    %t306 = cmp eq i32 %t305, 2
+    %t307 = convert trunc i32 i64 %t306
+    %t308 = cmp ne i32 %t307, 0
+    store typed i64 %t308, $land__29
+    jump ^land_end_81
+
+  block ^land_short_80:
+    store typed i64 0, $land__29
+    jump ^land_end_81
+
+  block ^land_end_81:
+    %t309 = load typed i64 $land__29
+    branch %t309, ^land_rhs_82, ^land_short_83
+
+  block ^land_rhs_82:
+    %t310 = addr $elided
+    %t311 = binary mul i64 1, 8
+    %t312 = index inbounds i8 [projection=array_element] %t310, %t311
+    %t313 = index inbounds i8 [projection=field] %t312, 4
+    %t314 = load typed i32 %t313
+    %t315 = cmp eq i32 %t314, 0
+    %t316 = convert trunc i32 i64 %t315
+    %t317 = cmp ne i32 %t316, 0
+    store typed i64 %t317, $land__30
+    jump ^land_end_84
+
+  block ^land_short_83:
+    store typed i64 0, $land__30
+    jump ^land_end_84
+
+  block ^land_end_84:
+    %t318 = load typed i64 $land__30
+    branch %t318, ^land_rhs_85, ^land_short_86
+
+  block ^land_rhs_85:
+    %t319 = addr $elided
+    %t320 = binary mul i64 2, 8
+    %t321 = index inbounds i8 [projection=array_element] %t319, %t320
+    %t322 = index inbounds i8 [projection=field] %t321, 0
+    %t323 = load typed i32 %t322
+    %t324 = cmp eq i32 %t323, 2
+    %t325 = convert trunc i32 i64 %t324
+    %t326 = cmp ne i32 %t325, 0
+    store typed i64 %t326, $land__31
+    jump ^land_end_87
+
+  block ^land_short_86:
+    store typed i64 0, $land__31
+    jump ^land_end_87
+
+  block ^land_end_87:
+    %t327 = load typed i64 $land__31
+    branch %t327, ^land_rhs_88, ^land_short_89
+
+  block ^land_rhs_88:
+    %t328 = addr $elided
+    %t329 = binary mul i64 2, 8
+    %t330 = index inbounds i8 [projection=array_element] %t328, %t329
+    %t331 = index inbounds i8 [projection=field] %t330, 4
+    %t332 = load typed i32 %t331
+    %t333 = cmp eq i32 %t332, 6
+    %t334 = convert trunc i32 i64 %t333
+    %t335 = cmp ne i32 %t334, 0
+    store typed i64 %t335, $land__32
+    jump ^land_end_90
+
+  block ^land_short_89:
+    store typed i64 0, $land__32
+    jump ^land_end_90
+
+  block ^land_end_90:
+    %t336 = load typed i64 $land__32
+    branch %t336, ^land_rhs_91, ^land_short_92
+
+  block ^land_rhs_91:
+    %t337 = addr @table
+    %t338 = binary mul i64 0, 8
+    %t339 = index inbounds i8 [projection=array_element] %t337, %t338
+    %t340 = index inbounds i8 [projection=field] %t339, 0
+    %t341 = load typed i32 %t340
+    %t342 = cmp eq i32 %t341, 0
+    %t343 = convert trunc i32 i64 %t342
+    %t344 = cmp ne i32 %t343, 0
+    store typed i64 %t344, $land__33
+    jump ^land_end_93
+
+  block ^land_short_92:
+    store typed i64 0, $land__33
+    jump ^land_end_93
+
+  block ^land_end_93:
+    %t345 = load typed i64 $land__33
+    branch %t345, ^land_rhs_94, ^land_short_95
+
+  block ^land_rhs_94:
+    %t346 = addr @table
+    %t347 = binary mul i64 0, 8
+    %t348 = index inbounds i8 [projection=array_element] %t346, %t347
+    %t349 = index inbounds i8 [projection=field] %t348, 4
+    %t350 = load typed i32 %t349
+    %t351 = cmp eq i32 %t350, 0
+    %t352 = convert trunc i32 i64 %t351
+    %t353 = cmp ne i32 %t352, 0
+    store typed i64 %t353, $land__34
+    jump ^land_end_96
+
+  block ^land_short_95:
+    store typed i64 0, $land__34
+    jump ^land_end_96
+
+  block ^land_end_96:
+    %t354 = load typed i64 $land__34
+    branch %t354, ^land_rhs_97, ^land_short_98
+
+  block ^land_rhs_97:
+    %t355 = addr @table
+    %t356 = binary mul i64 1, 8
+    %t357 = index inbounds i8 [projection=array_element] %t355, %t356
+    %t358 = index inbounds i8 [projection=field] %t357, 0
+    %t359 = load typed i32 %t358
+    %t360 = cmp eq i32 %t359, 3
+    %t361 = convert trunc i32 i64 %t360
+    %t362 = cmp ne i32 %t361, 0
+    store typed i64 %t362, $land__35
+    jump ^land_end_99
+
+  block ^land_short_98:
+    store typed i64 0, $land__35
+    jump ^land_end_99
+
+  block ^land_end_99:
+    %t363 = load typed i64 $land__35
+    branch %t363, ^land_rhs_100, ^land_short_101
+
+  block ^land_rhs_100:
+    %t364 = addr @table
+    %t365 = binary mul i64 1, 8
+    %t366 = index inbounds i8 [projection=array_element] %t364, %t365
+    %t367 = index inbounds i8 [projection=field] %t366, 4
+    %t368 = load typed i32 %t367
+    %t369 = cmp eq i32 %t368, 4
+    %t370 = convert trunc i32 i64 %t369
+    %t371 = cmp ne i32 %t370, 0
+    store typed i64 %t371, $land__36
+    jump ^land_end_102
+
+  block ^land_short_101:
+    store typed i64 0, $land__36
+    jump ^land_end_102
+
+  block ^land_end_102:
+    %t372 = load typed i64 $land__36
+    branch %t372, ^land_rhs_103, ^land_short_104
+
+  block ^land_rhs_103:
+    %t373 = addr @table
+    %t374 = binary mul i64 2, 8
+    %t375 = index inbounds i8 [projection=array_element] %t373, %t374
+    %t376 = index inbounds i8 [projection=field] %t375, 0
+    %t377 = load typed i32 %t376
+    %t378 = cmp eq i32 %t377, 3
+    %t379 = convert trunc i32 i64 %t378
+    %t380 = cmp ne i32 %t379, 0
+    store typed i64 %t380, $land__37
+    jump ^land_end_105
+
+  block ^land_short_104:
+    store typed i64 0, $land__37
+    jump ^land_end_105
+
+  block ^land_end_105:
+    %t381 = load typed i64 $land__37
+    branch %t381, ^land_rhs_106, ^land_short_107
+
+  block ^land_rhs_106:
+    %t382 = addr @table
+    %t383 = binary mul i64 2, 8
+    %t384 = index inbounds i8 [projection=array_element] %t382, %t383
+    %t385 = index inbounds i8 [projection=field] %t384, 4
+    %t386 = load typed i32 %t385
+    %t387 = cmp eq i32 %t386, 9
+    %t388 = convert trunc i32 i64 %t387
+    %t389 = cmp ne i32 %t388, 0
+    store typed i64 %t389, $land__38
+    jump ^land_end_108
+
+  block ^land_short_107:
+    store typed i64 0, $land__38
+    jump ^land_end_108
+
+  block ^land_end_108:
+    %t390 = load typed i64 $land__38
+    branch %t390, ^land_rhs_109, ^land_short_110
+
+  block ^land_rhs_109:
+    %t391 = addr @table
+    %t392 = binary mul i64 3, 8
+    %t393 = index inbounds i8 [projection=array_element] %t391, %t392
+    %t394 = index inbounds i8 [projection=field] %t393, 0
+    %t395 = load typed i32 %t394
+    %t396 = cmp eq i32 %t395, 7
+    %t397 = convert trunc i32 i64 %t396
+    %t398 = cmp ne i32 %t397, 0
+    store typed i64 %t398, $land__39
+    jump ^land_end_111
+
+  block ^land_short_110:
+    store typed i64 0, $land__39
+    jump ^land_end_111
+
+  block ^land_end_111:
+    %t399 = load typed i64 $land__39
+    branch %t399, ^land_rhs_112, ^land_short_113
+
+  block ^land_rhs_112:
+    %t400 = addr @table
+    %t401 = binary mul i64 3, 8
+    %t402 = index inbounds i8 [projection=array_element] %t400, %t401
+    %t403 = index inbounds i8 [projection=field] %t402, 4
+    %t404 = load typed i32 %t403
+    %t405 = cmp eq i32 %t404, 0
+    %t406 = convert trunc i32 i64 %t405
+    %t407 = cmp ne i32 %t406, 0
+    store typed i64 %t407, $land__40
+    jump ^land_end_114
+
+  block ^land_short_113:
+    store typed i64 0, $land__40
+    jump ^land_end_114
+
+  block ^land_end_114:
+    %t408 = load typed i64 $land__40
+    branch %t408, ^land_rhs_115, ^land_short_116
+
+  block ^land_rhs_115:
+    %t409 = addr @table
+    %t410 = binary mul i64 4, 8
+    %t411 = index inbounds i8 [projection=array_element] %t409, %t410
+    %t412 = index inbounds i8 [projection=field] %t411, 0
+    %t413 = load typed i32 %t412
+    %t414 = cmp eq i32 %t413, 6
+    %t415 = convert trunc i32 i64 %t414
+    %t416 = cmp ne i32 %t415, 0
+    store typed i64 %t416, $land__41
+    jump ^land_end_117
+
+  block ^land_short_116:
+    store typed i64 0, $land__41
+    jump ^land_end_117
+
+  block ^land_end_117:
+    %t417 = load typed i64 $land__41
+    branch %t417, ^land_rhs_118, ^land_short_119
+
+  block ^land_rhs_118:
+    %t418 = addr @table
+    %t419 = binary mul i64 4, 8
+    %t420 = index inbounds i8 [projection=array_element] %t418, %t419
+    %t421 = index inbounds i8 [projection=field] %t420, 4
+    %t422 = load typed i32 %t421
+    %t423 = cmp eq i32 %t422, 9
+    %t424 = convert trunc i32 i64 %t423
+    %t425 = cmp ne i32 %t424, 0
+    store typed i64 %t425, $land__42
+    jump ^land_end_120
+
+  block ^land_short_119:
+    store typed i64 0, $land__42
+    jump ^land_end_120
+
+  block ^land_end_120:
+    %t426 = load typed i64 $land__42
+    branch %t426, ^land_rhs_121, ^land_short_122
+
+  block ^land_rhs_121:
+    %t427 = addr @table
+    %t428 = binary mul i64 5, 8
+    %t429 = index inbounds i8 [projection=array_element] %t427, %t428
+    %t430 = index inbounds i8 [projection=field] %t429, 0
+    %t431 = load typed i32 %t430
+    %t432 = cmp eq i32 %t431, 3
+    %t433 = convert trunc i32 i64 %t432
+    %t434 = cmp ne i32 %t433, 0
+    store typed i64 %t434, $land__43
+    jump ^land_end_123
+
+  block ^land_short_122:
+    store typed i64 0, $land__43
+    jump ^land_end_123
+
+  block ^land_end_123:
+    %t435 = load typed i64 $land__43
+    branch %t435, ^land_rhs_124, ^land_short_125
+
+  block ^land_rhs_124:
+    %t436 = addr @table
+    %t437 = binary mul i64 5, 8
+    %t438 = index inbounds i8 [projection=array_element] %t436, %t437
+    %t439 = index inbounds i8 [projection=field] %t438, 4
+    %t440 = load typed i32 %t439
+    %t441 = cmp eq i32 %t440, 4
+    %t442 = convert trunc i32 i64 %t441
+    %t443 = cmp ne i32 %t442, 0
+    store typed i64 %t443, $land__44
+    jump ^land_end_126
+
+  block ^land_short_125:
+    store typed i64 0, $land__44
+    jump ^land_end_126
+
+  block ^land_end_126:
+    %t444 = load typed i64 $land__44
+    branch %t444, ^land_rhs_127, ^land_short_128
+
+  block ^land_rhs_127:
+    %t445 = addr $flags
+    %t446 = binary mul i64 0, 4
+    %t447 = index inbounds i8 [projection=array_element] %t445, %t446
+    %t448 = index inbounds i8 [projection=field] %t447, 0
+    %t449 = load i32 %t448
+    %t450 = binary and i32 %t449, 7
+    %t451 = copy u32 %t450
+    %t452 = copy i32 %t451
+    %t453 = cmp eq i32 %t452, 5
+    %t454 = convert trunc i32 i64 %t453
+    %t455 = cmp ne i32 %t454, 0
+    store typed i64 %t455, $land__45
+    jump ^land_end_129
+
+  block ^land_short_128:
+    store typed i64 0, $land__45
+    jump ^land_end_129
+
+  block ^land_end_129:
+    %t456 = load typed i64 $land__45
+    branch %t456, ^land_rhs_130, ^land_short_131
+
+  block ^land_rhs_130:
+    %t457 = addr $flags
+    %t458 = binary mul i64 0, 4
+    %t459 = index inbounds i8 [projection=array_element] %t457, %t458
+    %t460 = index inbounds i8 [projection=field] %t459, 0
+    %t461 = load i32 %t460
+    %t462 = binary shr i32 %t461, 3
+    %t463 = binary and i32 %t462, 15
+    %t464 = copy u32 %t463
+    %t465 = copy i32 %t464
+    %t466 = cmp eq i32 %t465, 0
+    %t467 = convert trunc i32 i64 %t466
+    %t468 = cmp ne i32 %t467, 0
+    store typed i64 %t468, $land__46
+    jump ^land_end_132
+
+  block ^land_short_131:
+    store typed i64 0, $land__46
+    jump ^land_end_132
+
+  block ^land_end_132:
+    %t469 = load typed i64 $land__46
+    branch %t469, ^land_rhs_133, ^land_short_134
+
+  block ^land_rhs_133:
+    %t470 = addr $flags
+    %t471 = binary mul i64 1, 4
+    %t472 = index inbounds i8 [projection=array_element] %t470, %t471
+    %t473 = index inbounds i8 [projection=field] %t472, 0
+    %t474 = load i32 %t473
+    %t475 = binary and i32 %t474, 7
+    %t476 = copy u32 %t475
+    %t477 = copy i32 %t476
+    %t478 = cmp eq i32 %t477, 5
+    %t479 = convert trunc i32 i64 %t478
+    %t480 = cmp ne i32 %t479, 0
+    store typed i64 %t480, $land__47
+    jump ^land_end_135
+
+  block ^land_short_134:
+    store typed i64 0, $land__47
+    jump ^land_end_135
+
+  block ^land_end_135:
+    %t481 = load typed i64 $land__47
+    branch %t481, ^land_rhs_136, ^land_short_137
+
+  block ^land_rhs_136:
+    %t482 = addr $flags
+    %t483 = binary mul i64 1, 4
+    %t484 = index inbounds i8 [projection=array_element] %t482, %t483
+    %t485 = index inbounds i8 [projection=field] %t484, 0
+    %t486 = load i32 %t485
+    %t487 = binary shr i32 %t486, 3
+    %t488 = binary and i32 %t487, 15
+    %t489 = copy u32 %t488
+    %t490 = copy i32 %t489
+    %t491 = cmp eq i32 %t490, 9
+    %t492 = convert trunc i32 i64 %t491
+    %t493 = cmp ne i32 %t492, 0
+    store typed i64 %t493, $land__48
+    jump ^land_end_138
+
+  block ^land_short_137:
+    store typed i64 0, $land__48
+    jump ^land_end_138
+
+  block ^land_end_138:
+    %t494 = load typed i64 $land__48
+    branch %t494, ^land_rhs_139, ^land_short_140
+
+  block ^land_rhs_139:
+    %t495 = addr $flags
+    %t496 = binary mul i64 2, 4
+    %t497 = index inbounds i8 [projection=array_element] %t495, %t496
+    %t498 = index inbounds i8 [projection=field] %t497, 0
+    %t499 = load i32 %t498
+    %t500 = binary and i32 %t499, 7
+    %t501 = copy u32 %t500
+    %t502 = copy i32 %t501
+    %t503 = cmp eq i32 %t502, 2
+    %t504 = convert trunc i32 i64 %t503
+    %t505 = cmp ne i32 %t504, 0
+    store typed i64 %t505, $land__49
+    jump ^land_end_141
+
+  block ^land_short_140:
+    store typed i64 0, $land__49
+    jump ^land_end_141
+
+  block ^land_end_141:
+    %t506 = load typed i64 $land__49
+    branch %t506, ^land_rhs_142, ^land_short_143
+
+  block ^land_rhs_142:
+    %t507 = addr $flags
+    %t508 = binary mul i64 2, 4
+    %t509 = index inbounds i8 [projection=array_element] %t507, %t508
+    %t510 = index inbounds i8 [projection=field] %t509, 0
+    %t511 = load i32 %t510
+    %t512 = binary shr i32 %t511, 3
+    %t513 = binary and i32 %t512, 15
+    %t514 = copy u32 %t513
+    %t515 = copy i32 %t514
+    %t516 = cmp eq i32 %t515, 9
+    %t517 = convert trunc i32 i64 %t516
+    %t518 = cmp ne i32 %t517, 0
+    store typed i64 %t518, $land__50
+    jump ^land_end_144
+
+  block ^land_short_143:
+    store typed i64 0, $land__50
+    jump ^land_end_144
+
+  block ^land_end_144:
+    %t519 = load typed i64 $land__50
+    branch %t519, ^land_rhs_145, ^land_short_146
+
+  block ^land_rhs_145:
+    %t520 = addr $flags
+    %t521 = binary mul i64 3, 4
+    %t522 = index inbounds i8 [projection=array_element] %t520, %t521
+    %t523 = index inbounds i8 [projection=field] %t522, 0
+    %t524 = load i32 %t523
+    %t525 = binary and i32 %t524, 7
+    %t526 = copy u32 %t525
+    %t527 = copy i32 %t526
+    %t528 = cmp eq i32 %t527, 0
+    %t529 = convert trunc i32 i64 %t528
+    %t530 = cmp ne i32 %t529, 0
+    store typed i64 %t530, $land__51
+    jump ^land_end_147
+
+  block ^land_short_146:
+    store typed i64 0, $land__51
+    jump ^land_end_147
+
+  block ^land_end_147:
+    %t531 = load typed i64 $land__51
+    branch %t531, ^land_rhs_148, ^land_short_149
+
+  block ^land_rhs_148:
+    %t532 = addr $flags
+    %t533 = binary mul i64 3, 4
+    %t534 = index inbounds i8 [projection=array_element] %t532, %t533
+    %t535 = index inbounds i8 [projection=field] %t534, 0
+    %t536 = load i32 %t535
+    %t537 = binary shr i32 %t536, 3
+    %t538 = binary and i32 %t537, 15
+    %t539 = copy u32 %t538
+    %t540 = copy i32 %t539
+    %t541 = cmp eq i32 %t540, 9
+    %t542 = convert trunc i32 i64 %t541
+    %t543 = cmp ne i32 %t542, 0
+    store typed i64 %t543, $land__52
+    jump ^land_end_150
+
+  block ^land_short_149:
+    store typed i64 0, $land__52
+    jump ^land_end_150
+
+  block ^land_end_150:
+    %t544 = load typed i64 $land__52
+    branch %t544, ^land_rhs_151, ^land_short_152
+
+  block ^land_rhs_151:
+    %t545 = addr @mask
+    %t546 = binary mul i64 0, 4
+    %t547 = index inbounds i8 [projection=array_element] %t545, %t546
+    %t548 = index inbounds i8 [projection=field] %t547, 0
+    %t549 = load i32 %t548
+    %t550 = binary and i32 %t549, 7
+    %t551 = copy u32 %t550
+    %t552 = copy i32 %t551
+    %t553 = cmp eq i32 %t552, 5
+    %t554 = convert trunc i32 i64 %t553
+    %t555 = cmp ne i32 %t554, 0
+    store typed i64 %t555, $land__53
+    jump ^land_end_153
+
+  block ^land_short_152:
+    store typed i64 0, $land__53
+    jump ^land_end_153
+
+  block ^land_end_153:
+    %t556 = load typed i64 $land__53
+    branch %t556, ^land_rhs_154, ^land_short_155
+
+  block ^land_rhs_154:
+    %t557 = addr @mask
+    %t558 = binary mul i64 0, 4
+    %t559 = index inbounds i8 [projection=array_element] %t557, %t558
+    %t560 = index inbounds i8 [projection=field] %t559, 0
+    %t561 = load i32 %t560
+    %t562 = binary shr i32 %t561, 3
+    %t563 = binary and i32 %t562, 15
+    %t564 = copy u32 %t563
+    %t565 = copy i32 %t564
+    %t566 = cmp eq i32 %t565, 0
+    %t567 = convert trunc i32 i64 %t566
+    %t568 = cmp ne i32 %t567, 0
+    store typed i64 %t568, $land__54
+    jump ^land_end_156
+
+  block ^land_short_155:
+    store typed i64 0, $land__54
+    jump ^land_end_156
+
+  block ^land_end_156:
+    %t569 = load typed i64 $land__54
+    branch %t569, ^land_rhs_157, ^land_short_158
+
+  block ^land_rhs_157:
+    %t570 = addr @mask
+    %t571 = binary mul i64 1, 4
+    %t572 = index inbounds i8 [projection=array_element] %t570, %t571
+    %t573 = index inbounds i8 [projection=field] %t572, 0
+    %t574 = load i32 %t573
+    %t575 = binary and i32 %t574, 7
+    %t576 = copy u32 %t575
+    %t577 = copy i32 %t576
+    %t578 = cmp eq i32 %t577, 5
+    %t579 = convert trunc i32 i64 %t578
+    %t580 = cmp ne i32 %t579, 0
+    store typed i64 %t580, $land__55
+    jump ^land_end_159
+
+  block ^land_short_158:
+    store typed i64 0, $land__55
+    jump ^land_end_159
+
+  block ^land_end_159:
+    %t581 = load typed i64 $land__55
+    branch %t581, ^land_rhs_160, ^land_short_161
+
+  block ^land_rhs_160:
+    %t582 = addr @mask
+    %t583 = binary mul i64 1, 4
+    %t584 = index inbounds i8 [projection=array_element] %t582, %t583
+    %t585 = index inbounds i8 [projection=field] %t584, 0
+    %t586 = load i32 %t585
+    %t587 = binary shr i32 %t586, 3
+    %t588 = binary and i32 %t587, 15
+    %t589 = copy u32 %t588
+    %t590 = copy i32 %t589
+    %t591 = cmp eq i32 %t590, 9
+    %t592 = convert trunc i32 i64 %t591
+    %t593 = cmp ne i32 %t592, 0
+    store typed i64 %t593, $land__56
+    jump ^land_end_162
+
+  block ^land_short_161:
+    store typed i64 0, $land__56
+    jump ^land_end_162
+
+  block ^land_end_162:
+    %t594 = load typed i64 $land__56
+    branch %t594, ^land_rhs_163, ^land_short_164
+
+  block ^land_rhs_163:
+    %t595 = addr @mask
+    %t596 = binary mul i64 2, 4
+    %t597 = index inbounds i8 [projection=array_element] %t595, %t596
+    %t598 = index inbounds i8 [projection=field] %t597, 0
+    %t599 = load i32 %t598
+    %t600 = binary and i32 %t599, 7
+    %t601 = copy u32 %t600
+    %t602 = copy i32 %t601
+    %t603 = cmp eq i32 %t602, 2
+    %t604 = convert trunc i32 i64 %t603
+    %t605 = cmp ne i32 %t604, 0
+    store typed i64 %t605, $land__57
+    jump ^land_end_165
+
+  block ^land_short_164:
+    store typed i64 0, $land__57
+    jump ^land_end_165
+
+  block ^land_end_165:
+    %t606 = load typed i64 $land__57
+    branch %t606, ^land_rhs_166, ^land_short_167
+
+  block ^land_rhs_166:
+    %t607 = addr @mask
+    %t608 = binary mul i64 2, 4
+    %t609 = index inbounds i8 [projection=array_element] %t607, %t608
+    %t610 = index inbounds i8 [projection=field] %t609, 0
+    %t611 = load i32 %t610
+    %t612 = binary shr i32 %t611, 3
+    %t613 = binary and i32 %t612, 15
+    %t614 = copy u32 %t613
+    %t615 = copy i32 %t614
+    %t616 = cmp eq i32 %t615, 9
+    %t617 = convert trunc i32 i64 %t616
+    %t618 = cmp ne i32 %t617, 0
+    store typed i64 %t618, $land__58
+    jump ^land_end_168
+
+  block ^land_short_167:
+    store typed i64 0, $land__58
+    jump ^land_end_168
+
+  block ^land_end_168:
+    %t619 = load typed i64 $land__58
+    branch %t619, ^land_rhs_169, ^land_short_170
+
+  block ^land_rhs_169:
+    %t620 = addr @mask
+    %t621 = binary mul i64 3, 4
+    %t622 = index inbounds i8 [projection=array_element] %t620, %t621
+    %t623 = index inbounds i8 [projection=field] %t622, 0
+    %t624 = load i32 %t623
+    %t625 = binary and i32 %t624, 7
+    %t626 = copy u32 %t625
+    %t627 = copy i32 %t626
+    %t628 = cmp eq i32 %t627, 0
+    %t629 = convert trunc i32 i64 %t628
+    %t630 = cmp ne i32 %t629, 0
+    store typed i64 %t630, $land__59
+    jump ^land_end_171
+
+  block ^land_short_170:
+    store typed i64 0, $land__59
+    jump ^land_end_171
+
+  block ^land_end_171:
+    %t631 = load typed i64 $land__59
+    branch %t631, ^land_rhs_172, ^land_short_173
+
+  block ^land_rhs_172:
+    %t632 = addr @mask
+    %t633 = binary mul i64 3, 4
+    %t634 = index inbounds i8 [projection=array_element] %t632, %t633
+    %t635 = index inbounds i8 [projection=field] %t634, 0
+    %t636 = load i32 %t635
+    %t637 = binary shr i32 %t636, 3
+    %t638 = binary and i32 %t637, 15
+    %t639 = copy u32 %t638
+    %t640 = copy i32 %t639
+    %t641 = cmp eq i32 %t640, 9
+    %t642 = convert trunc i32 i64 %t641
+    %t643 = cmp ne i32 %t642, 0
+    store typed i64 %t643, $land__60
+    jump ^land_end_174
+
+  block ^land_short_173:
+    store typed i64 0, $land__60
+    jump ^land_end_174
+
+  block ^land_end_174:
+    %t644 = load typed i64 $land__60
+    branch %t644, ^land_rhs_175, ^land_short_176
+
+  block ^land_rhs_175:
+    %t645 = addr @literals
+    %t646 = binary mul i64 0, 8
+    %t647 = index inbounds i8 [projection=array_element] %t645, %t646
+    %t648 = index inbounds i8 [projection=field] %t647, 0
+    %t649 = load typed i32 %t648
+    %t650 = cmp eq i32 %t649, 1
+    %t651 = convert trunc i32 i64 %t650
+    %t652 = cmp ne i32 %t651, 0
+    store typed i64 %t652, $land__61
+    jump ^land_end_177
+
+  block ^land_short_176:
+    store typed i64 0, $land__61
+    jump ^land_end_177
+
+  block ^land_end_177:
+    %t653 = load typed i64 $land__61
+    branch %t653, ^land_rhs_178, ^land_short_179
+
+  block ^land_rhs_178:
+    %t654 = addr @literals
+    %t655 = binary mul i64 1, 8
+    %t656 = index inbounds i8 [projection=array_element] %t654, %t655
+    %t657 = index inbounds i8 [projection=field] %t656, 0
+    %t658 = load typed i32 %t657
+    %t659 = cmp eq i32 %t658, 3
+    %t660 = convert trunc i32 i64 %t659
+    %t661 = cmp ne i32 %t660, 0
+    store typed i64 %t661, $land__62
+    jump ^land_end_180
+
+  block ^land_short_179:
+    store typed i64 0, $land__62
+    jump ^land_end_180
+
+  block ^land_end_180:
+    %t662 = load typed i64 $land__62
+    branch %t662, ^land_rhs_181, ^land_short_182
+
+  block ^land_rhs_181:
+    %t663 = addr @literals
+    %t664 = binary mul i64 1, 8
+    %t665 = index inbounds i8 [projection=array_element] %t663, %t664
+    %t666 = index inbounds i8 [projection=field] %t665, 4
+    %t667 = load typed i32 %t666
+    %t668 = cmp eq i32 %t667, 2
+    %t669 = convert trunc i32 i64 %t668
+    %t670 = cmp ne i32 %t669, 0
+    store typed i64 %t670, $land__63
+    jump ^land_end_183
+
+  block ^land_short_182:
+    store typed i64 0, $land__63
+    jump ^land_end_183
+
+  block ^land_end_183:
+    %t671 = load typed i64 $land__63
+    branch %t671, ^land_rhs_184, ^land_short_185
+
+  block ^land_rhs_184:
+    %t672 = addr @literals
+    %t673 = binary mul i64 2, 8
+    %t674 = index inbounds i8 [projection=array_element] %t672, %t673
+    %t675 = index inbounds i8 [projection=field] %t674, 4
+    %t676 = load typed i32 %t675
+    %t677 = cmp eq i32 %t676, 0
+    %t678 = convert trunc i32 i64 %t677
+    %t679 = cmp ne i32 %t678, 0
+    store typed i64 %t679, $land__64
+    jump ^land_end_186
+
+  block ^land_short_185:
+    store typed i64 0, $land__64
+    jump ^land_end_186
+
+  block ^land_end_186:
+    %t680 = load typed i64 $land__64
+    branch %t680, ^land_rhs_187, ^land_short_188
+
+  block ^land_rhs_187:
+    %t681 = addr $inherited
+    %t682 = index inbounds i8 [projection=field] %t681, 0
+    %t683 = index inbounds i8 [projection=field] %t682, 0
+    %t684 = binary mul i64 0, 8
+    %t685 = index inbounds i8 [projection=array_element] %t683, %t684
+    %t686 = index inbounds i8 [projection=field] %t685, 0
+    %t687 = load typed i32 %t686
+    %t688 = cmp eq i32 %t687, 7
+    %t689 = convert trunc i32 i64 %t688
+    %t690 = cmp ne i32 %t689, 0
+    store typed i64 %t690, $land__65
+    jump ^land_end_189
+
+  block ^land_short_188:
+    store typed i64 0, $land__65
+    jump ^land_end_189
+
+  block ^land_end_189:
+    %t691 = load typed i64 $land__65
+    branch %t691, ^land_rhs_190, ^land_short_191
+
+  block ^land_rhs_190:
+    %t692 = addr $inherited
+    %t693 = index inbounds i8 [projection=field] %t692, 0
+    %t694 = index inbounds i8 [projection=field] %t693, 0
+    %t695 = binary mul i64 0, 8
+    %t696 = index inbounds i8 [projection=array_element] %t694, %t695
+    %t697 = index inbounds i8 [projection=field] %t696, 4
+    %t698 = load typed i32 %t697
+    %t699 = cmp eq i32 %t698, 2
+    %t700 = convert trunc i32 i64 %t699
+    %t701 = cmp ne i32 %t700, 0
+    store typed i64 %t701, $land__66
+    jump ^land_end_192
+
+  block ^land_short_191:
+    store typed i64 0, $land__66
+    jump ^land_end_192
+
+  block ^land_end_192:
+    %t702 = load typed i64 $land__66
+    branch %t702, ^land_rhs_193, ^land_short_194
+
+  block ^land_rhs_193:
+    %t703 = addr $inherited
+    %t704 = index inbounds i8 [projection=field] %t703, 0
+    %t705 = index inbounds i8 [projection=field] %t704, 0
+    %t706 = binary mul i64 1, 8
+    %t707 = index inbounds i8 [projection=array_element] %t705, %t706
+    %t708 = index inbounds i8 [projection=field] %t707, 0
+    %t709 = load typed i32 %t708
+    %t710 = cmp eq i32 %t709, 9
+    %t711 = convert trunc i32 i64 %t710
+    %t712 = cmp ne i32 %t711, 0
+    store typed i64 %t712, $land__67
+    jump ^land_end_195
+
+  block ^land_short_194:
+    store typed i64 0, $land__67
+    jump ^land_end_195
+
+  block ^land_end_195:
+    %t713 = load typed i64 $land__67
+    branch %t713, ^land_rhs_196, ^land_short_197
+
+  block ^land_rhs_196:
+    %t714 = addr $inherited
+    %t715 = index inbounds i8 [projection=field] %t714, 0
+    %t716 = index inbounds i8 [projection=field] %t715, 0
+    %t717 = binary mul i64 1, 8
+    %t718 = index inbounds i8 [projection=array_element] %t716, %t717
+    %t719 = index inbounds i8 [projection=field] %t718, 4
+    %t720 = load typed i32 %t719
+    %t721 = cmp eq i32 %t720, 0
+    %t722 = convert trunc i32 i64 %t721
+    %t723 = cmp ne i32 %t722, 0
+    store typed i64 %t723, $land__68
+    jump ^land_end_198
+
+  block ^land_short_197:
+    store typed i64 0, $land__68
+    jump ^land_end_198
+
+  block ^land_end_198:
+    %t724 = load typed i64 $land__68
+    branch %t724, ^land_rhs_199, ^land_short_200
+
+  block ^land_rhs_199:
+    %t725 = addr $inherited
+    %t726 = index inbounds i8 [projection=field] %t725, 0
+    %t727 = index inbounds i8 [projection=field] %t726, 0
+    %t728 = binary mul i64 2, 8
+    %t729 = index inbounds i8 [projection=array_element] %t727, %t728
+    %t730 = index inbounds i8 [projection=field] %t729, 4
+    %t731 = load typed i32 %t730
+    %t732 = cmp eq i32 %t731, 6
+    %t733 = convert trunc i32 i64 %t732
+    %t734 = cmp ne i32 %t733, 0
+    store typed i64 %t734, $land__69
+    jump ^land_end_201
+
+  block ^land_short_200:
+    store typed i64 0, $land__69
+    jump ^land_end_201
+
+  block ^land_end_201:
+    %t735 = load typed i64 $land__69
+    branch %t735, ^land_rhs_202, ^land_short_203
+
+  block ^land_rhs_202:
+    %t736 = addr @calls
+    %t737 = index inbounds i32 [projection=array_element] %t736, 0
+    %t738 = load typed i32 %t737
+    %t739 = cmp eq i32 %t738, 1
+    %t740 = convert trunc i32 i64 %t739
+    %t741 = cmp ne i32 %t740, 0
+    store typed i64 %t741, $land__70
+    jump ^land_end_204
+
+  block ^land_short_203:
+    store typed i64 0, $land__70
+    jump ^land_end_204
+
+  block ^land_end_204:
+    %t742 = load typed i64 $land__70
+    branch %t742, ^land_rhs_205, ^land_short_206
+
+  block ^land_rhs_205:
+    %t743 = addr @calls
+    %t744 = index inbounds i32 [projection=array_element] %t743, 1
+    %t745 = load typed i32 %t744
+    %t746 = cmp eq i32 %t745, 1
+    %t747 = convert trunc i32 i64 %t746
+    %t748 = cmp ne i32 %t747, 0
+    store typed i64 %t748, $land__71
+    jump ^land_end_207
+
+  block ^land_short_206:
+    store typed i64 0, $land__71
+    jump ^land_end_207
+
+  block ^land_end_207:
+    %t749 = load typed i64 $land__71
+    branch %t749, ^land_rhs_208, ^land_short_209
+
+  block ^land_rhs_208:
+    %t750 = addr @calls
+    %t751 = index inbounds i32 [projection=array_element] %t750, 2
+    %t752 = load typed i32 %t751
+    %t753 = cmp eq i32 %t752, 1
+    %t754 = convert trunc i32 i64 %t753
+    %t755 = cmp ne i32 %t754, 0
+    store typed i64 %t755, $land__72
+    jump ^land_end_210
+
+  block ^land_short_209:
+    store typed i64 0, $land__72
+    jump ^land_end_210
+
+  block ^land_end_210:
+    %t756 = load typed i64 $land__72
+    branch %t756, ^land_rhs_211, ^land_short_212
+
+  block ^land_rhs_211:
+    %t757 = addr @calls
+    %t758 = index inbounds i32 [projection=array_element] %t757, 3
+    %t759 = load typed i32 %t758
+    %t760 = cmp eq i32 %t759, 1
+    %t761 = convert trunc i32 i64 %t760
+    %t762 = cmp ne i32 %t761, 0
+    store typed i64 %t762, $land__73
+    jump ^land_end_213
+
+  block ^land_short_212:
+    store typed i64 0, $land__73
+    jump ^land_end_213
+
+  block ^land_end_213:
+    %t763 = load typed i64 $land__73
+    branch %t763, ^land_rhs_214, ^land_short_215
+
+  block ^land_rhs_214:
+    %t764 = addr @calls
+    %t765 = index inbounds i32 [projection=array_element] %t764, 4
+    %t766 = load typed i32 %t765
+    %t767 = cmp eq i32 %t766, 1
+    %t768 = convert trunc i32 i64 %t767
+    %t769 = cmp ne i32 %t768, 0
+    store typed i64 %t769, $land__74
+    jump ^land_end_216
+
+  block ^land_short_215:
+    store typed i64 0, $land__74
+    jump ^land_end_216
+
+  block ^land_end_216:
+    %t770 = load typed i64 $land__74
+    %t771 = convert trunc i32 i64 %t770
+    %t772 = cmp eq i32 %t771, 0
+    %t773 = convert trunc i32 i64 %t772
+    return i32 %t773
+}

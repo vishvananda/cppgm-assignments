@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-compound-register-file-bad.t:1:29: invalid register storage class for a compound literal

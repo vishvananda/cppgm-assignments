@@ -1,0 +1,95 @@
+global @__constexpr_template__1 [storage=readonly, binding=internal] = {
+  i32 3
+  i32 0
+  i32 0
+  i32 0
+  i32 0
+  i32 7
+}
+
+function @check(%length : i32, %data : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $length : i32
+  slot $data : ptr
+  slot $tmpobj__1 : i64
+  slot $tmpobj__2 : i64
+  slot $view : ptr
+  slot $tmpobj__3 : i64
+  slot $other : ptr
+  slot $lor__4 : i64
+
+  block ^entry:
+    store typed i32 %length, $length
+    store typed ptr %data, $data
+    %t1 = load typed i32 $length
+    %t2 = convert sext i64 i32 %t1
+    %t3 = binary mul i64 %t2, 4
+    store typed i64 %t3, $tmpobj__1
+    %t4 = load typed i32 $length
+    %t5 = convert sext i64 i32 %t4
+    %t6 = binary mul i64 %t5, 4
+    store typed i64 %t6, $tmpobj__2
+    %t7 = load typed ptr $data
+    store typed ptr %t7, $view
+    %t8 = load typed i32 $length
+    %t9 = convert sext i64 i32 %t8
+    %t10 = binary mul i64 %t9, 4
+    store typed i64 %t10, $tmpobj__3
+    %t11 = load typed ptr $view
+    store typed ptr %t11, $other
+    %t12 = load typed ptr $view
+    %t13 = load typed i64 $tmpobj__2
+    %t14 = load typed i32 $length
+    %t15 = copy u32 %t14
+    %t16 = const i64 4
+    %t17 = convert zext i64 u32 %t15
+    %t18 = binary mul i64 %t17, %t16
+    %t19 = cmp ne i64 %t13, %t18
+    %t20 = convert trunc i32 i64 %t19
+    branch %t20, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t21 = load typed ptr $view
+    %t22 = load typed i64 $tmpobj__2
+    %t23 = copy i64 %t22
+    %t24 = binary mul i64 1, %t23
+    %t25 = index inbounds i8 [projection=array_element] %t21, %t24
+    %t26 = load typed i32 $length
+    %t27 = binary sub nowrap i32 %t26, 1
+    %t28 = index inbounds i32 [projection=array_element] %t25, %t27
+    %t29 = load typed i32 %t28
+    %t30 = load typed ptr $other
+    %t31 = load typed i64 $tmpobj__3
+    %t32 = copy i64 %t31
+    %t33 = binary mul i64 0, %t32
+    %t34 = index inbounds i8 [projection=array_element] %t30, %t33
+    %t35 = index inbounds i32 [projection=array_element] %t34, 0
+    %t36 = load typed i32 %t35
+    %t37 = binary add nowrap i32 %t36, 4
+    %t38 = cmp ne i32 %t29, %t37
+    %t39 = convert trunc i32 i64 %t38
+    %t40 = cmp ne i32 %t39, 0
+    store typed i64 %t40, $lor__4
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__4
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t41 = load typed i64 $lor__4
+    %t42 = convert trunc i32 i64 %t41
+    return i32 %t42
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $values : obj<24x4>
+  slot $length : i32
+
+  block ^entry:
+    %t1 = addr $values
+    copyobj 24x4 @__constexpr_template__1, %t1
+    store volatile i32 3, $length
+    %t2 = load volatile i32 $length
+    %t3 = addr $values
+    %t4 = call i32 @check(%t2, %t3)
+    return i32 %t4
+}

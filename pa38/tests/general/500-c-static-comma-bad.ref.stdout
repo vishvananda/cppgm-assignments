@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-static-comma-bad.t:1:14: a C static initializer requires a constant expression

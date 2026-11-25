@@ -1,0 +1,43 @@
+global @__strlit__1 [storage=readonly, binding=internal] = {
+  i8 109
+  i8 97
+  i8 105
+  i8 110
+  i8 0
+}
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $name : ptr
+  slot $lor__1 : i64
+
+  block ^entry:
+    %t1 = addr @__strlit__1
+    store typed ptr %t1, $name
+    %t2 = load typed ptr $name
+    %t3 = index inbounds i8 [projection=array_element] %t2, 0
+    %t4 = load i8 %t3
+    %t5 = convert sext i32 i8 %t4
+    %t6 = cmp ne i32 %t5, 109
+    %t7 = convert trunc i32 i64 %t6
+    branch %t7, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t8 = load typed ptr $name
+    %t9 = index inbounds i8 [projection=array_element] %t8, 4
+    %t10 = load i8 %t9
+    %t11 = convert sext i32 i8 %t10
+    %t12 = cmp ne i32 %t11, 0
+    %t13 = convert trunc i32 i64 %t12
+    %t14 = cmp ne i32 %t13, 0
+    store typed i64 %t14, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t15 = load typed i64 $lor__1
+    %t16 = convert trunc i32 i64 %t15
+    return i32 %t16
+}

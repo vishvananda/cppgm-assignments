@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-tentative-record-bad.t:1:15: a tentative definition still has incomplete type at the end of the translation unit

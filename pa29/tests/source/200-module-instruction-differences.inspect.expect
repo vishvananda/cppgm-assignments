@@ -1,0 +1,3 @@
+elf_section 1 .text.instruction_differences 6 0 90ea0e00000010008d81000000009048b80000000000000000b819000000
+relocation_class_canonical 1 data_pcrel external_object 1
+relocation_class_canonical 1 data_any external_object 2

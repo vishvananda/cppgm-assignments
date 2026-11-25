@@ -1,0 +1,7 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = binary add nowrap i32 17, 25
+    %t2 = cmp ne i32 %t1, 42
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/200-c-function-member-bad.t:2:26: a C record member cannot have function type

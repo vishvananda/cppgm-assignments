@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-enum-redefinition-duplicate-bad.t:2:21: duplicate member in enumeration redefinition

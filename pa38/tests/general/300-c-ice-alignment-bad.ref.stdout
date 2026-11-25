@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-ice-alignment-bad.t:1:11: an evaluated comma operator in a C constant expression

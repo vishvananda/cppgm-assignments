@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c17-ellipsis-only-bad.t:1:25: a parameter list with only an ellipsis requires C23

@@ -8,7 +8,8 @@
 #define ENTRY assembly_add
 .section .note.GNU-stack,"",%progbits
 #endif
-#define ADD(delta) leaq delta(%rdi), %rax; retq
+#define INCREMENT 7
+#define ADD() movq %rdi, %rax; addq $INCREMENT, %rax; retq
 
 .text
 .globl ENTRY
@@ -16,7 +17,7 @@
 .type ENTRY,@function
 #endif
 ENTRY:
-    ADD(7)
+    ADD()
 #if !defined(__APPLE__)
 .size ENTRY, .-ENTRY
 #endif

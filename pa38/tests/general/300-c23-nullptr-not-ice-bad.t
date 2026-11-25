@@ -1,0 +1,1 @@
+enum Invalid { Enumerator = nullptr };

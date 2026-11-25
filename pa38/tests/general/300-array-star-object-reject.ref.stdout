@@ -1,0 +1,1 @@
+ERROR: tests/general/300-array-star-object-reject.t:1:12: [*] requires a C prototype declarator without a static minimum bound

@@ -1,0 +1,36 @@
+struct Record {
+    char name[16];
+    unsigned marker;
+};
+
+struct Trailing {
+    unsigned marker;
+    char name[16];
+};
+
+static volatile unsigned effects;
+
+static struct Record *observe_address(struct Record *p)
+{
+    ++effects;
+    return p;
+}
+
+__attribute__((noinline)) int known_sizes(struct Record *p)
+{
+    (void)__builtin_object_size(observe_address(p)->name, 1);
+    return __builtin_object_size(p->name, 1) == 16 &&
+        __builtin_object_size(p->name, 3) == 16;
+}
+
+__attribute__((noinline)) int unknown_size(struct Trailing *p)
+{
+    return __builtin_object_size(p->name, 1) == (unsigned long)-1;
+}
+
+int main(void)
+{
+    struct Record value;
+    struct Trailing trailing;
+    return !known_sizes(&value) || !unknown_size(&trailing) || effects != 0;
+}

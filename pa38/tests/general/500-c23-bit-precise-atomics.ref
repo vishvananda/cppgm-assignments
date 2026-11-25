@@ -1,0 +1,151 @@
+global @value : u16 [linkage=c, binding=internal] = 511
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $atomic_expected__1 : u16
+  slot $atomic_expected__2 : u16
+  slot $atomic_expected__3 : u16
+  slot $atomic_expected__4 : u16
+  slot $atomic_expected__5 : u16
+
+  block ^entry:
+    %t1 = atomic_load u16 @value, 0
+    store typed u16 %t1, $atomic_expected__1
+    jump ^atomic_retry_4
+
+  block ^atomic_retry_4:
+    %t2 = load typed u16 $atomic_expected__1
+    %t3 = binary and u16 %t2, 511
+    %t4 = binary add u16 %t3, 1
+    %t5 = binary and u16 %t4, 511
+    %t6 = addr $atomic_expected__1
+    %t7 = atomic_compare_exchange u16 @value, %t6, %t5, 5, 5
+    branch %t7, ^atomic_done_5, ^atomic_retry_4
+
+  block ^atomic_done_5:
+    %t8 = convert zext i32 u16 %t3
+    %t9 = cmp ne i32 %t8, 511
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^if_then_1, ^lor_rhs_3
+
+  block ^lor_rhs_3:
+    %t11 = atomic_load u16 @value, 5
+    %t12 = binary and u16 %t11, 511
+    %t13 = convert zext i32 u16 %t12
+    %t14 = cmp ne i32 %t13, 0
+    %t15 = convert trunc i32 i64 %t14
+    branch %t15, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_6
+
+  block ^if_end_6:
+    %t16 = atomic_load u16 @value, 0
+    store typed u16 %t16, $atomic_expected__2
+    jump ^atomic_retry_10
+
+  block ^atomic_retry_10:
+    %t17 = load typed u16 $atomic_expected__2
+    %t18 = binary and u16 %t17, 511
+    %t19 = convert zext i32 u16 %t18
+    %t20 = binary add nowrap i32 %t19, 509
+    %t21 = convert trunc u16 i32 %t20
+    %t22 = binary and u16 %t21, 511
+    %t23 = addr $atomic_expected__2
+    %t24 = atomic_compare_exchange u16 @value, %t23, %t22, 5, 5
+    branch %t24, ^atomic_done_11, ^atomic_retry_10
+
+  block ^atomic_done_11:
+    %t25 = convert zext i32 u16 %t22
+    %t26 = cmp ne i32 %t25, 509
+    %t27 = convert trunc i32 i64 %t26
+    branch %t27, ^if_then_7, ^lor_rhs_9
+
+  block ^lor_rhs_9:
+    %t28 = atomic_load u16 @value, 0
+    store typed u16 %t28, $atomic_expected__3
+    jump ^atomic_retry_12
+
+  block ^atomic_retry_12:
+    %t29 = load typed u16 $atomic_expected__3
+    %t30 = binary and u16 %t29, 511
+    %t31 = convert zext i32 u16 %t30
+    %t32 = binary add nowrap i32 %t31, 4
+    %t33 = convert trunc u16 i32 %t32
+    %t34 = binary and u16 %t33, 511
+    %t35 = addr $atomic_expected__3
+    %t36 = atomic_compare_exchange u16 @value, %t35, %t34, 5, 5
+    branch %t36, ^atomic_done_13, ^atomic_retry_12
+
+  block ^atomic_done_13:
+    %t37 = convert zext i32 u16 %t34
+    %t38 = cmp ne i32 %t37, 1
+    %t39 = convert trunc i32 i64 %t38
+    branch %t39, ^if_then_7, ^if_else_8
+
+  block ^if_then_7:
+    return i32 2
+
+  block ^if_else_8:
+    jump ^if_end_14
+
+  block ^if_end_14:
+    %t40 = addr @value
+    %t41 = atomic_load u16 %t40, 0
+    store typed u16 %t41, $atomic_expected__4
+    jump ^atomic_retry_18
+
+  block ^atomic_retry_18:
+    %t42 = load typed u16 $atomic_expected__4
+    %t43 = binary and u16 %t42, 511
+    %t44 = binary add u16 %t43, 511
+    %t45 = binary and u16 %t44, 511
+    %t46 = addr $atomic_expected__4
+    %t47 = atomic_compare_exchange u16 %t40, %t46, %t45, 5, 5
+    branch %t47, ^atomic_done_19, ^atomic_retry_18
+
+  block ^atomic_done_19:
+    %t48 = binary and u16 %t43, 511
+    %t49 = convert zext i32 u16 %t48
+    %t50 = cmp ne i32 %t49, 1
+    %t51 = convert trunc i32 i64 %t50
+    branch %t51, ^if_then_15, ^lor_rhs_17
+
+  block ^lor_rhs_17:
+    %t52 = atomic_load u16 @value, 5
+    %t53 = binary and u16 %t52, 511
+    %t54 = convert zext i32 u16 %t53
+    %t55 = cmp ne i32 %t54, 0
+    %t56 = convert trunc i32 i64 %t55
+    branch %t56, ^if_then_15, ^if_else_16
+
+  block ^if_then_15:
+    return i32 3
+
+  block ^if_else_16:
+    jump ^if_end_20
+
+  block ^if_end_20:
+    %t57 = addr @value
+    %t58 = atomic_load u16 %t57, 0
+    store typed u16 %t58, $atomic_expected__5
+    jump ^atomic_retry_21
+
+  block ^atomic_retry_21:
+    %t59 = load typed u16 $atomic_expected__5
+    %t60 = binary and u16 %t59, 511
+    %t61 = binary add u16 %t60, 511
+    %t62 = binary and u16 %t61, 511
+    %t63 = addr $atomic_expected__5
+    %t64 = atomic_compare_exchange u16 %t57, %t63, %t62, 5, 5
+    branch %t64, ^atomic_done_22, ^atomic_retry_21
+
+  block ^atomic_done_22:
+    %t65 = binary and u16 %t62, 511
+    %t66 = convert zext i32 u16 %t65
+    %t67 = cmp ne i32 %t66, 511
+    %t68 = convert trunc i32 i64 %t67
+    return i32 %t68
+}

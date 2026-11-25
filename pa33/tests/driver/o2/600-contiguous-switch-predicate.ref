@@ -3466,8 +3466,8 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     jump ^for_cond_242
 
   block ^for_cond_254:
-    %t635 = phi u32 [^if_end_265: %t667, ^for_cond_242: %t600]
-    %t636 = phi u32 [^if_end_265: %t668, ^for_cond_242: 0]
+    %t635 = phi u32 [^if_end_265: %t668, ^for_cond_242: %t600]
+    %t636 = phi u32 [^if_end_265: %t669, ^for_cond_242: 0]
     %t637 = cmp ult u32 %t636, 137
     branch %t637, ^for_body_255, ^for_end_266
 
@@ -3489,1516 +3489,1533 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
 
   block ^cond_end_258:
     %t645 = phi i64 [^cond_then_256: %t641, ^cond_else_257: %t644]
-    %t646 = binary and i64 %t645, -3
-    %t647 = cmp eq i64 %t645, 4
-    %t648 = cmp eq i64 %t646, 1
-    %t649 = select i64 %t648, %t646, %t647
-    %t650 = binary umod u32 %t636, 4
-    %t651 = cmp eq u32 %t650, 0
-    branch %t651, ^cond_then_259, ^cond_else_260
+    %t646 = cmp eq i64 %t645, 3
+    %t647 = cmp eq i64 %t645, 1
+    %t648 = select i64 %t647, %t645, %t646
+    %t649 = cmp eq i64 %t645, 4
+    %t650 = select i64 %t648, 1, %t649
+    %t651 = binary umod u32 %t636, 4
+    %t652 = cmp eq u32 %t651, 0
+    branch %t652, ^cond_then_259, ^cond_else_260
 
   block ^cond_then_259:
-    %t652 = select i32 %t649, 2147483646, 2147483647
+    %t653 = select i32 %t650, 2147483646, 2147483647
     jump ^cond_end_263
 
   block ^cond_else_260:
-    %t653 = cmp eq u32 %t650, 1
-    branch %t653, ^cond_end_262, ^cond_else_261
+    %t654 = cmp eq u32 %t651, 1
+    branch %t654, ^cond_end_262, ^cond_else_261
 
   block ^cond_else_261:
-    %t654 = binary umod u32 %t636, 79
-    %t655 = copy i32 %t654
-    %t656 = binary sub nowrap i32 %t655, 37
+    %t655 = binary umod u32 %t636, 79
+    %t656 = copy i32 %t655
+    %t657 = binary sub nowrap i32 %t656, 37
     jump ^cond_end_262
 
   block ^cond_end_262:
-    %t657 = phi i32 [^cond_else_261: %t656, ^cond_else_260: -2147483648]
+    %t658 = phi i32 [^cond_else_261: %t657, ^cond_else_260: -2147483648]
     jump ^cond_end_263
 
   block ^cond_end_263:
-    %t658 = phi i32 [^cond_then_259: %t652, ^cond_end_262: %t657]
-    %t659 = convert trunc u8 i64 %t649
-    %t660 = convert zext i32 u8 %t659
-    %t661 = binary add nowrap i32 %t658, %t660
-    %t662 = convert trunc u16 i64 %t645
-    %t663 = call i32 @count_3_4(%t662, %t658)
-    %t664 = cmp ne i32 %t661, %t663
-    branch %t664, ^if_then_264, ^if_end_265
+    %t659 = phi i32 [^cond_then_259: %t653, ^cond_end_262: %t658]
+    %t660 = convert trunc u8 i64 %t650
+    %t661 = convert zext i32 u8 %t660
+    %t662 = binary add nowrap i32 %t659, %t661
+    %t663 = convert trunc u16 i64 %t645
+    %t664 = call i32 @count_3_4(%t663, %t659)
+    %t665 = cmp ne i32 %t662, %t664
+    branch %t665, ^if_then_264, ^if_end_265
 
   block ^if_then_264:
-    %t665 = addr @__strlit__20
-    %t666 = call i32 @printf(%t665, %t645, %t658, %t663, %t661)
+    %t666 = addr @__strlit__20
+    %t667 = call i32 @printf(%t666, %t645, %t659, %t664, %t662)
     return i32 1
 
   block ^if_end_265:
-    %t667 = binary add u32 %t635, 1
-    %t668 = binary add u32 %t636, 1
+    %t668 = binary add u32 %t635, 1
+    %t669 = binary add u32 %t636, 1
     jump ^for_cond_254
 
   block ^for_end_266:
-    %t669 = addr @__constexpr_template__19
+    %t670 = addr @__constexpr_template__19
     jump ^for_cond_267
 
   block ^for_cond_267:
-    %t670 = phi u32 [^for_end_266: %t635, ^if_end_278: %t700]
-    %t671 = phi u32 [^for_end_266: 0, ^if_end_278: %t701]
-    %t672 = cmp ult u32 %t671, 136
-    branch %t672, ^for_body_268, ^for_end_279
+    %t671 = phi u32 [^for_end_266: %t635, ^if_end_278: %t704]
+    %t672 = phi u32 [^for_end_266: 0, ^if_end_278: %t705]
+    %t673 = cmp ult u32 %t672, 136
+    branch %t673, ^for_body_268, ^for_end_279
 
   block ^for_body_268:
-    %t673 = cmp ult u32 %t671, 128
-    branch %t673, ^cond_then_269, ^cond_else_270
+    %t674 = cmp ult u32 %t672, 128
+    branch %t674, ^cond_then_269, ^cond_else_270
 
   block ^cond_then_269:
-    %t674 = convert zext i64 u32 %t671
-    %t675 = binary mul i64 %t674, -7046029254386353131
-    %t676 = binary and i64 %t675, 4294967295
+    %t675 = convert zext i64 u32 %t672
+    %t676 = binary mul i64 %t675, -7046029254386353131
+    %t677 = binary and i64 %t676, 4294967295
     jump ^cond_end_271
 
   block ^cond_else_270:
-    %t677 = binary sub u32 %t671, 128
-    %t678 = index inbounds i64 [projection=array_element] %t669, %t677
-    %t679 = load typed i64 %t678
+    %t678 = binary sub u32 %t672, 128
+    %t679 = index inbounds i64 [projection=array_element] %t670, %t678
+    %t680 = load typed i64 %t679
     jump ^cond_end_271
 
   block ^cond_end_271:
-    %t680 = phi i64 [^cond_then_269: %t676, ^cond_else_270: %t679]
-    %t681 = binary sub i64 %t680, 1
-    %t682 = cmp ule i64 %t681, 2
-    %t683 = binary umod u32 %t671, 4
-    %t684 = cmp eq u32 %t683, 0
-    branch %t684, ^cond_then_272, ^cond_else_273
+    %t681 = phi i64 [^cond_then_269: %t677, ^cond_else_270: %t680]
+    %t682 = cmp eq i64 %t681, 2
+    %t683 = cmp eq i64 %t681, 1
+    %t684 = select i64 %t683, %t681, %t682
+    %t685 = cmp eq i64 %t681, 3
+    %t686 = select i64 %t684, 1, %t685
+    %t687 = binary umod u32 %t672, 4
+    %t688 = cmp eq u32 %t687, 0
+    branch %t688, ^cond_then_272, ^cond_else_273
 
   block ^cond_then_272:
-    %t685 = select i32 %t682, 2147483646, 2147483647
+    %t689 = select i32 %t686, 2147483646, 2147483647
     jump ^cond_end_276
 
   block ^cond_else_273:
-    %t686 = cmp eq u32 %t683, 1
-    branch %t686, ^cond_end_275, ^cond_else_274
+    %t690 = cmp eq u32 %t687, 1
+    branch %t690, ^cond_end_275, ^cond_else_274
 
   block ^cond_else_274:
-    %t687 = binary umod u32 %t671, 79
-    %t688 = copy i32 %t687
-    %t689 = binary sub nowrap i32 %t688, 37
+    %t691 = binary umod u32 %t672, 79
+    %t692 = copy i32 %t691
+    %t693 = binary sub nowrap i32 %t692, 37
     jump ^cond_end_275
 
   block ^cond_end_275:
-    %t690 = phi i32 [^cond_else_274: %t689, ^cond_else_273: -2147483648]
+    %t694 = phi i32 [^cond_else_274: %t693, ^cond_else_273: -2147483648]
     jump ^cond_end_276
 
   block ^cond_end_276:
-    %t691 = phi i32 [^cond_then_272: %t685, ^cond_end_275: %t690]
-    %t692 = convert trunc u8 i64 %t682
-    %t693 = convert zext i32 u8 %t692
-    %t694 = binary add nowrap i32 %t691, %t693
-    %t695 = convert trunc i32 i64 %t680
-    %t696 = call i32 @count_4_0(%t695, %t691)
-    %t697 = cmp ne i32 %t694, %t696
-    branch %t697, ^if_then_277, ^if_end_278
+    %t695 = phi i32 [^cond_then_272: %t689, ^cond_end_275: %t694]
+    %t696 = convert trunc u8 i64 %t686
+    %t697 = convert zext i32 u8 %t696
+    %t698 = binary add nowrap i32 %t695, %t697
+    %t699 = convert trunc i32 i64 %t681
+    %t700 = call i32 @count_4_0(%t699, %t695)
+    %t701 = cmp ne i32 %t698, %t700
+    branch %t701, ^if_then_277, ^if_end_278
 
   block ^if_then_277:
-    %t698 = addr @__strlit__21
-    %t699 = call i32 @printf(%t698, %t680, %t691, %t696, %t694)
+    %t702 = addr @__strlit__21
+    %t703 = call i32 @printf(%t702, %t681, %t695, %t700, %t698)
     return i32 1
 
   block ^if_end_278:
-    %t700 = binary add u32 %t670, 1
-    %t701 = binary add u32 %t671, 1
+    %t704 = binary add u32 %t671, 1
+    %t705 = binary add u32 %t672, 1
     jump ^for_cond_267
 
   block ^for_end_279:
-    %t702 = addr @__constexpr_template__21
+    %t706 = addr @__constexpr_template__21
     jump ^for_cond_280
 
   block ^for_cond_280:
-    %t703 = phi u32 [^for_end_279: %t670, ^if_end_291: %t733]
-    %t704 = phi u32 [^for_end_279: 0, ^if_end_291: %t734]
-    %t705 = cmp ult u32 %t704, 135
-    branch %t705, ^for_body_281, ^for_end_292
+    %t707 = phi u32 [^for_end_279: %t671, ^if_end_291: %t737]
+    %t708 = phi u32 [^for_end_279: 0, ^if_end_291: %t738]
+    %t709 = cmp ult u32 %t708, 135
+    branch %t709, ^for_body_281, ^for_end_292
 
   block ^for_body_281:
-    %t706 = cmp ult u32 %t704, 128
-    branch %t706, ^cond_then_282, ^cond_else_283
+    %t710 = cmp ult u32 %t708, 128
+    branch %t710, ^cond_then_282, ^cond_else_283
 
   block ^cond_then_282:
-    %t707 = convert zext i64 u32 %t704
-    %t708 = binary mul i64 %t707, -7046029254386353131
-    %t709 = binary and i64 %t708, 4294967295
+    %t711 = convert zext i64 u32 %t708
+    %t712 = binary mul i64 %t711, -7046029254386353131
+    %t713 = binary and i64 %t712, 4294967295
     jump ^cond_end_284
 
   block ^cond_else_283:
-    %t710 = binary sub u32 %t704, 128
-    %t711 = index inbounds i64 [projection=array_element] %t702, %t710
-    %t712 = load typed i64 %t711
+    %t714 = binary sub u32 %t708, 128
+    %t715 = index inbounds i64 [projection=array_element] %t706, %t714
+    %t716 = load typed i64 %t715
     jump ^cond_end_284
 
   block ^cond_end_284:
-    %t713 = phi i64 [^cond_then_282: %t709, ^cond_else_283: %t712]
-    %t714 = binary sub i64 %t713, 4294967293
-    %t715 = cmp ule i64 %t714, 2
-    %t716 = binary umod u32 %t704, 4
-    %t717 = cmp eq u32 %t716, 0
-    branch %t717, ^cond_then_285, ^cond_else_286
+    %t717 = phi i64 [^cond_then_282: %t713, ^cond_else_283: %t716]
+    %t718 = binary sub i64 %t717, 4294967293
+    %t719 = cmp ule i64 %t718, 2
+    %t720 = binary umod u32 %t708, 4
+    %t721 = cmp eq u32 %t720, 0
+    branch %t721, ^cond_then_285, ^cond_else_286
 
   block ^cond_then_285:
-    %t718 = select i32 %t715, 2147483646, 2147483647
+    %t722 = select i32 %t719, 2147483646, 2147483647
     jump ^cond_end_289
 
   block ^cond_else_286:
-    %t719 = cmp eq u32 %t716, 1
-    branch %t719, ^cond_end_288, ^cond_else_287
+    %t723 = cmp eq u32 %t720, 1
+    branch %t723, ^cond_end_288, ^cond_else_287
 
   block ^cond_else_287:
-    %t720 = binary umod u32 %t704, 79
-    %t721 = copy i32 %t720
-    %t722 = binary sub nowrap i32 %t721, 37
+    %t724 = binary umod u32 %t708, 79
+    %t725 = copy i32 %t724
+    %t726 = binary sub nowrap i32 %t725, 37
     jump ^cond_end_288
 
   block ^cond_end_288:
-    %t723 = phi i32 [^cond_else_287: %t722, ^cond_else_286: -2147483648]
+    %t727 = phi i32 [^cond_else_287: %t726, ^cond_else_286: -2147483648]
     jump ^cond_end_289
 
   block ^cond_end_289:
-    %t724 = phi i32 [^cond_then_285: %t718, ^cond_end_288: %t723]
-    %t725 = convert trunc u8 i64 %t715
-    %t726 = convert zext i32 u8 %t725
-    %t727 = binary add nowrap i32 %t724, %t726
-    %t728 = convert trunc i32 i64 %t713
-    %t729 = call i32 @count_4_1(%t728, %t724)
-    %t730 = cmp ne i32 %t727, %t729
-    branch %t730, ^if_then_290, ^if_end_291
+    %t728 = phi i32 [^cond_then_285: %t722, ^cond_end_288: %t727]
+    %t729 = convert trunc u8 i64 %t719
+    %t730 = convert zext i32 u8 %t729
+    %t731 = binary add nowrap i32 %t728, %t730
+    %t732 = convert trunc i32 i64 %t717
+    %t733 = call i32 @count_4_1(%t732, %t728)
+    %t734 = cmp ne i32 %t731, %t733
+    branch %t734, ^if_then_290, ^if_end_291
 
   block ^if_then_290:
-    %t731 = addr @__strlit__22
-    %t732 = call i32 @printf(%t731, %t713, %t724, %t729, %t727)
+    %t735 = addr @__strlit__22
+    %t736 = call i32 @printf(%t735, %t717, %t728, %t733, %t731)
     return i32 1
 
   block ^if_end_291:
-    %t733 = binary add u32 %t703, 1
-    %t734 = binary add u32 %t704, 1
+    %t737 = binary add u32 %t707, 1
+    %t738 = binary add u32 %t708, 1
     jump ^for_cond_280
 
   block ^for_end_292:
-    %t735 = addr @__constexpr_template__23
+    %t739 = addr @__constexpr_template__23
     jump ^for_cond_293
 
   block ^for_cond_293:
-    %t736 = phi u32 [^for_end_292: %t703, ^if_end_304: %t766]
-    %t737 = phi u32 [^for_end_292: 0, ^if_end_304: %t767]
-    %t738 = cmp ult u32 %t737, 135
-    branch %t738, ^for_body_294, ^for_end_305
+    %t740 = phi u32 [^for_end_292: %t707, ^if_end_304: %t770]
+    %t741 = phi u32 [^for_end_292: 0, ^if_end_304: %t771]
+    %t742 = cmp ult u32 %t741, 135
+    branch %t742, ^for_body_294, ^for_end_305
 
   block ^for_body_294:
-    %t739 = cmp ult u32 %t737, 128
-    branch %t739, ^cond_then_295, ^cond_else_296
+    %t743 = cmp ult u32 %t741, 128
+    branch %t743, ^cond_then_295, ^cond_else_296
 
   block ^cond_then_295:
-    %t740 = convert zext i64 u32 %t737
-    %t741 = binary mul i64 %t740, -7046029254386353131
-    %t742 = binary and i64 %t741, 4294967295
+    %t744 = convert zext i64 u32 %t741
+    %t745 = binary mul i64 %t744, -7046029254386353131
+    %t746 = binary and i64 %t745, 4294967295
     jump ^cond_end_297
 
   block ^cond_else_296:
-    %t743 = binary sub u32 %t737, 128
-    %t744 = index inbounds i64 [projection=array_element] %t735, %t743
-    %t745 = load typed i64 %t744
+    %t747 = binary sub u32 %t741, 128
+    %t748 = index inbounds i64 [projection=array_element] %t739, %t747
+    %t749 = load typed i64 %t748
     jump ^cond_end_297
 
   block ^cond_end_297:
-    %t746 = phi i64 [^cond_then_295: %t742, ^cond_else_296: %t745]
-    %t747 = binary sub i64 %t746, 2147483647
-    %t748 = cmp ule i64 %t747, 2
-    %t749 = binary umod u32 %t737, 4
-    %t750 = cmp eq u32 %t749, 0
-    branch %t750, ^cond_then_298, ^cond_else_299
+    %t750 = phi i64 [^cond_then_295: %t746, ^cond_else_296: %t749]
+    %t751 = binary sub i64 %t750, 2147483647
+    %t752 = cmp ule i64 %t751, 2
+    %t753 = binary umod u32 %t741, 4
+    %t754 = cmp eq u32 %t753, 0
+    branch %t754, ^cond_then_298, ^cond_else_299
 
   block ^cond_then_298:
-    %t751 = select i32 %t748, 2147483646, 2147483647
+    %t755 = select i32 %t752, 2147483646, 2147483647
     jump ^cond_end_302
 
   block ^cond_else_299:
-    %t752 = cmp eq u32 %t749, 1
-    branch %t752, ^cond_end_301, ^cond_else_300
+    %t756 = cmp eq u32 %t753, 1
+    branch %t756, ^cond_end_301, ^cond_else_300
 
   block ^cond_else_300:
-    %t753 = binary umod u32 %t737, 79
-    %t754 = copy i32 %t753
-    %t755 = binary sub nowrap i32 %t754, 37
+    %t757 = binary umod u32 %t741, 79
+    %t758 = copy i32 %t757
+    %t759 = binary sub nowrap i32 %t758, 37
     jump ^cond_end_301
 
   block ^cond_end_301:
-    %t756 = phi i32 [^cond_else_300: %t755, ^cond_else_299: -2147483648]
+    %t760 = phi i32 [^cond_else_300: %t759, ^cond_else_299: -2147483648]
     jump ^cond_end_302
 
   block ^cond_end_302:
-    %t757 = phi i32 [^cond_then_298: %t751, ^cond_end_301: %t756]
-    %t758 = convert trunc u8 i64 %t748
-    %t759 = convert zext i32 u8 %t758
-    %t760 = binary add nowrap i32 %t757, %t759
-    %t761 = convert trunc i32 i64 %t746
-    %t762 = call i32 @count_4_2(%t761, %t757)
-    %t763 = cmp ne i32 %t760, %t762
-    branch %t763, ^if_then_303, ^if_end_304
+    %t761 = phi i32 [^cond_then_298: %t755, ^cond_end_301: %t760]
+    %t762 = convert trunc u8 i64 %t752
+    %t763 = convert zext i32 u8 %t762
+    %t764 = binary add nowrap i32 %t761, %t763
+    %t765 = convert trunc i32 i64 %t750
+    %t766 = call i32 @count_4_2(%t765, %t761)
+    %t767 = cmp ne i32 %t764, %t766
+    branch %t767, ^if_then_303, ^if_end_304
 
   block ^if_then_303:
-    %t764 = addr @__strlit__23
-    %t765 = call i32 @printf(%t764, %t746, %t757, %t762, %t760)
+    %t768 = addr @__strlit__23
+    %t769 = call i32 @printf(%t768, %t750, %t761, %t766, %t764)
     return i32 1
 
   block ^if_end_304:
-    %t766 = binary add u32 %t736, 1
-    %t767 = binary add u32 %t737, 1
+    %t770 = binary add u32 %t740, 1
+    %t771 = binary add u32 %t741, 1
     jump ^for_cond_293
 
   block ^for_end_305:
-    %t768 = addr @__constexpr_template__25
+    %t772 = addr @__constexpr_template__25
     jump ^for_cond_306
 
   block ^for_cond_306:
-    %t769 = phi u32 [^for_end_305: %t736, ^if_end_317: %t802]
-    %t770 = phi u32 [^for_end_305: 0, ^if_end_317: %t803]
-    %t771 = cmp ult u32 %t770, 135
-    branch %t771, ^for_body_307, ^for_end_318
+    %t773 = phi u32 [^for_end_305: %t740, ^if_end_317: %t806]
+    %t774 = phi u32 [^for_end_305: 0, ^if_end_317: %t807]
+    %t775 = cmp ult u32 %t774, 135
+    branch %t775, ^for_body_307, ^for_end_318
 
   block ^for_body_307:
-    %t772 = cmp ult u32 %t770, 128
-    branch %t772, ^cond_then_308, ^cond_else_309
+    %t776 = cmp ult u32 %t774, 128
+    branch %t776, ^cond_then_308, ^cond_else_309
 
   block ^cond_then_308:
-    %t773 = convert zext i64 u32 %t770
-    %t774 = binary mul i64 %t773, -7046029254386353131
-    %t775 = binary and i64 %t774, 4294967295
+    %t777 = convert zext i64 u32 %t774
+    %t778 = binary mul i64 %t777, -7046029254386353131
+    %t779 = binary and i64 %t778, 4294967295
     jump ^cond_end_310
 
   block ^cond_else_309:
-    %t776 = binary sub u32 %t770, 128
-    %t777 = index inbounds i64 [projection=array_element] %t768, %t776
-    %t778 = load typed i64 %t777
+    %t780 = binary sub u32 %t774, 128
+    %t781 = index inbounds i64 [projection=array_element] %t772, %t780
+    %t782 = load typed i64 %t781
     jump ^cond_end_310
 
   block ^cond_end_310:
-    %t779 = phi i64 [^cond_then_308: %t775, ^cond_else_309: %t778]
-    %t780 = cmp eq i64 %t779, 0
-    %t781 = cmp eq i64 %t779, 4294967295
-    %t782 = select i64 %t781, 1, %t780
-    %t783 = cmp eq i64 %t779, 1
-    %t784 = select i64 %t782, 1, %t783
-    %t785 = binary umod u32 %t770, 4
-    %t786 = cmp eq u32 %t785, 0
-    branch %t786, ^cond_then_311, ^cond_else_312
+    %t783 = phi i64 [^cond_then_308: %t779, ^cond_else_309: %t782]
+    %t784 = cmp eq i64 %t783, 0
+    %t785 = cmp eq i64 %t783, 4294967295
+    %t786 = select i64 %t785, 1, %t784
+    %t787 = cmp eq i64 %t783, 1
+    %t788 = select i64 %t786, 1, %t787
+    %t789 = binary umod u32 %t774, 4
+    %t790 = cmp eq u32 %t789, 0
+    branch %t790, ^cond_then_311, ^cond_else_312
 
   block ^cond_then_311:
-    %t787 = select i32 %t784, 2147483646, 2147483647
+    %t791 = select i32 %t788, 2147483646, 2147483647
     jump ^cond_end_315
 
   block ^cond_else_312:
-    %t788 = cmp eq u32 %t785, 1
-    branch %t788, ^cond_end_314, ^cond_else_313
+    %t792 = cmp eq u32 %t789, 1
+    branch %t792, ^cond_end_314, ^cond_else_313
 
   block ^cond_else_313:
-    %t789 = binary umod u32 %t770, 79
-    %t790 = copy i32 %t789
-    %t791 = binary sub nowrap i32 %t790, 37
+    %t793 = binary umod u32 %t774, 79
+    %t794 = copy i32 %t793
+    %t795 = binary sub nowrap i32 %t794, 37
     jump ^cond_end_314
 
   block ^cond_end_314:
-    %t792 = phi i32 [^cond_else_313: %t791, ^cond_else_312: -2147483648]
+    %t796 = phi i32 [^cond_else_313: %t795, ^cond_else_312: -2147483648]
     jump ^cond_end_315
 
   block ^cond_end_315:
-    %t793 = phi i32 [^cond_then_311: %t787, ^cond_end_314: %t792]
-    %t794 = convert trunc u8 i64 %t784
-    %t795 = convert zext i32 u8 %t794
-    %t796 = binary add nowrap i32 %t793, %t795
-    %t797 = convert trunc i32 i64 %t779
-    %t798 = call i32 @count_4_3(%t797, %t793)
-    %t799 = cmp ne i32 %t796, %t798
-    branch %t799, ^if_then_316, ^if_end_317
+    %t797 = phi i32 [^cond_then_311: %t791, ^cond_end_314: %t796]
+    %t798 = convert trunc u8 i64 %t788
+    %t799 = convert zext i32 u8 %t798
+    %t800 = binary add nowrap i32 %t797, %t799
+    %t801 = convert trunc i32 i64 %t783
+    %t802 = call i32 @count_4_3(%t801, %t797)
+    %t803 = cmp ne i32 %t800, %t802
+    branch %t803, ^if_then_316, ^if_end_317
 
   block ^if_then_316:
-    %t800 = addr @__strlit__24
-    %t801 = call i32 @printf(%t800, %t779, %t793, %t798, %t796)
+    %t804 = addr @__strlit__24
+    %t805 = call i32 @printf(%t804, %t783, %t797, %t802, %t800)
     return i32 1
 
   block ^if_end_317:
-    %t802 = binary add u32 %t769, 1
-    %t803 = binary add u32 %t770, 1
+    %t806 = binary add u32 %t773, 1
+    %t807 = binary add u32 %t774, 1
     jump ^for_cond_306
 
   block ^for_end_318:
-    %t804 = addr @__constexpr_template__26
+    %t808 = addr @__constexpr_template__26
     jump ^for_cond_319
 
   block ^for_cond_319:
-    %t805 = phi u32 [^for_end_318: %t769, ^if_end_330: %t837]
-    %t806 = phi u32 [^for_end_318: 0, ^if_end_330: %t838]
-    %t807 = cmp ult u32 %t806, 137
-    branch %t807, ^for_body_320, ^for_cond_331
+    %t809 = phi u32 [^for_end_318: %t773, ^if_end_330: %t842]
+    %t810 = phi u32 [^for_end_318: 0, ^if_end_330: %t843]
+    %t811 = cmp ult u32 %t810, 137
+    branch %t811, ^for_body_320, ^for_cond_331
 
   block ^for_body_320:
-    %t808 = cmp ult u32 %t806, 128
-    branch %t808, ^cond_then_321, ^cond_else_322
+    %t812 = cmp ult u32 %t810, 128
+    branch %t812, ^cond_then_321, ^cond_else_322
 
   block ^cond_then_321:
-    %t809 = convert zext i64 u32 %t806
-    %t810 = binary mul i64 %t809, -7046029254386353131
-    %t811 = binary and i64 %t810, 4294967295
+    %t813 = convert zext i64 u32 %t810
+    %t814 = binary mul i64 %t813, -7046029254386353131
+    %t815 = binary and i64 %t814, 4294967295
     jump ^cond_end_323
 
   block ^cond_else_322:
-    %t812 = binary sub u32 %t806, 128
-    %t813 = index inbounds i64 [projection=array_element] %t804, %t812
-    %t814 = load typed i64 %t813
+    %t816 = binary sub u32 %t810, 128
+    %t817 = index inbounds i64 [projection=array_element] %t808, %t816
+    %t818 = load typed i64 %t817
     jump ^cond_end_323
 
   block ^cond_end_323:
-    %t815 = phi i64 [^cond_then_321: %t811, ^cond_else_322: %t814]
-    %t816 = binary and i64 %t815, -3
-    %t817 = cmp eq i64 %t815, 4
-    %t818 = cmp eq i64 %t816, 1
-    %t819 = select i64 %t818, %t816, %t817
-    %t820 = binary umod u32 %t806, 4
-    %t821 = cmp eq u32 %t820, 0
-    branch %t821, ^cond_then_324, ^cond_else_325
+    %t819 = phi i64 [^cond_then_321: %t815, ^cond_else_322: %t818]
+    %t820 = cmp eq i64 %t819, 3
+    %t821 = cmp eq i64 %t819, 1
+    %t822 = select i64 %t821, %t819, %t820
+    %t823 = cmp eq i64 %t819, 4
+    %t824 = select i64 %t822, 1, %t823
+    %t825 = binary umod u32 %t810, 4
+    %t826 = cmp eq u32 %t825, 0
+    branch %t826, ^cond_then_324, ^cond_else_325
 
   block ^cond_then_324:
-    %t822 = select i32 %t819, 2147483646, 2147483647
+    %t827 = select i32 %t824, 2147483646, 2147483647
     jump ^cond_end_328
 
   block ^cond_else_325:
-    %t823 = cmp eq u32 %t820, 1
-    branch %t823, ^cond_end_327, ^cond_else_326
+    %t828 = cmp eq u32 %t825, 1
+    branch %t828, ^cond_end_327, ^cond_else_326
 
   block ^cond_else_326:
-    %t824 = binary umod u32 %t806, 79
-    %t825 = copy i32 %t824
-    %t826 = binary sub nowrap i32 %t825, 37
+    %t829 = binary umod u32 %t810, 79
+    %t830 = copy i32 %t829
+    %t831 = binary sub nowrap i32 %t830, 37
     jump ^cond_end_327
 
   block ^cond_end_327:
-    %t827 = phi i32 [^cond_else_326: %t826, ^cond_else_325: -2147483648]
+    %t832 = phi i32 [^cond_else_326: %t831, ^cond_else_325: -2147483648]
     jump ^cond_end_328
 
   block ^cond_end_328:
-    %t828 = phi i32 [^cond_then_324: %t822, ^cond_end_327: %t827]
-    %t829 = convert trunc u8 i64 %t819
-    %t830 = convert zext i32 u8 %t829
-    %t831 = binary add nowrap i32 %t828, %t830
-    %t832 = convert trunc i32 i64 %t815
-    %t833 = call i32 @count_4_4(%t832, %t828)
-    %t834 = cmp ne i32 %t831, %t833
-    branch %t834, ^if_then_329, ^if_end_330
+    %t833 = phi i32 [^cond_then_324: %t827, ^cond_end_327: %t832]
+    %t834 = convert trunc u8 i64 %t824
+    %t835 = convert zext i32 u8 %t834
+    %t836 = binary add nowrap i32 %t833, %t835
+    %t837 = convert trunc i32 i64 %t819
+    %t838 = call i32 @count_4_4(%t837, %t833)
+    %t839 = cmp ne i32 %t836, %t838
+    branch %t839, ^if_then_329, ^if_end_330
 
   block ^if_then_329:
-    %t835 = addr @__strlit__25
-    %t836 = call i32 @printf(%t835, %t815, %t828, %t833, %t831)
+    %t840 = addr @__strlit__25
+    %t841 = call i32 @printf(%t840, %t819, %t833, %t838, %t836)
     return i32 1
 
   block ^if_end_330:
-    %t837 = binary add u32 %t805, 1
-    %t838 = binary add u32 %t806, 1
+    %t842 = binary add u32 %t809, 1
+    %t843 = binary add u32 %t810, 1
     jump ^for_cond_319
 
   block ^for_cond_331:
-    %t839 = phi u32 [^if_end_342: %t869, ^for_cond_319: %t805]
-    %t840 = phi u32 [^if_end_342: %t870, ^for_cond_319: 0]
-    %t841 = cmp ult u32 %t840, 136
-    branch %t841, ^for_body_332, ^for_cond_343
+    %t844 = phi u32 [^if_end_342: %t877, ^for_cond_319: %t809]
+    %t845 = phi u32 [^if_end_342: %t878, ^for_cond_319: 0]
+    %t846 = cmp ult u32 %t845, 136
+    branch %t846, ^for_body_332, ^for_cond_343
 
   block ^for_body_332:
-    %t842 = cmp ult u32 %t840, 128
-    branch %t842, ^cond_then_333, ^cond_else_334
+    %t847 = cmp ult u32 %t845, 128
+    branch %t847, ^cond_then_333, ^cond_else_334
 
   block ^cond_then_333:
-    %t843 = convert zext i64 u32 %t840
-    %t844 = binary mul i64 %t843, -7046029254386353131
-    %t845 = binary and i64 %t844, 4294967295
+    %t848 = convert zext i64 u32 %t845
+    %t849 = binary mul i64 %t848, -7046029254386353131
+    %t850 = binary and i64 %t849, 4294967295
     jump ^cond_end_335
 
   block ^cond_else_334:
-    %t846 = binary sub u32 %t840, 128
-    %t847 = index inbounds i64 [projection=array_element] %t669, %t846
-    %t848 = load typed i64 %t847
+    %t851 = binary sub u32 %t845, 128
+    %t852 = index inbounds i64 [projection=array_element] %t670, %t851
+    %t853 = load typed i64 %t852
     jump ^cond_end_335
 
   block ^cond_end_335:
-    %t849 = phi i64 [^cond_then_333: %t845, ^cond_else_334: %t848]
-    %t850 = binary sub i64 %t849, 1
-    %t851 = cmp ule i64 %t850, 2
-    %t852 = binary umod u32 %t840, 4
-    %t853 = cmp eq u32 %t852, 0
-    branch %t853, ^cond_then_336, ^cond_else_337
+    %t854 = phi i64 [^cond_then_333: %t850, ^cond_else_334: %t853]
+    %t855 = cmp eq i64 %t854, 2
+    %t856 = cmp eq i64 %t854, 1
+    %t857 = select i64 %t856, %t854, %t855
+    %t858 = cmp eq i64 %t854, 3
+    %t859 = select i64 %t857, 1, %t858
+    %t860 = binary umod u32 %t845, 4
+    %t861 = cmp eq u32 %t860, 0
+    branch %t861, ^cond_then_336, ^cond_else_337
 
   block ^cond_then_336:
-    %t854 = select i32 %t851, 2147483646, 2147483647
+    %t862 = select i32 %t859, 2147483646, 2147483647
     jump ^cond_end_340
 
   block ^cond_else_337:
-    %t855 = cmp eq u32 %t852, 1
-    branch %t855, ^cond_end_339, ^cond_else_338
+    %t863 = cmp eq u32 %t860, 1
+    branch %t863, ^cond_end_339, ^cond_else_338
 
   block ^cond_else_338:
-    %t856 = binary umod u32 %t840, 79
-    %t857 = copy i32 %t856
-    %t858 = binary sub nowrap i32 %t857, 37
+    %t864 = binary umod u32 %t845, 79
+    %t865 = copy i32 %t864
+    %t866 = binary sub nowrap i32 %t865, 37
     jump ^cond_end_339
 
   block ^cond_end_339:
-    %t859 = phi i32 [^cond_else_338: %t858, ^cond_else_337: -2147483648]
+    %t867 = phi i32 [^cond_else_338: %t866, ^cond_else_337: -2147483648]
     jump ^cond_end_340
 
   block ^cond_end_340:
-    %t860 = phi i32 [^cond_then_336: %t854, ^cond_end_339: %t859]
-    %t861 = convert trunc u8 i64 %t851
-    %t862 = convert zext i32 u8 %t861
-    %t863 = binary add nowrap i32 %t860, %t862
-    %t864 = convert trunc u32 i64 %t849
-    %t865 = call i32 @count_5_0(%t864, %t860)
-    %t866 = cmp ne i32 %t863, %t865
-    branch %t866, ^if_then_341, ^if_end_342
+    %t868 = phi i32 [^cond_then_336: %t862, ^cond_end_339: %t867]
+    %t869 = convert trunc u8 i64 %t859
+    %t870 = convert zext i32 u8 %t869
+    %t871 = binary add nowrap i32 %t868, %t870
+    %t872 = convert trunc u32 i64 %t854
+    %t873 = call i32 @count_5_0(%t872, %t868)
+    %t874 = cmp ne i32 %t871, %t873
+    branch %t874, ^if_then_341, ^if_end_342
 
   block ^if_then_341:
-    %t867 = addr @__strlit__26
-    %t868 = call i32 @printf(%t867, %t849, %t860, %t865, %t863)
+    %t875 = addr @__strlit__26
+    %t876 = call i32 @printf(%t875, %t854, %t868, %t873, %t871)
     return i32 1
 
   block ^if_end_342:
-    %t869 = binary add u32 %t839, 1
-    %t870 = binary add u32 %t840, 1
+    %t877 = binary add u32 %t844, 1
+    %t878 = binary add u32 %t845, 1
     jump ^for_cond_331
 
   block ^for_cond_343:
-    %t871 = phi u32 [^if_end_354: %t901, ^for_cond_331: %t839]
-    %t872 = phi u32 [^if_end_354: %t902, ^for_cond_331: 0]
-    %t873 = cmp ult u32 %t872, 135
-    branch %t873, ^for_body_344, ^for_cond_355
+    %t879 = phi u32 [^if_end_354: %t909, ^for_cond_331: %t844]
+    %t880 = phi u32 [^if_end_354: %t910, ^for_cond_331: 0]
+    %t881 = cmp ult u32 %t880, 135
+    branch %t881, ^for_body_344, ^for_cond_355
 
   block ^for_body_344:
-    %t874 = cmp ult u32 %t872, 128
-    branch %t874, ^cond_then_345, ^cond_else_346
+    %t882 = cmp ult u32 %t880, 128
+    branch %t882, ^cond_then_345, ^cond_else_346
 
   block ^cond_then_345:
-    %t875 = convert zext i64 u32 %t872
-    %t876 = binary mul i64 %t875, -7046029254386353131
-    %t877 = binary and i64 %t876, 4294967295
+    %t883 = convert zext i64 u32 %t880
+    %t884 = binary mul i64 %t883, -7046029254386353131
+    %t885 = binary and i64 %t884, 4294967295
     jump ^cond_end_347
 
   block ^cond_else_346:
-    %t878 = binary sub u32 %t872, 128
-    %t879 = index inbounds i64 [projection=array_element] %t702, %t878
-    %t880 = load typed i64 %t879
+    %t886 = binary sub u32 %t880, 128
+    %t887 = index inbounds i64 [projection=array_element] %t706, %t886
+    %t888 = load typed i64 %t887
     jump ^cond_end_347
 
   block ^cond_end_347:
-    %t881 = phi i64 [^cond_then_345: %t877, ^cond_else_346: %t880]
-    %t882 = binary sub i64 %t881, 4294967293
-    %t883 = cmp ule i64 %t882, 2
-    %t884 = binary umod u32 %t872, 4
-    %t885 = cmp eq u32 %t884, 0
-    branch %t885, ^cond_then_348, ^cond_else_349
+    %t889 = phi i64 [^cond_then_345: %t885, ^cond_else_346: %t888]
+    %t890 = binary sub i64 %t889, 4294967293
+    %t891 = cmp ule i64 %t890, 2
+    %t892 = binary umod u32 %t880, 4
+    %t893 = cmp eq u32 %t892, 0
+    branch %t893, ^cond_then_348, ^cond_else_349
 
   block ^cond_then_348:
-    %t886 = select i32 %t883, 2147483646, 2147483647
+    %t894 = select i32 %t891, 2147483646, 2147483647
     jump ^cond_end_352
 
   block ^cond_else_349:
-    %t887 = cmp eq u32 %t884, 1
-    branch %t887, ^cond_end_351, ^cond_else_350
+    %t895 = cmp eq u32 %t892, 1
+    branch %t895, ^cond_end_351, ^cond_else_350
 
   block ^cond_else_350:
-    %t888 = binary umod u32 %t872, 79
-    %t889 = copy i32 %t888
-    %t890 = binary sub nowrap i32 %t889, 37
+    %t896 = binary umod u32 %t880, 79
+    %t897 = copy i32 %t896
+    %t898 = binary sub nowrap i32 %t897, 37
     jump ^cond_end_351
 
   block ^cond_end_351:
-    %t891 = phi i32 [^cond_else_350: %t890, ^cond_else_349: -2147483648]
+    %t899 = phi i32 [^cond_else_350: %t898, ^cond_else_349: -2147483648]
     jump ^cond_end_352
 
   block ^cond_end_352:
-    %t892 = phi i32 [^cond_then_348: %t886, ^cond_end_351: %t891]
-    %t893 = convert trunc u8 i64 %t883
-    %t894 = convert zext i32 u8 %t893
-    %t895 = binary add nowrap i32 %t892, %t894
-    %t896 = convert trunc u32 i64 %t881
-    %t897 = call i32 @count_5_1(%t896, %t892)
-    %t898 = cmp ne i32 %t895, %t897
-    branch %t898, ^if_then_353, ^if_end_354
+    %t900 = phi i32 [^cond_then_348: %t894, ^cond_end_351: %t899]
+    %t901 = convert trunc u8 i64 %t891
+    %t902 = convert zext i32 u8 %t901
+    %t903 = binary add nowrap i32 %t900, %t902
+    %t904 = convert trunc u32 i64 %t889
+    %t905 = call i32 @count_5_1(%t904, %t900)
+    %t906 = cmp ne i32 %t903, %t905
+    branch %t906, ^if_then_353, ^if_end_354
 
   block ^if_then_353:
-    %t899 = addr @__strlit__27
-    %t900 = call i32 @printf(%t899, %t881, %t892, %t897, %t895)
+    %t907 = addr @__strlit__27
+    %t908 = call i32 @printf(%t907, %t889, %t900, %t905, %t903)
     return i32 1
 
   block ^if_end_354:
-    %t901 = binary add u32 %t871, 1
-    %t902 = binary add u32 %t872, 1
+    %t909 = binary add u32 %t879, 1
+    %t910 = binary add u32 %t880, 1
     jump ^for_cond_343
 
   block ^for_cond_355:
-    %t903 = phi u32 [^if_end_366: %t933, ^for_cond_343: %t871]
-    %t904 = phi u32 [^if_end_366: %t934, ^for_cond_343: 0]
-    %t905 = cmp ult u32 %t904, 135
-    branch %t905, ^for_body_356, ^for_cond_367
+    %t911 = phi u32 [^if_end_366: %t941, ^for_cond_343: %t879]
+    %t912 = phi u32 [^if_end_366: %t942, ^for_cond_343: 0]
+    %t913 = cmp ult u32 %t912, 135
+    branch %t913, ^for_body_356, ^for_cond_367
 
   block ^for_body_356:
-    %t906 = cmp ult u32 %t904, 128
-    branch %t906, ^cond_then_357, ^cond_else_358
+    %t914 = cmp ult u32 %t912, 128
+    branch %t914, ^cond_then_357, ^cond_else_358
 
   block ^cond_then_357:
-    %t907 = convert zext i64 u32 %t904
-    %t908 = binary mul i64 %t907, -7046029254386353131
-    %t909 = binary and i64 %t908, 4294967295
+    %t915 = convert zext i64 u32 %t912
+    %t916 = binary mul i64 %t915, -7046029254386353131
+    %t917 = binary and i64 %t916, 4294967295
     jump ^cond_end_359
 
   block ^cond_else_358:
-    %t910 = binary sub u32 %t904, 128
-    %t911 = index inbounds i64 [projection=array_element] %t735, %t910
-    %t912 = load typed i64 %t911
+    %t918 = binary sub u32 %t912, 128
+    %t919 = index inbounds i64 [projection=array_element] %t739, %t918
+    %t920 = load typed i64 %t919
     jump ^cond_end_359
 
   block ^cond_end_359:
-    %t913 = phi i64 [^cond_then_357: %t909, ^cond_else_358: %t912]
-    %t914 = binary sub i64 %t913, 2147483647
-    %t915 = cmp ule i64 %t914, 2
-    %t916 = binary umod u32 %t904, 4
-    %t917 = cmp eq u32 %t916, 0
-    branch %t917, ^cond_then_360, ^cond_else_361
+    %t921 = phi i64 [^cond_then_357: %t917, ^cond_else_358: %t920]
+    %t922 = binary sub i64 %t921, 2147483647
+    %t923 = cmp ule i64 %t922, 2
+    %t924 = binary umod u32 %t912, 4
+    %t925 = cmp eq u32 %t924, 0
+    branch %t925, ^cond_then_360, ^cond_else_361
 
   block ^cond_then_360:
-    %t918 = select i32 %t915, 2147483646, 2147483647
+    %t926 = select i32 %t923, 2147483646, 2147483647
     jump ^cond_end_364
 
   block ^cond_else_361:
-    %t919 = cmp eq u32 %t916, 1
-    branch %t919, ^cond_end_363, ^cond_else_362
+    %t927 = cmp eq u32 %t924, 1
+    branch %t927, ^cond_end_363, ^cond_else_362
 
   block ^cond_else_362:
-    %t920 = binary umod u32 %t904, 79
-    %t921 = copy i32 %t920
-    %t922 = binary sub nowrap i32 %t921, 37
+    %t928 = binary umod u32 %t912, 79
+    %t929 = copy i32 %t928
+    %t930 = binary sub nowrap i32 %t929, 37
     jump ^cond_end_363
 
   block ^cond_end_363:
-    %t923 = phi i32 [^cond_else_362: %t922, ^cond_else_361: -2147483648]
+    %t931 = phi i32 [^cond_else_362: %t930, ^cond_else_361: -2147483648]
     jump ^cond_end_364
 
   block ^cond_end_364:
-    %t924 = phi i32 [^cond_then_360: %t918, ^cond_end_363: %t923]
-    %t925 = convert trunc u8 i64 %t915
-    %t926 = convert zext i32 u8 %t925
-    %t927 = binary add nowrap i32 %t924, %t926
-    %t928 = convert trunc u32 i64 %t913
-    %t929 = call i32 @count_5_2(%t928, %t924)
-    %t930 = cmp ne i32 %t927, %t929
-    branch %t930, ^if_then_365, ^if_end_366
+    %t932 = phi i32 [^cond_then_360: %t926, ^cond_end_363: %t931]
+    %t933 = convert trunc u8 i64 %t923
+    %t934 = convert zext i32 u8 %t933
+    %t935 = binary add nowrap i32 %t932, %t934
+    %t936 = convert trunc u32 i64 %t921
+    %t937 = call i32 @count_5_2(%t936, %t932)
+    %t938 = cmp ne i32 %t935, %t937
+    branch %t938, ^if_then_365, ^if_end_366
 
   block ^if_then_365:
-    %t931 = addr @__strlit__28
-    %t932 = call i32 @printf(%t931, %t913, %t924, %t929, %t927)
+    %t939 = addr @__strlit__28
+    %t940 = call i32 @printf(%t939, %t921, %t932, %t937, %t935)
     return i32 1
 
   block ^if_end_366:
-    %t933 = binary add u32 %t903, 1
-    %t934 = binary add u32 %t904, 1
+    %t941 = binary add u32 %t911, 1
+    %t942 = binary add u32 %t912, 1
     jump ^for_cond_355
 
   block ^for_cond_367:
-    %t935 = phi u32 [^if_end_378: %t968, ^for_cond_355: %t903]
-    %t936 = phi u32 [^if_end_378: %t969, ^for_cond_355: 0]
-    %t937 = cmp ult u32 %t936, 135
-    branch %t937, ^for_body_368, ^for_cond_379
+    %t943 = phi u32 [^if_end_378: %t976, ^for_cond_355: %t911]
+    %t944 = phi u32 [^if_end_378: %t977, ^for_cond_355: 0]
+    %t945 = cmp ult u32 %t944, 135
+    branch %t945, ^for_body_368, ^for_cond_379
 
   block ^for_body_368:
-    %t938 = cmp ult u32 %t936, 128
-    branch %t938, ^cond_then_369, ^cond_else_370
+    %t946 = cmp ult u32 %t944, 128
+    branch %t946, ^cond_then_369, ^cond_else_370
 
   block ^cond_then_369:
-    %t939 = convert zext i64 u32 %t936
-    %t940 = binary mul i64 %t939, -7046029254386353131
-    %t941 = binary and i64 %t940, 4294967295
+    %t947 = convert zext i64 u32 %t944
+    %t948 = binary mul i64 %t947, -7046029254386353131
+    %t949 = binary and i64 %t948, 4294967295
     jump ^cond_end_371
 
   block ^cond_else_370:
-    %t942 = binary sub u32 %t936, 128
-    %t943 = index inbounds i64 [projection=array_element] %t768, %t942
-    %t944 = load typed i64 %t943
+    %t950 = binary sub u32 %t944, 128
+    %t951 = index inbounds i64 [projection=array_element] %t772, %t950
+    %t952 = load typed i64 %t951
     jump ^cond_end_371
 
   block ^cond_end_371:
-    %t945 = phi i64 [^cond_then_369: %t941, ^cond_else_370: %t944]
-    %t946 = cmp eq i64 %t945, 0
-    %t947 = cmp eq i64 %t945, 4294967295
-    %t948 = select i64 %t947, 1, %t946
-    %t949 = cmp eq i64 %t945, 1
-    %t950 = select i64 %t948, 1, %t949
-    %t951 = binary umod u32 %t936, 4
-    %t952 = cmp eq u32 %t951, 0
-    branch %t952, ^cond_then_372, ^cond_else_373
+    %t953 = phi i64 [^cond_then_369: %t949, ^cond_else_370: %t952]
+    %t954 = cmp eq i64 %t953, 0
+    %t955 = cmp eq i64 %t953, 4294967295
+    %t956 = select i64 %t955, 1, %t954
+    %t957 = cmp eq i64 %t953, 1
+    %t958 = select i64 %t956, 1, %t957
+    %t959 = binary umod u32 %t944, 4
+    %t960 = cmp eq u32 %t959, 0
+    branch %t960, ^cond_then_372, ^cond_else_373
 
   block ^cond_then_372:
-    %t953 = select i32 %t950, 2147483646, 2147483647
+    %t961 = select i32 %t958, 2147483646, 2147483647
     jump ^cond_end_376
 
   block ^cond_else_373:
-    %t954 = cmp eq u32 %t951, 1
-    branch %t954, ^cond_end_375, ^cond_else_374
+    %t962 = cmp eq u32 %t959, 1
+    branch %t962, ^cond_end_375, ^cond_else_374
 
   block ^cond_else_374:
-    %t955 = binary umod u32 %t936, 79
-    %t956 = copy i32 %t955
-    %t957 = binary sub nowrap i32 %t956, 37
+    %t963 = binary umod u32 %t944, 79
+    %t964 = copy i32 %t963
+    %t965 = binary sub nowrap i32 %t964, 37
     jump ^cond_end_375
 
   block ^cond_end_375:
-    %t958 = phi i32 [^cond_else_374: %t957, ^cond_else_373: -2147483648]
+    %t966 = phi i32 [^cond_else_374: %t965, ^cond_else_373: -2147483648]
     jump ^cond_end_376
 
   block ^cond_end_376:
-    %t959 = phi i32 [^cond_then_372: %t953, ^cond_end_375: %t958]
-    %t960 = convert trunc u8 i64 %t950
-    %t961 = convert zext i32 u8 %t960
-    %t962 = binary add nowrap i32 %t959, %t961
-    %t963 = convert trunc u32 i64 %t945
-    %t964 = call i32 @count_5_3(%t963, %t959)
-    %t965 = cmp ne i32 %t962, %t964
-    branch %t965, ^if_then_377, ^if_end_378
+    %t967 = phi i32 [^cond_then_372: %t961, ^cond_end_375: %t966]
+    %t968 = convert trunc u8 i64 %t958
+    %t969 = convert zext i32 u8 %t968
+    %t970 = binary add nowrap i32 %t967, %t969
+    %t971 = convert trunc u32 i64 %t953
+    %t972 = call i32 @count_5_3(%t971, %t967)
+    %t973 = cmp ne i32 %t970, %t972
+    branch %t973, ^if_then_377, ^if_end_378
 
   block ^if_then_377:
-    %t966 = addr @__strlit__29
-    %t967 = call i32 @printf(%t966, %t945, %t959, %t964, %t962)
+    %t974 = addr @__strlit__29
+    %t975 = call i32 @printf(%t974, %t953, %t967, %t972, %t970)
     return i32 1
 
   block ^if_end_378:
-    %t968 = binary add u32 %t935, 1
-    %t969 = binary add u32 %t936, 1
+    %t976 = binary add u32 %t943, 1
+    %t977 = binary add u32 %t944, 1
     jump ^for_cond_367
 
   block ^for_cond_379:
-    %t970 = phi u32 [^if_end_390: %t1003, ^for_cond_367: 0]
-    %t971 = phi u32 [^if_end_390: %t1002, ^for_cond_367: %t935]
-    %t972 = cmp ult u32 %t970, 137
-    branch %t972, ^for_body_380, ^for_end_391
+    %t978 = phi u32 [^if_end_390: %t1012, ^for_cond_367: 0]
+    %t979 = phi u32 [^if_end_390: %t1011, ^for_cond_367: %t943]
+    %t980 = cmp ult u32 %t978, 137
+    branch %t980, ^for_body_380, ^for_end_391
 
   block ^for_body_380:
-    %t973 = cmp ult u32 %t970, 128
-    branch %t973, ^cond_then_381, ^cond_else_382
+    %t981 = cmp ult u32 %t978, 128
+    branch %t981, ^cond_then_381, ^cond_else_382
 
   block ^cond_then_381:
-    %t974 = convert zext i64 u32 %t970
-    %t975 = binary mul i64 %t974, -7046029254386353131
-    %t976 = binary and i64 %t975, 4294967295
+    %t982 = convert zext i64 u32 %t978
+    %t983 = binary mul i64 %t982, -7046029254386353131
+    %t984 = binary and i64 %t983, 4294967295
     jump ^cond_end_383
 
   block ^cond_else_382:
-    %t977 = binary sub u32 %t970, 128
-    %t978 = index inbounds i64 [projection=array_element] %t804, %t977
-    %t979 = load typed i64 %t978
+    %t985 = binary sub u32 %t978, 128
+    %t986 = index inbounds i64 [projection=array_element] %t808, %t985
+    %t987 = load typed i64 %t986
     jump ^cond_end_383
 
   block ^cond_end_383:
-    %t980 = phi i64 [^cond_then_381: %t976, ^cond_else_382: %t979]
-    %t981 = binary and i64 %t980, -3
-    %t982 = cmp eq i64 %t980, 4
-    %t983 = cmp eq i64 %t981, 1
-    %t984 = select i64 %t983, %t981, %t982
-    %t985 = binary umod u32 %t970, 4
-    %t986 = cmp eq u32 %t985, 0
-    branch %t986, ^cond_then_384, ^cond_else_385
+    %t988 = phi i64 [^cond_then_381: %t984, ^cond_else_382: %t987]
+    %t989 = cmp eq i64 %t988, 3
+    %t990 = cmp eq i64 %t988, 1
+    %t991 = select i64 %t990, %t988, %t989
+    %t992 = cmp eq i64 %t988, 4
+    %t993 = select i64 %t991, 1, %t992
+    %t994 = binary umod u32 %t978, 4
+    %t995 = cmp eq u32 %t994, 0
+    branch %t995, ^cond_then_384, ^cond_else_385
 
   block ^cond_then_384:
-    %t987 = select i32 %t984, 2147483646, 2147483647
+    %t996 = select i32 %t993, 2147483646, 2147483647
     jump ^cond_end_388
 
   block ^cond_else_385:
-    %t988 = cmp eq u32 %t985, 1
-    branch %t988, ^cond_end_387, ^cond_else_386
+    %t997 = cmp eq u32 %t994, 1
+    branch %t997, ^cond_end_387, ^cond_else_386
 
   block ^cond_else_386:
-    %t989 = binary umod u32 %t970, 79
-    %t990 = copy i32 %t989
-    %t991 = binary sub nowrap i32 %t990, 37
+    %t998 = binary umod u32 %t978, 79
+    %t999 = copy i32 %t998
+    %t1000 = binary sub nowrap i32 %t999, 37
     jump ^cond_end_387
 
   block ^cond_end_387:
-    %t992 = phi i32 [^cond_else_386: %t991, ^cond_else_385: -2147483648]
+    %t1001 = phi i32 [^cond_else_386: %t1000, ^cond_else_385: -2147483648]
     jump ^cond_end_388
 
   block ^cond_end_388:
-    %t993 = phi i32 [^cond_then_384: %t987, ^cond_end_387: %t992]
-    %t994 = convert trunc u8 i64 %t984
-    %t995 = convert zext i32 u8 %t994
-    %t996 = binary add nowrap i32 %t993, %t995
-    %t997 = convert trunc u32 i64 %t980
-    %t998 = call i32 @count_5_4(%t997, %t993)
-    %t999 = cmp ne i32 %t996, %t998
-    branch %t999, ^if_then_389, ^if_end_390
+    %t1002 = phi i32 [^cond_then_384: %t996, ^cond_end_387: %t1001]
+    %t1003 = convert trunc u8 i64 %t993
+    %t1004 = convert zext i32 u8 %t1003
+    %t1005 = binary add nowrap i32 %t1002, %t1004
+    %t1006 = convert trunc u32 i64 %t988
+    %t1007 = call i32 @count_5_4(%t1006, %t1002)
+    %t1008 = cmp ne i32 %t1005, %t1007
+    branch %t1008, ^if_then_389, ^if_end_390
 
   block ^if_then_389:
-    %t1000 = addr @__strlit__30
-    %t1001 = call i32 @printf(%t1000, %t980, %t993, %t998, %t996)
+    %t1009 = addr @__strlit__30
+    %t1010 = call i32 @printf(%t1009, %t988, %t1002, %t1007, %t1005)
     return i32 1
 
   block ^if_end_390:
-    %t1002 = binary add u32 %t971, 1
-    %t1003 = binary add u32 %t970, 1
+    %t1011 = binary add u32 %t979, 1
+    %t1012 = binary add u32 %t978, 1
     jump ^for_cond_379
 
   block ^for_end_391:
-    %t1004 = addr @__constexpr_template__27
+    %t1013 = addr @__constexpr_template__27
     jump ^for_cond_392
 
   block ^for_cond_392:
-    %t1005 = phi u32 [^for_end_391: 0, ^if_end_403: %t1034]
-    %t1006 = phi u32 [^for_end_391: %t971, ^if_end_403: %t1033]
-    %t1007 = cmp ult u32 %t1005, 136
-    branch %t1007, ^for_body_393, ^for_end_404
+    %t1014 = phi u32 [^for_end_391: 0, ^if_end_403: %t1046]
+    %t1015 = phi u32 [^for_end_391: %t979, ^if_end_403: %t1045]
+    %t1016 = cmp ult u32 %t1014, 136
+    branch %t1016, ^for_body_393, ^for_end_404
 
   block ^for_body_393:
-    %t1008 = cmp ult u32 %t1005, 128
-    branch %t1008, ^cond_then_394, ^cond_else_395
+    %t1017 = cmp ult u32 %t1014, 128
+    branch %t1017, ^cond_then_394, ^cond_else_395
 
   block ^cond_then_394:
-    %t1009 = convert zext i64 u32 %t1005
-    %t1010 = binary mul i64 %t1009, -7046029254386353131
+    %t1018 = convert zext i64 u32 %t1014
+    %t1019 = binary mul i64 %t1018, -7046029254386353131
     jump ^cond_end_396
 
   block ^cond_else_395:
-    %t1011 = binary sub u32 %t1005, 128
-    %t1012 = index inbounds i64 [projection=array_element] %t1004, %t1011
-    %t1013 = load typed i64 %t1012
+    %t1020 = binary sub u32 %t1014, 128
+    %t1021 = index inbounds i64 [projection=array_element] %t1013, %t1020
+    %t1022 = load typed i64 %t1021
     jump ^cond_end_396
 
   block ^cond_end_396:
-    %t1014 = phi i64 [^cond_then_394: %t1010, ^cond_else_395: %t1013]
-    %t1015 = binary sub i64 %t1014, 1
-    %t1016 = cmp ule i64 %t1015, 2
-    %t1017 = binary umod u32 %t1005, 4
-    %t1018 = cmp eq u32 %t1017, 0
-    branch %t1018, ^cond_then_397, ^cond_else_398
+    %t1023 = phi i64 [^cond_then_394: %t1019, ^cond_else_395: %t1022]
+    %t1024 = cmp eq i64 %t1023, 2
+    %t1025 = cmp eq i64 %t1023, 1
+    %t1026 = select i64 %t1025, %t1023, %t1024
+    %t1027 = cmp eq i64 %t1023, 3
+    %t1028 = select i64 %t1026, 1, %t1027
+    %t1029 = binary umod u32 %t1014, 4
+    %t1030 = cmp eq u32 %t1029, 0
+    branch %t1030, ^cond_then_397, ^cond_else_398
 
   block ^cond_then_397:
-    %t1019 = select i32 %t1016, 2147483646, 2147483647
+    %t1031 = select i32 %t1028, 2147483646, 2147483647
     jump ^cond_end_401
 
   block ^cond_else_398:
-    %t1020 = cmp eq u32 %t1017, 1
-    branch %t1020, ^cond_end_400, ^cond_else_399
+    %t1032 = cmp eq u32 %t1029, 1
+    branch %t1032, ^cond_end_400, ^cond_else_399
 
   block ^cond_else_399:
-    %t1021 = binary umod u32 %t1005, 79
-    %t1022 = copy i32 %t1021
-    %t1023 = binary sub nowrap i32 %t1022, 37
+    %t1033 = binary umod u32 %t1014, 79
+    %t1034 = copy i32 %t1033
+    %t1035 = binary sub nowrap i32 %t1034, 37
     jump ^cond_end_400
 
   block ^cond_end_400:
-    %t1024 = phi i32 [^cond_else_399: %t1023, ^cond_else_398: -2147483648]
+    %t1036 = phi i32 [^cond_else_399: %t1035, ^cond_else_398: -2147483648]
     jump ^cond_end_401
 
   block ^cond_end_401:
-    %t1025 = phi i32 [^cond_then_397: %t1019, ^cond_end_400: %t1024]
-    %t1026 = convert trunc u8 i64 %t1016
-    %t1027 = convert zext i32 u8 %t1026
-    %t1028 = binary add nowrap i32 %t1025, %t1027
-    %t1029 = call i32 @count_6_0(%t1014, %t1025)
-    %t1030 = cmp ne i32 %t1028, %t1029
-    branch %t1030, ^if_then_402, ^if_end_403
+    %t1037 = phi i32 [^cond_then_397: %t1031, ^cond_end_400: %t1036]
+    %t1038 = convert trunc u8 i64 %t1028
+    %t1039 = convert zext i32 u8 %t1038
+    %t1040 = binary add nowrap i32 %t1037, %t1039
+    %t1041 = call i32 @count_6_0(%t1023, %t1037)
+    %t1042 = cmp ne i32 %t1040, %t1041
+    branch %t1042, ^if_then_402, ^if_end_403
 
   block ^if_then_402:
-    %t1031 = addr @__strlit__31
-    %t1032 = call i32 @printf(%t1031, %t1014, %t1025, %t1029, %t1028)
+    %t1043 = addr @__strlit__31
+    %t1044 = call i32 @printf(%t1043, %t1023, %t1037, %t1041, %t1040)
     return i32 1
 
   block ^if_end_403:
-    %t1033 = binary add u32 %t1006, 1
-    %t1034 = binary add u32 %t1005, 1
+    %t1045 = binary add u32 %t1015, 1
+    %t1046 = binary add u32 %t1014, 1
     jump ^for_cond_392
 
   block ^for_end_404:
-    %t1035 = addr @__constexpr_template__29
+    %t1047 = addr @__constexpr_template__29
     jump ^for_cond_405
 
   block ^for_cond_405:
-    %t1036 = phi u32 [^for_end_404: 0, ^if_end_416: %t1064]
-    %t1037 = phi u32 [^for_end_404: %t1006, ^if_end_416: %t1063]
-    %t1038 = cmp ult u32 %t1036, 135
-    branch %t1038, ^for_body_406, ^for_end_417
+    %t1048 = phi u32 [^for_end_404: 0, ^if_end_416: %t1076]
+    %t1049 = phi u32 [^for_end_404: %t1015, ^if_end_416: %t1075]
+    %t1050 = cmp ult u32 %t1048, 135
+    branch %t1050, ^for_body_406, ^for_end_417
 
   block ^for_body_406:
-    %t1039 = cmp ult u32 %t1036, 128
-    branch %t1039, ^cond_then_407, ^cond_else_408
+    %t1051 = cmp ult u32 %t1048, 128
+    branch %t1051, ^cond_then_407, ^cond_else_408
 
   block ^cond_then_407:
-    %t1040 = convert zext i64 u32 %t1036
-    %t1041 = binary mul i64 %t1040, -7046029254386353131
+    %t1052 = convert zext i64 u32 %t1048
+    %t1053 = binary mul i64 %t1052, -7046029254386353131
     jump ^cond_end_409
 
   block ^cond_else_408:
-    %t1042 = binary sub u32 %t1036, 128
-    %t1043 = index inbounds i64 [projection=array_element] %t1035, %t1042
-    %t1044 = load typed i64 %t1043
+    %t1054 = binary sub u32 %t1048, 128
+    %t1055 = index inbounds i64 [projection=array_element] %t1047, %t1054
+    %t1056 = load typed i64 %t1055
     jump ^cond_end_409
 
   block ^cond_end_409:
-    %t1045 = phi i64 [^cond_then_407: %t1041, ^cond_else_408: %t1044]
-    %t1046 = cmp uge i64 %t1045, -3
-    %t1047 = binary umod u32 %t1036, 4
-    %t1048 = cmp eq u32 %t1047, 0
-    branch %t1048, ^cond_then_410, ^cond_else_411
+    %t1057 = phi i64 [^cond_then_407: %t1053, ^cond_else_408: %t1056]
+    %t1058 = cmp uge i64 %t1057, -3
+    %t1059 = binary umod u32 %t1048, 4
+    %t1060 = cmp eq u32 %t1059, 0
+    branch %t1060, ^cond_then_410, ^cond_else_411
 
   block ^cond_then_410:
-    %t1049 = select i32 %t1046, 2147483646, 2147483647
+    %t1061 = select i32 %t1058, 2147483646, 2147483647
     jump ^cond_end_414
 
   block ^cond_else_411:
-    %t1050 = cmp eq u32 %t1047, 1
-    branch %t1050, ^cond_end_413, ^cond_else_412
+    %t1062 = cmp eq u32 %t1059, 1
+    branch %t1062, ^cond_end_413, ^cond_else_412
 
   block ^cond_else_412:
-    %t1051 = binary umod u32 %t1036, 79
-    %t1052 = copy i32 %t1051
-    %t1053 = binary sub nowrap i32 %t1052, 37
+    %t1063 = binary umod u32 %t1048, 79
+    %t1064 = copy i32 %t1063
+    %t1065 = binary sub nowrap i32 %t1064, 37
     jump ^cond_end_413
 
   block ^cond_end_413:
-    %t1054 = phi i32 [^cond_else_412: %t1053, ^cond_else_411: -2147483648]
+    %t1066 = phi i32 [^cond_else_412: %t1065, ^cond_else_411: -2147483648]
     jump ^cond_end_414
 
   block ^cond_end_414:
-    %t1055 = phi i32 [^cond_then_410: %t1049, ^cond_end_413: %t1054]
-    %t1056 = convert trunc u8 i64 %t1046
-    %t1057 = convert zext i32 u8 %t1056
-    %t1058 = binary add nowrap i32 %t1055, %t1057
-    %t1059 = call i32 @count_6_1(%t1045, %t1055)
-    %t1060 = cmp ne i32 %t1058, %t1059
-    branch %t1060, ^if_then_415, ^if_end_416
+    %t1067 = phi i32 [^cond_then_410: %t1061, ^cond_end_413: %t1066]
+    %t1068 = convert trunc u8 i64 %t1058
+    %t1069 = convert zext i32 u8 %t1068
+    %t1070 = binary add nowrap i32 %t1067, %t1069
+    %t1071 = call i32 @count_6_1(%t1057, %t1067)
+    %t1072 = cmp ne i32 %t1070, %t1071
+    branch %t1072, ^if_then_415, ^if_end_416
 
   block ^if_then_415:
-    %t1061 = addr @__strlit__32
-    %t1062 = call i32 @printf(%t1061, %t1045, %t1055, %t1059, %t1058)
+    %t1073 = addr @__strlit__32
+    %t1074 = call i32 @printf(%t1073, %t1057, %t1067, %t1071, %t1070)
     return i32 1
 
   block ^if_end_416:
-    %t1063 = binary add u32 %t1037, 1
-    %t1064 = binary add u32 %t1036, 1
+    %t1075 = binary add u32 %t1049, 1
+    %t1076 = binary add u32 %t1048, 1
     jump ^for_cond_405
 
   block ^for_end_417:
-    %t1065 = addr @__constexpr_template__31
+    %t1077 = addr @__constexpr_template__31
     jump ^for_cond_418
 
   block ^for_cond_418:
-    %t1066 = phi u32 [^for_end_417: %t1037, ^if_end_429: %t1094]
-    %t1067 = phi u32 [^for_end_417: 0, ^if_end_429: %t1095]
-    %t1068 = cmp ult u32 %t1067, 135
-    branch %t1068, ^for_body_419, ^for_end_430
+    %t1078 = phi u32 [^for_end_417: %t1049, ^if_end_429: %t1106]
+    %t1079 = phi u32 [^for_end_417: 0, ^if_end_429: %t1107]
+    %t1080 = cmp ult u32 %t1079, 135
+    branch %t1080, ^for_body_419, ^for_end_430
 
   block ^for_body_419:
-    %t1069 = cmp ult u32 %t1067, 128
-    branch %t1069, ^cond_then_420, ^cond_else_421
+    %t1081 = cmp ult u32 %t1079, 128
+    branch %t1081, ^cond_then_420, ^cond_else_421
 
   block ^cond_then_420:
-    %t1070 = convert zext i64 u32 %t1067
-    %t1071 = binary mul i64 %t1070, -7046029254386353131
+    %t1082 = convert zext i64 u32 %t1079
+    %t1083 = binary mul i64 %t1082, -7046029254386353131
     jump ^cond_end_422
 
   block ^cond_else_421:
-    %t1072 = binary sub u32 %t1067, 128
-    %t1073 = index inbounds i64 [projection=array_element] %t1065, %t1072
-    %t1074 = load typed i64 %t1073
+    %t1084 = binary sub u32 %t1079, 128
+    %t1085 = index inbounds i64 [projection=array_element] %t1077, %t1084
+    %t1086 = load typed i64 %t1085
     jump ^cond_end_422
 
   block ^cond_end_422:
-    %t1075 = phi i64 [^cond_then_420: %t1071, ^cond_else_421: %t1074]
-    %t1076 = binary sub i64 %t1075, 9223372036854775807
-    %t1077 = cmp ule i64 %t1076, 2
-    %t1078 = binary umod u32 %t1067, 4
-    %t1079 = cmp eq u32 %t1078, 0
-    branch %t1079, ^cond_then_423, ^cond_else_424
+    %t1087 = phi i64 [^cond_then_420: %t1083, ^cond_else_421: %t1086]
+    %t1088 = binary sub i64 %t1087, 9223372036854775807
+    %t1089 = cmp ule i64 %t1088, 2
+    %t1090 = binary umod u32 %t1079, 4
+    %t1091 = cmp eq u32 %t1090, 0
+    branch %t1091, ^cond_then_423, ^cond_else_424
 
   block ^cond_then_423:
-    %t1080 = select i32 %t1077, 2147483646, 2147483647
+    %t1092 = select i32 %t1089, 2147483646, 2147483647
     jump ^cond_end_427
 
   block ^cond_else_424:
-    %t1081 = cmp eq u32 %t1078, 1
-    branch %t1081, ^cond_end_426, ^cond_else_425
+    %t1093 = cmp eq u32 %t1090, 1
+    branch %t1093, ^cond_end_426, ^cond_else_425
 
   block ^cond_else_425:
-    %t1082 = binary umod u32 %t1067, 79
-    %t1083 = copy i32 %t1082
-    %t1084 = binary sub nowrap i32 %t1083, 37
+    %t1094 = binary umod u32 %t1079, 79
+    %t1095 = copy i32 %t1094
+    %t1096 = binary sub nowrap i32 %t1095, 37
     jump ^cond_end_426
 
   block ^cond_end_426:
-    %t1085 = phi i32 [^cond_else_425: %t1084, ^cond_else_424: -2147483648]
+    %t1097 = phi i32 [^cond_else_425: %t1096, ^cond_else_424: -2147483648]
     jump ^cond_end_427
 
   block ^cond_end_427:
-    %t1086 = phi i32 [^cond_then_423: %t1080, ^cond_end_426: %t1085]
-    %t1087 = convert trunc u8 i64 %t1077
-    %t1088 = convert zext i32 u8 %t1087
-    %t1089 = binary add nowrap i32 %t1086, %t1088
-    %t1090 = call i32 @count_6_2(%t1075, %t1086)
-    %t1091 = cmp ne i32 %t1089, %t1090
-    branch %t1091, ^if_then_428, ^if_end_429
+    %t1098 = phi i32 [^cond_then_423: %t1092, ^cond_end_426: %t1097]
+    %t1099 = convert trunc u8 i64 %t1089
+    %t1100 = convert zext i32 u8 %t1099
+    %t1101 = binary add nowrap i32 %t1098, %t1100
+    %t1102 = call i32 @count_6_2(%t1087, %t1098)
+    %t1103 = cmp ne i32 %t1101, %t1102
+    branch %t1103, ^if_then_428, ^if_end_429
 
   block ^if_then_428:
-    %t1092 = addr @__strlit__33
-    %t1093 = call i32 @printf(%t1092, %t1075, %t1086, %t1090, %t1089)
+    %t1104 = addr @__strlit__33
+    %t1105 = call i32 @printf(%t1104, %t1087, %t1098, %t1102, %t1101)
     return i32 1
 
   block ^if_end_429:
-    %t1094 = binary add u32 %t1066, 1
-    %t1095 = binary add u32 %t1067, 1
+    %t1106 = binary add u32 %t1078, 1
+    %t1107 = binary add u32 %t1079, 1
     jump ^for_cond_418
 
   block ^for_end_430:
-    %t1096 = addr @__constexpr_template__33
+    %t1108 = addr @__constexpr_template__33
     jump ^for_cond_431
 
   block ^for_cond_431:
-    %t1097 = phi u32 [^for_end_430: %t1066, ^if_end_442: %t1125]
-    %t1098 = phi u32 [^for_end_430: 0, ^if_end_442: %t1126]
-    %t1099 = cmp ult u32 %t1098, 135
-    branch %t1099, ^for_body_432, ^for_end_443
+    %t1109 = phi u32 [^for_end_430: %t1078, ^if_end_442: %t1137]
+    %t1110 = phi u32 [^for_end_430: 0, ^if_end_442: %t1138]
+    %t1111 = cmp ult u32 %t1110, 135
+    branch %t1111, ^for_body_432, ^for_end_443
 
   block ^for_body_432:
-    %t1100 = cmp ult u32 %t1098, 128
-    branch %t1100, ^cond_then_433, ^cond_else_434
+    %t1112 = cmp ult u32 %t1110, 128
+    branch %t1112, ^cond_then_433, ^cond_else_434
 
   block ^cond_then_433:
-    %t1101 = convert zext i64 u32 %t1098
-    %t1102 = binary mul i64 %t1101, -7046029254386353131
+    %t1113 = convert zext i64 u32 %t1110
+    %t1114 = binary mul i64 %t1113, -7046029254386353131
     jump ^cond_end_435
 
   block ^cond_else_434:
-    %t1103 = binary sub u32 %t1098, 128
-    %t1104 = index inbounds i64 [projection=array_element] %t1096, %t1103
-    %t1105 = load typed i64 %t1104
+    %t1115 = binary sub u32 %t1110, 128
+    %t1116 = index inbounds i64 [projection=array_element] %t1108, %t1115
+    %t1117 = load typed i64 %t1116
     jump ^cond_end_435
 
   block ^cond_end_435:
-    %t1106 = phi i64 [^cond_then_433: %t1102, ^cond_else_434: %t1105]
-    %t1107 = binary sub i64 %t1106, -1
-    %t1108 = cmp ule i64 %t1107, 2
-    %t1109 = binary umod u32 %t1098, 4
-    %t1110 = cmp eq u32 %t1109, 0
-    branch %t1110, ^cond_then_436, ^cond_else_437
+    %t1118 = phi i64 [^cond_then_433: %t1114, ^cond_else_434: %t1117]
+    %t1119 = binary sub i64 %t1118, -1
+    %t1120 = cmp ule i64 %t1119, 2
+    %t1121 = binary umod u32 %t1110, 4
+    %t1122 = cmp eq u32 %t1121, 0
+    branch %t1122, ^cond_then_436, ^cond_else_437
 
   block ^cond_then_436:
-    %t1111 = select i32 %t1108, 2147483646, 2147483647
+    %t1123 = select i32 %t1120, 2147483646, 2147483647
     jump ^cond_end_440
 
   block ^cond_else_437:
-    %t1112 = cmp eq u32 %t1109, 1
-    branch %t1112, ^cond_end_439, ^cond_else_438
+    %t1124 = cmp eq u32 %t1121, 1
+    branch %t1124, ^cond_end_439, ^cond_else_438
 
   block ^cond_else_438:
-    %t1113 = binary umod u32 %t1098, 79
-    %t1114 = copy i32 %t1113
-    %t1115 = binary sub nowrap i32 %t1114, 37
+    %t1125 = binary umod u32 %t1110, 79
+    %t1126 = copy i32 %t1125
+    %t1127 = binary sub nowrap i32 %t1126, 37
     jump ^cond_end_439
 
   block ^cond_end_439:
-    %t1116 = phi i32 [^cond_else_438: %t1115, ^cond_else_437: -2147483648]
+    %t1128 = phi i32 [^cond_else_438: %t1127, ^cond_else_437: -2147483648]
     jump ^cond_end_440
 
   block ^cond_end_440:
-    %t1117 = phi i32 [^cond_then_436: %t1111, ^cond_end_439: %t1116]
-    %t1118 = convert trunc u8 i64 %t1108
-    %t1119 = convert zext i32 u8 %t1118
-    %t1120 = binary add nowrap i32 %t1117, %t1119
-    %t1121 = call i32 @count_6_3(%t1106, %t1117)
-    %t1122 = cmp ne i32 %t1120, %t1121
-    branch %t1122, ^if_then_441, ^if_end_442
+    %t1129 = phi i32 [^cond_then_436: %t1123, ^cond_end_439: %t1128]
+    %t1130 = convert trunc u8 i64 %t1120
+    %t1131 = convert zext i32 u8 %t1130
+    %t1132 = binary add nowrap i32 %t1129, %t1131
+    %t1133 = call i32 @count_6_3(%t1118, %t1129)
+    %t1134 = cmp ne i32 %t1132, %t1133
+    branch %t1134, ^if_then_441, ^if_end_442
 
   block ^if_then_441:
-    %t1123 = addr @__strlit__34
-    %t1124 = call i32 @printf(%t1123, %t1106, %t1117, %t1121, %t1120)
+    %t1135 = addr @__strlit__34
+    %t1136 = call i32 @printf(%t1135, %t1118, %t1129, %t1133, %t1132)
     return i32 1
 
   block ^if_end_442:
-    %t1125 = binary add u32 %t1097, 1
-    %t1126 = binary add u32 %t1098, 1
+    %t1137 = binary add u32 %t1109, 1
+    %t1138 = binary add u32 %t1110, 1
     jump ^for_cond_431
 
   block ^for_end_443:
-    %t1127 = addr @__constexpr_template__34
+    %t1139 = addr @__constexpr_template__34
     jump ^for_cond_444
 
   block ^for_cond_444:
-    %t1128 = phi u32 [^for_end_443: %t1097, ^if_end_455: %t1158]
-    %t1129 = phi u32 [^for_end_443: 0, ^if_end_455: %t1159]
-    %t1130 = cmp ult u32 %t1129, 137
-    branch %t1130, ^for_body_445, ^for_cond_456
+    %t1140 = phi u32 [^for_end_443: %t1109, ^if_end_455: %t1171]
+    %t1141 = phi u32 [^for_end_443: 0, ^if_end_455: %t1172]
+    %t1142 = cmp ult u32 %t1141, 137
+    branch %t1142, ^for_body_445, ^for_cond_456
 
   block ^for_body_445:
-    %t1131 = cmp ult u32 %t1129, 128
-    branch %t1131, ^cond_then_446, ^cond_else_447
+    %t1143 = cmp ult u32 %t1141, 128
+    branch %t1143, ^cond_then_446, ^cond_else_447
 
   block ^cond_then_446:
-    %t1132 = convert zext i64 u32 %t1129
-    %t1133 = binary mul i64 %t1132, -7046029254386353131
+    %t1144 = convert zext i64 u32 %t1141
+    %t1145 = binary mul i64 %t1144, -7046029254386353131
     jump ^cond_end_448
 
   block ^cond_else_447:
-    %t1134 = binary sub u32 %t1129, 128
-    %t1135 = index inbounds i64 [projection=array_element] %t1127, %t1134
-    %t1136 = load typed i64 %t1135
+    %t1146 = binary sub u32 %t1141, 128
+    %t1147 = index inbounds i64 [projection=array_element] %t1139, %t1146
+    %t1148 = load typed i64 %t1147
     jump ^cond_end_448
 
   block ^cond_end_448:
-    %t1137 = phi i64 [^cond_then_446: %t1133, ^cond_else_447: %t1136]
-    %t1138 = binary and i64 %t1137, -3
-    %t1139 = cmp eq i64 %t1137, 4
-    %t1140 = cmp eq i64 %t1138, 1
-    %t1141 = select i64 %t1140, %t1138, %t1139
-    %t1142 = binary umod u32 %t1129, 4
-    %t1143 = cmp eq u32 %t1142, 0
-    branch %t1143, ^cond_then_449, ^cond_else_450
+    %t1149 = phi i64 [^cond_then_446: %t1145, ^cond_else_447: %t1148]
+    %t1150 = cmp eq i64 %t1149, 3
+    %t1151 = cmp eq i64 %t1149, 1
+    %t1152 = select i64 %t1151, %t1149, %t1150
+    %t1153 = cmp eq i64 %t1149, 4
+    %t1154 = select i64 %t1152, 1, %t1153
+    %t1155 = binary umod u32 %t1141, 4
+    %t1156 = cmp eq u32 %t1155, 0
+    branch %t1156, ^cond_then_449, ^cond_else_450
 
   block ^cond_then_449:
-    %t1144 = select i32 %t1141, 2147483646, 2147483647
+    %t1157 = select i32 %t1154, 2147483646, 2147483647
     jump ^cond_end_453
 
   block ^cond_else_450:
-    %t1145 = cmp eq u32 %t1142, 1
-    branch %t1145, ^cond_end_452, ^cond_else_451
+    %t1158 = cmp eq u32 %t1155, 1
+    branch %t1158, ^cond_end_452, ^cond_else_451
 
   block ^cond_else_451:
-    %t1146 = binary umod u32 %t1129, 79
-    %t1147 = copy i32 %t1146
-    %t1148 = binary sub nowrap i32 %t1147, 37
+    %t1159 = binary umod u32 %t1141, 79
+    %t1160 = copy i32 %t1159
+    %t1161 = binary sub nowrap i32 %t1160, 37
     jump ^cond_end_452
 
   block ^cond_end_452:
-    %t1149 = phi i32 [^cond_else_451: %t1148, ^cond_else_450: -2147483648]
+    %t1162 = phi i32 [^cond_else_451: %t1161, ^cond_else_450: -2147483648]
     jump ^cond_end_453
 
   block ^cond_end_453:
-    %t1150 = phi i32 [^cond_then_449: %t1144, ^cond_end_452: %t1149]
-    %t1151 = convert trunc u8 i64 %t1141
-    %t1152 = convert zext i32 u8 %t1151
-    %t1153 = binary add nowrap i32 %t1150, %t1152
-    %t1154 = call i32 @count_6_4(%t1137, %t1150)
-    %t1155 = cmp ne i32 %t1153, %t1154
-    branch %t1155, ^if_then_454, ^if_end_455
+    %t1163 = phi i32 [^cond_then_449: %t1157, ^cond_end_452: %t1162]
+    %t1164 = convert trunc u8 i64 %t1154
+    %t1165 = convert zext i32 u8 %t1164
+    %t1166 = binary add nowrap i32 %t1163, %t1165
+    %t1167 = call i32 @count_6_4(%t1149, %t1163)
+    %t1168 = cmp ne i32 %t1166, %t1167
+    branch %t1168, ^if_then_454, ^if_end_455
 
   block ^if_then_454:
-    %t1156 = addr @__strlit__35
-    %t1157 = call i32 @printf(%t1156, %t1137, %t1150, %t1154, %t1153)
+    %t1169 = addr @__strlit__35
+    %t1170 = call i32 @printf(%t1169, %t1149, %t1163, %t1167, %t1166)
     return i32 1
 
   block ^if_end_455:
-    %t1158 = binary add u32 %t1128, 1
-    %t1159 = binary add u32 %t1129, 1
+    %t1171 = binary add u32 %t1140, 1
+    %t1172 = binary add u32 %t1141, 1
     jump ^for_cond_444
 
   block ^for_cond_456:
-    %t1160 = phi u32 [^if_end_467: %t1188, ^for_cond_444: %t1128]
-    %t1161 = phi u32 [^if_end_467: %t1189, ^for_cond_444: 0]
-    %t1162 = cmp ult u32 %t1161, 136
-    branch %t1162, ^for_body_457, ^for_cond_468
+    %t1173 = phi u32 [^if_end_467: %t1204, ^for_cond_444: %t1140]
+    %t1174 = phi u32 [^if_end_467: %t1205, ^for_cond_444: 0]
+    %t1175 = cmp ult u32 %t1174, 136
+    branch %t1175, ^for_body_457, ^for_cond_468
 
   block ^for_body_457:
-    %t1163 = cmp ult u32 %t1161, 128
-    branch %t1163, ^cond_then_458, ^cond_else_459
+    %t1176 = cmp ult u32 %t1174, 128
+    branch %t1176, ^cond_then_458, ^cond_else_459
 
   block ^cond_then_458:
-    %t1164 = convert zext i64 u32 %t1161
-    %t1165 = binary mul i64 %t1164, -7046029254386353131
+    %t1177 = convert zext i64 u32 %t1174
+    %t1178 = binary mul i64 %t1177, -7046029254386353131
     jump ^cond_end_460
 
   block ^cond_else_459:
-    %t1166 = binary sub u32 %t1161, 128
-    %t1167 = index inbounds i64 [projection=array_element] %t1004, %t1166
-    %t1168 = load typed i64 %t1167
+    %t1179 = binary sub u32 %t1174, 128
+    %t1180 = index inbounds i64 [projection=array_element] %t1013, %t1179
+    %t1181 = load typed i64 %t1180
     jump ^cond_end_460
 
   block ^cond_end_460:
-    %t1169 = phi i64 [^cond_then_458: %t1165, ^cond_else_459: %t1168]
-    %t1170 = binary sub i64 %t1169, 1
-    %t1171 = cmp ule i64 %t1170, 2
-    %t1172 = binary umod u32 %t1161, 4
-    %t1173 = cmp eq u32 %t1172, 0
-    branch %t1173, ^cond_then_461, ^cond_else_462
+    %t1182 = phi i64 [^cond_then_458: %t1178, ^cond_else_459: %t1181]
+    %t1183 = cmp eq i64 %t1182, 2
+    %t1184 = cmp eq i64 %t1182, 1
+    %t1185 = select i64 %t1184, %t1182, %t1183
+    %t1186 = cmp eq i64 %t1182, 3
+    %t1187 = select i64 %t1185, 1, %t1186
+    %t1188 = binary umod u32 %t1174, 4
+    %t1189 = cmp eq u32 %t1188, 0
+    branch %t1189, ^cond_then_461, ^cond_else_462
 
   block ^cond_then_461:
-    %t1174 = select i32 %t1171, 2147483646, 2147483647
+    %t1190 = select i32 %t1187, 2147483646, 2147483647
     jump ^cond_end_465
 
   block ^cond_else_462:
-    %t1175 = cmp eq u32 %t1172, 1
-    branch %t1175, ^cond_end_464, ^cond_else_463
+    %t1191 = cmp eq u32 %t1188, 1
+    branch %t1191, ^cond_end_464, ^cond_else_463
 
   block ^cond_else_463:
-    %t1176 = binary umod u32 %t1161, 79
-    %t1177 = copy i32 %t1176
-    %t1178 = binary sub nowrap i32 %t1177, 37
+    %t1192 = binary umod u32 %t1174, 79
+    %t1193 = copy i32 %t1192
+    %t1194 = binary sub nowrap i32 %t1193, 37
     jump ^cond_end_464
 
   block ^cond_end_464:
-    %t1179 = phi i32 [^cond_else_463: %t1178, ^cond_else_462: -2147483648]
+    %t1195 = phi i32 [^cond_else_463: %t1194, ^cond_else_462: -2147483648]
     jump ^cond_end_465
 
   block ^cond_end_465:
-    %t1180 = phi i32 [^cond_then_461: %t1174, ^cond_end_464: %t1179]
-    %t1181 = convert trunc u8 i64 %t1171
-    %t1182 = convert zext i32 u8 %t1181
-    %t1183 = binary add nowrap i32 %t1180, %t1182
-    %t1184 = call i32 @count_7_0(%t1169, %t1180)
-    %t1185 = cmp ne i32 %t1183, %t1184
-    branch %t1185, ^if_then_466, ^if_end_467
+    %t1196 = phi i32 [^cond_then_461: %t1190, ^cond_end_464: %t1195]
+    %t1197 = convert trunc u8 i64 %t1187
+    %t1198 = convert zext i32 u8 %t1197
+    %t1199 = binary add nowrap i32 %t1196, %t1198
+    %t1200 = call i32 @count_7_0(%t1182, %t1196)
+    %t1201 = cmp ne i32 %t1199, %t1200
+    branch %t1201, ^if_then_466, ^if_end_467
 
   block ^if_then_466:
-    %t1186 = addr @__strlit__36
-    %t1187 = call i32 @printf(%t1186, %t1169, %t1180, %t1184, %t1183)
+    %t1202 = addr @__strlit__36
+    %t1203 = call i32 @printf(%t1202, %t1182, %t1196, %t1200, %t1199)
     return i32 1
 
   block ^if_end_467:
-    %t1188 = binary add u32 %t1160, 1
-    %t1189 = binary add u32 %t1161, 1
+    %t1204 = binary add u32 %t1173, 1
+    %t1205 = binary add u32 %t1174, 1
     jump ^for_cond_456
 
   block ^for_cond_468:
-    %t1190 = phi u32 [^if_end_479: %t1217, ^for_cond_456: %t1160]
-    %t1191 = phi u32 [^if_end_479: %t1218, ^for_cond_456: 0]
-    %t1192 = cmp ult u32 %t1191, 135
-    branch %t1192, ^for_body_469, ^for_cond_480
+    %t1206 = phi u32 [^if_end_479: %t1233, ^for_cond_456: %t1173]
+    %t1207 = phi u32 [^if_end_479: %t1234, ^for_cond_456: 0]
+    %t1208 = cmp ult u32 %t1207, 135
+    branch %t1208, ^for_body_469, ^for_cond_480
 
   block ^for_body_469:
-    %t1193 = cmp ult u32 %t1191, 128
-    branch %t1193, ^cond_then_470, ^cond_else_471
+    %t1209 = cmp ult u32 %t1207, 128
+    branch %t1209, ^cond_then_470, ^cond_else_471
 
   block ^cond_then_470:
-    %t1194 = convert zext i64 u32 %t1191
-    %t1195 = binary mul i64 %t1194, -7046029254386353131
+    %t1210 = convert zext i64 u32 %t1207
+    %t1211 = binary mul i64 %t1210, -7046029254386353131
     jump ^cond_end_472
 
   block ^cond_else_471:
-    %t1196 = binary sub u32 %t1191, 128
-    %t1197 = index inbounds i64 [projection=array_element] %t1035, %t1196
-    %t1198 = load typed i64 %t1197
+    %t1212 = binary sub u32 %t1207, 128
+    %t1213 = index inbounds i64 [projection=array_element] %t1047, %t1212
+    %t1214 = load typed i64 %t1213
     jump ^cond_end_472
 
   block ^cond_end_472:
-    %t1199 = phi i64 [^cond_then_470: %t1195, ^cond_else_471: %t1198]
-    %t1200 = cmp uge i64 %t1199, -3
-    %t1201 = binary umod u32 %t1191, 4
-    %t1202 = cmp eq u32 %t1201, 0
-    branch %t1202, ^cond_then_473, ^cond_else_474
+    %t1215 = phi i64 [^cond_then_470: %t1211, ^cond_else_471: %t1214]
+    %t1216 = cmp uge i64 %t1215, -3
+    %t1217 = binary umod u32 %t1207, 4
+    %t1218 = cmp eq u32 %t1217, 0
+    branch %t1218, ^cond_then_473, ^cond_else_474
 
   block ^cond_then_473:
-    %t1203 = select i32 %t1200, 2147483646, 2147483647
+    %t1219 = select i32 %t1216, 2147483646, 2147483647
     jump ^cond_end_477
 
   block ^cond_else_474:
-    %t1204 = cmp eq u32 %t1201, 1
-    branch %t1204, ^cond_end_476, ^cond_else_475
+    %t1220 = cmp eq u32 %t1217, 1
+    branch %t1220, ^cond_end_476, ^cond_else_475
 
   block ^cond_else_475:
-    %t1205 = binary umod u32 %t1191, 79
-    %t1206 = copy i32 %t1205
-    %t1207 = binary sub nowrap i32 %t1206, 37
+    %t1221 = binary umod u32 %t1207, 79
+    %t1222 = copy i32 %t1221
+    %t1223 = binary sub nowrap i32 %t1222, 37
     jump ^cond_end_476
 
   block ^cond_end_476:
-    %t1208 = phi i32 [^cond_else_475: %t1207, ^cond_else_474: -2147483648]
+    %t1224 = phi i32 [^cond_else_475: %t1223, ^cond_else_474: -2147483648]
     jump ^cond_end_477
 
   block ^cond_end_477:
-    %t1209 = phi i32 [^cond_then_473: %t1203, ^cond_end_476: %t1208]
-    %t1210 = convert trunc u8 i64 %t1200
-    %t1211 = convert zext i32 u8 %t1210
-    %t1212 = binary add nowrap i32 %t1209, %t1211
-    %t1213 = call i32 @count_7_1(%t1199, %t1209)
-    %t1214 = cmp ne i32 %t1212, %t1213
-    branch %t1214, ^if_then_478, ^if_end_479
+    %t1225 = phi i32 [^cond_then_473: %t1219, ^cond_end_476: %t1224]
+    %t1226 = convert trunc u8 i64 %t1216
+    %t1227 = convert zext i32 u8 %t1226
+    %t1228 = binary add nowrap i32 %t1225, %t1227
+    %t1229 = call i32 @count_7_1(%t1215, %t1225)
+    %t1230 = cmp ne i32 %t1228, %t1229
+    branch %t1230, ^if_then_478, ^if_end_479
 
   block ^if_then_478:
-    %t1215 = addr @__strlit__37
-    %t1216 = call i32 @printf(%t1215, %t1199, %t1209, %t1213, %t1212)
+    %t1231 = addr @__strlit__37
+    %t1232 = call i32 @printf(%t1231, %t1215, %t1225, %t1229, %t1228)
     return i32 1
 
   block ^if_end_479:
-    %t1217 = binary add u32 %t1190, 1
-    %t1218 = binary add u32 %t1191, 1
+    %t1233 = binary add u32 %t1206, 1
+    %t1234 = binary add u32 %t1207, 1
     jump ^for_cond_468
 
   block ^for_cond_480:
-    %t1219 = phi u32 [^if_end_491: %t1247, ^for_cond_468: %t1190]
-    %t1220 = phi u32 [^if_end_491: %t1248, ^for_cond_468: 0]
-    %t1221 = cmp ult u32 %t1220, 135
-    branch %t1221, ^for_body_481, ^for_cond_492
+    %t1235 = phi u32 [^if_end_491: %t1263, ^for_cond_468: %t1206]
+    %t1236 = phi u32 [^if_end_491: %t1264, ^for_cond_468: 0]
+    %t1237 = cmp ult u32 %t1236, 135
+    branch %t1237, ^for_body_481, ^for_cond_492
 
   block ^for_body_481:
-    %t1222 = cmp ult u32 %t1220, 128
-    branch %t1222, ^cond_then_482, ^cond_else_483
+    %t1238 = cmp ult u32 %t1236, 128
+    branch %t1238, ^cond_then_482, ^cond_else_483
 
   block ^cond_then_482:
-    %t1223 = convert zext i64 u32 %t1220
-    %t1224 = binary mul i64 %t1223, -7046029254386353131
+    %t1239 = convert zext i64 u32 %t1236
+    %t1240 = binary mul i64 %t1239, -7046029254386353131
     jump ^cond_end_484
 
   block ^cond_else_483:
-    %t1225 = binary sub u32 %t1220, 128
-    %t1226 = index inbounds i64 [projection=array_element] %t1065, %t1225
-    %t1227 = load typed i64 %t1226
+    %t1241 = binary sub u32 %t1236, 128
+    %t1242 = index inbounds i64 [projection=array_element] %t1077, %t1241
+    %t1243 = load typed i64 %t1242
     jump ^cond_end_484
 
   block ^cond_end_484:
-    %t1228 = phi i64 [^cond_then_482: %t1224, ^cond_else_483: %t1227]
-    %t1229 = binary sub i64 %t1228, 9223372036854775807
-    %t1230 = cmp ule i64 %t1229, 2
-    %t1231 = binary umod u32 %t1220, 4
-    %t1232 = cmp eq u32 %t1231, 0
-    branch %t1232, ^cond_then_485, ^cond_else_486
+    %t1244 = phi i64 [^cond_then_482: %t1240, ^cond_else_483: %t1243]
+    %t1245 = binary sub i64 %t1244, 9223372036854775807
+    %t1246 = cmp ule i64 %t1245, 2
+    %t1247 = binary umod u32 %t1236, 4
+    %t1248 = cmp eq u32 %t1247, 0
+    branch %t1248, ^cond_then_485, ^cond_else_486
 
   block ^cond_then_485:
-    %t1233 = select i32 %t1230, 2147483646, 2147483647
+    %t1249 = select i32 %t1246, 2147483646, 2147483647
     jump ^cond_end_489
 
   block ^cond_else_486:
-    %t1234 = cmp eq u32 %t1231, 1
-    branch %t1234, ^cond_end_488, ^cond_else_487
+    %t1250 = cmp eq u32 %t1247, 1
+    branch %t1250, ^cond_end_488, ^cond_else_487
 
   block ^cond_else_487:
-    %t1235 = binary umod u32 %t1220, 79
-    %t1236 = copy i32 %t1235
-    %t1237 = binary sub nowrap i32 %t1236, 37
+    %t1251 = binary umod u32 %t1236, 79
+    %t1252 = copy i32 %t1251
+    %t1253 = binary sub nowrap i32 %t1252, 37
     jump ^cond_end_488
 
   block ^cond_end_488:
-    %t1238 = phi i32 [^cond_else_487: %t1237, ^cond_else_486: -2147483648]
+    %t1254 = phi i32 [^cond_else_487: %t1253, ^cond_else_486: -2147483648]
     jump ^cond_end_489
 
   block ^cond_end_489:
-    %t1239 = phi i32 [^cond_then_485: %t1233, ^cond_end_488: %t1238]
-    %t1240 = convert trunc u8 i64 %t1230
-    %t1241 = convert zext i32 u8 %t1240
-    %t1242 = binary add nowrap i32 %t1239, %t1241
-    %t1243 = call i32 @count_7_2(%t1228, %t1239)
-    %t1244 = cmp ne i32 %t1242, %t1243
-    branch %t1244, ^if_then_490, ^if_end_491
+    %t1255 = phi i32 [^cond_then_485: %t1249, ^cond_end_488: %t1254]
+    %t1256 = convert trunc u8 i64 %t1246
+    %t1257 = convert zext i32 u8 %t1256
+    %t1258 = binary add nowrap i32 %t1255, %t1257
+    %t1259 = call i32 @count_7_2(%t1244, %t1255)
+    %t1260 = cmp ne i32 %t1258, %t1259
+    branch %t1260, ^if_then_490, ^if_end_491
 
   block ^if_then_490:
-    %t1245 = addr @__strlit__38
-    %t1246 = call i32 @printf(%t1245, %t1228, %t1239, %t1243, %t1242)
+    %t1261 = addr @__strlit__38
+    %t1262 = call i32 @printf(%t1261, %t1244, %t1255, %t1259, %t1258)
     return i32 1
 
   block ^if_end_491:
-    %t1247 = binary add u32 %t1219, 1
-    %t1248 = binary add u32 %t1220, 1
+    %t1263 = binary add u32 %t1235, 1
+    %t1264 = binary add u32 %t1236, 1
     jump ^for_cond_480
 
   block ^for_cond_492:
-    %t1249 = phi u32 [^if_end_503: %t1277, ^for_cond_480: %t1219]
-    %t1250 = phi u32 [^if_end_503: %t1278, ^for_cond_480: 0]
-    %t1251 = cmp ult u32 %t1250, 135
-    branch %t1251, ^for_body_493, ^for_cond_504
+    %t1265 = phi u32 [^if_end_503: %t1293, ^for_cond_480: %t1235]
+    %t1266 = phi u32 [^if_end_503: %t1294, ^for_cond_480: 0]
+    %t1267 = cmp ult u32 %t1266, 135
+    branch %t1267, ^for_body_493, ^for_cond_504
 
   block ^for_body_493:
-    %t1252 = cmp ult u32 %t1250, 128
-    branch %t1252, ^cond_then_494, ^cond_else_495
+    %t1268 = cmp ult u32 %t1266, 128
+    branch %t1268, ^cond_then_494, ^cond_else_495
 
   block ^cond_then_494:
-    %t1253 = convert zext i64 u32 %t1250
-    %t1254 = binary mul i64 %t1253, -7046029254386353131
+    %t1269 = convert zext i64 u32 %t1266
+    %t1270 = binary mul i64 %t1269, -7046029254386353131
     jump ^cond_end_496
 
   block ^cond_else_495:
-    %t1255 = binary sub u32 %t1250, 128
-    %t1256 = index inbounds i64 [projection=array_element] %t1096, %t1255
-    %t1257 = load typed i64 %t1256
+    %t1271 = binary sub u32 %t1266, 128
+    %t1272 = index inbounds i64 [projection=array_element] %t1108, %t1271
+    %t1273 = load typed i64 %t1272
     jump ^cond_end_496
 
   block ^cond_end_496:
-    %t1258 = phi i64 [^cond_then_494: %t1254, ^cond_else_495: %t1257]
-    %t1259 = binary sub i64 %t1258, -1
-    %t1260 = cmp ule i64 %t1259, 2
-    %t1261 = binary umod u32 %t1250, 4
-    %t1262 = cmp eq u32 %t1261, 0
-    branch %t1262, ^cond_then_497, ^cond_else_498
+    %t1274 = phi i64 [^cond_then_494: %t1270, ^cond_else_495: %t1273]
+    %t1275 = binary sub i64 %t1274, -1
+    %t1276 = cmp ule i64 %t1275, 2
+    %t1277 = binary umod u32 %t1266, 4
+    %t1278 = cmp eq u32 %t1277, 0
+    branch %t1278, ^cond_then_497, ^cond_else_498
 
   block ^cond_then_497:
-    %t1263 = select i32 %t1260, 2147483646, 2147483647
+    %t1279 = select i32 %t1276, 2147483646, 2147483647
     jump ^cond_end_501
 
   block ^cond_else_498:
-    %t1264 = cmp eq u32 %t1261, 1
-    branch %t1264, ^cond_end_500, ^cond_else_499
+    %t1280 = cmp eq u32 %t1277, 1
+    branch %t1280, ^cond_end_500, ^cond_else_499
 
   block ^cond_else_499:
-    %t1265 = binary umod u32 %t1250, 79
-    %t1266 = copy i32 %t1265
-    %t1267 = binary sub nowrap i32 %t1266, 37
+    %t1281 = binary umod u32 %t1266, 79
+    %t1282 = copy i32 %t1281
+    %t1283 = binary sub nowrap i32 %t1282, 37
     jump ^cond_end_500
 
   block ^cond_end_500:
-    %t1268 = phi i32 [^cond_else_499: %t1267, ^cond_else_498: -2147483648]
+    %t1284 = phi i32 [^cond_else_499: %t1283, ^cond_else_498: -2147483648]
     jump ^cond_end_501
 
   block ^cond_end_501:
-    %t1269 = phi i32 [^cond_then_497: %t1263, ^cond_end_500: %t1268]
-    %t1270 = convert trunc u8 i64 %t1260
-    %t1271 = convert zext i32 u8 %t1270
-    %t1272 = binary add nowrap i32 %t1269, %t1271
-    %t1273 = call i32 @count_7_3(%t1258, %t1269)
-    %t1274 = cmp ne i32 %t1272, %t1273
-    branch %t1274, ^if_then_502, ^if_end_503
+    %t1285 = phi i32 [^cond_then_497: %t1279, ^cond_end_500: %t1284]
+    %t1286 = convert trunc u8 i64 %t1276
+    %t1287 = convert zext i32 u8 %t1286
+    %t1288 = binary add nowrap i32 %t1285, %t1287
+    %t1289 = call i32 @count_7_3(%t1274, %t1285)
+    %t1290 = cmp ne i32 %t1288, %t1289
+    branch %t1290, ^if_then_502, ^if_end_503
 
   block ^if_then_502:
-    %t1275 = addr @__strlit__39
-    %t1276 = call i32 @printf(%t1275, %t1258, %t1269, %t1273, %t1272)
+    %t1291 = addr @__strlit__39
+    %t1292 = call i32 @printf(%t1291, %t1274, %t1285, %t1289, %t1288)
     return i32 1
 
   block ^if_end_503:
-    %t1277 = binary add u32 %t1249, 1
-    %t1278 = binary add u32 %t1250, 1
+    %t1293 = binary add u32 %t1265, 1
+    %t1294 = binary add u32 %t1266, 1
     jump ^for_cond_492
 
   block ^for_cond_504:
-    %t1279 = phi u32 [^if_end_515: %t1309, ^for_cond_492: %t1249]
-    %t1280 = phi u32 [^if_end_515: %t1310, ^for_cond_492: 0]
-    %t1281 = cmp ult u32 %t1280, 137
-    branch %t1281, ^for_body_505, ^for_end_516
+    %t1295 = phi u32 [^if_end_515: %t1326, ^for_cond_492: %t1265]
+    %t1296 = phi u32 [^if_end_515: %t1327, ^for_cond_492: 0]
+    %t1297 = cmp ult u32 %t1296, 137
+    branch %t1297, ^for_body_505, ^for_end_516
 
   block ^for_body_505:
-    %t1282 = cmp ult u32 %t1280, 128
-    branch %t1282, ^cond_then_506, ^cond_else_507
+    %t1298 = cmp ult u32 %t1296, 128
+    branch %t1298, ^cond_then_506, ^cond_else_507
 
   block ^cond_then_506:
-    %t1283 = convert zext i64 u32 %t1280
-    %t1284 = binary mul i64 %t1283, -7046029254386353131
+    %t1299 = convert zext i64 u32 %t1296
+    %t1300 = binary mul i64 %t1299, -7046029254386353131
     jump ^cond_end_508
 
   block ^cond_else_507:
-    %t1285 = binary sub u32 %t1280, 128
-    %t1286 = index inbounds i64 [projection=array_element] %t1127, %t1285
-    %t1287 = load typed i64 %t1286
+    %t1301 = binary sub u32 %t1296, 128
+    %t1302 = index inbounds i64 [projection=array_element] %t1139, %t1301
+    %t1303 = load typed i64 %t1302
     jump ^cond_end_508
 
   block ^cond_end_508:
-    %t1288 = phi i64 [^cond_then_506: %t1284, ^cond_else_507: %t1287]
-    %t1289 = binary and i64 %t1288, -3
-    %t1290 = cmp eq i64 %t1288, 4
-    %t1291 = cmp eq i64 %t1289, 1
-    %t1292 = select i64 %t1291, %t1289, %t1290
-    %t1293 = binary umod u32 %t1280, 4
-    %t1294 = cmp eq u32 %t1293, 0
-    branch %t1294, ^cond_then_509, ^cond_else_510
+    %t1304 = phi i64 [^cond_then_506: %t1300, ^cond_else_507: %t1303]
+    %t1305 = cmp eq i64 %t1304, 3
+    %t1306 = cmp eq i64 %t1304, 1
+    %t1307 = select i64 %t1306, %t1304, %t1305
+    %t1308 = cmp eq i64 %t1304, 4
+    %t1309 = select i64 %t1307, 1, %t1308
+    %t1310 = binary umod u32 %t1296, 4
+    %t1311 = cmp eq u32 %t1310, 0
+    branch %t1311, ^cond_then_509, ^cond_else_510
 
   block ^cond_then_509:
-    %t1295 = select i32 %t1292, 2147483646, 2147483647
+    %t1312 = select i32 %t1309, 2147483646, 2147483647
     jump ^cond_end_513
 
   block ^cond_else_510:
-    %t1296 = cmp eq u32 %t1293, 1
-    branch %t1296, ^cond_end_512, ^cond_else_511
+    %t1313 = cmp eq u32 %t1310, 1
+    branch %t1313, ^cond_end_512, ^cond_else_511
 
   block ^cond_else_511:
-    %t1297 = binary umod u32 %t1280, 79
-    %t1298 = copy i32 %t1297
-    %t1299 = binary sub nowrap i32 %t1298, 37
+    %t1314 = binary umod u32 %t1296, 79
+    %t1315 = copy i32 %t1314
+    %t1316 = binary sub nowrap i32 %t1315, 37
     jump ^cond_end_512
 
   block ^cond_end_512:
-    %t1300 = phi i32 [^cond_else_511: %t1299, ^cond_else_510: -2147483648]
+    %t1317 = phi i32 [^cond_else_511: %t1316, ^cond_else_510: -2147483648]
     jump ^cond_end_513
 
   block ^cond_end_513:
-    %t1301 = phi i32 [^cond_then_509: %t1295, ^cond_end_512: %t1300]
-    %t1302 = convert trunc u8 i64 %t1292
-    %t1303 = convert zext i32 u8 %t1302
-    %t1304 = binary add nowrap i32 %t1301, %t1303
-    %t1305 = call i32 @count_7_4(%t1288, %t1301)
-    %t1306 = cmp ne i32 %t1304, %t1305
-    branch %t1306, ^if_then_514, ^if_end_515
+    %t1318 = phi i32 [^cond_then_509: %t1312, ^cond_end_512: %t1317]
+    %t1319 = convert trunc u8 i64 %t1309
+    %t1320 = convert zext i32 u8 %t1319
+    %t1321 = binary add nowrap i32 %t1318, %t1320
+    %t1322 = call i32 @count_7_4(%t1304, %t1318)
+    %t1323 = cmp ne i32 %t1321, %t1322
+    branch %t1323, ^if_then_514, ^if_end_515
 
   block ^if_then_514:
-    %t1307 = addr @__strlit__40
-    %t1308 = call i32 @printf(%t1307, %t1288, %t1301, %t1305, %t1304)
+    %t1324 = addr @__strlit__40
+    %t1325 = call i32 @printf(%t1324, %t1304, %t1318, %t1322, %t1321)
     return i32 1
 
   block ^if_end_515:
-    %t1309 = binary add u32 %t1279, 1
-    %t1310 = binary add u32 %t1280, 1
+    %t1326 = binary add u32 %t1295, 1
+    %t1327 = binary add u32 %t1296, 1
     jump ^for_cond_504
 
   block ^for_end_516:
-    %t1311 = addr @__constexpr_template__35
+    %t1328 = addr @__constexpr_template__35
     jump ^for_body_517
 
   block ^for_body_517:
-    %t1312 = phi u32 [^for_end_516: 0, ^for_iter_548: %t1371]
-    %t1313 = phi u32 [^for_end_516: %t1279, ^for_iter_548: %t1317]
+    %t1329 = phi u32 [^for_end_516: 0, ^for_iter_548: %t1388]
+    %t1330 = phi u32 [^for_end_516: %t1295, ^for_iter_548: %t1334]
     jump ^for_body_518
 
   block ^for_body_518:
-    %t1314 = phi u32 [^for_body_517: 0, ^for_iter_547: %t1369]
-    %t1315 = phi u32 [^for_body_517: %t1313, ^for_iter_547: %t1317]
+    %t1331 = phi u32 [^for_body_517: 0, ^for_iter_547: %t1386]
+    %t1332 = phi u32 [^for_body_517: %t1330, ^for_iter_547: %t1334]
     jump ^for_cond_519
 
   block ^for_cond_519:
-    %t1316 = phi u32 [^for_body_518: 0, ^if_end_546: %t1368]
-    %t1317 = phi u32 [^for_body_518: %t1315, ^if_end_546: %t1367]
-    %t1318 = cmp ult u32 %t1316, 16
-    branch %t1318, ^for_body_520, ^for_iter_547
+    %t1333 = phi u32 [^for_body_518: 0, ^if_end_546: %t1385]
+    %t1334 = phi u32 [^for_body_518: %t1332, ^if_end_546: %t1384]
+    %t1335 = cmp ult u32 %t1333, 16
+    branch %t1335, ^for_body_520, ^for_iter_547
 
   block ^for_body_520:
-    %t1319 = index inbounds i64 [projection=array_element] %t1311, %t1314
-    %t1320 = load typed i64 %t1319
-    %t1321 = binary sub i64 %t1320, 1
-    %t1322 = cmp ule i64 %t1321, 2
-    %t1323 = binary mul u32 %t1312, 177
-    store typed u32 %t1323, $expected_data
-    store typed u32 %t1323, $actual_data
+    %t1336 = index inbounds i64 [projection=array_element] %t1328, %t1331
+    %t1337 = load typed i64 %t1336
+    %t1338 = binary sub i64 %t1337, 1
+    %t1339 = cmp ule i64 %t1338, 2
+    %t1340 = binary mul u32 %t1329, 177
+    store typed u32 %t1340, $expected_data
+    store typed u32 %t1340, $actual_data
     store typed u32 0, $field__1
     store typed u32 0, $field__2
-    branch %t1322, ^cond_then_521, ^cond_end_522
+    branch %t1339, ^cond_then_521, ^cond_end_522
 
   block ^cond_then_521:
-    %t1324 = binary umod u32 %t1312, 13
-    %t1325 = binary add u32 %t1324, 1
+    %t1341 = binary umod u32 %t1329, 13
+    %t1342 = binary add u32 %t1341, 1
     jump ^cond_end_522
 
   block ^cond_end_522:
-    %t1326 = phi u32 [^cond_then_521: %t1325, ^for_body_520: 0]
+    %t1343 = phi u32 [^cond_then_521: %t1342, ^for_body_520: 0]
     store typed u8 0, $field__3
     store typed u8 0, $field__4
     store typed u32 0, @calls
     store typed u32 0, @closed
     store typed u32 0, @opened
     eh_try ^catch_dispatch_525
-    %t1327 = cmp ule i64 %t1321, 2
-    branch %t1327, ^cond_then_523, ^cond_end_524
+    %t1344 = cmp ule i64 %t1338, 2
+    branch %t1344, ^cond_then_523, ^cond_end_524
 
   block ^cond_then_523:
-    %t1328 = addr $expected_data
+    %t1345 = addr $expected_data
     jump ^cond_end_524
 
   block ^cond_end_524:
-    %t1329 = phi ptr [^cond_then_523: %t1328, ^cond_end_522: 0]
-    %t1330 = call u32 @reference(%t1320, %t1312, %t1329, %t1326, %t1316)
-    store typed u32 %t1330, $field__1
+    %t1346 = phi ptr [^cond_then_523: %t1345, ^cond_end_522: 0]
+    %t1347 = call u32 @reference(%t1337, %t1329, %t1346, %t1343, %t1333)
+    store typed u32 %t1347, $field__1
     eh_end
     jump ^try_end_531
 
   block ^catch_dispatch_525:
     eh_catch @__external_rtti__int, 1
-    %t1331 = exception ptr
-    %t1332 = exception_selector i32
-    %t1333 = cmp eq i32 %t1332, 1
-    branch %t1333, ^catch_body_526, ^catch_next_530
+    %t1348 = exception ptr
+    %t1349 = exception_selector i32
+    %t1350 = cmp eq i32 %t1349, 1
+    branch %t1350, ^catch_body_526, ^catch_next_530
 
   block ^catch_body_526:
-    %t1334 = call ptr @__external_runtime____cxa_begin_catch(%t1331)
+    %t1351 = call ptr @__external_runtime____cxa_begin_catch(%t1348)
     eh_cleanup ^catch_cleanup_529
-    %t1335 = load typed i32 %t1334
-    %t1336 = cmp ne i32 %t1335, 71
-    branch %t1336, ^if_then_527, ^if_end_528
+    %t1352 = load typed i32 %t1351
+    %t1353 = cmp ne i32 %t1352, 71
+    branch %t1353, ^if_then_527, ^if_end_528
 
   block ^if_then_527:
     eh_end
@@ -5020,42 +5037,42 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     resume
 
   block ^try_end_531:
-    %t1337 = load typed u32 @opened
-    %t1338 = load typed u32 @closed
-    %t1339 = load typed u32 @calls
+    %t1354 = load typed u32 @opened
+    %t1355 = load typed u32 @closed
+    %t1356 = load typed u32 @calls
     store typed u32 0, @calls
     store typed u32 0, @closed
     store typed u32 0, @opened
     eh_try ^catch_dispatch_534
-    %t1340 = cmp ule i64 %t1321, 2
-    branch %t1340, ^cond_then_532, ^cond_end_533
+    %t1357 = cmp ule i64 %t1338, 2
+    branch %t1357, ^cond_then_532, ^cond_end_533
 
   block ^cond_then_532:
-    %t1341 = addr $actual_data
+    %t1358 = addr $actual_data
     jump ^cond_end_533
 
   block ^cond_end_533:
-    %t1342 = phi ptr [^cond_then_532: %t1341, ^try_end_531: 0]
-    %t1343 = call u32 @effect_dispatch(%t1320, %t1312, %t1342, %t1326, %t1316)
-    store typed u32 %t1343, $field__2
+    %t1359 = phi ptr [^cond_then_532: %t1358, ^try_end_531: 0]
+    %t1360 = call u32 @effect_dispatch(%t1337, %t1329, %t1359, %t1343, %t1333)
+    store typed u32 %t1360, $field__2
     eh_end
-    %t1344 = load typed u32 $field__1
-    %t1345 = cmp ne u32 %t1343, %t1344
-    branch %t1345, ^if_then_545, ^lor_rhs_540
+    %t1361 = load typed u32 $field__1
+    %t1362 = cmp ne u32 %t1360, %t1361
+    branch %t1362, ^if_then_545, ^lor_rhs_540
 
   block ^catch_dispatch_534:
     eh_catch @__external_rtti__int, 2
-    %t1346 = exception ptr
-    %t1347 = exception_selector i32
-    %t1348 = cmp eq i32 %t1347, 2
-    branch %t1348, ^catch_body_535, ^catch_next_539
+    %t1363 = exception ptr
+    %t1364 = exception_selector i32
+    %t1365 = cmp eq i32 %t1364, 2
+    branch %t1365, ^catch_body_535, ^catch_next_539
 
   block ^catch_body_535:
-    %t1349 = call ptr @__external_runtime____cxa_begin_catch(%t1346)
+    %t1366 = call ptr @__external_runtime____cxa_begin_catch(%t1363)
     eh_cleanup ^catch_cleanup_538
-    %t1350 = load typed i32 %t1349
-    %t1351 = cmp ne i32 %t1350, 71
-    branch %t1351, ^if_then_536, ^if_end_537
+    %t1367 = load typed i32 %t1366
+    %t1368 = cmp ne i32 %t1367, 71
+    branch %t1368, ^if_then_536, ^if_end_537
 
   block ^if_then_536:
     eh_end
@@ -5066,10 +5083,10 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     store typed u8 1, $field__4
     eh_end
     call void @__external_runtime____cxa_end_catch()
-    %t1352 = load typed u32 $field__2
-    %t1353 = load typed u32 $field__1
-    %t1354 = cmp ne u32 %t1352, %t1353
-    branch %t1354, ^if_then_545, ^lor_rhs_540
+    %t1369 = load typed u32 $field__2
+    %t1370 = load typed u32 $field__1
+    %t1371 = cmp ne u32 %t1369, %t1370
+    branch %t1371, ^if_then_545, ^lor_rhs_540
 
   block ^catch_cleanup_538:
     call void @__external_runtime____cxa_end_catch()
@@ -5080,52 +5097,52 @@ function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
     resume
 
   block ^lor_rhs_540:
-    %t1355 = load typed u32 $expected_data
-    %t1356 = load typed u32 $actual_data
-    %t1357 = cmp ne u32 %t1355, %t1356
-    branch %t1357, ^if_then_545, ^lor_rhs_541
+    %t1372 = load typed u32 $expected_data
+    %t1373 = load typed u32 $actual_data
+    %t1374 = cmp ne u32 %t1372, %t1373
+    branch %t1374, ^if_then_545, ^lor_rhs_541
 
   block ^lor_rhs_541:
-    %t1358 = load typed u8 $field__4
-    %t1359 = load typed u8 $field__3
-    %t1360 = cmp ne u8 %t1358, %t1359
-    branch %t1360, ^if_then_545, ^lor_rhs_542
+    %t1375 = load typed u8 $field__4
+    %t1376 = load typed u8 $field__3
+    %t1377 = cmp ne u8 %t1375, %t1376
+    branch %t1377, ^if_then_545, ^lor_rhs_542
 
   block ^lor_rhs_542:
-    %t1361 = load typed u32 @opened
-    %t1362 = cmp ne u32 %t1337, %t1361
-    branch %t1362, ^if_then_545, ^lor_rhs_543
+    %t1378 = load typed u32 @opened
+    %t1379 = cmp ne u32 %t1354, %t1378
+    branch %t1379, ^if_then_545, ^lor_rhs_543
 
   block ^lor_rhs_543:
-    %t1363 = load typed u32 @closed
-    %t1364 = cmp ne u32 %t1338, %t1363
-    branch %t1364, ^if_then_545, ^lor_rhs_544
+    %t1380 = load typed u32 @closed
+    %t1381 = cmp ne u32 %t1355, %t1380
+    branch %t1381, ^if_then_545, ^lor_rhs_544
 
   block ^lor_rhs_544:
-    %t1365 = load typed u32 @calls
-    %t1366 = cmp ne u32 %t1339, %t1365
-    branch %t1366, ^if_then_545, ^if_end_546
+    %t1382 = load typed u32 @calls
+    %t1383 = cmp ne u32 %t1356, %t1382
+    branch %t1383, ^if_then_545, ^if_end_546
 
   block ^if_then_545:
     return i32 4
 
   block ^if_end_546:
-    %t1367 = binary add u32 %t1317, 1
-    %t1368 = binary add u32 %t1316, 1
+    %t1384 = binary add u32 %t1334, 1
+    %t1385 = binary add u32 %t1333, 1
     jump ^for_cond_519
 
   block ^for_iter_547:
-    %t1369 = binary add u32 %t1314, 1
-    %t1370 = cmp ult u32 %t1369, 7
-    branch %t1370, ^for_body_518, ^for_iter_548
+    %t1386 = binary add u32 %t1331, 1
+    %t1387 = cmp ult u32 %t1386, 7
+    branch %t1387, ^for_body_518, ^for_iter_548
 
   block ^for_iter_548:
-    %t1371 = binary add u32 %t1312, 1
-    %t1372 = cmp ult u32 %t1371, 64
-    branch %t1372, ^for_body_517, ^for_end_549
+    %t1388 = binary add u32 %t1329, 1
+    %t1389 = cmp ult u32 %t1388, 64
+    branch %t1389, ^for_body_517, ^for_end_549
 
   block ^for_end_549:
-    %t1373 = addr @__strlit__41
-    %t1374 = call i32 @printf(%t1373, %t1317)
+    %t1390 = addr @__strlit__41
+    %t1391 = call i32 @printf(%t1390, %t1334)
     return i32 0
 }

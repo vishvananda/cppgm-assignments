@@ -1,0 +1,1 @@
+-x c -std=c11 -fshort-wchar -O2

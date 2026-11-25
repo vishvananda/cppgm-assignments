@@ -1,1 +1,0 @@
-ERROR: tests/general/300-variable-array-multidimension-bad.t:1:33: multidimensional variable-length arrays are outside the C profile

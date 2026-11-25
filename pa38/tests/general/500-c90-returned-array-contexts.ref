@@ -1,0 +1,74 @@
+global @row [linkage=c, binding=internal] = {
+  i8 17
+  i8 25
+  zero 15
+}
+
+function @make_row(%ret : ptr [pass=indirect_result, alias=exclusive_result, object_bytes=17]) -> void [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @row
+    copyobj 17x1 %t1, %ret
+    return void
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $sum : i32
+  slot $tmpobj__1 : obj<17x1>
+  slot $tmpobj__2 : obj<17x1>
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+
+  block ^entry:
+    %t1 = addr $tmpobj__1
+    call void @make_row(%t1)
+    %t2 = index inbounds i8 [projection=field] %t1, 0
+    %t3 = index inbounds i8 [projection=array_element] %t2, 0
+    %t4 = load i8 %t3
+    %t5 = addr $tmpobj__2
+    call void @make_row(%t5)
+    %t6 = index inbounds i8 [projection=field] %t5, 0
+    %t7 = index inbounds i8 [projection=array_element] %t6, 1
+    %t8 = load i8 %t7
+    %t9 = convert sext i32 i8 %t4
+    %t10 = convert sext i32 i8 %t8
+    %t11 = binary add nowrap i32 %t9, %t10
+    store typed i32 %t11, $sum
+    %t12 = const i64 17
+    %t13 = convert sext i64 i32 17
+    %t14 = cmp ne i64 %t12, %t13
+    %t15 = convert trunc i32 i64 %t14
+    branch %t15, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t16 = const i64 8
+    %t17 = const i64 8
+    %t18 = cmp ne i64 %t16, %t17
+    %t19 = convert trunc i32 i64 %t18
+    %t20 = cmp ne i32 %t19, 0
+    store typed i64 %t20, $lor__3
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__3
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t21 = load typed i64 $lor__3
+    branch %t21, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t22 = load typed i32 $sum
+    %t23 = cmp ne i32 %t22, 42
+    %t24 = convert trunc i32 i64 %t23
+    %t25 = cmp ne i32 %t24, 0
+    store typed i64 %t25, $lor__4
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__4
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t26 = load typed i64 $lor__4
+    %t27 = convert trunc i32 i64 %t26
+    return i32 %t27
+}

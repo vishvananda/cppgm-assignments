@@ -1,0 +1,209 @@
+global @row [linkage=c, binding=internal] = {
+  i32 4
+  i32 7
+  i32 9
+}
+
+function @local_value(%value : ptr) -> i32 [linkage=c, binding=internal] {
+  slot $value : ptr
+
+  block ^entry:
+    store typed ptr %value, $value
+    %t1 = load typed ptr $value
+    %t2 = index inbounds i32 [projection=array_element] %t1, 1
+    %t3 = load typed i32 %t2
+    return i32 %t3
+}
+function @inherited_linkage() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @row
+    %t2 = call i32 @local_value(%t1)
+    return i32 %t2
+}
+function @from_first_block() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @row
+    %t2 = call i32 @next_value(%t1)
+    return i32 %t2
+}
+function @from_file_declaration() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @row
+    %t2 = addr @next_value
+    %t3 = call i32 %t2(%t1) as (%arg0 : ptr) -> i32
+    return i32 %t3
+}
+function @next_value(%value : ptr) -> i32 [linkage=c, binding=strong] {
+  slot $value : ptr
+
+  block ^entry:
+    store typed ptr %value, $value
+    %t1 = load typed ptr $value
+    %t2 = index inbounds i32 [projection=array_element] %t1, 2
+    %t3 = load typed i32 %t2
+    return i32 %t3
+}
+function @hidden_prototype() -> i32 [linkage=c, binding=internal] {
+  slot $value : i32
+  slot $next_value : i32
+
+  block ^entry:
+    store typed i32 3, $value
+    store typed i32 1, $next_value
+    %t1 = addr @row
+    %t2 = addr @next_value
+    %t3 = call i32 %t2(%t1) as (%arg0 : ptr) -> i32
+    store typed i32 %t3, $value
+    %t4 = load typed i32 $value
+    %t5 = load typed i32 $next_value
+    %t6 = binary add nowrap i32 %t4, %t5
+    return i32 %t6
+}
+function @nested_composite() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = call ptr @get_row()
+    %t2 = index inbounds i32 [projection=array_element] %t1, 0
+    %t3 = load typed i32 %t2
+    return i32 %t3
+}
+function @get_row() -> ptr [linkage=c, binding=strong] {
+  block ^entry:
+    %t1 = addr @row
+    return ptr %t1
+}
+function @from_unprototyped_block() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @row
+    %t2 = addr @remote_value
+    %t3 = call i32 %t2(%t1) as (%arg0 : ptr) -> i32
+    return i32 %t3
+}
+function @from_prototyped_block() -> i32 [linkage=c, binding=internal] {
+  block ^entry:
+    %t1 = addr @row
+    %t2 = call i32 @remote_value(%t1) as (%arg0 : ptr) -> i32
+    return i32 %t2
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $land__1 : i64
+  slot $land__2 : i64
+  slot $land__3 : i64
+  slot $land__4 : i64
+  slot $land__5 : i64
+  slot $land__6 : i64
+
+  block ^entry:
+    %t1 = call i32 @inherited_linkage()
+    %t2 = cmp eq i32 %t1, 7
+    %t3 = convert trunc i32 i64 %t2
+    branch %t3, ^land_rhs_1, ^land_short_2
+
+  block ^land_rhs_1:
+    %t4 = call i32 @from_first_block()
+    %t5 = cmp eq i32 %t4, 9
+    %t6 = convert trunc i32 i64 %t5
+    %t7 = cmp ne i32 %t6, 0
+    store typed i64 %t7, $land__1
+    jump ^land_end_3
+
+  block ^land_short_2:
+    store typed i64 0, $land__1
+    jump ^land_end_3
+
+  block ^land_end_3:
+    %t8 = load typed i64 $land__1
+    branch %t8, ^land_rhs_4, ^land_short_5
+
+  block ^land_rhs_4:
+    %t9 = call i32 @from_file_declaration()
+    %t10 = cmp eq i32 %t9, 9
+    %t11 = convert trunc i32 i64 %t10
+    %t12 = cmp ne i32 %t11, 0
+    store typed i64 %t12, $land__2
+    jump ^land_end_6
+
+  block ^land_short_5:
+    store typed i64 0, $land__2
+    jump ^land_end_6
+
+  block ^land_end_6:
+    %t13 = load typed i64 $land__2
+    branch %t13, ^land_rhs_7, ^land_short_8
+
+  block ^land_rhs_7:
+    %t14 = call i32 @hidden_prototype()
+    %t15 = cmp eq i32 %t14, 10
+    %t16 = convert trunc i32 i64 %t15
+    %t17 = cmp ne i32 %t16, 0
+    store typed i64 %t17, $land__3
+    jump ^land_end_9
+
+  block ^land_short_8:
+    store typed i64 0, $land__3
+    jump ^land_end_9
+
+  block ^land_end_9:
+    %t18 = load typed i64 $land__3
+    branch %t18, ^land_rhs_10, ^land_short_11
+
+  block ^land_rhs_10:
+    %t19 = call i32 @nested_composite()
+    %t20 = cmp eq i32 %t19, 4
+    %t21 = convert trunc i32 i64 %t20
+    %t22 = cmp ne i32 %t21, 0
+    store typed i64 %t22, $land__4
+    jump ^land_end_12
+
+  block ^land_short_11:
+    store typed i64 0, $land__4
+    jump ^land_end_12
+
+  block ^land_end_12:
+    %t23 = load typed i64 $land__4
+    branch %t23, ^land_rhs_13, ^land_short_14
+
+  block ^land_rhs_13:
+    %t24 = call i32 @from_unprototyped_block()
+    %t25 = cmp eq i32 %t24, 7
+    %t26 = convert trunc i32 i64 %t25
+    %t27 = cmp ne i32 %t26, 0
+    store typed i64 %t27, $land__5
+    jump ^land_end_15
+
+  block ^land_short_14:
+    store typed i64 0, $land__5
+    jump ^land_end_15
+
+  block ^land_end_15:
+    %t28 = load typed i64 $land__5
+    branch %t28, ^land_rhs_16, ^land_short_17
+
+  block ^land_rhs_16:
+    %t29 = call i32 @from_prototyped_block()
+    %t30 = cmp eq i32 %t29, 7
+    %t31 = convert trunc i32 i64 %t30
+    %t32 = cmp ne i32 %t31, 0
+    store typed i64 %t32, $land__6
+    jump ^land_end_18
+
+  block ^land_short_17:
+    store typed i64 0, $land__6
+    jump ^land_end_18
+
+  block ^land_end_18:
+    %t33 = load typed i64 $land__6
+    %t34 = convert trunc i32 i64 %t33
+    %t35 = cmp eq i32 %t34, 0
+    %t36 = convert trunc i32 i64 %t35
+    return i32 %t36
+}
+function @remote_value(%row : ptr) -> i32 [linkage=c, binding=strong] {
+  slot $row : ptr
+
+  block ^entry:
+    store typed ptr %row, $row
+    %t1 = load typed ptr $row
+    %t2 = index inbounds i32 [projection=array_element] %t1, 1
+    %t3 = load typed i32 %t2
+    return i32 %t3
+}

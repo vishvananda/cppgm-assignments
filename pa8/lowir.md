@@ -57,6 +57,9 @@ The following naming conventions are used:
 These are LowIR symbol names, not necessarily raw source-level identifiers. Later C++
 lowering assignments may encode qualified or overloaded source names into deterministic
 LowIR symbol spellings as long as they remain valid `@name` tokens.
+Names introduced by a sigil accept ASCII letters, digits, `_`, `.`,
+`$`, and non-ASCII Unicode scalar values encoded in UTF-8. Preserve
+the Unicode spelling when reading and writing these names.
 
 ## Target profiles
 
@@ -279,7 +282,14 @@ function @boot() -> void [role=init, binding=strong] {
 The currently defined top-level metadata keys are `role`, `linkage`, `binding`, `object`,
 `tls_for` (functions only), `keep_alias`, `prefer_local`, `object_root`, `force_inline`
 (functions only), `inline_hint` (functions only), `no_inline` (functions only), `cold`
-(functions only), and `storage` and `section` (globals only).
+(functions only), `no_builtin` (functions only), `storage` (globals only), and `section`.
+
+`no_builtin=yes` keeps a function's linkage and type while disabling any
+special library behavior inferred from its name. Calls still use explicit
+boundary facts such as `effects=readonly`. The reader also skips legacy
+entry, init, and fini inference for the symbol. Freestanding C uses this
+flag for ordinary C functions. Explicit builtins and generated helper
+calls carry their own contracts. Omit the key for the default behavior.
 
 The currently defined global `storage` values are:
 
@@ -307,12 +317,10 @@ describe a function or global's object visibility. The default is omitted.
 Visibility is independent of symbol binding. An ELF writer encodes it in
 the symbol's `st_other` field.
 
-`section=<name>` places a declared or defined global in a named ELF section.
-The first public form is intentionally token-safe: `<name>` must be nonempty
-and contain only ASCII letters, digits, `_`, and `.`. It does not accept a
-quoted name, whitespace, commas, hyphens, target segment syntax, or function
-placement. A declaration and definition of the same source object must agree
-on the section name before LowIR is produced.
+`section=<name>` names the ELF section for a function or global. An emitted
+function uses an executable section. `<name>` must be nonempty and contain
+only ASCII letters, digits, `_`, and `.`. All annotated declarations of the
+same symbol must agree on the section name before LowIR is produced.
 
 `storage=thread_local` is semantic TLS storage intent. Backend-specific descriptor
 sections and relocation forms are lower-layer object-format details. When a thread-local
@@ -617,7 +625,7 @@ Call signatures only accept call-boundary metadata such as `arity=...`, `effects
 `this_return=yes`. Top-level symbol metadata such as `role=...`, `linkage=...`,
 `binding=...`, `replaceable=...`, `object=...`, `keep_alias=...`, `prefer_local=...`, `object_root=...`, and
 `force_inline=...`, `inline_hint=...`, `no_inline=...`, and
-`cold=...` are not valid on `as (...) -> ...`
+`cold=...` or `no_builtin=...` are not valid on `as (...) -> ...`
 call signatures.
 
 Later backend lowering may also introduce internal compiler builtin helper symbols for
@@ -719,8 +727,14 @@ Where each `<data-item>` is one of:
 ```text
 <type> <scalar-literal>
 ptr addr @symbol
+ptr addr unaligned @symbol
 zero <bytes>
 ```
+
+`ptr addr unaligned` places the address of `@symbol` at the current byte
+position. The item occupies the target pointer width and contributes alignment
+one. Use it when a packed aggregate places a pointer relocation between its
+otherwise naturally aligned positions.
 
 Examples:
 
@@ -1553,6 +1567,13 @@ zero; unlike `ctz` and `clz`, every operand is defined. Source lowering may
 select it with `-mpopcnt`. The reference native form requires POPCNT, like the
 explicit ISA requirements of vector operations; a behavior-equivalent sequence
 is also valid. This extension is not part of PA8's required unary operators.
+
+The optional optimizer spelling `unary isconstant` takes an `i32`, `u32`, or
+`i64` value and returns 0 or 1 in the same type. A literal operand gives 1.
+An optimizer may also replace the query with 1 when it proves the operand's
+value constant. An unresolved query gives 0 at object emission. Source
+lowering can use this spelling for a GNU constant probe and discard any
+unused operand computation before writing the final LowIR.
 
 `unary sqrt` is the IEEE square root of an `f32` or `f64`, correctly rounded.
 It has no other effect: unlike the C library's `sqrt`, it does not set `errno`.
@@ -2608,3 +2629,32 @@ implicitly run source cleanups. Their full validation and lifetime rules are in
 [the assembly boundary](../pa29/assembly.md). PA8 validates and round-trips these typed records and their invariants.
 PA29 later binds constraints, encodes instructions and observes native behavior.
 No C++ parser, register allocator or assembly encoder is required in PA8.
+
+
+## Floating operations with environment access
+
+PA38 adds `%result = fenv_binary <operation> <float-type> <left>, <right>`.
+Use the same operands and result type as a scalar floating `binary`.
+The operations are `add`, `sub`, `mul`, and `div`. The operation
+observes the rounding mode and may update floating-point status flags.
+Retain its execution and ordering when the result is unused or both
+operands are constant. Use the target's scalar floating instruction
+with the active rounding state when selecting machine code.
+
+Use `fenv_convert` with the operand and result types of a numerical
+floating conversion. Rounding conversions read the active rounding
+mode. Like arithmetic, conversions retain their status effects.
+
+`fenv_cmp` and `fenv_cmp_signal` use the operands, predicate, and
+`i64` result of a floating `cmp`. They have the same truth values.
+The signaling form is used for C relational operators and raises
+invalid when either operand is a quiet NaN. The quiet form is used
+for equality, inequality, and quiet comparison builtins.
+
+## Fused multiply-add
+
+On AArch64, `%result = fma <float-type> <left>, <right>, <addend>`
+rounds the product plus the addend once. All operands and the result have
+the same type, either `f32` or `f64`. The instruction records a contraction
+chosen during PA38 source lowering. Preserve the single rounding when
+optimizing or selecting instructions.

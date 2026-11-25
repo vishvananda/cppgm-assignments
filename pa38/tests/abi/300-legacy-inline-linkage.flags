@@ -1,0 +1,1 @@
+-x c -std=iso9899:199409 -pedantic-errors -O2

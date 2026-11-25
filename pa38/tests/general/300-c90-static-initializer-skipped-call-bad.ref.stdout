@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c90-static-initializer-skipped-call-bad.t:2:20: a forbidden operator in a C90 constant initializer

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-enum-incomplete-call.t:6:5: a call has incomplete enumeration return type

@@ -1,0 +1,36 @@
+global @__local_static__main__decl0__index : i32 [binding=internal, object=_ZZ4mainE5index] = 0
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    jump ^for_cond_1
+
+  block ^for_cond_1:
+    %t1 = load typed i32 @__local_static__main__decl0__index
+    %t2 = cmp ne i32 %t1, 3
+    %t3 = convert trunc i32 i64 %t2
+    branch %t3, ^for_body_2, ^for_end_4
+
+  block ^for_body_2:
+    %t4 = load typed i32 @__local_static__main__decl0__index
+    %t5 = cmp eq i32 %t4, 2
+    %t6 = convert trunc i32 i64 %t5
+    branch %t6, ^if_then_5, ^if_else_6
+
+  block ^if_then_5:
+    return i32 0
+
+  block ^if_else_6:
+    jump ^if_end_7
+
+  block ^if_end_7:
+    jump ^for_iter_3
+
+  block ^for_iter_3:
+    %t7 = load typed i32 @__local_static__main__decl0__index
+    %t8 = binary add nowrap i32 %t7, 1
+    store typed i32 %t8, @__local_static__main__decl0__index
+    jump ^for_cond_1
+
+  block ^for_end_4:
+    return i32 1
+}

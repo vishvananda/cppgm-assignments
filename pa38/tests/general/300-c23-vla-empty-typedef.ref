@@ -1,0 +1,153 @@
+declare function @__cppgm_builtin_memset(%arg0 : ptr, %arg1 : i32, %arg2 : i64) -> ptr [unwind=no, binding=strong, object=cppgm_builtin_memset]
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $n : i32
+  slot $tmpobj__1 : i64
+  slot $i : i32
+  slot $cleanup_return__2 : i32
+  slot $row : i32
+  slot $column : i32
+
+  block ^entry:
+    store typed i32 4, $n
+    %t1 = load typed i32 $n
+    %t2 = binary add nowrap i32 %t1, 1
+    store typed i32 %t2, $n
+    %t3 = convert sext i64 i32 %t1
+    %t4 = binary mul i64 %t3, 4
+    store typed i64 %t4, $tmpobj__1
+    %t5 = load typed i32 $n
+    %t6 = cmp ne i32 %t5, 5
+    %t7 = convert trunc i32 i64 %t6
+    branch %t7, ^if_then_1, ^if_else_2
+
+  block ^if_then_1:
+    return i32 1
+
+  block ^if_else_2:
+    jump ^if_end_3
+
+  block ^if_end_3:
+    store typed i32 1, $n
+    store typed i32 0, $i
+    jump ^for_cond_4
+
+  block ^for_cond_4:
+    %t8 = load typed i32 $i
+    %t9 = cmp lt i32 %t8, 3
+    %t10 = convert trunc i32 i64 %t9
+    branch %t10, ^for_body_5, ^for_end_7
+
+  block ^for_body_5:
+    %t11 = load typed i64 $tmpobj__1
+    %t12 = binary mul i64 %t11, 2
+    %t13 = stack_save
+    %t14 = stack_alloc %t12
+    %t15 = call ptr @__cppgm_builtin_memset(%t14, 0, %t12)
+    %t16 = load typed i64 $tmpobj__1
+    %t17 = binary mul i64 %t16, 2
+    %t18 = const i64 4
+    %t19 = convert sext i64 i32 8
+    %t20 = binary mul i64 %t19, %t18
+    %t21 = cmp ne i64 %t17, %t20
+    %t22 = convert trunc i32 i64 %t21
+    branch %t22, ^if_then_8, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t23 = load typed i32 $n
+    %t24 = cmp ne i32 %t23, 1
+    %t25 = convert trunc i32 i64 %t24
+    branch %t25, ^if_then_8, ^if_else_9
+
+  block ^if_then_8:
+    store typed i32 2, $cleanup_return__2
+    jump ^return_cleanup_action_12
+
+  block ^return_cleanup_terminal_11:
+    return i32 $cleanup_return__2
+
+  block ^return_cleanup_action_12:
+    stack_restore %t13
+    jump ^return_cleanup_terminal_11
+
+  block ^if_else_9:
+    jump ^if_end_13
+
+  block ^if_end_13:
+    store typed i32 0, $row
+    jump ^for_cond_14
+
+  block ^for_cond_14:
+    %t26 = load typed i32 $row
+    %t27 = cmp lt i32 %t26, 2
+    %t28 = convert trunc i32 i64 %t27
+    branch %t28, ^for_body_15, ^for_end_17
+
+  block ^for_body_15:
+    store typed i32 0, $column
+    jump ^for_cond_18
+
+  block ^for_cond_18:
+    %t29 = load typed i32 $column
+    %t30 = cmp lt i32 %t29, 4
+    %t31 = convert trunc i32 i64 %t30
+    branch %t31, ^for_body_19, ^for_end_21
+
+  block ^for_body_19:
+    %t32 = load typed i32 $row
+    %t33 = convert sext i64 i32 %t32
+    %t34 = load typed i64 $tmpobj__1
+    %t35 = copy i64 %t34
+    %t36 = binary mul i64 %t33, %t35
+    %t37 = index inbounds i8 [projection=array_element] %t14, %t36
+    %t38 = load typed i32 $column
+    %t39 = index inbounds i32 [projection=array_element] %t37, %t38
+    %t40 = load typed i32 %t39
+    %t41 = cmp ne i32 %t40, 0
+    %t42 = convert trunc i32 i64 %t41
+    branch %t42, ^if_then_22, ^if_else_23
+
+  block ^if_then_22:
+    store typed i32 3, $cleanup_return__2
+    jump ^return_cleanup_action_12
+
+  block ^if_else_23:
+    jump ^if_end_24
+
+  block ^if_end_24:
+    jump ^for_iter_20
+
+  block ^for_iter_20:
+    %t43 = load typed i32 $column
+    %t44 = binary add nowrap i32 %t43, 1
+    store typed i32 %t44, $column
+    jump ^for_cond_18
+
+  block ^for_end_21:
+    jump ^for_iter_16
+
+  block ^for_iter_16:
+    %t45 = load typed i32 $row
+    %t46 = binary add nowrap i32 %t45, 1
+    store typed i32 %t46, $row
+    jump ^for_cond_14
+
+  block ^for_end_17:
+    %t47 = load typed i64 $tmpobj__1
+    %t48 = copy i64 %t47
+    %t49 = binary mul i64 1, %t48
+    %t50 = index inbounds i8 [projection=array_element] %t14, %t49
+    %t51 = index inbounds i32 [projection=array_element] %t50, 3
+    store typed i32 7, %t51
+    stack_restore %t13
+    jump ^for_iter_6
+
+  block ^for_iter_6:
+    %t52 = load typed i32 $i
+    %t53 = binary add nowrap i32 %t52, 1
+    store typed i32 %t53, $i
+    jump ^for_cond_4
+
+  block ^for_end_7:
+    return i32 0
+}

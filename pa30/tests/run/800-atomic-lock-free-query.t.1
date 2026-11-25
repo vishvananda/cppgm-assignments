@@ -1,0 +1,32 @@
+using Size = __SIZE_TYPE__;
+
+static_assert(__atomic_always_lock_free(4, nullptr), "naturally aligned int");
+static_assert(!__atomic_always_lock_free(3, nullptr), "three-byte generic operation");
+
+static int visits;
+static volatile Size size = 4;
+alignas(8) static unsigned char bytes[16];
+
+static Size size_argument()
+{
+    ++visits;
+    return size;
+}
+
+static void *pointer_argument(bool unaligned)
+{
+    ++visits;
+    return bytes + unaligned;
+}
+
+int main()
+{
+    if (!__atomic_is_lock_free(size_argument(), pointer_argument(false)) || visits != 2)
+        return 1;
+    if (__atomic_is_lock_free(size_argument(), pointer_argument(true)) || visits != 4)
+        return 2;
+    if (!__c11_atomic_is_lock_free(size_argument()) || visits != 5)
+        return 3;
+    size = 3;
+    return __atomic_is_lock_free(size_argument(), nullptr) || visits != 6;
+}

@@ -270,7 +270,9 @@ check catch behavior without requiring particular cell names or instructions.
 Generate each function's call-frame instructions from the frame facts the
 encoder records as it emits the prologue and epilogues: each push, the stack
 reservation, where the prologue sits, and each epilogue, with its own rows
-when returns have their own epilogues. Do not write them from a fixed
+when returns have their own epilogues. Use stack-register instruction forms
+that external stack analysis tools can follow. Do not write the call-frame
+instructions from a fixed
 `push rbp; mov rbp, rsp` template. Build the LSDA's call-site table from the
 final addresses of the calls after block layout. With both, later
 optimization can omit the frame pointer, push callee-saved registers, start

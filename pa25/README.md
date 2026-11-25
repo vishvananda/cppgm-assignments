@@ -90,6 +90,9 @@ New in PA25:
 
 - compile mode: `-c`
 - default link mode with source and object inputs
+- runtime selection: `-nostartfiles` omits compiler-supplied startup,
+  `-nodefaultlibs` omits automatically selected library members, and
+  `-nostdlib` combines both
 - include search: `-I <dir>` and `-I<dir>`
 - library search: `-L <dir>`, `-L<dir>`, `-l <name>`, and `-l<name>`
 - target selection: `--target <target>` or `--target=<target>`
@@ -106,7 +109,20 @@ Not yet required here:
   `-dumpversion`, and `-print-search-dirs`
 - static archives and shared libraries as link inputs
 
+For x86-64 freestanding code, accept `-mno-sse`, `-mno-sse2`,
+`-mno-80387` and `-mno-fp-ret-in-387`. Remove disabled SSE feature macros.
+Use integer registers for integer code, including compiler-generated memory
+copies, clearing and variadic argument handling. If a function needs an
+operation or return convention disabled by these options, diagnose it.
+Explicit assembly instructions may still access the processor's floating-point
+state under the program's own management.
+
 ### Command-Line Contract
+
+On ELF x86-64, `cppgm -S` writes GNU assembly to the requested output
+or an input-derived `.s` file. It expresses the target bytes, section and
+symbol properties, and relocations in assembly directives. Source string
+directives still appear as strings in the assembly output.
 
 Required compile forms:
 
@@ -132,6 +148,9 @@ cppgm -L<dir> -l <name> -o <outfile> <input1> <input2> ... <inputN>
 
 Options may be combined when their meanings are compatible, for example
 `--target <target>` with `-I` or `-L`/`-l`.
+An invocation which omits startup may supply its own process entry. On
+Linux that entry is `_start`. Explicit object and library arguments
+continue to be linked when default libraries are omitted.
 
 In link mode, each `<inputK>` may be:
 

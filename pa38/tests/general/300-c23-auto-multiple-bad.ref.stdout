@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-auto-multiple-bad.t:1:15: an inferred C type requires a single declarator

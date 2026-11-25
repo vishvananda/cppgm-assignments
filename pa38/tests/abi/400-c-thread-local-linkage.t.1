@@ -1,0 +1,15 @@
+extern _Thread_local int host_count;
+_Thread_local int course_count = 7;
+
+int increment_from_host(void);
+
+int main(void)
+{
+	if (host_count != 11 || increment_from_host() != 8)
+		return 1;
+	host_count += 2;
+	{
+		extern _Thread_local int host_count;
+		return host_count != 13 || course_count != 8;
+	}
+}

@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c17-label-at-block-end-bad.t:5:1: a label at the end of a compound statement requires C23

@@ -1,0 +1,1 @@
+ERROR: tests/general/500-c-type-generic-math-signature.t:6:32: type-generic candidate has inconsistent varying types

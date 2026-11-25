@@ -1,0 +1,1 @@
+ERROR: tests/general/100-c23-bit-precise-suffix-bad.t:1:13: no literal operator for the user-defined literal

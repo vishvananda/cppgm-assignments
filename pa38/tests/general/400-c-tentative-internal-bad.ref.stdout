@@ -1,0 +1,1 @@
+ERROR: tests/general/400-c-tentative-internal-bad.t:1:12: a tentative definition with internal linkage has incomplete type

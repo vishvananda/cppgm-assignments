@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c-prototype-tag-redeclaration-bad.t:2:5: conflicting C function declarations

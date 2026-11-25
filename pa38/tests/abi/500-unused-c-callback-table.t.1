@@ -1,0 +1,32 @@
+struct Ops {
+    int (*read)(void);
+};
+
+extern int undefined_callback(void);
+extern int observe(const struct Ops *);
+
+static const struct Ops dead_ops = {undefined_callback};
+static const int sentinel __attribute__((used)) = 67;
+
+static int value(void)
+{
+    return 41;
+}
+
+static const struct Ops live_ops = {value};
+
+#if defined(__linux__) && defined(__x86_64__)
+asm(".text\n");
+#endif
+
+static __attribute__((noinline)) int check_limit(int limit)
+{
+    if (limit)
+        return undefined_callback();
+    return 0;
+}
+
+int main(void)
+{
+    return observe(&live_ops) != 41 || check_limit(0);
+}

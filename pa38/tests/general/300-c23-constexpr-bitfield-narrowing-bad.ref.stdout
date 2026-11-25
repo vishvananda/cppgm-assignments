@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-constexpr-bitfield-narrowing-bad.t:2:41: a C constexpr initializer requires an exactly representable constant

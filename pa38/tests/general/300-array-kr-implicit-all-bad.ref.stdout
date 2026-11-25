@@ -1,0 +1,1 @@
+ERROR: tests/general/300-array-kr-implicit-all-bad.t:1:7: a C identifier-list definition requires a declaration for each parameter

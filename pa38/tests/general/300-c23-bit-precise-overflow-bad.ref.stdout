@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-bit-precise-overflow-bad.t:1:17: an arithmetic operation with an undefined result

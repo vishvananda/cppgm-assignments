@@ -1,0 +1,163 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $header : obj<8x4>
+  slot $trailer : obj<4x4>
+  slot $lor__1 : i64
+  slot $lor__2 : i64
+  slot $lor__3 : i64
+  slot $lor__4 : i64
+  slot $lor__5 : i64
+
+  block ^entry:
+    %t1 = addr $header
+    %t2 = addr $header
+    %t3 = index inbounds i8 [projection=field] %t2, 0
+    store typed u32 10, %t3
+    %t4 = addr $header
+    %t5 = index inbounds i8 [projection=field] %t4, 4
+    %t6 = binary and u32 1, 1
+    store u32 %t6, %t5
+    %t7 = addr $header
+    %t8 = index inbounds i8 [projection=field] %t7, 4
+    %t9 = binary and u32 7, 5
+    %t10 = binary shl u32 %t9, 1
+    %t11 = load u32 %t8
+    %t12 = binary and u32 %t11, 4294967281
+    %t13 = binary or u32 %t12, %t10
+    store u32 %t13, %t8
+    %t14 = addr $header
+    %t15 = index inbounds i8 [projection=field] %t14, 4
+    %t16 = binary and u32 15, 13
+    %t17 = binary shl u32 %t16, 4
+    %t18 = load u32 %t15
+    %t19 = binary and u32 %t18, 4294967055
+    %t20 = binary or u32 %t19, %t17
+    store u32 %t20, %t15
+    %t21 = addr $trailer
+    %t22 = addr $trailer
+    %t23 = index inbounds i8 [projection=field] %t22, 0
+    %t24 = binary and u32 3, 2
+    store u32 %t24, %t23
+    %t25 = addr $trailer
+    %t26 = index inbounds i8 [projection=field] %t25, 0
+    %t27 = binary and u32 1, 1
+    %t28 = binary shl u32 %t27, 2
+    %t29 = load u32 %t26
+    %t30 = binary and u32 %t29, 4294967291
+    %t31 = binary or u32 %t30, %t28
+    store u32 %t31, %t26
+    %t32 = addr $header
+    %t33 = index inbounds i8 [projection=field] %t32, 0
+    %t34 = load typed u32 %t33
+    %t35 = cmp ne u32 %t34, 10
+    %t36 = convert trunc i32 i64 %t35
+    branch %t36, ^lor_short_2, ^lor_rhs_1
+
+  block ^lor_rhs_1:
+    %t37 = addr $header
+    %t38 = index inbounds i8 [projection=field] %t37, 4
+    %t39 = load i32 %t38
+    %t40 = binary and i32 %t39, 1
+    %t41 = copy u32 %t40
+    %t42 = copy i32 %t41
+    %t43 = cmp ne i32 %t42, 1
+    %t44 = convert trunc i32 i64 %t43
+    %t45 = cmp ne i32 %t44, 0
+    store typed i64 %t45, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_short_2:
+    store typed i64 1, $lor__1
+    jump ^lor_end_3
+
+  block ^lor_end_3:
+    %t46 = load typed i64 $lor__1
+    branch %t46, ^lor_short_5, ^lor_rhs_4
+
+  block ^lor_rhs_4:
+    %t47 = addr $header
+    %t48 = index inbounds i8 [projection=field] %t47, 4
+    %t49 = load i32 %t48
+    %t50 = binary shr i32 %t49, 1
+    %t51 = binary and i32 %t50, 7
+    %t52 = copy u32 %t51
+    %t53 = copy i32 %t52
+    %t54 = cmp ne i32 %t53, 5
+    %t55 = convert trunc i32 i64 %t54
+    %t56 = cmp ne i32 %t55, 0
+    store typed i64 %t56, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_short_5:
+    store typed i64 1, $lor__2
+    jump ^lor_end_6
+
+  block ^lor_end_6:
+    %t57 = load typed i64 $lor__2
+    branch %t57, ^lor_short_8, ^lor_rhs_7
+
+  block ^lor_rhs_7:
+    %t58 = addr $header
+    %t59 = index inbounds i8 [projection=field] %t58, 4
+    %t60 = load i32 %t59
+    %t61 = binary shr i32 %t60, 4
+    %t62 = binary and i32 %t61, 15
+    %t63 = copy u32 %t62
+    %t64 = copy i32 %t63
+    %t65 = cmp ne i32 %t64, 13
+    %t66 = convert trunc i32 i64 %t65
+    %t67 = cmp ne i32 %t66, 0
+    store typed i64 %t67, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_short_8:
+    store typed i64 1, $lor__3
+    jump ^lor_end_9
+
+  block ^lor_end_9:
+    %t68 = load typed i64 $lor__3
+    branch %t68, ^lor_short_11, ^lor_rhs_10
+
+  block ^lor_rhs_10:
+    %t69 = addr $trailer
+    %t70 = index inbounds i8 [projection=field] %t69, 0
+    %t71 = load i32 %t70
+    %t72 = binary and i32 %t71, 3
+    %t73 = copy u32 %t72
+    %t74 = copy i32 %t73
+    %t75 = cmp ne i32 %t74, 2
+    %t76 = convert trunc i32 i64 %t75
+    %t77 = cmp ne i32 %t76, 0
+    store typed i64 %t77, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_short_11:
+    store typed i64 1, $lor__4
+    jump ^lor_end_12
+
+  block ^lor_end_12:
+    %t78 = load typed i64 $lor__4
+    branch %t78, ^lor_short_14, ^lor_rhs_13
+
+  block ^lor_rhs_13:
+    %t79 = addr $trailer
+    %t80 = index inbounds i8 [projection=field] %t79, 0
+    %t81 = load i32 %t80
+    %t82 = binary shr i32 %t81, 2
+    %t83 = binary and i32 %t82, 1
+    %t84 = copy u32 %t83
+    %t85 = copy i32 %t84
+    %t86 = cmp ne i32 %t85, 1
+    %t87 = convert trunc i32 i64 %t86
+    %t88 = cmp ne i32 %t87, 0
+    store typed i64 %t88, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_short_14:
+    store typed i64 1, $lor__5
+    jump ^lor_end_15
+
+  block ^lor_end_15:
+    %t89 = load typed i64 $lor__5
+    %t90 = convert trunc i32 i64 %t89
+    return i32 %t90
+}

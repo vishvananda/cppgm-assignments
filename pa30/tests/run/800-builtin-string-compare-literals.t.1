@@ -1,0 +1,29 @@
+#include <stddef.h>
+
+// An unexpected call to either library function makes an equality check fail.
+extern "C" int strcmp(const char*, const char*)
+{
+    return 1;
+}
+
+extern "C" int strncmp(const char*, const char*, size_t)
+{
+    return 1;
+}
+
+int main()
+{
+    if (__builtin_strcmp("<", "<") != 0)
+        return 1;
+    if (__builtin_strcmp("\xff", "z") <= 0)
+        return 2;
+    if (__builtin_strcmp("z", "\xff") >= 0)
+        return 3;
+    if (__builtin_strncmp("a\0x", "a\0y", 3) != 0)
+        return 4;
+    if (__builtin_strncmp("<=", "<", 1) != 0)
+        return 5;
+    if (__builtin_strncmp("a", "z", 0) != 0)
+        return 6;
+    return 0;
+}

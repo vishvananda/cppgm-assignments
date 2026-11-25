@@ -1,0 +1,25 @@
+using Callback = int (*)(int);
+extern "C" int indirect_call(Callback, int);
+extern "C" int indirect_tail(Callback, int);
+
+int target(int value)
+{
+    if (value < 0)
+        throw value;
+    return value + 11;
+}
+
+int main()
+{
+    if (indirect_call(target, 30) != 42 || indirect_tail(target, 31) != 42)
+        return 1;
+    try
+    {
+        indirect_call(target, -3);
+    }
+    catch (int value)
+    {
+        return value != -3;
+    }
+    return 2;
+}

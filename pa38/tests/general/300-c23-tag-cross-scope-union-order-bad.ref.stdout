@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-tag-cross-scope-union-order-bad.t:7:26: invalid implicit conversion

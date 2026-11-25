@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-constexpr-no-initializer-bad.t:1:15: a C constexpr object requires an initializer

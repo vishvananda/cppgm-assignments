@@ -1,0 +1,23 @@
+#include "300-unnamed-bit-field-boundary.h"
+
+static union FloatAndBits change_bits(union FloatAndBits input) {
+    input.value -= 1.25f;
+    return input;
+}
+
+static volatile float seed = 6.25f;
+
+int main(void) {
+    unsigned actual[10], expected[10];
+    bit_field_layout(actual);
+    host_bit_field_layout(expected);
+    for (unsigned i = 0; i < 10; ++i)
+        if (actual[i] != expected[i])
+            return 1;
+
+    union FloatAndBits mixed = { .value = seed };
+    struct FloatAndZero zero = { .value = seed };
+    if (host_change_bits(mixed).value != 8.75f || host_change_zero(zero).value != 9.75f)
+        return 2;
+    return host_call_bit_field_peer(change_bits, seed) != 5.0f;
+}

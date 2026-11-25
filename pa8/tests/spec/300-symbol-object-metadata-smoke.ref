@@ -15,6 +15,7 @@ declare function @throw_bad_typeid() -> void [role=bad_typeid]
 declare function @kept_call_shape() -> void [no_inline=yes]
 declare function @rarely_called() -> void [cold=yes]
 declare function @rarely_kept() -> void [no_inline=yes, cold=yes]
+declare function @strlen(%text : ptr) -> i64 [linkage=c, no_builtin=yes]
 
 function @main() -> i64 [role=entry, binding=strong, keep_alias=yes] {
   block ^entry:

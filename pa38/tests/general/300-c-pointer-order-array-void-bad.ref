@@ -1,0 +1,13 @@
+function @ordered(%array : ptr, %address : ptr) -> i32 [linkage=c, binding=strong] {
+  slot $array : ptr
+  slot $address : ptr
+
+  block ^entry:
+    store typed ptr %array, $array
+    store typed ptr %address, $address
+    %t1 = load typed ptr $array
+    %t2 = load typed ptr $address
+    %t3 = cmp ult ptr %t1, %t2
+    %t4 = convert trunc i32 i64 %t3
+    return i32 %t4
+}

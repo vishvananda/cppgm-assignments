@@ -1,0 +1,1 @@
+ERROR: tests/general/300-c23-nullptr-ordered-bad.t:1:36: invalid operands to a comparison

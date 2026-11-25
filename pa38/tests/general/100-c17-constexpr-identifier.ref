@@ -1,0 +1,10 @@
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  slot $constexpr : i32
+
+  block ^entry:
+    store typed i32 7, $constexpr
+    %t1 = load typed i32 $constexpr
+    %t2 = cmp ne i32 %t1, 7
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}

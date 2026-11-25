@@ -1,0 +1,45 @@
+function @convert(%condition : i32, %value : ptr) -> ptr [linkage=c, binding=internal] {
+  slot $condition : i32
+  slot $value : ptr
+  slot $cond__1 : ptr
+  slot $cond__2 : i32
+
+  block ^entry:
+    store typed i32 %condition, $condition
+    store typed ptr %value, $value
+    %t1 = load typed i32 $condition
+    branch %t1, ^cond_then_1, ^cond_else_2
+
+  block ^cond_then_1:
+    %t2 = load typed ptr $value
+    store typed ptr %t2, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_else_2:
+    branch 1, ^cond_then_4, ^cond_else_5
+
+  block ^cond_then_4:
+    store typed i32 0, $cond__2
+    jump ^cond_end_6
+
+  block ^cond_else_5:
+    store typed i32 0, $cond__2
+    jump ^cond_end_6
+
+  block ^cond_end_6:
+    %t3 = load typed i32 $cond__2
+    %t4 = copy ptr %t3
+    store typed ptr %t4, $cond__1
+    jump ^cond_end_3
+
+  block ^cond_end_3:
+    %t5 = load typed ptr $cond__1
+    return ptr %t5
+}
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = call ptr @convert(0, 0)
+    %t2 = cmp ne ptr %t1, 0
+    %t3 = convert trunc i32 i64 %t2
+    return i32 %t3
+}

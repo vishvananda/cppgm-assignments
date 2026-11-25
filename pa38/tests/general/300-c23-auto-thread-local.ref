@@ -1,0 +1,14 @@
+global @count : i32 [storage=thread_local, linkage=c, binding=internal] = 3
+
+function @main() -> i32 [role=entry, binding=strong, keep_alias=yes] {
+  block ^entry:
+    %t1 = addr @count
+    %t2 = load typed i32 %t1
+    %t3 = binary add nowrap i32 %t2, 4
+    store typed i32 %t3, %t1
+    %t4 = addr @count
+    %t5 = load typed i32 %t4
+    %t6 = cmp ne i32 %t5, 7
+    %t7 = convert trunc i32 i64 %t6
+    return i32 %t7
+}
