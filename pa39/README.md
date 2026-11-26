@@ -91,6 +91,31 @@ Freestanding C code can use `-mgeneral-regs-only` to suppress vectorization and
 keep compiler-generated aggregate copies in general registers. Explicit SIMD
 translation units use the regular AArch64 profile.
 
+### Integrated AArch64 Linux assembly
+
+Compile the supplied `.S` input directly to ELF with the integrated
+assembler. Reuse PA29's macro, symbol and section rules. Preserve
+`#` as an immediate prefix and emit four bytes for `.word`. Support
+the register aliases, scalar and SIMD instructions, local branches,
+external calls and address relocations in the control. Any assembler that observes
+those rules can supply the separately compiled caller or callee.
+
+Use the same assembler for file-scope and inline instructions in `-c` output. Keep macros
+defined by an earlier file-scope declaration available to the inline
+statement. Preserve branches across multi-instruction statements, numbered
+local labels, and `asm goto` destinations. If an inline statement emits data
+in a different section, place the data there and resume code emission in the
+original section. Keep replacement instructions in subsection 1 outside
+the function's fall-through code. Resolve the lengths in its data record
+from the labels that delimit each instruction sequence. Resolve backward
+label distances when a macro uses them for a repetition count or condition.
+Check both source input and the serialized LowIR packet.
+
+```sh
+make -C pa39 check TEST=tests/control/300-integrated-assembly.t
+make -C pa39 check TEST=tests/control/300-integrated-inline.t
+```
+
 ### Size optimization and source LTO
 
 Both Arm targets support the experimental `-Oz` size profile and full source LTO.

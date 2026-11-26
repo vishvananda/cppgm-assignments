@@ -216,8 +216,10 @@ for my $level (@{$expect->{levels} // [0..3]}) {
         for my $i (0 .. $#units) {
             push @clang_peers, "$directory/clang-peer-$i.o";
             push @cppgm_peers, "$directory/cppgm-peer-$i.o";
-            run(0, @reference, '-c', $units[$i], '-o', $clang_peers[-1]);
-            compile_unit($units[$i], $cppgm_peers[-1], @flags, '-x', 'c++');
+            my $assembly = $units[$i] =~ /\.S\z/;
+            run(0, @reference, ($assembly ? ('-x', 'assembler-with-cpp') : ()),
+                '-c', $units[$i], '-o', $clang_peers[-1]);
+            compile_unit($units[$i], $cppgm_peers[-1], @flags, ($assembly ? () : ('-x', 'c++')));
         }
         if ($expect->{archive_units}) {
             for my $pair (['witness', \@clang_peers], ['cppgm', \@cppgm_peers]) {

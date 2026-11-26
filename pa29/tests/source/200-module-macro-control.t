@@ -4,7 +4,7 @@
 #define SYM(name) name
 #endif
 asm(".data\n.globl " SYM("macro_control") "\n" SYM("macro_control") ":\n"
-    ".macro outer\n.macro inner value\n.byte \\value\n.endm\n.endm\nouter\ninner 7\n"
+    ".macro outer\n.macro inner, value\n.byte \\value\n.endm\n.endm\nouter\ninner 7\n"
     ".macro stop\n.byte 1\n.rept 3\n.byte 2\n.exitm\n.byte 3\n.endr\n.byte 4\n.endm\nstop\n.byte 5\n"
     ".macro old\n.purgem old\n.byte 6\n.endm\nold\n"
     ".macro defaults first = 11,second = 13\n.byte \\first,\\second\n.endm\n"

@@ -1,0 +1,7 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "units": ["300-integrated-assembly.S"],
+  "llvm_interop": true,
+  "commands": [{"exit": 39, "stdout": ""}]
+}
