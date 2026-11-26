@@ -407,7 +407,9 @@ The first fixture set covers these parts of the C17 input profile:
   `vector_size` and `mode` in a nested declarator by applying the modifier to
   the base type before forming derived types. A GNU `weak` attribute after
   the pointer's `*` applies to the declared symbol, including a function
-  returning a pointer.
+  returning a pointer. A block-scope function redeclaration's GNU `weak`
+  and `visibility` attributes apply to the function it names. An undefined
+  weak function's address resolves to null on ELF.
 - With optimization enabled, discard a private constant object when no live
   code, retained initializer or explicit assembly operand needs it. Preserve
   a definition marked `used` or assigned an explicit section.

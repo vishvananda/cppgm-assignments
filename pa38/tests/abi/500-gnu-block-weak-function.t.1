@@ -1,0 +1,18 @@
+int optional_driver(void);
+int available_driver(void);
+
+#define SYMBOL_GET(name) ({ \
+    extern typeof(name) name __attribute__((weak, visibility("hidden"))); \
+    &name; \
+})
+
+int main(void)
+{
+    int (*optional)(void) = SYMBOL_GET(optional_driver);
+    int (*available)(void) = SYMBOL_GET(available_driver);
+    if (optional)
+        return 1;
+    if (!available || available() != 42)
+        return 2;
+    return 0;
+}
