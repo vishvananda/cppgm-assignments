@@ -40,6 +40,10 @@ PA25 introduced `cppgm -c`, multiple translation units, symbol resolution, reloc
 | Write a Linux ELF executable and an Apple Silicon Mach-O executable in process. Honor each format's address, page, relocation and entry-point rules. Build macOS load commands, rebasing information and the ad-hoc code signature. | Inspect both images independently, run Linux images on Arm, verify every Mach-O code-signing page hash on x86 and run the signed image under dyld on Apple Silicon. |
 | Produce objects that the platform toolchain can link against its system libraries. | Use LLD or Apple's linker as an independent consumer and exercise hosted exceptions and thread-local storage. |
 
+An ELF object’s undefined symbols describe its remaining imports. Inspect the symbol
+table after optimization to check that an eliminated call leaves no undefined
+entry and that references to other translation units still link.
+
 Use the platform linker for hosted programs that link against system libraries.
 On Linux, advertise the GNU attribute syntax so glibc leaves `__attribute__`
 available when a C header precedes the C++ headers. ABI tags must survive that
@@ -271,6 +275,7 @@ For example, the Apple calling-convention control uses the following fields.
 `llvm_interop` exchanges independently compiled objects with Clang in both
 directions. Each command may also specify `args`. Use PA37’s `reference_assembly` for an independent assembly unit,
 `archive_units` for archive linking, and `reject_link` for an expected link failure.
+`absent_symbols` lists names that must be absent from the Linux ELF symbol table.
 The `quality.levels` and `quality.functions` fields publish the bounds for each
 named function; Clang's code for the fixture meets them too. `quality.own_functions`
 holds bounds for your compiler's code alone, where the rule is not one Clang follows. Keep expected output and exit status in the sidecar. Run one fixture with

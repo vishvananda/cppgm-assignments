@@ -1,0 +1,9 @@
+{
+  "source": true,
+  "target": "aarch64-linux-gnu",
+  "levels": [2, 3],
+  "units": ["600-dead-import.t.1"],
+  "llvm_interop": true,
+  "absent_symbols": ["unused", "unused_weak"],
+  "commands": [{"exit": 47, "stdout": ""}]
+}

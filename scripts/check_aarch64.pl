@@ -143,6 +143,12 @@ for my $level (@{$expect->{levels} // [0..3]}) {
     die "$test: wrong ELF architecture\n" unless $header =~ /Machine: EM_AARCH64\b/;
     die "$test: expected relocation $expect->{relocation}\n"
         if $expect->{relocation} && index($header, $expect->{relocation}) < 0;
+    if ($expect->{absent_symbols}) {
+        my $symbols = run(0, $inspect, '--symbols', $object);
+        for my $symbol (@{$expect->{absent_symbols}}) {
+            die "$test: unexpected symbol $symbol at O$level\n" if $symbols =~ /^\s*Name: \Q$symbol\E \(\d+\)$/m;
+        }
+    }
     if ($expect->{shared_link}) {
         my $pic_object = "$directory/pic-unit.o";
         compile_unit($test, $pic_object, @flags, '-fPIC', '-x', 'c++');
