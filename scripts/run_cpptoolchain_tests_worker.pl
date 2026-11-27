@@ -208,7 +208,7 @@ sub process_one_test
 			$impl_stdout,
 			$impl_stderr,
 			{ CPPGM_BATCH_TIMEOUT_SEC => $build_timeout },
-			@flags,
+			@flags, '--internal-link',
 			'-o',
 			"$test_base.$suffix.program",
 			@objfiles);
@@ -219,7 +219,7 @@ sub process_one_test
 			$impl_stdout,
 			$impl_stderr,
 			{ CPPGM_BATCH_TIMEOUT_SEC => $build_timeout },
-			@flags,
+			@flags, '--internal-link',
 			'-o',
 			"$test_base.$suffix.direct.program",
 			@srcfiles);
@@ -227,7 +227,7 @@ sub process_one_test
 		{
 			note_progress_state('mixed-link', $test);
 			my @mixed_args = (
-				@flags,
+				@flags, '--internal-link',
 				'-o',
 				"$test_base.$suffix.mixed.program",
 				$objfiles[0],

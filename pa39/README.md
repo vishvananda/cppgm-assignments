@@ -68,7 +68,7 @@ finds no definition and names the linked definition when one is present.
 
 ```sh
 cppgm --target=aarch64-linux-gnu -O2 -c sum.cpp -o sum.o
-cppgm --target=aarch64-linux-gnu sum.o main.o -o program
+cppgm --internal-link --target=aarch64-linux-gnu sum.o main.o -o program
 qemu-aarch64 -cpu cortex-a53 ./program
 cppgm --target=aarch64-linux-gnu -S -emit-lowir -O2 main.cpp -o main.lowir
 lowir2native --target=aarch64-linux-gnu main.lowir -o main

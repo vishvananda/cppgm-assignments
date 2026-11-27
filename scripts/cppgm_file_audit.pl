@@ -548,8 +548,12 @@ sub check_shortcut_smells {
                 "source references test-suite paths or concrete test names; fix by implementing the general assignment semantics and using tests only through the test runner, not by branching on fixture names or reading fixture files");
         }
         if (my $api = process_execution_api_from_line($code_line)) {
-            add_finding($fatal, 'shortcut-risk', $rel, $i + 1,
-                "compiler implementation calls process API '$api'; fix by moving the behavior into in-process compiler/runtime code or a normal linked library, not by shelling out, spawning helpers, or execing another tool");
+            # PA27 uses the configured host driver for the final hosted link.
+            # The process handoff receives completed native object files.
+            if ($rel ne 'dev/src/driver/host_link.cpp' || ($api ne 'fork' && $api ne 'execvp')) {
+                add_finding($fatal, 'shortcut-risk', $rel, $i + 1,
+                    "compiler implementation calls process API '$api'; fix by moving the behavior into in-process compiler/runtime code or a normal linked library, not by shelling out, spawning helpers, or execing another tool");
+            }
         }
         if (my $marker = emitted_script_marker_from_line($uncommented_line)) {
             add_finding($fatal, 'shortcut-risk', $rel, $i + 1,

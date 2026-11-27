@@ -1,0 +1,76 @@
+#include <sys/mman.h>
+#include <unistd.h>
+
+typedef char Bytes __attribute__((vector_size(64)));
+typedef unsigned long long Mask;
+#define BW __attribute__((target("avx512f,avx512bw")))
+
+static int pointer_calls, vector_calls, mask_calls;
+
+static const char* counted_pointer(const char* p)
+{
+	++pointer_calls;
+	return p;
+}
+
+BW static Bytes counted_vector(Bytes v)
+{
+	++vector_calls;
+	return v;
+}
+
+static Mask counted_mask(Mask m)
+{
+	++mask_calls;
+	return m;
+}
+
+BW __attribute__((noinline)) static bool check(const char* data, Mask mask)
+{
+	Bytes passthrough;
+	for (unsigned i = 0; i < 64; ++i)
+		passthrough[i] = static_cast<char>(i + 64);
+	pointer_calls = vector_calls = mask_calls = 0;
+	const Bytes result = __builtin_ia32_loaddquqi512_mask(
+		counted_pointer(data), counted_vector(passthrough), counted_mask(mask));
+	if (pointer_calls != 1 || vector_calls != 1 || mask_calls != 1)
+		return false;
+	for (unsigned i = 0; i < 64; ++i)
+		if (result[i] != ((mask >> i & 1) ? data[i] : passthrough[i]))
+			return false;
+	return true;
+}
+
+BW static bool check_constants(const char* data)
+{
+	const Bytes zero = {};
+	const Bytes none = __builtin_ia32_loaddquqi512_mask(nullptr, zero, 0);
+	const Bytes all = __builtin_ia32_loaddquqi512_mask(reinterpret_cast<const Bytes*>(data), zero, ~Mask(0));
+	for (unsigned i = 0; i < 64; ++i)
+		if (none[i] != 0 || all[i] != data[i])
+			return false;
+	return true;
+}
+
+int main()
+{
+	char input[65];
+	for (unsigned i = 0; i < sizeof(input); ++i)
+		input[i] = static_cast<char>(i);
+	if (!check(input + 1, 0x8001800100010001ull) || !check_constants(input + 1))
+		return 1;
+
+	const int page = getpagesize();
+	char* pages = static_cast<char*>(
+		mmap(nullptr, 2u * page, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+	if (pages == MAP_FAILED)
+		return 2;
+	if (mprotect(pages + page, page, PROT_NONE) != 0)
+		return 3;
+	char* tail = pages + page - 5;
+	for (unsigned i = 0; i < 5; ++i)
+		tail[i] = static_cast<char>(i + 17);
+	const bool passed = check(tail, 0x15) && check(pages + page, 0);
+	munmap(pages, 2u * page);
+	return passed ? 0 : 4;
+}

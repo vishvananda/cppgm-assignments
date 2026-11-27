@@ -38,13 +38,13 @@ for my $test (@tests)
 			my $program = "$directory/$route.program";
 			my $object = "$directory/$route" . ($route eq 'object' ? '.obj' : '.o');
 			my $lowir = "$directory/$route.lowir";
-			my @linker = $route eq 'native' ? @host : ($app, $level, @flags);
+			my @linker = $route eq 'native' ? @host : ($app, $level, @flags, '--internal-link');
 			unlink($program, $object, $lowir);
 			my @commands = $route eq 'lowir'
 				? ([$app, '--emit-lowir', $level, @flags, '-o', $lowir, $test],
 				   [$backend, $level, '-o', $program, $lowir])
 				: $route eq 'direct'
-				? ([$app, $level, @flags, '-o', $program, $test])
+				? ([@linker, '-o', $program, $test])
 				: ([$app, $level, @flags, '-c', '-o', $object, $test],
 				   [@linker, '-o', $program, $object]);
 			for my $command (@commands)

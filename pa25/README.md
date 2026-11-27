@@ -9,7 +9,7 @@ used since PA5 with practical compiler-driver behavior.
 
 - compile mode, `-c`, which takes one C++ source file and writes one
   implementation-defined compiler object file
-- default link mode, which takes one or more inputs and writes one native
+- internal link mode (`--internal-link`), which takes one or more inputs and writes one native
   executable program
 
 In link mode, each input may be either:
@@ -89,7 +89,7 @@ Previously required:
 New in PA25:
 
 - compile mode: `-c`
-- default link mode with source and object inputs
+- internal link mode with source and object inputs
 - runtime selection: `-nostartfiles` omits compiler-supplied startup,
   `-nodefaultlibs` omits automatically selected library members, and
   `-nostdlib` combines both
@@ -138,12 +138,12 @@ cppgm -c --target <target> -I<dir> -o <objfile> <srcfile>
 Required link forms:
 
 ```sh
-cppgm -o <outfile> <input1> <input2> ... <inputN>
-cppgm --target <target> -o <outfile> <input1> <input2> ... <inputN>
-cppgm -I <dir> -o <outfile> <input1> <input2> ... <inputN>
-cppgm -I<dir> -o <outfile> <input1> <input2> ... <inputN>
-cppgm -L <dir> -l<name> -o <outfile> <input1> <input2> ... <inputN>
-cppgm -L<dir> -l <name> -o <outfile> <input1> <input2> ... <inputN>
+cppgm --internal-link -o <outfile> <input1> <input2> ... <inputN>
+cppgm --internal-link --target <target> -o <outfile> <input1> <input2> ... <inputN>
+cppgm --internal-link -I <dir> -o <outfile> <input1> <input2> ... <inputN>
+cppgm --internal-link -I<dir> -o <outfile> <input1> <input2> ... <inputN>
+cppgm --internal-link -L <dir> -l<name> -o <outfile> <input1> <input2> ... <inputN>
+cppgm --internal-link -L<dir> -l <name> -o <outfile> <input1> <input2> ... <inputN>
 ```
 
 Options may be combined when their meanings are compatible, for example

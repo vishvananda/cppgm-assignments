@@ -22,6 +22,6 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-"${CPPGM_CPPGM_APP:-../dev/cppgm}" -gline-tables-only -O0 -o "$exe" "$src" || exit 1
+"${CPPGM_CPPGM_APP:-../dev/cppgm}" --internal-link -gline-tables-only -O0 -o "$exe" "$src" || exit 1
 
 cppgm_run_debugger_frame_and_vars "$exe" "$src" 3 'x y' > "$outfile"

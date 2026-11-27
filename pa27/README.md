@@ -1,4 +1,4 @@
-## CPPGM Programming Assignment 27 (`cppgm -c`)
+## CPPGM Programming Assignment 27 (host toolchain interoperability)
 
 ### Overview
 
@@ -12,6 +12,8 @@ and writes the resulting names into real object files:
   object format.
 - Those objects must be accepted by the host C++ compiler driver when it performs
   the final link.
+- The default native link command uses the configured host C++ driver to link
+  objects and select startup objects and libraries.
 - Objects produced by `cppgm` must interoperate with host-built C and C++
   objects, static archives, and shared libraries in the practical subset tested
   here.
@@ -37,8 +39,8 @@ The PA27 harness does not normally use `cppgm` as the final linker. It runs:
    supplied by the test.
 3. The linked program, when the link succeeds.
 
-The main PA27 question is: can `cppgm` produce ordinary host-linkable object
-files?
+The command-line controls also check that `cppgm` can perform the entire
+compile and link command for a hosted program.
 
 ### Prerequisites
 
@@ -105,8 +107,26 @@ cppgm -c --target <target> -I<dir> -o <objfile> <srcfile>
 ```
 
 `<target>` may be `linux` or the corresponding x86_64 Linux host triple form
-accepted by your implementation. PA27 only requires compile mode. The normal
-PA27 final link is performed outside `cppgm` by the host C++ compiler driver.
+accepted by your implementation.
+
+To build a hosted program, invoke `cppgm` with source files, host-compatible
+objects, or both. The output is `a.out` unless `-o` supplies a name.
+
+```sh
+cppgm -o program main.cpp helper.cpp
+cppgm -o program main.cpp helper.o -L ./lib -lprovider
+```
+
+Compile each source through the same host object path as `-c`. Pass the
+objects, libraries, and link options to the configured host C++ compiler
+driver in an argument vector. Keep the input order, including the placement
+of `-l` libraries and `-Wl,` or `-Xlinker` arguments. The host driver handles
+`-pthread`, `-nostartfiles`, `-nodefaultlibs`, `-nostdlib`, `-fuse-ld=` and
+the linker's diagnostics. Linux defaults to a non-PIE executable so the
+driver can link ordinary objects from `cppgm -c`. Pass `-pie` to enable a PIE link.
+Remove temporary objects after the link or a failure. Use
+`--internal-link` to select PA25's linker explicitly. A direct link of course
+`.obj` files or serialized `.lowir` uses that linker.
 
 ### Output Format
 
@@ -153,6 +173,9 @@ not direct N3485 clause tests.
 (`../scripts/check_pa27_section_contract.pl`): a section name that is a safe
 token must reach the LowIR as `section=` and the object as a section of that
 name, and an unsafe or conflicting section attribute must be rejected.
+`100-hosted-link-runtime.t` builds and runs a hosted executable using
+source files, an existing object, and an archive. It exercises a host
+linker option and checks that an unresolved symbol fails the link.
 `make check TEST=tests/controls/<name>.t` runs one.
 
 For x86-64 ELF, honor `-fno-asynchronous-unwind-tables` when neither

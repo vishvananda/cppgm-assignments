@@ -975,6 +975,11 @@ its instruction's result:
   bits are set into the low lanes in order, and the other lanes are the
   passthrough's; `compressstoreqi512_mask` and `compressstoreuqi512_mask`
   store only the packed bytes, at any alignment;
+- `loaddquqi512_mask(address, passthrough, m)` reads bytes at their original
+  offsets where the corresponding mask bits are set and keeps the
+  passthrough's other lanes. The address may be unaligned. A masked-off lane
+  must never read memory, including when the access would cross into an
+  inaccessible page or the mask is zero;
 - `vpermt2varq512_mask(index, a, b, m)` and `vpermi2varq512(a, index, b)`
   select each lane from `a`'s eight lanes followed by `b`'s by the index
   lane's low four bits; where `m`'s bit is clear, the lane is `a`'s;

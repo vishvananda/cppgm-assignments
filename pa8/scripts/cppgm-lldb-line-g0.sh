@@ -22,6 +22,6 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-"${CPPGM_CPPGM_APP:-../dev/cppgm}" -g0 -O0 -o "$exe" "$src" || exit 1
+"${CPPGM_CPPGM_APP:-../dev/cppgm}" --internal-link -g0 -O0 -o "$exe" "$src" || exit 1
 
 cppgm_run_debugger_pending_breakpoint "$exe" "$src" 1 > "$outfile"

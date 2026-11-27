@@ -102,7 +102,7 @@ sub link_external {
 }
 
 sub link_course {
-    run(0, $compiler, @target, @_, @assembly, @libraries, '-o', "$directory/program");
+    run(0, $compiler, @target, '--internal-link', @_, @assembly, @libraries, '-o', "$directory/program");
     execute_image('course');
 }
 
@@ -133,7 +133,7 @@ for my $level (@{$expect->{levels} // [0..3]}) {
     run(0, @reference, '-c', $test, '-o', $other);
     compile_unit($test, $object, @flags, '-x', 'c++');
     if ($expect->{reject_link}) {
-        for my $cmd ([$compiler, @target, $object], [$lld, '-m', 'aarch64elf', '-static', '-e', 'main', $other]) {
+        for my $cmd ([$compiler, @target, '--internal-link', $object], [$lld, '-m', 'aarch64elf', '-static', '-e', 'main', $other]) {
             run(1, @$cmd, @assembly, '-o', "$directory/rejected");
             read_bytes("$directory/err") =~ /\S/ or die "$test: link failed without a diagnostic\n";
         }
@@ -212,7 +212,7 @@ for my $level (@{$expect->{levels} // [0..3]}) {
     if ($expect->{source_link_flags}) {
         my @group = ($compiler, @flags, @{$expect->{source_link_flags}}, '-x', 'c++', $test, @units);
         $producers = 'cppgm-source-lto';
-        run(0, @group, '-o', "$directory/program");
+        run(0, @group, '--internal-link', '-o', "$directory/program");
         execute_image('course');
         run(0, @group, '-c', '-o', "$directory/combined.o");
         link_external("$directory/combined.o");

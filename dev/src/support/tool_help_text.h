@@ -45,6 +45,7 @@ inline const char* cppgm_help_text()
 		   "  -E -dM              dump active macro definitions\n"
 		   "  -E -H               show included headers on standard error\n"
 		   "  -c                  compile only\n"
+		   "  --internal-link     use cppgm's internal linker for a native executable\n"
 		   "  -o <outfile>        explicit output path\n"
 		   "  -I <dir> / -I<dir>  user include search path\n"
 		   "  -iquote <dir>       quoted include search path\n"

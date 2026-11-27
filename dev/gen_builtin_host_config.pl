@@ -161,6 +161,8 @@ sub main {
     print "namespace cppgm_builtin_host_config {\n\n";
     print "static const char kHostCxx[] = ", string_literal($host_cxx), ";\n";
     print "static const char kStdlibFlags[] = ", string_literal($stdlib_flags), ";\n";
+    print "static const char* const kHostLinkCommand[] = {",
+          join(", ", map { string_literal($_) } @base_args), ", nullptr};\n";
     print "static const char kTarget[] = ", string_literal($target), ";\n";
     print "static const char kVersion[] = ", string_literal($version), ";\n";
     print "static const char kSearchDirs[] = ",

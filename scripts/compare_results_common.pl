@@ -971,9 +971,9 @@ sub check_source_behavior
 	my $log = "$my.behavior.stderr";
 	# The source is built at the lane's level, read from the lane's name
 	# (`.../o1/...`), so that what the source sees (`__OPTIMIZE__`) matches
-	# what the emitted LowIR saw; the emitted LowIR is lowered at -O0.
+	# what the emitted LowIR saw. Both programs use the course runtime.
 	my $level = $my =~ m{(?:^|/)o([0-3])(?:/|$)} ? "-O$1" : '-O0';
-	my $built = system("\"$app\" $level -o \"$source_program\" \"$source_file\" > /dev/null 2> \"$log\"") == 0;
+	my $built = system("\"$app\" --internal-link $level -o \"$source_program\" \"$source_file\" > /dev/null 2> \"$log\"") == 0;
 	if (!$built)
 	{
 		unlink($source_program, $log);
