@@ -64,6 +64,9 @@ enum class Encoding : std::uint8_t
 	InvalidateContext,
 	X87StackPop,
 	X87Word,
+	X87Transfer,
+	X87Stack,
+	X87Binary,
 	Count
 };
 
@@ -376,15 +379,15 @@ inline const Form* forms(std::size_t& count)
 		{ "monitor", E::Zero, 0x0f01c8, 0, 0, false, 0 },
 		{ "mwait", E::Zero, 0x0f01c9, 0, 0, false, 0 },
 		{ "fninit", E::Zero, 0xdbe3, 0, 0, false, 0 },
-		{ "fnstsw", E::X87Word, 0xdd, 0, 16, false, 0 },
-		{ "fstsw", E::X87Word, 0xdd, 0x9b, 16, false, 0 },
-		{ "fnstcw", E::X87Word, 0xd9, 0, 16, true, 0 },
-		{ "fstcw", E::X87Word, 0xd9, 0x9b, 16, true, 0 },
+		{ "fnstsw", E::X87Word, 0xdd07, 0, 16, false, 0 },
+		{ "fstsw", E::X87Word, 0xdd07, 0x9b, 16, false, 0 },
+		{ "fnstcw", E::X87Word, 0xd907, 0, 16, true, 0 },
+		{ "fstcw", E::X87Word, 0xd907, 0x9b, 16, true, 0 },
 		{ "fwait", E::Zero, 0x9b, 0, 0, false, 0 },
 		{ "wait", E::Zero, 0x9b, 0, 0, false, 0 },
 		{ "frstor", E::ControlMemory, 0xdd04, 0, 0, true, 0 },
 		{ "fnsave", E::ControlMemory, 0xdd06, 0, 0, true, 0 },
-		{ "fldl", E::ControlMemory, 0xdd00, 0, 0, true, 0 },
+		{ "fldl", E::X87Transfer, 0xd9c0, 0, 64, true, 0 },
 		{ "fmull", E::ControlMemory, 0xdc01, 0, 0, true, 0 },
 		{ "fdivl", E::ControlMemory, 0xdc06, 0, 0, true, 0 },
 		{ "fildl", E::ControlMemory, 0xdb00, 0, 0, true, 0 },
@@ -488,6 +491,54 @@ inline const Form* forms(std::size_t& count)
 		{ "pcmpgtb", E::VectorRM, 0x0f64, 0x66, 128, false, 0 },
 		{ "pcmpgtw", E::VectorRM, 0x0f65, 0x66, 128, false, 0 },
 		{ "pcmpgtd", E::VectorRM, 0x0f66, 0x66, 128, false, 0 },
+		// Additional x87 and SSE floating-point forms, scalar streaming stores and ENCLU.
+		{ "enclu", E::Zero, 0x0f01d7, 0, 0, false, 0 },
+		{ "fldcw", E::X87Word, 0xd905, 0, 16, true, 0 },
+		{ "fld", E::X87Transfer, 0xd9c0, 0, 0, false, 0 },
+		{ "flds", E::X87Transfer, 0xd9c0, 0, 32, true, 0 },
+		{ "fldt", E::X87Transfer, 0xd9c0, 0, 80, true, 0 },
+		{ "fstp", E::X87Transfer, 0xddd8, 0, 0, false, 0 },
+		{ "fstps", E::X87Transfer, 0xddd8, 0, 32, true, 0 },
+		{ "fstpl", E::X87Transfer, 0xddd8, 0, 64, true, 0 },
+		{ "fstpt", E::X87Transfer, 0xddd8, 0, 80, true, 0 },
+		{ "fld1", E::Zero, 0xd9e8, 0, 0, false, 0 },
+		{ "f2xm1", E::Zero, 0xd9f0, 0, 0, false, 0 },
+		{ "frndint", E::Zero, 0xd9fc, 0, 0, false, 0 },
+		{ "fscale", E::Zero, 0xd9fd, 0, 0, false, 0 },
+		{ "fxch", E::X87Stack, 0xd9c8, 0, 0, false, 0 },
+		{ "fucom", E::X87Stack, 0xdde0, 0, 0, false, 0 },
+		{ "fadd", E::X87Binary, 0, 0, 0, false, 0 },
+		{ "fadds", E::X87Binary, 0, 0, 32, true, 0 },
+		{ "faddl", E::X87Binary, 0, 0, 64, true, 0 },
+		{ "fsub", E::X87Binary, 4, 0, 0, false, 0 },
+		{ "fsubs", E::X87Binary, 4, 0, 32, true, 0 },
+		{ "fsubl", E::X87Binary, 4, 0, 64, true, 0 },
+		{ "movntss", E::VectorMR, 0x0f2b, 0xf3, 32, true, 0 },
+		{ "movntsd", E::VectorMR, 0x0f2b, 0xf2, 64, true, 0 },
+		{ "addss", E::VectorRM, 0x0f58, 0xf3, 32, false, 0 },
+		{ "addsd", E::VectorRM, 0x0f58, 0xf2, 64, false, 0 },
+		{ "subss", E::VectorRM, 0x0f5c, 0xf3, 32, false, 0 },
+		{ "subsd", E::VectorRM, 0x0f5c, 0xf2, 64, false, 0 },
+		{ "mulss", E::VectorRM, 0x0f59, 0xf3, 32, false, 0 },
+		{ "mulsd", E::VectorRM, 0x0f59, 0xf2, 64, false, 0 },
+		{ "divss", E::VectorRM, 0x0f5e, 0xf3, 32, false, 0 },
+		{ "divsd", E::VectorRM, 0x0f5e, 0xf2, 64, false, 0 },
+		{ "minps", E::VectorRM, 0x0f5d, 0, 128, false, 0 },
+		{ "minpd", E::VectorRM, 0x0f5d, 0x66, 128, false, 0 },
+		{ "minss", E::VectorRM, 0x0f5d, 0xf3, 32, false, 0 },
+		{ "minsd", E::VectorRM, 0x0f5d, 0xf2, 64, false, 0 },
+		{ "maxps", E::VectorRM, 0x0f5f, 0, 128, false, 0 },
+		{ "maxpd", E::VectorRM, 0x0f5f, 0x66, 128, false, 0 },
+		{ "maxss", E::VectorRM, 0x0f5f, 0xf3, 32, false, 0 },
+		{ "maxsd", E::VectorRM, 0x0f5f, 0xf2, 64, false, 0 },
+		{ "sqrtps", E::VectorRM, 0x0f51, 0, 128, false, 0 },
+		{ "sqrtpd", E::VectorRM, 0x0f51, 0x66, 128, false, 0 },
+		{ "sqrtss", E::VectorRM, 0x0f51, 0xf3, 32, false, 0 },
+		{ "sqrtsd", E::VectorRM, 0x0f51, 0xf2, 64, false, 0 },
+		{ "rcpps", E::VectorRM, 0x0f53, 0, 128, false, 0 },
+		{ "rcpss", E::VectorRM, 0x0f53, 0xf3, 32, false, 0 },
+		{ "rsqrtps", E::VectorRM, 0x0f52, 0, 128, false, 0 },
+		{ "rsqrtss", E::VectorRM, 0x0f52, 0xf3, 32, false, 0 },
 	};
 
 	count = sizeof kForms / sizeof kForms[0];
@@ -507,6 +558,7 @@ enum class VexLayout : std::uint8_t
 	Unary,
 	UnaryImm,
 	Move,
+	Load,
 	Store,
 	ScalarMove,
 	Mask,
@@ -516,7 +568,8 @@ enum class VexLayout : std::uint8_t
 	Insert,
 	Extract,
 	ExtractInteger,
-	Shift
+	Shift,
+	Fma4
 };
 struct VexForm
 {
@@ -713,6 +766,9 @@ inline const VexForm* vex_forms(std::size_t& count)
 		{ "vpsrad", L::Shift, 0xe2, 1, 1, 0, 3, 0, 0x72, 4 },
 		{ "vpslldq", L::Shift, 0x00, 1, 1, 0, 3, 0, 0x73, 7 },
 		{ "vpsrldq", L::Shift, 0x00, 1, 1, 0, 3, 0, 0x73, 3 },
+		{ "vmovntdqa", L::Load, 0x2a, 2, 1, 0, 3, 0, 0x00, 0 },
+		{ "vfmaddss", L::Fma4, 0x6a, 3, 1, 1, 1, 32, 0x00, 0 },
+		{ "vfmaddsd", L::Fma4, 0x6b, 3, 1, 1, 1, 64, 0x00, 0 },
 	};
 	count = sizeof kVexForms / sizeof kVexForms[0];
 	return kVexForms;
@@ -926,6 +982,7 @@ inline const EvexVariant* evex_variants(std::size_t& count)
 		{ "vpbroadcastw", 0, 7, 16, 3 },
 		{ "vpbroadcastd", 0, 7, 32, 3 },
 		{ "vpbroadcastq", 1, 7, 64, 3 },
+		{ "vmovntdqa", 0, 7, 32, 0 },
 	};
 	count = sizeof kEvexVariants / sizeof kEvexVariants[0];
 	return kEvexVariants;
@@ -971,6 +1028,7 @@ inline const EvexForm* evex_forms(std::size_t& count)
 		{ { "vextracti32x8", L::Extract, 0x3b, 3, 1, 0, 4, 256, 0, 0 }, 32, 3 },
 		{ { "vextracti64x4", L::Extract, 0x3b, 3, 1, 1, 4, 256, 0, 0 }, 64, 3 },
 		{ { "vpabsq", L::Unary, 0x1f, 2, 1, 1, 7, 0, 0, 0 }, 64, 7 },
+		{ { "vmovsh", L::ScalarMove, 0x10, 5, 2, 0, 1, 16, 0, 0 }, 16, 3 },
 	};
 	count = sizeof kEvexForms / sizeof kEvexForms[0];
 	return kEvexForms;

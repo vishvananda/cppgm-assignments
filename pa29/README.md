@@ -97,8 +97,12 @@ compare/exchange. Sign/zero-extension moves have distinct source and destination
 widths, including their AT&T names; reject invalid high-byte/REX combinations.
 Feature-dependent native observations must check the host CPU before execution.
 Preserve scalar SSE move bits and memory widths, including NaN payloads.
-Distinguish scalar-double `movsd` from its zero-operand 32-bit string form.
-Both dialects' string spellings are supported. Immediate moves preserve flags;
+Support legacy scalar arithmetic with an XMM destination and an XMM or
+scalar memory source, and packed square root with a full-width source.
+Distinguish scalar-double `movsd` from its 32-bit string form. In both
+dialects, MOVS and STOS may spell out their implicit operands. Check
+the matching SI and DI address views for MOVS and the accumulator and
+DI address for STOS. Immediate moves preserve flags;
 explicit `movabs` accepts numeric and typed symbol addresses, including addends.
 Relocatable symbol operands use the encoding's field width. Preserve the
 distinction between sign-extended 32-bit immediates and displacements and
@@ -111,8 +115,12 @@ Use the width of the address registers to select 32-bit or 64-bit addressing.
 Support explicit control, debug and segment register transfers, descriptor-table
 operations, port I/O, state save/restore and non-temporal memory forms. Inspect privileged
 instructions in the object; execute only the user-mode paths in test drivers.
-Store x87 control and status words with `fnstcw` and `fnstsw`. The status
-form also accepts `%ax`. The `fstcw` and `fstsw` forms wait before storing.
+Load the x87 control word with `fldcw` and store control and status words
+with `fnstcw` and `fnstsw`. The status form also accepts `%ax`. The
+`fstcw` and `fstsw` forms wait before storing. Support the supplied x87
+stack, arithmetic and floating memory-transfer forms in both dialects.
+Non-temporal forms include the scalar SSE4a stores and VEX or EVEX
+`vmovntdqa` loads. These loads require memory and have no write mask.
 The VEX form tables in `x86_asm_model.h` add XMM/YMM moves, packed and scalar
 arithmetic, comparisons, shuffles, variable/immediate shifts, lane
 insertion/extraction, broadcasts, mask extraction and fused arithmetic. Preserve
@@ -124,6 +132,11 @@ and YMM/ZMM register alternatives in registers 0..31. Capture every input byte b
 every output byte before assigning output places. Preserve XMM/YMM aliases,
 ties, early writes, volatile places and over-aligned local storage. This adds
 assembly transfers, not a general wide-vector call ABI.
+
+The scalar FMA4 forms `vfmaddss` and `vfmaddsd` take a destination and
+three sources. The second multiplier or the addend may be in memory.
+Encode the other source in the high nibble of the trailing byte and select
+the VEX.W value that preserves the source order.
 
 Within a packet, support absolute integer expressions in immediate operands,
 AT&T displacements, and numeric `.byte`/`.short`/`.word`/`.long`/`.quad` data,
@@ -154,6 +167,8 @@ EVEX supplements add the supplied XMM/YMM/ZMM forms and register views through
 compressed displacement scaling. Several families have no mask encoding;
 reject unsupported decorations rather than ignoring them. `kmovb/w/d/q`
 transports mask values between mask registers, matching memory and GPR views.
+The EVEX scalar half-precision `vmovsh` supports merging and zeroing loads
+from 16-bit memory.
 Static rounding, suppression modifiers, mask-valued comparisons and additional
 ISA forms remain further goals. Honor declared upper-vector and opmask clobbers, preserving any live values
 your allocator places there. These banks are caller-saved in the supported ABI.
@@ -323,7 +338,7 @@ Numeric conditions and repetition counts accept absolute integer expressions,
 using GNU assembler precedence and truth values. Numeric conditions also accept
 register equality and inequality, comparing the full register views.
 Character constants can supply integer operands or macro arguments, including
-whitespace and punctuation. Honor GNU assembly block comments outside strings.
+whitespace and punctuation. Honor `/* */` and `//` comments outside strings.
 For port instructions accept GNU AT&T's parenthesized DX spelling alongside
 the plain register operand. Encode `loop`, `loope` and `loopne` with a signed
 byte displacement to their local target. A location-counter assignment such

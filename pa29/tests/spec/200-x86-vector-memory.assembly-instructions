@@ -1,0 +1,7 @@
+movntss
+movntsd
+vmovntdqa
+vmovsh
+vfmaddss
+vfmaddsd
+enclu
