@@ -35,9 +35,19 @@ sub bytes {
 sub limits {
     my ($reader) = @_;
     my $flags = number($reader);
-    die "Unsupported shared/memory64 limits\n" if $flags > 1;
-    number($reader);
-    number($reader) if $flags & 1;
+    die "Unsupported Wasm limits flags\n" if $flags & ~7;
+    for (1 .. (1 + ($flags & 1))) {
+        if ($flags & 4) {
+            my $last;
+            for my $index (1 .. 10) {
+                $last = byte($reader);
+                die "Invalid Wasm u64 limit\n" if $index == 10 && $last > 1;
+                last unless $last & 128;
+            }
+        } else {
+            number($reader);
+        }
+    }
 }
 
 sub value_type {

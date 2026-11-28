@@ -36,6 +36,8 @@ test-controls: $(TEST_DEPS)
 test-native-driver: $(TEST_DEPS)
 	@CPPGM_APP_ARGS= perl ../scripts/check_cppgm_native_programs.pl --levels=0,2 \
 		"$(CPPGM_TEST_APP)" "$(GENERAL_TEST_ROOT)/100-c-filename.c" "$(LOWIR2NATIVE_APP)"
+	@CPPGM_APP_ARGS= perl ../scripts/check_cppgm_native_programs.pl --levels=0,2 \
+		"$(CPPGM_TEST_APP)" "$(CONTROL_TEST_ROOT)/300-c-trivial-auto-var-init.t" "$(LOWIR2NATIVE_APP)"
 	@set -e; for test in $(NATIVE_DRIVER_TESTS); do \
 		CPPGM_APP_ARGS="-x c -std=c17" perl ../scripts/check_cppgm_native_programs.pl --levels=0,2 \
 			"$(CPPGM_TEST_APP)" "$(GENERAL_TEST_ROOT)/$$test.t" "$(LOWIR2NATIVE_APP)"; \

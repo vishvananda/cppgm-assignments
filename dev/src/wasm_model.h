@@ -75,9 +75,21 @@ enum class RelocationKind : std::uint8_t
 	MemoryAddressRelative = 11,
 	TableIndexRelative = 12,
 	GlobalIndexI32 = 13,
+	MemoryAddress64 = 14,
+	MemoryAddressSigned64 = 15,
+	MemoryAddressI64 = 16,
+	TableIndex64 = 18,
+	TableIndexI64 = 19,
 	TableNumber = 20,
 	FunctionIndexI32 = 26
 };
+
+constexpr bool wide_relocation(RelocationKind kind)
+{
+	return kind == RelocationKind::MemoryAddress64 || kind == RelocationKind::MemoryAddressSigned64 ||
+		kind == RelocationKind::MemoryAddressI64 || kind == RelocationKind::TableIndex64 ||
+		kind == RelocationKind::TableIndexI64;
+}
 
 // name, binary opcode, immediate form, diagnostic spelling
 // clang-format off: clang-format reflows this list differently on every run.

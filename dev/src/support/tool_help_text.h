@@ -62,7 +62,8 @@ inline const char* cppgm_help_text()
 		   "  -mpopcnt / -mno-popcnt  enable/disable the population-count ISA\n"
 		   "  -g0 / -gline-tables-only\n"
 		   "  -stdlib <name> / -stdlib=<name>\n"
-		   "  --target <target>   linux, macos, wasm32-unknown-unknown, wasm32-wasip1\n"
+		   "  --target <target>   linux, macos, wasm32-unknown-unknown, wasm32-wasip1,\n"
+		   "                      wasm64-unknown-unknown (experimental)\n"
 		   "  --sysroot <dir>    Wasm target headers and runtime libraries\n"
 		   "  -resource-dir <dir>  supplied target builtin headers and compiler runtime\n"
 		   "  --export <name>    export a Wasm function\n";

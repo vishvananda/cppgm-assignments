@@ -1,5 +1,6 @@
 {
   "source": true,
+  "assembly_roundtrip": true,
   "llvm_interop": true,
   "reference_link_flags": ["--allow-undefined"],
   "standalone_optimizer": true,

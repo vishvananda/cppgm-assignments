@@ -1,0 +1,8 @@
+{
+  "source": true,
+  "assembly": true,
+  "target": "wasm64-unknown-unknown",
+  "llvm_interop": true,
+  "hosts": {"arithmetic": "100-wasm64-assembly-host.wat"},
+  "calls": [{"export": "observe", "result": "42"}]
+}

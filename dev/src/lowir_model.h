@@ -260,7 +260,7 @@ enum class Opcode : std::uint8_t
 	IndirectJump,
 	Return,
 	Unreachable,
-	// PA37's single wasm32 memory: size in pages, or grow by u32 pages.
+	// PA37's single Wasm memory: size in pages, or grow by the target's page count type.
 	MemorySize,
 	MemoryGrow,
 	// Scalar floating operations with observable environment effects.

@@ -1,0 +1,1 @@
+-ftrivial-auto-var-init=uninitialized -ftrivial-auto-var-init=zero

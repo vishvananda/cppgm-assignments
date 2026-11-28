@@ -72,6 +72,8 @@ my $command_sequence = 0;
 my $checked = CppgmWasmCheckCache->new(validator => $validator, runtime => $runtime);
 my %lowered_source;
 my @units = fixture_units($test, $expect);
+my $target = $expect->{target} // 'wasm32-unknown-unknown';
+my $external_link = $target eq 'wasm64-unknown-unknown';
 
 if ($expect->{reference_limitations} || ($expect->{llvm_interop} && $expect->{interop_linkers} &&
     !grep { $_ eq 'llvm' } @{$expect->{interop_linkers}})) {
@@ -308,7 +310,7 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
     my @sequence_exports = map { $_->{export} } map { @$_ } @{$expect->{sequences} // []};
     my @exports = map { ('--export', $_) } @{$expect->{link_exports} //
         [(map { $_->{export} } @{$expect->{calls} // []}), @{$expect->{exports} // []}, @sequence_exports]};
-    if (!$expect->{archive_units}) {
+    if (!$expect->{archive_units} && !$external_link) {
     my $tool = $expect->{source} ? $source_compiler : $compiler;
     ($status, $stdout, $stderr) = command("compile-$level", $tool, "-O$level",
         '--target', ($expect->{target} // 'wasm32-unknown-unknown'),
@@ -355,6 +357,7 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
     }
     }
     my @objects;
+    my @assembly_roundtrip_objects;
     my @roundtrip_objects;
     my @inputs = ($test, @units);
     if (!$expect->{source}) {
@@ -374,6 +377,28 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
         check_optimized_text_object($index, $level, $inputs[$index], $object)
             if $optimized_text && !$expect->{assembly};
         push @objects, $object;
+        if ($expect->{assembly_roundtrip}) {
+            my $asm = "$directory/input-$index-$level.s";
+            my $assembled = "$directory/assembly-roundtrip-$index-$level.o";
+            ($status, $stdout, $stderr) = command("source-assembly-$index-$level", $source_compiler,
+                '--target', $target, @target_flags, @{$expect->{flags} // []},
+                "-O$level", '-S', $inputs[$index], '-o', $asm);
+            die "$test: Wasm assembly emission failed: $stdout$stderr\n" if $status;
+            my $clang = $ENV{CPPGM_WASM_CLANG} // 'wasm-ref-clang++';
+            # The reference assembler's checker still consumes i32 in
+            # table64 indirect calls. Validate the assembled code below.
+            my @assembler = $external_link
+                ? ('-cc1as', '-triple', $target, '-target-feature', '+reference-types',
+                    '-target-feature', '+bulk-memory', '-mno-type-check', '-filetype', 'obj')
+                : ("--target=$target", '-x', 'assembler', '-c');
+            ($status, $stdout, $stderr) = command("reassemble-$index-$level", $clang, @assembler,
+                $asm, '-o', $assembled);
+            die "$test: assembling -S output failed: $stdout$stderr\n" if $status;
+            ($status, $stdout, $stderr) = command("assembly-roundtrip-validate-$index-$level",
+                $validator, 'validate', $assembled);
+            die "$test: reassembled object is invalid: $stdout$stderr\n" if $status;
+            push @assembly_roundtrip_objects, $assembled;
+        }
         if ($expect->{source} && !$expect->{assembly} && @units) {
             my $lowir = $lowered_source{$inputs[$index]} // "$directory/unit-$index.lowir";
             if (!$lowered_source{$inputs[$index]}) {
@@ -411,11 +436,13 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
         @roundtrip_objects = archive_inputs("$directory/roundtrip-library-$level.a", @roundtrip_objects);
     }
     my $linked = "$directory/linked-$level.wasm";
+    my $lld = $ENV{CPPGM_WASM_LD} // 'wasm-ref-ld';
+    my @link = $external_link
+        ? ($lld, '-mwasm64', '--no-entry', '--strip-all', @{$expect->{reference_link_flags} // []})
+        : ($source_compiler, '--target', $target, @target_flags, @{$expect->{link_flags} // []});
     for my $pass (1, 2) {
         my $output = "$linked.$pass";
-        ($status, $stdout, $stderr) = command("link-$level-$pass", $source_compiler,
-            '--target', ($expect->{target} // 'wasm32-unknown-unknown'),
-            @target_flags, @{$expect->{link_flags} // []}, @exports, @objects, @supplied_inputs, '-o', $output);
+        ($status, $stdout, $stderr) = command("link-$level-$pass", @link, @exports, @objects, @supplied_inputs, '-o', $output);
         die "$test: object link failed: $stdout$stderr\n" if $status;
     }
     die "$test: identical object inputs produced different module bytes\n"
@@ -456,14 +483,15 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
                 if $status == 124 || $status >= 128 || "$stdout$stderr" !~ /error/i;
         }
     }
-    if (@roundtrip_objects) {
-        my $output = "$directory/roundtrip-linked-$level.wasm";
-        ($status, $stdout, $stderr) = command("roundtrip-link-$level", $source_compiler,
-            '--target', ($expect->{target} // 'wasm32-unknown-unknown'),
-            @target_flags, @{$expect->{link_flags} // []}, @exports, @roundtrip_objects, @supplied_inputs, '-o', $output);
-        die "$test: round-trip object link failed: $stdout$stderr\n" if $status;
-        ($status, $stdout, $stderr) = command("roundtrip-link-validate-$level", $validator, 'validate', $output);
-        die "$test: invalid round-trip linked module: $stdout$stderr\n" if $status;
+    for my $roundtrip (['lowir', \@roundtrip_objects], ['assembly', \@assembly_roundtrip_objects]) {
+        my ($form, $objects) = @$roundtrip;
+        next unless @$objects;
+        my $output = "$directory/$form-roundtrip-linked-$level.wasm";
+        ($status, $stdout, $stderr) = command("$form-roundtrip-link-$level", @link,
+            @exports, @$objects, @supplied_inputs, '-o', $output);
+        die "$test: $form round-trip object link failed: $stdout$stderr\n" if $status;
+        ($status, $stdout, $stderr) = command("$form-roundtrip-validate-$level", $validator, 'validate', $output);
+        die "$test: invalid $form round-trip linked module: $stdout$stderr\n" if $status;
         push @modules, $output;
     }
     if ($expect->{llvm_link}) {
@@ -492,12 +520,12 @@ for my $level (@{$expect->{levels} // [0, 1, 2, 3]}) {
         for my $producer (0 .. $#inputs) {
             my @mixed = @objects;
             $mixed[$producer] = $reference_objects[$producer];
-            for my $linker (@{$expect->{interop_linkers} // ['cppgm', 'llvm']}) {
+            for my $linker (@{$expect->{interop_linkers} // ($external_link ? ['llvm'] : ['cppgm', 'llvm'])}) {
                 die "$test: unknown interoperability linker $linker\n" unless $linker eq 'cppgm' || $linker eq 'llvm';
                 my $output = "$directory/mixed-$producer-$linker-$level.wasm";
                 my @tool = $linker eq 'cppgm'
                     ? ($source_compiler, '--target', ($expect->{target} // 'wasm32-unknown-unknown'), @target_flags, @{$expect->{link_flags} // []})
-                    : $expect->{wasi} ? ($clang, '--target=wasm32-wasip1', @{$expect->{link_flags} // []}, @{$expect->{reference_link_flags} // []}) : ($lld, '--no-entry', @{$expect->{reference_link_flags} // []});
+                    : $expect->{wasi} ? ($clang, '--target=wasm32-wasip1', @{$expect->{link_flags} // []}, @{$expect->{reference_link_flags} // []}) : ($lld, ($external_link ? '-mwasm64' : ()), '--no-entry', @{$expect->{reference_link_flags} // []});
                 my @link_exports = @exports;
                 if ($linker eq 'llvm' && $expect->{reference_initialize}) {
                     # Exporting the constructor entry disables LLD's per-command

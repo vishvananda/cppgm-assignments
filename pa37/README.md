@@ -52,7 +52,8 @@ This path has no source-to-LowIR view. Native targets must reject this Wasm
 assembly input.
 
 The initial runtime subset covers `.functype`, `.globaltype`, function locals,
-visibility/binding directives, zero-initialized Wasm globals, constructor
+visibility and binding directives, explicit function imports via `.import_module`
+and `.import_name`, zero-initialized Wasm globals, constructor
 `.init_array` sections, and `target_features` metadata. Support scalar core
 instructions with typed function/global references, structured control flow,
 floating constants, memory size/growth and bulk-memory operations. These are
@@ -154,11 +155,33 @@ aligned objects of 1, 2, 4 or 8 bytes and accept a null pointer to ask about
 natural alignment. Disabled queries return false. A runtime query observes
 each operand once and can execute without an imported atomic runtime.
 
-Threads/shared memory, TLS, Emscripten glue, components, dynamic
-linking and wasm64 are outside this profile. Diagnose these and unsupported
+Threads and shared memory, TLS, Emscripten glue, components, and dynamic
+linking are outside this profile. Diagnose these and unsupported
 architecture-specific operations, including x86 assembly, CPUID, MXCSR and
 hardware frame introspection. Ordinary portable operations must not fail
 merely because the native backend implemented them with an x86 instruction.
+
+### Experimental wasm64
+
+Use `--target=wasm64-unknown-unknown` for freestanding Wasm with 64-bit
+`long`, pointers, linear-memory addresses, and function-table indices.
+`int` remains 32-bit. Record this data model as the `wasm64` LowIR target.
+Build relocatable objects with `-c` and link them with a memory64-capable
+linker. The Wasm32 internal linker continues to serve the Wasm32 profiles.
+
+```sh
+cppgm --target=wasm64-unknown-unknown -std=gnu11 -O2 -c source.c -o source.o
+cppgm --target=wasm64-unknown-unknown -std=gnu11 -O2 -S source.c -o source.s
+wasm-ld -mwasm64 --no-entry --export=observe source.o -o program.wasm
+```
+
+Emit GNU-style Wasm assembly with `-S` on both Wasm widths. Use the target's
+local and global value types in the output. The assembler directives for a
+function's host module and import name preserve the separate linker name.
+The wasm64 profile also accepts inline moves between typed Wasm globals
+and scalar GNU `r` operands. Declare the globals with file-scope
+`.globaltype`. In `-S` output, preserve constant substitutions in
+`.ascii "->..."` records used to generate C layout headers.
 
 ### Target layout and ABI
 

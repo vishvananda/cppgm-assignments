@@ -1,0 +1,12 @@
+{
+  "source": true,
+  "target": "wasm64-unknown-unknown",
+  "assembly_roundtrip": true,
+  "llvm_interop": true,
+  "reference_assembly": ["400-wasm64-source-assembly.global.s"],
+  "calls": [
+    {"export": "observe", "args": ["33"], "result": "42"},
+    {"export": "observe", "args": ["4294967296"], "result": "4294967305"}
+  ],
+  "abi": {"observe": {"params": ["i64"], "results": ["i64"]}}
+}

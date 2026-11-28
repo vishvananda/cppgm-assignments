@@ -13,7 +13,8 @@ enum class Architecture : std::uint8_t
 	X86_64,
 	Wasm32,
 	AArch64,
-	I386
+	I386,
+	Wasm64
 };
 
 enum class Environment : std::uint8_t
@@ -79,7 +80,8 @@ enum class Target : std::uint8_t
 	Emscripten,
 	AArch64Linux,
 	AArch64MacOS,
-	I386Linux
+	I386Linux,
+	Wasm64
 };
 
 enum class WasmFunctionAttribute : std::uint8_t
@@ -141,7 +143,13 @@ struct OptimizationModel
 
 constexpr bool is_wasm(Target target)
 {
-	return target == Target::Wasm32 || target == Target::Wasi || target == Target::Emscripten;
+	return target == Target::Wasm32 || target == Target::Wasm64 || target == Target::Wasi ||
+		target == Target::Emscripten;
+}
+
+constexpr bool is_bare_wasm(Target target)
+{
+	return target == Target::Wasm32 || target == Target::Wasm64;
 }
 
 constexpr bool is_aarch64(Target target)
@@ -188,6 +196,7 @@ constexpr DataLayout data_layout(Target target)
 {
 	return target == Target::AArch64MacOS ? DataLayout{ 8, 8, 8, 8, ExtendedFloat::Binary64, ByteOrder::Little }
 		: is_i386(target)                 ? DataLayout{ 4, 4, 12, 4, ExtendedFloat::X87, ByteOrder::Little }
+		: target == Target::Wasm64        ? DataLayout{ 8, 8, 16, 16, ExtendedFloat::Binary128, ByteOrder::Little }
 		: is_wasm(target)
 		? DataLayout{ 4, 4, 16, target == Target::Emscripten ? std::uint8_t(8) : std::uint8_t(16),
 			  ExtendedFloat::Binary128, ByteOrder::Little }
@@ -203,13 +212,14 @@ constexpr unsigned default_new_alignment(Target target)
 constexpr Description describe(Target target)
 {
 	return Description{ is_aarch64(target) ? Architecture::AArch64
+			: target == Target::Wasm64     ? Architecture::Wasm64
 			: is_wasm(target)              ? Architecture::Wasm32
 			: is_i386(target)              ? Architecture::I386
 										   : Architecture::X86_64,
 		is_darwin(target)                  ? Environment::Darwin
 			: target == Target::Wasi       ? Environment::WasiPreview1
 			: target == Target::Emscripten ? Environment::Emscripten
-			: target == Target::Wasm32     ? Environment::Freestanding
+			: is_bare_wasm(target)         ? Environment::Freestanding
 										   : Environment::Linux,
 		is_darwin(target)     ? ObjectFormat::MachO
 			: is_wasm(target) ? ObjectFormat::WebAssembly
@@ -268,6 +278,8 @@ inline const char* spelling(Target target)
 		return "macos";
 	case Target::Wasm32:
 		return "wasm32-unknown-unknown";
+	case Target::Wasm64:
+		return "wasm64-unknown-unknown";
 	case Target::Wasi:
 		return "wasm32-wasip1";
 	case Target::Emscripten:
@@ -286,10 +298,10 @@ inline const char* spelling(Target target)
 inline const char* lowir_spelling(Target target)
 {
 	static const char* const names[] = { "linux", "macos", "wasm32", "wasi", "emscripten", "aarch64", "arm64_macos",
-		"i386" };
+		"i386", "wasm64" };
 	return names[static_cast<unsigned>(target)];
 }
 
-const unsigned kTargetCount = static_cast<unsigned>(Target::I386Linux) + 1;
+const unsigned kTargetCount = static_cast<unsigned>(Target::Wasm64) + 1;
 
 } // namespace target_model

@@ -14,8 +14,24 @@ _Static_assert(sizeof(struct Empty) == 0 && sizeof(union EmptyUnion) == 0, "empt
 _Static_assert(sizeof(struct Empty[17]) == 0, "empty record array size");
 _Static_assert(sizeof(struct Pair) == 2 && offsetof(struct Pair, right) == 1, "enclosing record layout");
 
+static int evaluations;
+
+static struct Empty *destination(struct Pair *pair)
+{
+    ++evaluations;
+    return &pair->first;
+}
+
+static struct Empty replacement(void)
+{
+    ++evaluations;
+    return (struct Empty){};
+}
+
 int main(void)
 {
     struct Pair copy = pair;
-    return !(copy.left == 3 && copy.right == 5);
+    *destination(&copy) = replacement();
+    copy.second = copy.first;
+    return !(copy.left == 3 && copy.right == 5 && evaluations == 2);
 }
